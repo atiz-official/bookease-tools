@@ -324,9 +324,15 @@
           <button class="primary green" id="prevCreateBtn" disabled>🚀 สร้างหน้าเว็บร้านตัวอย่าง</button>
 
           <div class="link-box" id="prevLiffBox" style="display: none;">
-            <div class="label">✅ ลิงก์เว็บร้านพร้อมแล้ว · ให้ลูกค้าทดสอบ:</div>
-            <div class="url" id="prevLiffUrl"></div>
-            <button class="secondary" style="margin-top: 10px;" onclick="copyText('prevLiffUrl')">📋 คัดลอกลิงก์</button>
+            <div class="label">✅ เว็บร้านพร้อมแล้ว · เปิดดูใน tab ใหม่</div>
+            <div style="font-size: 13px; color: #1e40af; font-weight: 600; margin-top: 8px;">URL จริง (เมื่อ Atiz ติดตั้งครบ):</div>
+            <div class="url" id="prevPublicUrl" style="font-size: 14px; font-weight: 600;"></div>
+            <div style="font-size: 13px; color: #1e40af; font-weight: 600; margin-top: 10px;">ลิงก์ทดสอบตอนนี้:</div>
+            <div class="url" id="prevLiffUrl" style="font-size: 11px; max-height: 50px; overflow: hidden;"></div>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <button class="secondary" onclick="copyText('prevLiffUrl')" style="flex: 1;">📋 คัดลอกลิงก์</button>
+              <button class="primary" id="prevOpenPreviewBtn" style="flex: 1; margin-top: 0;">🚀 เปิดดูใหม่</button>
+            </div>
           </div>
         </div>
 
@@ -604,17 +610,65 @@ Output ONLY valid JSON. No prose. No code fences.`;
     }
   });
 
-  prevCreateBtn.addEventListener('click', () => {
-    const shortName = document.getElementById('prevShortName').value.trim();
-    if (!shortName) {
+  function collectShopData() {
+    const data = {
+      shopName: document.getElementById('prevShopName').value.trim(),
+      shortName: document.getElementById('prevShortName').value.trim(),
+      lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
+      brandColor: document.getElementById('prevBrandColor').value.trim() || '#2563eb',
+      services: [],
+    };
+    // Pull services from menu-OCR mode if any rows have data
+    document.querySelectorAll('#menuTableBody tr').forEach(tr => {
+      const inputs = tr.querySelectorAll('input');
+      if (inputs.length < 3) return;
+      const name = inputs[0].value.trim();
+      if (!name) return;
+      data.services.push({
+        serviceName: name,
+        durationMin: parseInt(inputs[1].value) || null,
+        price: parseInt(inputs[2].value) || 0,
+      });
+    });
+    return data;
+  }
+
+  function encodeShopData(data) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  }
+
+  function buildPreviewUrl(data) {
+    // liff-preview.html lives next to menu-ocr.html (same directory)
+    const path = window.location.pathname.replace(/menu-ocr\.html$/, 'liff-preview.html');
+    const fullPath = window.location.origin + path;
+    return fullPath + '?data=' + encodeURIComponent(encodeShopData(data));
+  }
+
+  function doCreatePreview() {
+    const data = collectShopData();
+    if (!data.shopName) {
+      showStatus('prevStatus', '⚠️ ใส่ชื่อร้านก่อน', 'error');
+      return;
+    }
+    if (!data.shortName) {
       showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
       return;
     }
-    const previewUrl = `https://bookease.co/${encodeURIComponent(shortName)}`;
+    const previewUrl = buildPreviewUrl(data);
+    const publicUrl = `bookease.co/${data.shortName}`;
+    document.getElementById('prevPublicUrl').textContent = publicUrl;
     document.getElementById('prevLiffUrl').textContent = previewUrl;
     document.getElementById('prevLiffBox').style.display = 'block';
-    showStatus('prevStatus', '✅ เตรียมลิงก์เว็บร้านแล้ว · ทดสอบบนมือถือ', 'success');
-  });
+    // Auto-open preview in new tab
+    window.open(previewUrl, '_blank', 'noopener');
+    const svcMsg = data.services.length > 0
+      ? `✅ เปิดเว็บร้านใน tab ใหม่ · ${data.services.length} บริการ`
+      : '✅ เปิดเว็บร้านใน tab ใหม่ · ยังไม่มีบริการ (ไปแท็บ "ถ่ายเมนู" เพื่อเพิ่ม)';
+    showStatus('prevStatus', svcMsg, 'success');
+  }
+
+  prevCreateBtn.addEventListener('click', doCreatePreview);
+  document.getElementById('prevOpenPreviewBtn').addEventListener('click', doCreatePreview);
 
   // ═══════════════════════════════════════════════════════════════
   // MODE 2 · ถ่ายเมนู

@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>เว็บร้าน · BookEase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --brand: #2563eb;
+    --brand-rgb: 37, 99, 235;
+  }
+  body {
+    margin: 0; font-family: 'Sarabun', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; font-size: 16px;
+    min-height: 100vh;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CONTROL PANEL (top · merchant-facing)
+     ═══════════════════════════════════════════════════════════════ */
+  .control { max-width: 880px; margin: 0 auto; padding: 20px 16px 0; }
+  .control h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+  .control .sub { color: #64748b; font-size: 14px; margin: 0 0 18px; }
+
+  .url-block {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 18px;
+  }
+  .url-block .heading {
+    font-size: 13px; font-weight: 600; color: #475569;
+    margin-bottom: 6px;
+  }
+  .url-block .public-url {
+    font-family: ui-monospace, monospace; font-size: 18px;
+    color: #1e293b; font-weight: 600;
+    background: #f8fafc; padding: 12px 14px; border-radius: 10px;
+    border: 1px dashed #cbd5e1; word-break: break-all;
+    margin-bottom: 8px;
+  }
+  .url-block .public-url .accent {
+    color: var(--brand); font-weight: 700;
+  }
+  .url-block .test-url-row {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    font-size: 12px; color: #64748b; margin-top: 8px;
+  }
+  .url-block .test-url-row .label { white-space: nowrap; font-weight: 500; }
+  .url-block .test-url-row .test-url {
+    flex: 1; min-width: 180px;
+    font-family: ui-monospace, monospace; font-size: 11px;
+    background: #f8fafc; padding: 6px 8px; border-radius: 6px;
+    color: #475569; word-break: break-all; max-height: 38px; overflow: hidden;
+  }
+  .url-block .note {
+    font-size: 12px; color: #94a3b8; margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* Template picker */
+  .templates {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 20px;
+  }
+  .tmpl-btn {
+    background: #fff; border: 2px solid #e2e8f0;
+    border-radius: 14px; padding: 14px 8px;
+    cursor: pointer; font-family: inherit; font-size: 14px;
+    color: #475569; text-align: center; transition: all 0.15s;
+    font-weight: 600;
+  }
+  .tmpl-btn .icon { font-size: 26px; margin-bottom: 4px; line-height: 1; display: block; }
+  .tmpl-btn:hover { border-color: #cbd5e1; }
+  .tmpl-btn.active {
+    border-color: var(--brand);
+    background: rgba(var(--brand-rgb), 0.05);
+    color: var(--brand);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     PHONE FRAME (center · what merchant + customer see)
+     ═══════════════════════════════════════════════════════════════ */
+  .phone-wrap {
+    display: flex; justify-content: center;
+    padding: 0 16px 100px;
+  }
+  .phone {
+    width: 100%; max-width: 380px;
+    background: #000; border-radius: 36px;
+    padding: 8px; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+    position: relative;
+  }
+  .phone-screen {
+    background: var(--bg, #fff);
+    border-radius: 30px; overflow: hidden;
+    min-height: 680px; display: flex; flex-direction: column;
+    color: var(--text, #0f172a);
+  }
+  .phone-status {
+    height: 28px; background: transparent;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 16px; font-size: 12px; font-weight: 600;
+    color: var(--text, #0f172a);
+  }
+  .phone-address {
+    background: #f1f5f9; margin: 0 8px 0;
+    padding: 8px 12px; border-radius: 10px;
+    font-family: ui-monospace, monospace; font-size: 13px;
+    color: #475569; display: flex; align-items: center; gap: 6px;
+    border: 1px solid #e2e8f0;
+  }
+  .phone-address .lock { font-size: 11px; }
+  .phone-address .url-thai { font-weight: 600; color: #1e293b; }
+
+  .reset-btn {
+    position: absolute; top: 18px; right: 18px;
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
+    border: 1px solid #cbd5e1; border-radius: 100px;
+    padding: 6px 10px; font-size: 11px; cursor: pointer;
+    color: #475569; font-family: inherit; font-weight: 500;
+    z-index: 10;
+  }
+
+  /* ─── Phone screen content (the LIFF page itself) ─── */
+  .liff-content {
+    flex: 1; padding: 20px 18px 100px; overflow-y: auto;
+    background: var(--bg, #fff);
+  }
+  .liff-content .screen { display: none; }
+  .liff-content .screen.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cover screen */
+  .cover-hero {
+    width: 100%; aspect-ratio: 1.4;
+    background: linear-gradient(135deg, var(--accent, var(--brand)), var(--accent-2, var(--brand)));
+    border-radius: var(--radius, 16px);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px; position: relative; overflow: hidden;
+  }
+  .cover-hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.25), transparent 60%);
+  }
+  .cover-letter {
+    width: 88px; height: 88px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; font-weight: 800;
+    color: var(--accent, var(--brand));
+    z-index: 1;
+  }
+  .cover-shop-name {
+    margin: 0 0 8px; font-size: 26px;
+    font-weight: var(--weight-bold, 700);
+    color: var(--text, #0f172a); line-height: 1.2;
+  }
+  .cover-tagline {
+    margin: 0 0 6px; color: var(--text-muted, #64748b);
+    font-size: 14px; line-height: 1.5;
+  }
+  .cover-line-oa {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(6, 199, 85, 0.1); color: #06c755;
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 12px; font-weight: 600; margin-bottom: 16px;
+  }
+
+  /* Service list */
+  .screen-title {
+    margin: 0 0 16px; font-size: 20px;
+    font-weight: var(--weight-bold, 700);
+    color: var(--text, #0f172a);
+  }
+  .service-list { display: flex; flex-direction: column; gap: 10px; }
+  .service-card {
+    background: var(--panel-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 12px);
+    padding: 14px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .service-card:hover, .service-card.selected {
+    border-color: var(--accent, var(--brand));
+    box-shadow: 0 2px 8px rgba(var(--brand-rgb), 0.1);
+  }
+  .service-card.selected {
+    background: var(--accent-soft, rgba(var(--brand-rgb), 0.05));
+  }
+  .service-name {
+    font-weight: var(--weight-bold, 600); font-size: 15px;
+    color: var(--text, #0f172a); margin-bottom: 4px;
+  }
+  .service-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--text-muted, #64748b);
+  }
+  .service-price {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700; color: var(--text, #0f172a);
+    font-size: 15px;
+  }
+
+  /* Date stepper + time picker */
+  .date-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin-bottom: 18px;
+  }
+  .date-pill {
+    background: var(--panel-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 12px);
+    padding: 10px 4px; text-align: center; cursor: pointer;
+    font-size: 13px; transition: all 0.15s;
+  }
+  .date-pill .day {
+    font-weight: var(--weight-bold, 600);
+    color: var(--text, #0f172a); font-size: 16px;
+  }
+  .date-pill .label { color: var(--text-muted, #64748b); font-size: 11px; }
+  .date-pill.selected {
+    background: var(--accent, var(--brand)); border-color: var(--accent, var(--brand));
+  }
+  .date-pill.selected .day,
+  .date-pill.selected .label { color: #fff; }
+
+  .time-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .time-pill {
+    background: var(--panel-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 12px);
+    padding: 12px 6px; text-align: center; cursor: pointer;
+    font-size: 14px; font-weight: 600;
+    color: var(--text, #0f172a);
+    transition: all 0.15s; font-variant-numeric: tabular-nums;
+  }
+  .time-pill:hover { border-color: var(--accent, var(--brand)); }
+  .time-pill.selected {
+    background: var(--accent, var(--brand)); border-color: var(--accent, var(--brand));
+    color: #fff;
+  }
+
+  /* Pay screen */
+  .summary-card {
+    background: var(--panel-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 12px);
+    padding: 14px; margin-bottom: 16px;
+  }
+  .summary-row {
+    display: flex; justify-content: space-between;
+    font-size: 14px; padding: 6px 0;
+  }
+  .summary-row.total {
+    border-top: 1px dashed var(--card-border, #e2e8f0);
+    margin-top: 8px; padding-top: 10px;
+    font-weight: var(--weight-bold, 700); font-size: 16px;
+    color: var(--accent, var(--brand));
+  }
+  .summary-label { color: var(--text-muted, #64748b); }
+  .summary-value { color: var(--text, #0f172a); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .input-thai {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 10px);
+    font-family: inherit; font-size: 15px;
+    background: var(--panel-bg, #fff); color: var(--text, #0f172a);
+    margin-bottom: 10px;
+  }
+  .input-thai:focus { outline: none; border-color: var(--accent, var(--brand)); }
+  .input-label {
+    font-size: 13px; font-weight: 600; color: var(--text, #0f172a);
+    margin-bottom: 6px; display: block;
+  }
+
+  .promptpay-mock {
+    background: var(--panel-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: var(--radius, 12px);
+    padding: 16px; text-align: center; margin-bottom: 14px;
+  }
+  .promptpay-mock .qr {
+    width: 160px; height: 160px; margin: 0 auto 10px;
+    background: #fff; border: 2px solid #0f172a; border-radius: 8px;
+    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+    padding: 8px; gap: 1px;
+  }
+  .promptpay-mock .qr div {
+    background: #0f172a;
+  }
+  .promptpay-mock .qr div.empty { background: transparent; }
+  .promptpay-mock .label {
+    font-size: 13px; color: var(--text-muted, #64748b);
+  }
+
+  .test-disclaimer {
+    background: #fef3c7; border: 1px solid #facc15;
+    color: #854d0e; padding: 12px 14px; border-radius: 10px;
+    font-size: 13px; line-height: 1.5; margin-bottom: 14px;
+  }
+  .test-disclaimer strong { color: #713f12; }
+
+  .cta-btn {
+    width: 100%; padding: 14px;
+    background: var(--accent, var(--brand)); color: #fff;
+    border: none; border-radius: var(--radius, 12px);
+    font-family: inherit; font-size: 16px;
+    font-weight: var(--weight-bold, 700);
+    cursor: pointer; min-height: 52px;
+  }
+  .cta-btn:active { transform: translateY(1px); }
+  .cta-btn.secondary {
+    background: transparent; color: var(--text, #0f172a);
+    border: 1px solid var(--card-border, #e2e8f0);
+  }
+
+  /* Success screen */
+  .success-icon {
+    width: 80px; height: 80px;
+    background: #d1fae5; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; margin: 8px auto 18px;
+  }
+  .success-text { text-align: center; }
+  .success-text h2 {
+    margin: 0 0 8px; font-size: 22px;
+    font-weight: var(--weight-bold, 700);
+    color: var(--text, #0f172a);
+  }
+  .success-text p {
+    margin: 0 0 8px; color: var(--text-muted, #64748b);
+    font-size: 14px; line-height: 1.5;
+  }
+  .booking-qr {
+    margin: 18px auto; width: 130px; height: 130px;
+    background: #fff; border: 2px solid var(--card-border, #e2e8f0);
+    border-radius: 12px;
+    display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr);
+    padding: 8px; gap: 1px;
+  }
+  .booking-qr div { background: #0f172a; }
+  .booking-qr div.empty { background: transparent; }
+
+  /* Pagination dots */
+  .pagination {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 8px 0 16px; background: var(--bg, #fff);
+  }
+  .pagination .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--card-border, #e2e8f0);
+    transition: all 0.15s;
+  }
+  .pagination .dot.active {
+    background: var(--accent, var(--brand)); width: 24px;
+  }
+
+  /* Sticky bottom action bar (merchant tools) */
+  .action-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    display: flex; gap: 8px; max-width: 880px; margin: 0 auto;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  }
+  .action-bar button {
+    flex: 1; padding: 12px 8px;
+    border: 1px solid #e2e8f0; border-radius: 12px;
+    background: #fff; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: #1e293b; min-height: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .action-bar button .icon { font-size: 18px; }
+  .action-bar button.primary {
+    background: var(--brand); color: #fff; border-color: var(--brand);
+    flex: 2;
+  }
+  .action-bar button:active { transform: translateY(1px); }
+
+  /* QR modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+    display: none; align-items: center; justify-content: center; z-index: 100;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px; padding: 24px;
+    max-width: 320px; width: 100%; text-align: center;
+  }
+  .modal h3 { margin: 0 0 14px; font-size: 18px; font-weight: 700; }
+  .modal img { width: 100%; max-width: 240px; }
+  .modal p { font-size: 13px; color: #64748b; margin: 12px 0; line-height: 1.4; }
+  .modal button { margin-top: 12px; }
+
+  /* Template-specific overrides */
+  [data-template="elegant"] .phone-screen {
+    --bg: #fafaf9; --panel-bg: #ffffff;
+    --text: #1c1917; --text-muted: #78716c;
+    --card-border: #e7e5e4; --radius: 8px;
+    --weight-bold: 600;
+  }
+  [data-template="elegant"] .cover-hero {
+    background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 70%, white));
+  }
+  [data-template="elegant"] .screen-title { letter-spacing: -0.01em; }
+
+  [data-template="cute"] .phone-screen {
+    --bg: #fef7f4; --panel-bg: #ffffff;
+    --text: #831843; --text-muted: #be185d;
+    --card-border: #fce7f3; --radius: 22px;
+    --weight-bold: 700;
+    --accent-soft: #fff1f2;
+  }
+  [data-template="cute"] .cover-hero {
+    background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, #fce7f3), #fce7f3);
+  }
+  [data-template="cute"] .cover-letter { background: #fff1f2; }
+
+  [data-template="bold"] .phone-screen {
+    --bg: #ffffff; --panel-bg: #f8fafc;
+    --text: #0f172a; --text-muted: #475569;
+    --card-border: #cbd5e1; --radius: 10px;
+    --weight-bold: 800;
+  }
+  [data-template="bold"] .cover-hero {
+    background: var(--accent);
+  }
+
+  /* Default brand fallback if no template attribute */
+  .phone-screen {
+    --bg: #ffffff; --panel-bg: #f8fafc;
+    --text: #0f172a; --text-muted: #64748b;
+    --card-border: #e2e8f0; --radius: 12px;
+    --weight-bold: 700;
+    --accent: var(--brand);
+  }
+
+  @media (max-width: 600px) {
+    .control { padding: 16px 12px 0; }
+    .control h1 { font-size: 18px; }
+    .url-block .public-url { font-size: 14px; }
+    .templates { gap: 6px; }
+    .tmpl-btn { padding: 10px 4px; font-size: 12px; }
+    .tmpl-btn .icon { font-size: 22px; }
+    .phone-wrap { padding: 0 8px 100px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     CONTROL PANEL
+     ════════════════════════════════════════════════════════════════ -->
+<div class="control">
+  <h1 id="controlHeader">เว็บร้านพร้อมแล้ว ✨</h1>
+  <p class="sub">เลือก template แล้วส่งให้ลูกค้าลองจองได้เลย</p>
+
+  <!-- URL block (Path C: honest 2-URL display) -->
+  <div class="url-block">
+    <div class="heading">URL เว็บร้านของคุณ</div>
+    <div class="public-url">bookease.co/<span class="accent" id="publicUrlSlug">demoshop</span></div>
+    <div class="test-url-row">
+      <span class="label">📎 ลิงก์ทดสอบตอนนี้:</span>
+      <span class="test-url" id="testUrl"></span>
+    </div>
+    <div class="note">
+      ℹ️ URL เว็บร้านจริงจะใช้งานได้เมื่อ Atiz ติดตั้งระบบครบ · ตอนนี้ใช้ลิงก์ทดสอบแทน · merchant สามารถส่งให้ลูกค้าลองจอง flow ได้
+    </div>
+  </div>
+
+  <!-- Template picker -->
+  <div class="templates">
+    <button class="tmpl-btn active" data-tmpl="elegant">
+      <span class="icon">✨</span>
+      เรียบหรู
+    </button>
+    <button class="tmpl-btn" data-tmpl="cute">
+      <span class="icon">🌸</span>
+      สดใสน่ารัก
+    </button>
+    <button class="tmpl-btn" data-tmpl="bold">
+      <span class="icon">🌟</span>
+      เด่นสะดุดตา
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     PHONE FRAME
+     ════════════════════════════════════════════════════════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+    <button class="reset-btn" id="resetBtn">↻ เริ่มใหม่</button>
+    <div class="phone-screen" data-template="elegant" id="phoneScreen">
+      <div class="phone-status">
+        <span>9:41</span>
+        <span>▰▰▰▰▰</span>
+      </div>
+      <div class="phone-address">
+        <span class="lock">🔒</span>
+        <span>bookease.co/<span class="url-thai" id="addressSlug">demoshop</span></span>
+      </div>
+
+      <div class="liff-content">
+
+        <!-- Screen 1: Cover -->
+        <div class="screen active" data-screen="1">
+          <div class="cover-hero">
+            <div class="cover-letter" id="coverLetter">B</div>
+          </div>
+          <div class="cover-line-oa" id="coverLineOa" style="display: none;">
+            <span>💬</span> <span id="coverLineOaText"></span>
+          </div>
+          <h2 class="cover-shop-name" id="coverShopName">ร้านตัวอย่าง</h2>
+          <p class="cover-tagline">บริการของร้าน · จองออนไลน์ · ฿200 ล็อกคิว</p>
+          <button class="cta-btn" data-go="2" style="margin-top: 16px;">เริ่มจอง →</button>
+        </div>
+
+        <!-- Screen 2: Service select -->
+        <div class="screen" data-screen="2">
+          <h2 class="screen-title">เลือกบริการ</h2>
+          <div class="service-list" id="serviceList"></div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button class="cta-btn secondary" data-go="1" style="flex: 1;">← ย้อน</button>
+            <button class="cta-btn" data-go="3" id="servicesNext" style="flex: 2;" disabled>ถัดไป →</button>
+          </div>
+        </div>
+
+        <!-- Screen 3: Time picker -->
+        <div class="screen" data-screen="3">
+          <h2 class="screen-title">เลือกวัน-เวลา</h2>
+          <div class="date-row" id="dateRow"></div>
+          <div class="time-grid" id="timeGrid"></div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button class="cta-btn secondary" data-go="2" style="flex: 1;">← ย้อน</button>
+            <button class="cta-btn" data-go="4" id="timeNext" style="flex: 2;" disabled>ถัดไป →</button>
+          </div>
+        </div>
+
+        <!-- Screen 4: Confirm + pay -->
+        <div class="screen" data-screen="4">
+          <h2 class="screen-title">ยืนยันการจอง</h2>
+
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="summary-label">ร้าน</span>
+              <span class="summary-value" id="confirmShopName">ร้านตัวอย่าง</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">บริการ</span>
+              <span class="summary-value" id="confirmService">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">วันเวลา</span>
+              <span class="summary-value" id="confirmDateTime">—</span>
+            </div>
+            <div class="summary-row total">
+              <span>มัดจำล็อกคิว</span>
+              <span>฿200</span>
+            </div>
+          </div>
+
+          <label class="input-label">ชื่อ-สกุล</label>
+          <input class="input-thai" type="text" id="custName" placeholder="กรอกชื่อ" />
+
+          <label class="input-label">เบอร์โทร</label>
+          <input class="input-thai" type="tel" id="custPhone" placeholder="0XX-XXX-XXXX" />
+
+          <div class="test-disclaimer">
+            <strong>⚠️ โหมดทดสอบ:</strong> นี่คือการลองจองให้ดู flow · <strong>ยังไม่หักเงินจริง</strong> · เริ่มรับเงินจริงเมื่อ Atiz ติดตั้งระบบครบ (~1 สัปดาห์)
+          </div>
+
+          <div class="promptpay-mock">
+            <div class="qr" id="mockQr"></div>
+            <div class="label">QR PromptPay (mock) · ฿200</div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="cta-btn secondary" data-go="3" style="flex: 1;">← ย้อน</button>
+            <button class="cta-btn" data-go="5" style="flex: 2;">จ่าย ฿200 (ทดสอบ)</button>
+          </div>
+        </div>
+
+        <!-- Screen 5: Success -->
+        <div class="screen" data-screen="5">
+          <div class="success-icon">✓</div>
+          <div class="success-text">
+            <h2>จองเรียบร้อย</h2>
+            <p>ร้าน <strong id="successShopName">ร้านตัวอย่าง</strong> จะยืนยันใน LINE chat ภายใน 30 นาที</p>
+            <div class="booking-qr" id="bookingQr"></div>
+            <p style="font-size: 12px;">QR สำหรับแสดงตอนเข้าร้าน</p>
+          </div>
+          <button class="cta-btn secondary" data-go="1" style="margin-top: 16px;">← จองอีกครั้ง</button>
+        </div>
+
+      </div><!-- /.liff-content -->
+
+      <!-- Pagination dots -->
+      <div class="pagination" id="pagination">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div><!-- /.phone-screen -->
+  </div><!-- /.phone -->
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     STICKY ACTION BAR (merchant tools)
+     ════════════════════════════════════════════════════════════════ -->
+<div class="action-bar">
+  <button id="copyBtn">
+    <span class="icon">📋</span>
+    คัดลอกลิงก์
+  </button>
+  <button class="primary" id="shareBtn">
+    <span class="icon">📲</span>
+    ส่งให้ลูกค้าลองจอง
+  </button>
+  <button id="qrBtn">
+    <span class="icon">📷</span>
+    QR
+  </button>
+</div>
+
+<!-- QR modal -->
+<div class="modal-backdrop" id="qrModal">
+  <div class="modal">
+    <h3>📷 QR สำหรับลูกค้าสแกน</h3>
+    <img id="qrImage" alt="QR code" />
+    <p>ให้ลูกค้าสแกน QR นี้บนมือถือเขา · จะเปิดเว็บร้านของคุณ</p>
+    <button class="cta-btn secondary" onclick="document.getElementById('qrModal').classList.remove('show')">ปิด</button>
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // Decode shop data from URL ?data=<base64>
+  // ═══════════════════════════════════════════════════════════════
+  function decodeData(b64) {
+    try {
+      return JSON.parse(decodeURIComponent(escape(atob(b64))));
+    } catch (e) {
+      return null;
+    }
+  }
+  const params = new URLSearchParams(window.location.search);
+  const dataB64 = params.get('data');
+  let shopData = dataB64 ? decodeData(dataB64) : null;
+
+  // Fallback demo data if no ?data param OR decode failed
+  if (!shopData) {
+    shopData = {
+      shopName: 'Bare Nail Spa',
+      shortName: 'barenailspa',
+      brandColor: '#A78B7A',
+      lineOaId: '@barenailspa',
+      services: [
+        { serviceName: 'Manicure คลาสสิก', durationMin: 60, price: 500 },
+        { serviceName: 'Pedicure คลาสสิก', durationMin: 60, price: 600 },
+        { serviceName: 'Gel Polish', durationMin: 75, price: 800 },
+        { serviceName: 'Spa Manicure', durationMin: 90, price: 1200 },
+      ],
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Apply shop data to UI
+  // ═══════════════════════════════════════════════════════════════
+  const brand = shopData.brandColor || '#2563eb';
+  document.documentElement.style.setProperty('--brand', brand);
+  document.documentElement.style.setProperty('--brand-rgb', hexToRgb(brand));
+
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `${r}, ${g}, ${b}`;
+  }
+
+  // Header + URL
+  document.getElementById('controlHeader').textContent = `เว็บร้าน ${shopData.shopName} พร้อมแล้ว ✨`;
+  document.getElementById('publicUrlSlug').textContent = shopData.shortName;
+  document.getElementById('addressSlug').textContent = shopData.shortName;
+  document.getElementById('testUrl').textContent = window.location.href;
+
+  // Cover screen
+  document.getElementById('coverShopName').textContent = shopData.shopName;
+  document.getElementById('coverLetter').textContent = (shopData.shopName || '?').charAt(0).toUpperCase();
+  if (shopData.lineOaId) {
+    document.getElementById('coverLineOa').style.display = 'inline-flex';
+    document.getElementById('coverLineOaText').textContent = `เปิดผ่าน LINE OA ${shopData.lineOaId}`;
+  }
+
+  // Service list
+  const serviceListEl = document.getElementById('serviceList');
+  let selectedService = null;
+  (shopData.services || []).slice(0, 8).forEach((svc, idx) => {
+    const card = document.createElement('div');
+    card.className = 'service-card';
+    card.dataset.idx = idx;
+    card.innerHTML = `
+      <div class="service-name">${svc.serviceName || 'บริการ'}</div>
+      <div class="service-meta">
+        <span>${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
+        <span class="service-price">฿${(svc.price || 0).toLocaleString()}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedService = svc;
+      document.getElementById('servicesNext').disabled = false;
+      document.getElementById('confirmService').textContent = `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
+    });
+    serviceListEl.appendChild(card);
+  });
+  if (!serviceListEl.children.length) {
+    serviceListEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 24px;">ยังไม่มีบริการ</div>';
+  }
+
+  // Date row + time grid
+  const dateRow = document.getElementById('dateRow');
+  const timeGrid = document.getElementById('timeGrid');
+  let selectedDate = null, selectedTime = null;
+  const days = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+  const monthsTh = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const today = new Date();
+  for (let i = 0; i < 4; i++) {
+    const d = new Date(today.getTime() + i * 86400000);
+    const pill = document.createElement('div');
+    pill.className = 'date-pill';
+    pill.dataset.date = d.toISOString().slice(0, 10);
+    pill.dataset.dayLabel = i === 0 ? 'วันนี้' : days[d.getDay()];
+    pill.innerHTML = `
+      <div class="day">${d.getDate()}</div>
+      <div class="label">${i === 0 ? 'วันนี้' : days[d.getDay()] + ' ' + monthsTh[d.getMonth()]}</div>
+    `;
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      selectedDate = d;
+      checkTimeNext();
+    });
+    dateRow.appendChild(pill);
+  }
+
+  ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'].forEach(t => {
+    const pill = document.createElement('div');
+    pill.className = 'time-pill';
+    pill.textContent = t;
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      selectedTime = t;
+      checkTimeNext();
+    });
+    timeGrid.appendChild(pill);
+  });
+
+  function checkTimeNext() {
+    document.getElementById('timeNext').disabled = !(selectedDate && selectedTime);
+    if (selectedDate && selectedTime) {
+      const d = selectedDate;
+      const dayLabel = d.toDateString() === today.toDateString() ? 'วันนี้' : days[d.getDay()];
+      document.getElementById('confirmDateTime').textContent = `${dayLabel} ${d.getDate()} ${monthsTh[d.getMonth()]} · ${selectedTime}`;
+    }
+  }
+
+  // Confirm screen shop name
+  document.getElementById('confirmShopName').textContent = shopData.shopName;
+  document.getElementById('successShopName').textContent = shopData.shopName;
+
+  // Mock QR codes (visual only, not real QR data)
+  function fillMockQr(elId, density) {
+    const el = document.getElementById(elId);
+    const cells = el.children.length || (parseInt(getComputedStyle(el).gridTemplateColumns.split(' ').length) * parseInt(getComputedStyle(el).gridTemplateRows.split(' ').length));
+    el.innerHTML = '';
+    const cols = parseInt(getComputedStyle(el).gridTemplateColumns.split(' ').length);
+    const rows = parseInt(getComputedStyle(el).gridTemplateRows.split(' ').length);
+    const total = cols * rows;
+    // Create deterministic pattern from shop name
+    const seed = shopData.shopName.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    for (let i = 0; i < total; i++) {
+      const div = document.createElement('div');
+      const x = i % cols, y = Math.floor(i / cols);
+      // Corner squares (QR finder pattern look)
+      const isCorner = (x < 2 && y < 2) || (x >= cols - 2 && y < 2) || (x < 2 && y >= rows - 2);
+      const fill = isCorner || ((seed + i * 7) % 3 === 0);
+      if (!fill) div.className = 'empty';
+      div.style.background = fill ? '#0f172a' : 'transparent';
+      el.appendChild(div);
+    }
+  }
+  fillMockQr('mockQr');
+  fillMockQr('bookingQr');
+
+  // ═══════════════════════════════════════════════════════════════
+  // Screen navigation (tap-through)
+  // ═══════════════════════════════════════════════════════════════
+  function goToScreen(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelector(`[data-screen="${n}"]`)?.classList.add('active');
+    document.querySelectorAll('.pagination .dot').forEach((d, i) => {
+      d.classList.toggle('active', i === n - 1);
+    });
+    document.querySelector('.liff-content').scrollTop = 0;
+  }
+  document.querySelectorAll('[data-go]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = parseInt(btn.dataset.go);
+      goToScreen(target);
+    });
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    selectedService = null; selectedDate = null; selectedTime = null;
+    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    document.getElementById('servicesNext').disabled = true;
+    document.getElementById('timeNext').disabled = true;
+    document.getElementById('custName').value = '';
+    document.getElementById('custPhone').value = '';
+    goToScreen(1);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // Template switcher
+  // ═══════════════════════════════════════════════════════════════
+  document.querySelectorAll('.tmpl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tmpl-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('phoneScreen').dataset.template = btn.dataset.tmpl;
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // Action bar: share · copy · QR
+  // ═══════════════════════════════════════════════════════════════
+  const shareUrl = window.location.href;
+  const shareText = `ร้าน ${shopData.shopName} เปิดจองออนไลน์แล้ว ✨\nกดจองที่นี่ · ฿200 ล็อกคิว · มัดจำหักจากค่าบริการหน้าร้าน\n👉 `;
+
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: shopData.shopName, text: shareText, url: shareUrl });
+      } catch (e) { /* user canceled */ }
+    } else {
+      await navigator.clipboard.writeText(shareText + shareUrl);
+      alert('คัดลอกข้อความให้ลูกค้าแล้ว · paste ใน LINE ได้เลย');
+    }
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(shareUrl);
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span class="icon">✅</span>คัดลอกแล้ว';
+    setTimeout(() => { btn.innerHTML = orig; }, 1500);
+  });
+
+  document.getElementById('qrBtn').addEventListener('click', () => {
+    const qrImg = document.getElementById('qrImage');
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(shareUrl)}`;
+    document.getElementById('qrModal').classList.add('show');
+  });
+  document.getElementById('qrModal').addEventListener('click', (e) => {
+    if (e.target.id === 'qrModal') e.currentTarget.classList.remove('show');
+  });
+</script>
+
+</body>
+</html>
