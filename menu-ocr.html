@@ -464,6 +464,21 @@
     adminSave.disabled = true;
     const test = await testApiKey(k);
     if (!test.ok) {
+      // Detect "credit balance too low" specifically — the key WORKS but account has no credits
+      // We should still save the key (it's valid) and let Art top up · proceed.
+      if (test.body && test.body.includes('credit balance is too low')) {
+        if (confirm('✅ Key ถูกต้อง (ใช้ได้)\n\n💳 แต่ account นี้ยังไม่มี credit · ต้องเติมที่ console.anthropic.com/settings/billing ก่อนใช้งาน\n\nบันทึก key ไว้ก่อนไหม?')) {
+          localStorage.setItem(KEY_STORAGE, k);
+          adminInput.value = '';
+          refreshAdminStatus();
+          adminSave.textContent = '✅ บันทึก key แล้ว · ไปเติม credit ก่อนใช้งาน';
+          setTimeout(() => window.location.reload(), 1500);
+          return;
+        }
+        adminSave.textContent = origText;
+        adminSave.disabled = false;
+        return;
+      }
       let msg = `❌ Key ใช้ไม่ได้\n\n`;
       if (test.status) msg += `HTTP ${test.status}\n`;
       if (test.body) msg += test.body;
@@ -519,9 +534,18 @@
       try { bodyText = await res.text(); } catch {}
       console.error('Anthropic API error', res.status, bodyText);
       const snippet = bodyText.replace(/\s+/g, ' ').substring(0, 180);
+      // Friendly Thai messages for known-cause errors
+      if (bodyText.includes('credit balance is too low')) {
+        throw new Error(`💳 ยอดเครดิต Anthropic หมด · ติดต่อคุณอาทเติม credit ที่ console.anthropic.com/settings/billing`);
+      }
+      if (bodyText.includes('rate_limit') || res.status === 429) {
+        throw new Error(`⏳ ใช้งานเยอะเกินไป · รอสักครู่แล้วลองใหม่`);
+      }
+      if (bodyText.includes('overloaded')) {
+        throw new Error(`🌐 Anthropic ระบบขัดข้อง · ลองใหม่อีก 30 วินาที`);
+      }
       if (res.status === 401) throw new Error(`Key ใช้ไม่ได้ (401) · เช็คว่า paste ครบไม่มี space · หรือ key ถูก revoke แล้ว · ${snippet}`);
       if (res.status === 404) throw new Error(`Model ไม่พบ (404) · account อาจไม่มี ${MODEL} · ${snippet}`);
-      if (res.status === 429) throw new Error(`เกินโควต้า (429) · เช็ค spending limit ที่ console.anthropic.com · ${snippet}`);
       throw new Error(`AI ตอบ ${res.status}: ${snippet}`);
     }
     const json = await res.json();
