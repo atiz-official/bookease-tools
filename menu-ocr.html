@@ -182,6 +182,46 @@
     border-top: 1px solid #e2e8f0; color: #94a3b8;
     font-size: 13px; text-align: center;
   }
+
+  /* ───── Admin panel (collapsed by default · for Art only) ───── */
+  .admin-panel {
+    margin: 16px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fafafa;
+  }
+  .admin-panel summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #94a3b8;
+    user-select: none;
+    list-style: none;
+  }
+  .admin-panel summary::-webkit-details-marker { display: none; }
+  .admin-panel summary:hover { color: #475569; }
+  .admin-panel[open] summary {
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+  }
+  .admin-content {
+    padding: 14px;
+  }
+  .admin-status {
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-family: ui-monospace, monospace;
+  }
+  .admin-content input {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #cbd5e1; border-radius: 8px;
+    font-family: ui-monospace, monospace; font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .admin-hint {
+    font-size: 12px; color: #94a3b8; margin-top: 8px; text-align: center;
+  }
 </style>
 </head>
 <body>
@@ -198,6 +238,20 @@
   <div id="setupOk" class="setup-ok" style="display: none;">
     ✅ ตั้งค่าเครื่องนี้เรียบร้อย · พร้อมใช้งานได้แล้ว
   </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       Admin panel · API key management (collapsed by default)
+       Art uses this to paste a new key OR reset · staff ignores it
+       ═══════════════════════════════════════════════════════════════ -->
+  <details class="admin-panel" id="adminPanel">
+    <summary>⚙️ Admin · ตั้งค่า API key (สำหรับ Art เท่านั้น)</summary>
+    <div class="admin-content">
+      <div class="admin-status" id="adminStatus"></div>
+      <input id="apiKey" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
+      <button class="primary" id="saveApiKeyBtn" style="margin-top: 0;">💾 บันทึก key</button>
+      <div class="admin-hint">⚠️ Staff ไม่ต้องแตะส่วนนี้ · Art only</div>
+    </div>
+  </details>
 
   <!-- ═══════════════════════════════════════════════════════════════
        Setup-needed (shown when no API key)
@@ -372,6 +426,35 @@
     document.getElementById('setupNeeded').style.display = 'none';
     document.getElementById('mainTool').style.display = 'block';
   }
+
+  // ── Admin panel: paste/replace key in-page ──
+  const adminStatus = document.getElementById('adminStatus');
+  const adminInput = document.getElementById('apiKey');
+  const adminSave = document.getElementById('saveApiKeyBtn');
+  function refreshAdminStatus() {
+    const k = localStorage.getItem(KEY_STORAGE);
+    if (k) {
+      adminStatus.innerHTML = `✅ มี key อยู่แล้ว · <code>${k.slice(0, 14)}…${k.slice(-4)}</code>`;
+      adminStatus.style.color = '#047857';
+    } else {
+      adminStatus.innerHTML = '❌ ยังไม่มี key';
+      adminStatus.style.color = '#b91c1c';
+    }
+  }
+  refreshAdminStatus();
+  // If no key yet · auto-open the admin panel so Art doesn't have to hunt for it
+  if (!STORED_KEY) document.getElementById('adminPanel').open = true;
+
+  adminSave.addEventListener('click', () => {
+    const k = adminInput.value.trim();
+    if (!k) { alert('ใส่ key ก่อน'); return; }
+    if (!k.startsWith('sk-')) { alert('Key ต้องขึ้นต้น sk-...'); return; }
+    localStorage.setItem(KEY_STORAGE, k);
+    adminInput.value = '';
+    refreshAdminStatus();
+    // Reload so the bootstrap check picks up the new key + shows main tool
+    window.location.reload();
+  });
 
   // ═══════════════════════════════════════════════════════════════
   // Anthropic API helper
