@@ -3,346 +3,391 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BookEase · Caravan OCR Tool · Internal Staff Only</title>
+<title>เครื่องมือ on-site · BookEase</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Sarabun', 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-  header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
-  header h1 { margin: 0; font-size: 22px; }
-  header .badge { padding: 2px 8px; background: #fef3c7; color: #92400e; border-radius: 6px; font-size: 11px; font-weight: 600; }
-  header .pill { padding: 2px 8px; background: #fee2e2; color: #b91c1c; border-radius: 6px; font-size: 11px; font-weight: 600; }
-  header p { color: #64748b; margin: 4px 0 16px; font-size: 14px; }
+  body {
+    margin: 0; font-family: 'Sarabun', system-ui, sans-serif;
+    background: #f8fafc; color: #0f172a; font-size: 16px;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 20px 16px; }
 
-  .mode-tabs { display: flex; gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; width: fit-content; margin-bottom: 16px; }
-  .mode-tab { padding: 8px 16px; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: #475569; }
+  header h1 { margin: 0 0 4px; font-size: 24px; font-weight: 700; }
+  header p  { margin: 0 0 24px; color: #64748b; font-size: 15px; }
+
+  /* ───── Setup-needed block (shown when no API key) ───── */
+  .setup-needed {
+    background: #fff; border: 2px solid #ef4444; border-radius: 16px;
+    padding: 24px 20px; margin-bottom: 20px; text-align: center;
+  }
+  .setup-needed .icon { font-size: 48px; margin-bottom: 8px; }
+  .setup-needed h2 { margin: 0 0 8px; font-size: 20px; color: #b91c1c; }
+  .setup-needed p { margin: 0 0 16px; color: #475569; font-size: 16px; line-height: 1.5; }
+  .setup-needed .contact {
+    display: inline-block; background: #06c755; color: #fff;
+    padding: 10px 20px; border-radius: 100px; font-weight: 600;
+    text-decoration: none; font-size: 16px;
+  }
+
+  /* ───── Setup-success toast ───── */
+  .setup-ok {
+    background: #d1fae5; border: 2px solid #10b981; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 20px; text-align: center;
+    font-size: 16px; font-weight: 600; color: #065f46;
+  }
+
+  /* ───── Mode tabs ───── */
+  .mode-tabs {
+    display: flex; gap: 4px; background: #e2e8f0; padding: 4px;
+    border-radius: 100px; margin-bottom: 20px;
+  }
+  .mode-tab {
+    flex: 1; padding: 12px 16px; font-size: 15px; font-weight: 600;
+    border-radius: 100px; cursor: pointer; border: none;
+    background: transparent; color: #475569;
+    font-family: inherit;
+  }
   .mode-tab.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  /* ───── Cards ───── */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
   @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
 
-  .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
-  .card h3 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
-  .card .hint { font-size: 12px; color: #64748b; margin: -8px 0 12px; }
+  .card {
+    background: #fff; border-radius: 16px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
+  }
+  .card h3 { margin: 0 0 6px; font-size: 17px; font-weight: 700; }
+  .card .hint { font-size: 14px; color: #64748b; margin: 0 0 16px; line-height: 1.4; }
 
-  .api-key-section { background: #fef9c3; border: 1px solid #facc15; padding: 12px; border-radius: 12px; margin-bottom: 16px; }
-  .api-key-section.ok { background: #d1fae5; border-color: #10b981; }
-  .api-key-section label { font-size: 12px; font-weight: 500; }
-  .api-key-section input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 12px; margin-top: 4px; }
-
+  /* ───── Upload zone (BIG · easy to tap) ───── */
   input[type="file"] { display: none; }
   .upload-zone {
-    border: 2px dashed #cbd5e1; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    display: block;
+    border: 3px dashed #cbd5e1; border-radius: 14px;
+    padding: 36px 16px; text-align: center; cursor: pointer;
+    transition: all 0.15s; background: #f8fafc;
   }
-  .upload-zone:hover { border-color: #0EA5E9; background: #f0f9ff; }
-  .upload-zone.has-file { border-style: solid; border-color: #10b981; background: #f0fdf4; padding: 12px; }
-  .upload-zone img { max-width: 100%; max-height: 280px; border-radius: 8px; }
-  .upload-icon { font-size: 32px; margin-bottom: 8px; }
-  .upload-label { font-weight: 500; color: #475569; }
-  .upload-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .upload-zone:hover, .upload-zone:active {
+    border-color: #0EA5E9; background: #f0f9ff;
+  }
+  .upload-zone.has-file {
+    border-style: solid; border-color: #10b981;
+    background: #f0fdf4; padding: 12px;
+  }
+  .upload-zone img { max-width: 100%; max-height: 280px; border-radius: 10px; }
+  .upload-icon { font-size: 44px; margin-bottom: 8px; line-height: 1; }
+  .upload-label { font-weight: 600; color: #334155; font-size: 16px; }
+  .upload-sub { font-size: 13px; color: #94a3b8; margin-top: 6px; }
 
+  /* ───── Buttons (BIG · easy to tap) ───── */
   button.primary {
-    background: #0EA5E9; color: #fff; border: none; padding: 10px 16px; border-radius: 10px;
-    font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 12px;
+    display: block; width: 100%;
+    background: #0EA5E9; color: #fff; border: none;
+    padding: 14px 16px; border-radius: 12px;
+    font-weight: 700; font-size: 16px; cursor: pointer;
+    margin-top: 14px; font-family: inherit;
+    min-height: 52px;
   }
   button.primary:disabled { background: #cbd5e1; cursor: not-allowed; }
   button.primary:hover:not(:disabled) { background: #0284c7; }
+  button.primary:active:not(:disabled) { transform: translateY(1px); }
+  button.primary.green { background: #10b981; }
+  button.primary.green:hover:not(:disabled) { background: #059669; }
+
   button.secondary {
-    background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;
-    font-size: 13px; cursor: pointer; font-weight: 500;
+    background: #f1f5f9; color: #334155;
+    border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 10px;
+    font-size: 15px; cursor: pointer; font-weight: 600;
+    font-family: inherit; min-height: 44px;
   }
   button.secondary:hover { background: #e2e8f0; }
+
   button.danger {
-    background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px; border-radius: 6px;
-    font-size: 12px; cursor: pointer;
+    background: #fee2e2; color: #b91c1c; border: none;
+    padding: 8px 12px; border-radius: 8px; font-size: 18px;
+    cursor: pointer; font-weight: 600; font-family: inherit;
+    min-height: 36px; min-width: 36px;
   }
 
-  .status { margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; }
+  /* ───── Status messages ───── */
+  .status {
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+    font-size: 15px; display: none; line-height: 1.4;
+  }
   .status.show { display: block; }
   .status.info { background: #dbeafe; color: #1e40af; }
   .status.error { background: #fee2e2; color: #991b1b; }
   .status.success { background: #d1fae5; color: #047857; }
 
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
-  table th { text-align: left; padding: 8px; background: #f8fafc; font-weight: 600; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
-  table td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; }
-  table input { width: 100%; padding: 4px 6px; border: 1px solid transparent; background: transparent; font-size: 13px; font-family: inherit; }
-  table input:focus { background: #fff; border-color: #0EA5E9; outline: none; border-radius: 4px; }
+  /* ───── Service edit table ───── */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin-top: 8px; font-size: 15px;
+  }
+  table th {
+    text-align: left; padding: 10px 8px;
+    background: #f8fafc; font-weight: 700;
+    border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #475569;
+  }
+  table td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
+  table input {
+    width: 100%; padding: 8px 10px; border: 1px solid transparent;
+    background: transparent; font-size: 15px; font-family: inherit;
+    border-radius: 6px;
+  }
+  table input:focus { background: #fff; border-color: #0EA5E9; outline: none; }
   table input.num { text-align: right; font-variant-numeric: tabular-nums; }
-  table .row-actions { text-align: right; }
 
-  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .actions button { flex: 1; min-width: 120px; }
+  .actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .actions button { flex: 1; min-width: 140px; }
 
-  .preview-output { background: #0f172a; color: #f1f5f9; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.4; max-height: 200px; overflow: auto; white-space: pre-wrap; }
+  /* ───── Branding fields ───── */
+  .branding-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 600px) { .branding-grid { grid-template-columns: 1fr; } }
+  .branding-field label {
+    font-size: 14px; font-weight: 600; color: #334155;
+    display: block; margin-bottom: 6px;
+  }
+  .branding-field input {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #cbd5e1; border-radius: 8px;
+    font-family: inherit; font-size: 15px;
+  }
+  .branding-field input:focus { outline: none; border-color: #0EA5E9; }
+  .full { grid-column: 1 / -1; }
 
-  .liff-link-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 10px; margin-top: 12px; }
-  .liff-link-box .url { font-family: monospace; font-size: 12px; color: #1e40af; word-break: break-all; }
+  /* ───── Result link box ───── */
+  .link-box {
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    padding: 14px; border-radius: 12px; margin-top: 14px;
+  }
+  .link-box .label {
+    font-size: 14px; font-weight: 700; color: #1e40af; margin-bottom: 6px;
+  }
+  .link-box .url {
+    font-size: 14px; color: #1e40af; word-break: break-all;
+    background: #fff; padding: 10px; border-radius: 8px;
+    border: 1px solid #dbeafe;
+  }
 
-  .branding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .branding-field label { font-size: 12px; font-weight: 500; color: #475569; display: block; margin-bottom: 4px; }
-  .branding-field input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 13px; }
-  .color-swatch { display: inline-block; width: 16px; height: 16px; border-radius: 4px; vertical-align: middle; margin-right: 6px; border: 1px solid #cbd5e1; }
-
-  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center; }
+  footer {
+    margin-top: 28px; padding-top: 16px;
+    border-top: 1px solid #e2e8f0; color: #94a3b8;
+    font-size: 13px; text-align: center;
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>BookEase Caravan OCR Tool</h1>
-    <span class="badge">v0 · 2026-05-03</span>
-    <span class="pill">⚠️ Internal Staff Only · Do NOT share</span>
+    <h1>เครื่องมือ on-site</h1>
+    <p>ใช้ที่ร้าน · ถ่ายรูป → AI ดึงข้อมูลให้</p>
   </header>
-  <p>Pre-visit prep + menu OCR for caravan field reps. Powered by Claude Vision API. Created services + branding feed into BookEase preview shop · merchant sees their shop alive in &lt;60 sec.</p>
 
-  <!-- API Key (one-time setup) -->
-  <div class="api-key-section" id="apiKeySection">
-    <label for="apiKey">🔑 Anthropic API Key</label>
-    <input id="apiKey" type="password" placeholder="sk-ant-api03-..." />
-    <div class="hint" style="margin-top: 6px;">Saved locally in your browser only. Never sent except to api.anthropic.com directly.</div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       Setup-success (shown briefly after ?setup=KEY URL)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="setupOk" class="setup-ok" style="display: none;">
+    ✅ ตั้งค่าเครื่องนี้เรียบร้อย · พร้อมใช้งานได้แล้ว
   </div>
 
-  <!-- Mode tabs -->
-  <div class="mode-tabs">
-    <button class="mode-tab active" data-mode="previsit">📍 Pre-visit prep</button>
-    <button class="mode-tab" data-mode="menu">📋 Menu OCR</button>
+  <!-- ═══════════════════════════════════════════════════════════════
+       Setup-needed (shown when no API key)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="setupNeeded" class="setup-needed" style="display: none;">
+    <div class="icon">🔒</div>
+    <h2>เครื่องนี้ยังไม่ได้ตั้งค่า</h2>
+    <p>กรุณาแจ้งคุณอาท เพื่อเปิดใช้งานเครื่องมือ<br/>ใน 1 นาทีสามารถใช้งานได้เลย</p>
+    <a class="contact" href="https://line.me/ti/p/~artsb" target="_blank">📞 ทักหา Art ทาง LINE</a>
   </div>
 
-  <!-- ========================================================================
-       MODE 1 · Pre-visit prep
-       Extract shop branding from LINE OA screenshot
-       ======================================================================== -->
-  <div id="mode-previsit">
-    <div class="grid">
-      <!-- Upload -->
-      <div class="card">
-        <h3>1. Upload screenshot ของ LINE OA</h3>
-        <div class="hint">หา LINE OA ของร้านจาก Google Maps / IG bio / ป้ายหน้าร้าน · screenshot Rich Menu page</div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       Main tool (shown only when API key present)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="mainTool" style="display: none;">
 
-        <label for="prevFile" class="upload-zone" id="prevUploadZone">
-          <div class="upload-icon">📷</div>
-          <div class="upload-label">กดเพื่อ upload screenshot</div>
-          <div class="upload-sub">JPG/PNG · &lt; 5 MB</div>
-        </label>
-        <input id="prevFile" type="file" accept="image/*" />
+    <!-- Mode tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="previsit">📍 ค้นหาข้อมูลร้าน</button>
+      <button class="mode-tab" data-mode="menu">📋 ถ่ายเมนู</button>
+    </div>
 
-        <button class="primary" id="prevExtractBtn" disabled>🤖 Extract shop branding</button>
+    <!-- ───────────────────────────────────────────────────────────
+         MODE 1 · ค้นหาข้อมูลร้าน (เตรียมก่อนเข้าร้าน)
+         ─────────────────────────────────────────────────────────── -->
+    <div id="mode-previsit">
+      <div class="grid">
 
-        <div class="status" id="prevStatus"></div>
-      </div>
+        <!-- Upload card -->
+        <div class="card">
+          <h3>1. รูปหน้า LINE OA ของร้าน</h3>
+          <div class="hint">screenshot จาก LINE app · หรือรูปจาก Google Maps · IG · หรือป้ายร้าน</div>
 
-      <!-- Result + edit -->
-      <div class="card">
-        <h3>2. Review + edit shop branding</h3>
-        <div class="hint">AI ดึงมาให้ · staff ตรวจ + แก้ก่อน create draft preview shop</div>
+          <label for="prevFile" class="upload-zone" id="prevUploadZone">
+            <div class="upload-icon">📷</div>
+            <div class="upload-label">แตะเลือกรูป</div>
+            <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
+          </label>
+          <input id="prevFile" type="file" accept="image/*" />
 
-        <div class="branding-grid">
-          <div class="branding-field">
-            <label>ชื่อร้าน</label>
-            <input id="prevShopName" type="text" placeholder="Bare Nail Spa" />
+          <button class="primary" id="prevExtractBtn" disabled>🤖 ดึงข้อมูลร้านให้</button>
+
+          <div class="status" id="prevStatus"></div>
+        </div>
+
+        <!-- Result + edit card -->
+        <div class="card">
+          <h3>2. ตรวจ + แก้ข้อมูล</h3>
+          <div class="hint">AI ดึงมาให้ · ตรวจดูแล้วแก้ตรงไหนก็ได้</div>
+
+          <div class="branding-grid">
+            <div class="branding-field full">
+              <label>ชื่อร้าน</label>
+              <input id="prevShopName" type="text" placeholder="เช่น Bare Nail Spa" />
+            </div>
+            <div class="branding-field">
+              <label>ชื่อย่อ (ภาษาอังกฤษ · สำหรับลิงก์)</label>
+              <input id="prevShortName" type="text" placeholder="เช่น barenailspa" />
+            </div>
+            <div class="branding-field">
+              <label>ไอดี LINE OA</label>
+              <input id="prevLineOaId" type="text" placeholder="เช่น @barenailspa" />
+            </div>
+            <div class="branding-field full">
+              <label>สีของร้าน (auto)</label>
+              <input id="prevBrandColor" type="text" placeholder="เช่น #A78B7A" />
+            </div>
           </div>
-          <div class="branding-field">
-            <label>สาขา (ถ้ามี)</label>
-            <input id="prevBranchName" type="text" placeholder="สาขาเอกมัย" />
-          </div>
-          <div class="branding-field">
-            <label>shortName (URL slug)</label>
-            <input id="prevShortName" type="text" placeholder="barenailspa" />
-          </div>
-          <div class="branding-field">
-            <label>LINE OA ID</label>
-            <input id="prevLineOaId" type="text" placeholder="@barenailspa" />
-          </div>
-          <div class="branding-field">
-            <label>Brand color (hex)</label>
-            <input id="prevBrandColor" type="text" placeholder="#A78B7A" />
-          </div>
-          <div class="branding-field">
-            <label>Logo style</label>
-            <input id="prevLogoStyle" type="text" placeholder="minimalist · cream tones · serif" />
+
+          <button class="primary green" id="prevCreateBtn" disabled>🚀 สร้างหน้าเว็บร้านตัวอย่าง</button>
+
+          <div class="link-box" id="prevLiffBox" style="display: none;">
+            <div class="label">✅ ลิงก์เว็บร้านพร้อมแล้ว · ให้ลูกค้าทดสอบ:</div>
+            <div class="url" id="prevLiffUrl"></div>
+            <button class="secondary" style="margin-top: 10px;" onclick="copyText('prevLiffUrl')">📋 คัดลอกลิงก์</button>
           </div>
         </div>
 
-        <div class="actions">
-          <button class="secondary" onclick="copyJSON('prevJson')">📋 Copy JSON</button>
-          <button class="primary" id="prevCreateBtn" disabled style="flex: 2;">🚀 Create preview LIFF</button>
-        </div>
-
-        <div class="liff-link-box" id="prevLiffBox" style="display: none;">
-          <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">✅ Preview LIFF URL (ready to show merchant):</div>
-          <div class="url" id="prevLiffUrl"></div>
-          <button class="secondary" style="margin-top: 8px;" onclick="copyText('prevLiffUrl')">📋 Copy URL</button>
-        </div>
-
-        <div class="preview-output" id="prevJson" style="display: none;"></div>
       </div>
     </div>
-  </div>
 
-  <!-- ========================================================================
-       MODE 2 · Menu OCR
-       Extract services from menu photo
-       ======================================================================== -->
-  <div id="mode-menu" style="display: none;">
-    <div class="grid">
-      <!-- Upload -->
-      <div class="card">
-        <h3>1. Upload รูปเมนูร้าน</h3>
-        <div class="hint">ถ่ายรูปเมนูที่ printed/laminated ในร้าน · clear lighting · all services visible</div>
+    <!-- ───────────────────────────────────────────────────────────
+         MODE 2 · ถ่ายเมนู (ที่ร้าน · ขั้นตอนสำคัญที่สุด)
+         ─────────────────────────────────────────────────────────── -->
+    <div id="mode-menu" style="display: none;">
+      <div class="grid">
 
-        <label for="menuFile" class="upload-zone" id="menuUploadZone">
-          <div class="upload-icon">📷</div>
-          <div class="upload-label">กดเพื่อ upload menu photo</div>
-          <div class="upload-sub">JPG/PNG · &lt; 5 MB</div>
-        </label>
-        <input id="menuFile" type="file" accept="image/*" />
+        <!-- Upload card -->
+        <div class="card">
+          <h3>1. รูปเมนูของร้าน</h3>
+          <div class="hint">ถ่ายรูปเมนูที่พิมพ์ไว้ในร้าน · ให้แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
 
-        <button class="primary" id="menuExtractBtn" disabled>🤖 Extract services (~15 sec)</button>
+          <label for="menuFile" class="upload-zone" id="menuUploadZone">
+            <div class="upload-icon">📷</div>
+            <div class="upload-label">แตะเลือกรูปเมนู</div>
+            <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
+          </label>
+          <input id="menuFile" type="file" accept="image/*" />
 
-        <div class="status" id="menuStatus"></div>
-      </div>
+          <button class="primary" id="menuExtractBtn" disabled>🤖 ดึงรายการบริการให้ (~15 วิ)</button>
 
-      <!-- Services table -->
-      <div class="card">
-        <h3>2. Review + edit services</h3>
-        <div class="hint">AI ดึงมา · staff ตรวจ + แก้ก่อน publish · เพิ่มแถวด้วย "+ Add service"</div>
-
-        <div style="overflow-x: auto;">
-          <table id="menuTable">
-            <thead>
-              <tr>
-                <th style="width: 45%;">Service name</th>
-                <th style="width: 15%;">Duration (min)</th>
-                <th style="width: 15%;">Price (฿)</th>
-                <th style="width: 20%;">Category</th>
-                <th style="width: 5%;"></th>
-              </tr>
-            </thead>
-            <tbody id="menuTableBody">
-              <tr><td colspan="5" style="text-align: center; padding: 32px; color: #94a3b8;">No services yet · upload menu photo</td></tr>
-            </tbody>
-          </table>
+          <div class="status" id="menuStatus"></div>
         </div>
 
-        <div class="actions">
-          <button class="secondary" onclick="addServiceRow()">+ Add service</button>
-          <button class="secondary" onclick="copyJSON('menuJson')">📋 Copy JSON</button>
-          <button class="primary" id="menuPublishBtn" disabled style="flex: 2;">🚀 Publish to shop catalog</button>
+        <!-- Services table card -->
+        <div class="card">
+          <h3>2. ตรวจ + แก้รายการ</h3>
+          <div class="hint">AI ดึงมา · ตรวจดูแล้วแก้/ลบ/เพิ่มได้</div>
+
+          <div style="overflow-x: auto;">
+            <table id="menuTable">
+              <thead>
+                <tr>
+                  <th style="width: 55%;">ชื่อบริการ</th>
+                  <th style="width: 18%;">เวลา (นาที)</th>
+                  <th style="width: 17%;">ราคา (฿)</th>
+                  <th style="width: 10%;"></th>
+                </tr>
+              </thead>
+              <tbody id="menuTableBody">
+                <tr><td colspan="4" style="text-align: center; padding: 32px; color: #94a3b8;">ยังไม่มีรายการ · แตะเลือกรูปเมนูก่อน</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="actions">
+            <button class="secondary" onclick="addServiceRow()">+ เพิ่มบริการเอง</button>
+            <button class="primary green" id="menuPublishBtn" disabled style="flex: 2;">🚀 ส่งบริการเข้าระบบ</button>
+          </div>
+
+          <div class="status" id="menuPublishStatus"></div>
         </div>
 
-        <div class="preview-output" id="menuJson" style="display: none;"></div>
       </div>
     </div>
-  </div>
 
-  <footer>
-    <strong>BookEase Caravan OCR Tool · v0</strong> · Internal staff only · All processing client-side or via Anthropic API only · Data never logged to Atiz servers · For caravan field rep use only<br/>
-    Spec: <code>specs/LIFF_BOOKING_SPEC_v0.md</code> · Workflow: <code>CARAVAN_PLAYBOOK.md §Phase -5 + §Phase 0</code>
-  </footer>
+  </div><!-- /#mainTool -->
+
+  <footer>BookEase · staff use only</footer>
 </div>
 
 <script>
+  // ═══════════════════════════════════════════════════════════════
+  // API key bootstrap
+  //
+  // Two paths to get an API key onto a staff laptop:
+  //   1. ?setup=KEY URL — used by Art ONCE per device. Saves to
+  //      localStorage, strips the param from URL, shows success.
+  //   2. localStorage already has key — silent use.
+  //
+  // If neither: show "ติดต่อ Art" block and hide the tool.
+  // Staff never sees an API key field.
+  // ═══════════════════════════════════════════════════════════════
+  const KEY_STORAGE = 'bookease_anthropic_key';
+  const params = new URLSearchParams(window.location.search);
+  const setupKey = params.get('setup');
+
+  if (setupKey) {
+    localStorage.setItem(KEY_STORAGE, setupKey.trim());
+    history.replaceState({}, '', window.location.pathname);
+    document.getElementById('setupOk').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('setupOk').style.display = 'none';
+    }, 4000);
+  }
+
+  const STORED_KEY = localStorage.getItem(KEY_STORAGE) || '';
+  if (!STORED_KEY) {
+    document.getElementById('setupNeeded').style.display = 'block';
+    document.getElementById('mainTool').style.display = 'none';
+  } else {
+    document.getElementById('setupNeeded').style.display = 'none';
+    document.getElementById('mainTool').style.display = 'block';
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Anthropic API helper
+  // ═══════════════════════════════════════════════════════════════
   const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
   const ANTHROPIC_VERSION = '2023-06-01';
   const MODEL = 'claude-opus-4-7';
-  const LIFF_BASE = 'https://liff.line.me/';
-  const LIFF_ID_PLACEHOLDER = '<liff-id>';
-  const FRONTEND_BASE = 'https://bookease.co'; // for dev fallback URL
+  const TOOL_BASE = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
 
-  // ─────────────────────────────────────────────────────────────────
-  // API key persistence (localStorage)
-  // ─────────────────────────────────────────────────────────────────
-  const apiKeyInput = document.getElementById('apiKey');
-  const apiKeySection = document.getElementById('apiKeySection');
-  apiKeyInput.value = localStorage.getItem('bookease_anthropic_key') || '';
-  if (apiKeyInput.value) apiKeySection.classList.add('ok');
-  apiKeyInput.addEventListener('change', () => {
-    localStorage.setItem('bookease_anthropic_key', apiKeyInput.value.trim());
-    apiKeySection.classList.toggle('ok', !!apiKeyInput.value.trim());
-    updateButtonStates();
-  });
-
-  // ─────────────────────────────────────────────────────────────────
-  // Mode switching
-  // ─────────────────────────────────────────────────────────────────
-  document.querySelectorAll('.mode-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const mode = btn.dataset.mode;
-      document.getElementById('mode-previsit').style.display = mode === 'previsit' ? 'block' : 'none';
-      document.getElementById('mode-menu').style.display = mode === 'menu' ? 'block' : 'none';
-    });
-  });
-
-  // ─────────────────────────────────────────────────────────────────
-  // Helpers
-  // ─────────────────────────────────────────────────────────────────
-  function showStatus(id, msg, kind) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = 'status show ' + kind;
-  }
-  function hideStatus(id) {
-    document.getElementById(id).className = 'status';
-  }
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        // strip the "data:image/...;base64," prefix
-        resolve(result.split(',')[1]);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-  function slugify(name) {
-    return name.toLowerCase()
-      .replace(/[^a-z0-9ก-๙\s-]/gi, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-      .slice(0, 32);
-  }
-  function copyText(elementId) {
-    const el = document.getElementById(elementId);
-    const text = el.textContent || el.innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      const original = el.textContent;
-      el.textContent = '✅ Copied!';
-      setTimeout(() => { el.textContent = original; }, 1500);
-    });
-  }
-  function copyJSON(elementId) {
-    const el = document.getElementById(elementId);
-    if (el.style.display === 'none') {
-      // build JSON before copying
-      buildPreviewJson();
-      buildMenuJson();
-      el.style.display = 'block';
-    }
-    navigator.clipboard.writeText(el.textContent).then(() => {
-      const orig = el.textContent;
-      el.textContent = '✅ Copied to clipboard!';
-      setTimeout(() => { el.textContent = orig; }, 1500);
-    });
-  }
   async function callClaudeVision(base64Image, mediaType, prompt) {
-    const apiKey = apiKeyInput.value.trim();
-    if (!apiKey) throw new Error('API key required');
+    if (!STORED_KEY) throw new Error('เครื่องนี้ยังไม่ได้ตั้งค่า · ติดต่อคุณอาท');
     const res = await fetch(ANTHROPIC_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
+        'x-api-key': STORED_KEY,
         'anthropic-version': ANTHROPIC_VERSION,
         'anthropic-dangerous-direct-browser-access': 'true',
       },
@@ -359,23 +404,70 @@
       }),
     });
     if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`API ${res.status}: ${err}`);
+      if (res.status === 401) throw new Error('การตั้งค่าไม่ถูกต้อง · ติดต่อคุณอาทเพื่อตั้งค่าใหม่');
+      throw new Error('AI ไม่ตอบสนอง · ลองใหม่อีกครั้ง');
     }
     const json = await res.json();
     return json.content[0].text;
   }
+
   function extractJsonFromText(text) {
     const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     if (codeBlockMatch) return JSON.parse(codeBlockMatch[1]);
     const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
     if (jsonMatch) return JSON.parse(jsonMatch[0]);
-    throw new Error('No JSON found in response');
+    throw new Error('AI ตอบกลับมาไม่ถูกต้อง · ลองใหม่');
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  // PRE-VISIT PREP MODE
-  // ─────────────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // Common helpers
+  // ═══════════════════════════════════════════════════════════════
+  function showStatus(id, msg, kind) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status show ' + kind;
+  }
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function slugify(name) {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9\s-]/gi, '')
+      .replace(/\s+/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 32);
+  }
+  function copyText(elementId) {
+    const el = document.getElementById(elementId);
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      const original = el.textContent;
+      el.textContent = '✅ คัดลอกแล้ว';
+      setTimeout(() => { el.textContent = original; }, 1500);
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Mode switching
+  // ═══════════════════════════════════════════════════════════════
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mode = btn.dataset.mode;
+      document.getElementById('mode-previsit').style.display = mode === 'previsit' ? 'block' : 'none';
+      document.getElementById('mode-menu').style.display = mode === 'menu' ? 'block' : 'none';
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // MODE 1 · ค้นหาข้อมูลร้าน
+  // ═══════════════════════════════════════════════════════════════
   const prevFile = document.getElementById('prevFile');
   const prevUploadZone = document.getElementById('prevUploadZone');
   const prevExtractBtn = document.getElementById('prevExtractBtn');
@@ -386,12 +478,12 @@
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      showStatus('prevStatus', 'File too large (>5 MB)', 'error');
+      showStatus('prevStatus', '⚠️ รูปใหญ่เกินไป (เกิน 5 MB) · ลองรูปอื่น', 'error');
       return;
     }
     const reader = new FileReader();
     reader.onload = (ev) => {
-      prevUploadZone.innerHTML = `<img src="${ev.target.result}" alt="screenshot" />`;
+      prevUploadZone.innerHTML = `<img src="${ev.target.result}" alt="รูปร้าน" />`;
       prevUploadZone.classList.add('has-file');
     };
     reader.readAsDataURL(file);
@@ -401,33 +493,29 @@
 
   prevExtractBtn.addEventListener('click', async () => {
     if (!prevImageData) return;
-    showStatus('prevStatus', '🤖 Calling Claude Vision API... (may take 5-15 sec)', 'info');
+    showStatus('prevStatus', '🤖 AI กำลังอ่านรูป · รอแป๊บนึง...', 'info');
     prevExtractBtn.disabled = true;
     try {
       const prompt = `This is a screenshot of a Thai service shop's LINE OA (Official Account) page. Extract the following branding info as JSON:
 
 {
-  "shopName": "...",         // shop name as visible (English or Thai)
-  "branchName": "...",       // branch/location if visible (e.g. "Ekkamai branch") or null
-  "shortName": "...",        // suggested URL slug (lowercase, no spaces, e.g. "barenailspa")
-  "lineOaId": "...",          // LINE OA handle if visible (e.g. "@barenailspa") or null
-  "brandColor": "#XXXXXX",   // primary brand color from logo/UI (hex)
-  "logoStyle": "..."          // brief logo description (e.g. "minimalist serif on cream")
+  "shopName": "...",
+  "shortName": "...",
+  "lineOaId": "...",
+  "brandColor": "#XXXXXX"
 }
 
 Output ONLY valid JSON. No prose. No code fences.`;
       const responseText = await callClaudeVision(prevImageData.base64, prevImageData.mediaType, prompt);
       const data = extractJsonFromText(responseText);
       document.getElementById('prevShopName').value = data.shopName || '';
-      document.getElementById('prevBranchName').value = data.branchName || '';
       document.getElementById('prevShortName').value = data.shortName || slugify(data.shopName || '');
       document.getElementById('prevLineOaId').value = data.lineOaId || '';
       document.getElementById('prevBrandColor').value = data.brandColor || '';
-      document.getElementById('prevLogoStyle').value = data.logoStyle || '';
-      showStatus('prevStatus', '✅ Branding extracted · review + edit if needed', 'success');
+      showStatus('prevStatus', '✅ ดึงข้อมูลแล้ว · ตรวจ + แก้ที่ด้านขวา', 'success');
       updateButtonStates();
     } catch (err) {
-      showStatus('prevStatus', `❌ ${err.message}`, 'error');
+      showStatus('prevStatus', '❌ ' + err.message, 'error');
     } finally {
       prevExtractBtn.disabled = false;
     }
@@ -436,34 +524,18 @@ Output ONLY valid JSON. No prose. No code fences.`;
   prevCreateBtn.addEventListener('click', () => {
     const shortName = document.getElementById('prevShortName').value.trim();
     if (!shortName) {
-      showStatus('prevStatus', 'shortName required', 'error');
+      showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
       return;
     }
-    const liffUrl = `${LIFF_BASE}${LIFF_ID_PLACEHOLDER}?shop=${encodeURIComponent(shortName)}`;
-    const previewUrl = `${FRONTEND_BASE}/liff/${encodeURIComponent(shortName)}`;
-    document.getElementById('prevLiffUrl').textContent = `${liffUrl}\n\n(dev preview: ${previewUrl})`;
+    const previewUrl = `https://bookease.co/${encodeURIComponent(shortName)}`;
+    document.getElementById('prevLiffUrl').textContent = previewUrl;
     document.getElementById('prevLiffBox').style.display = 'block';
-    buildPreviewJson();
-    showStatus('prevStatus', '✅ Preview ready · TODO v1: POST to backend /api/preview/shop', 'success');
+    showStatus('prevStatus', '✅ เตรียมลิงก์เว็บร้านแล้ว · ทดสอบบนมือถือ', 'success');
   });
 
-  function buildPreviewJson() {
-    const data = {
-      shopName: document.getElementById('prevShopName').value.trim(),
-      branchName: document.getElementById('prevBranchName').value.trim() || null,
-      shortName: document.getElementById('prevShortName').value.trim(),
-      lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
-      brandColor: document.getElementById('prevBrandColor').value.trim(),
-      logoStyle: document.getElementById('prevLogoStyle').value.trim(),
-      status: 'preview',
-      createdAt: new Date().toISOString(),
-    };
-    document.getElementById('prevJson').textContent = JSON.stringify(data, null, 2);
-  }
-
-  // ─────────────────────────────────────────────────────────────────
-  // MENU OCR MODE
-  // ─────────────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // MODE 2 · ถ่ายเมนู
+  // ═══════════════════════════════════════════════════════════════
   const menuFile = document.getElementById('menuFile');
   const menuUploadZone = document.getElementById('menuUploadZone');
   const menuExtractBtn = document.getElementById('menuExtractBtn');
@@ -474,12 +546,12 @@ Output ONLY valid JSON. No prose. No code fences.`;
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      showStatus('menuStatus', 'File too large (>5 MB)', 'error');
+      showStatus('menuStatus', '⚠️ รูปใหญ่เกินไป (เกิน 5 MB) · ลองรูปอื่น', 'error');
       return;
     }
     const reader = new FileReader();
     reader.onload = (ev) => {
-      menuUploadZone.innerHTML = `<img src="${ev.target.result}" alt="menu" />`;
+      menuUploadZone.innerHTML = `<img src="${ev.target.result}" alt="เมนู" />`;
       menuUploadZone.classList.add('has-file');
     };
     reader.readAsDataURL(file);
@@ -489,29 +561,28 @@ Output ONLY valid JSON. No prose. No code fences.`;
 
   menuExtractBtn.addEventListener('click', async () => {
     if (!menuImageData) return;
-    showStatus('menuStatus', '🤖 Calling Claude Vision API... (extracting services · ~15 sec)', 'info');
+    showStatus('menuStatus', '🤖 AI กำลังอ่านเมนู · รอ ~15 วินาที...', 'info');
     menuExtractBtn.disabled = true;
     try {
       const prompt = `This is a photo of a Thai service shop menu (likely spa, nail salon, or massage). Extract every service item as a JSON array. Each item must have:
 
 {
-  "serviceName": "...",        // exact name from menu (English or Thai)
-  "durationMin": 0,            // duration in minutes if visible (else null)
-  "price": 0,                  // price in THB as number (no commas, no currency symbol)
-  "category": "..."            // category if menu groups them (e.g. "spa", "nail") or null
+  "serviceName": "...",
+  "durationMin": 0,
+  "price": 0
 }
 
-Be thorough · extract every single service line, even bundle/combo deals. If duration ranges (e.g. "1 staff 90 mins / 2 staff 60 mins"), use the shorter one and note in serviceName.
+Be thorough · extract every single service line, even bundle/combo deals. If duration ranges (e.g. "1 staff 90 mins / 2 staff 60 mins"), use the shorter one.
 
 Output ONLY a JSON array. No prose. No code fences.`;
       const responseText = await callClaudeVision(menuImageData.base64, menuImageData.mediaType, prompt);
       const services = extractJsonFromText(responseText);
-      if (!Array.isArray(services)) throw new Error('Expected JSON array');
+      if (!Array.isArray(services)) throw new Error('AI ตอบกลับไม่ถูกต้อง · ลองใหม่');
       renderMenuTable(services);
-      showStatus('menuStatus', `✅ Extracted ${services.length} services · review + edit`, 'success');
+      showStatus('menuStatus', `✅ ดึงมาได้ ${services.length} บริการ · ตรวจ + แก้ได้เลย`, 'success');
       updateButtonStates();
     } catch (err) {
-      showStatus('menuStatus', `❌ ${err.message}`, 'error');
+      showStatus('menuStatus', '❌ ' + err.message, 'error');
     } finally {
       menuExtractBtn.disabled = false;
     }
@@ -520,42 +591,49 @@ Output ONLY a JSON array. No prose. No code fences.`;
   function renderMenuTable(services) {
     const body = document.getElementById('menuTableBody');
     body.innerHTML = '';
-    services.forEach((s, idx) => {
-      addServiceRow(s);
-    });
+    services.forEach(s => addServiceRow(s));
     if (services.length === 0) {
-      body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 32px; color: #94a3b8;">No services yet · upload menu photo</td></tr>';
+      body.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 32px; color: #94a3b8;">ยังไม่มีรายการ · แตะเลือกรูปเมนูก่อน</td></tr>';
     }
   }
 
   function addServiceRow(s) {
-    s = s || { serviceName: '', durationMin: '', price: '', category: '' };
+    s = s || { serviceName: '', durationMin: '', price: '' };
     const body = document.getElementById('menuTableBody');
-    // remove placeholder row if present
     if (body.children.length === 1 && body.children[0].children.length === 1) {
       body.innerHTML = '';
     }
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><input type="text" value="${(s.serviceName || '').replace(/"/g, '&quot;')}" /></td>
-      <td><input type="number" class="num" value="${s.durationMin ?? ''}" min="0" /></td>
-      <td><input type="number" class="num" value="${s.price ?? ''}" min="0" /></td>
-      <td><input type="text" value="${(s.category || '').replace(/"/g, '&quot;')}" /></td>
-      <td class="row-actions"><button class="danger" onclick="this.closest('tr').remove(); buildMenuJson();">×</button></td>
+      <td><input type="text" value="${(s.serviceName || '').replace(/"/g, '&quot;')}" placeholder="เช่น นวดน้ำมัน" /></td>
+      <td><input type="number" class="num" value="${s.durationMin ?? ''}" min="0" placeholder="60" /></td>
+      <td><input type="number" class="num" value="${s.price ?? ''}" min="0" placeholder="500" /></td>
+      <td style="text-align: right;"><button class="danger" onclick="this.closest('tr').remove(); recountServices();">×</button></td>
     `;
-    tr.addEventListener('input', buildMenuJson);
+    tr.addEventListener('input', recountServices);
     body.appendChild(tr);
-    buildMenuJson();
+    recountServices();
   }
-  // expose for inline onclick
   window.addServiceRow = addServiceRow;
 
-  function buildMenuJson() {
+  function recountServices() {
+    const rows = document.querySelectorAll('#menuTableBody tr');
+    let count = 0;
+    rows.forEach(tr => {
+      const inputs = tr.querySelectorAll('input');
+      if (inputs.length < 3) return;
+      if (inputs[0].value.trim()) count++;
+    });
+    document.getElementById('menuPublishBtn').disabled = count === 0;
+  }
+  window.recountServices = recountServices;
+
+  menuPublishBtn.addEventListener('click', () => {
     const rows = document.querySelectorAll('#menuTableBody tr');
     const services = [];
     rows.forEach((tr, idx) => {
       const inputs = tr.querySelectorAll('input');
-      if (inputs.length < 4) return; // placeholder row
+      if (inputs.length < 3) return;
       const serviceName = inputs[0].value.trim();
       if (!serviceName) return;
       services.push({
@@ -563,26 +641,17 @@ Output ONLY a JSON array. No prose. No code fences.`;
         serviceName,
         durationMin: parseInt(inputs[1].value) || null,
         price: parseInt(inputs[2].value) || 0,
-        category: inputs[3].value.trim() || null,
       });
     });
-    document.getElementById('menuJson').textContent = JSON.stringify({ services }, null, 2);
-    document.getElementById('menuPublishBtn').disabled = services.length === 0;
-  }
-
-  menuPublishBtn.addEventListener('click', () => {
-    buildMenuJson();
-    document.getElementById('menuJson').style.display = 'block';
-    showStatus('menuStatus', '✅ JSON ready · TODO v1: POST to backend /api/shop/<shortName>/services/bulk · for now copy JSON manually into shopv3 admin', 'success');
+    showStatus('menuPublishStatus', `✅ พร้อม ${services.length} บริการ · TODO: เชื่อมระบบ shopv3 (รอ Mod) · ตอนนี้ copy ใส่ shopv3 admin manual`, 'success');
   });
 
-  // ─────────────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
   // Button states
-  // ─────────────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
   function updateButtonStates() {
-    const hasKey = !!apiKeyInput.value.trim();
-    prevExtractBtn.disabled = !hasKey || !prevImageData;
-    menuExtractBtn.disabled = !hasKey || !menuImageData;
+    prevExtractBtn.disabled = !prevImageData;
+    menuExtractBtn.disabled = !menuImageData;
     const shortName = document.getElementById('prevShortName').value.trim();
     prevCreateBtn.disabled = !shortName;
   }
