@@ -6,83 +6,164 @@
 <title>เว็บร้าน · BookEase</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
   :root {
-    --brand: #2563eb;
-    --brand-rgb: 37, 99, 235;
+    /* Industry palettes (auto-applied via [data-industry] attribute) */
+    --pal-bg: #fef3f2;
+    --pal-mid: #f0d7d3;
+    --pal-deep: #c98c80;
+    --pal-text: #4a1f1a;
+    --pal-text-muted: #7a3a32;
+    --pal-card-border: rgba(74, 31, 26, 0.12);
+    --pal-warm-overlay: #fff8e7;
   }
+
+  /* ─── 5 INDUSTRY PALETTES ─── */
+  [data-industry="nail"] {
+    --pal-bg: #f4e4d4; --pal-mid: #c9a88e; --pal-deep: #7a5c42;
+    --pal-text: #1c1410; --pal-text-muted: #5a463a;
+    --pal-card-border: rgba(28, 20, 16, 0.10); --pal-warm-overlay: #fff8e7;
+  }
+  [data-industry="wellness"] {
+    --pal-bg: #f0ebe3; --pal-mid: #a8c9b8; --pal-deep: #6b8e7f;
+    --pal-text: #2d3d35; --pal-text-muted: #5a6e64;
+    --pal-card-border: rgba(45, 61, 53, 0.10); --pal-warm-overlay: #fbf8f0;
+  }
+  [data-industry="cafe"] {
+    --pal-bg: #faf3e7; --pal-mid: #c4a485; --pal-deep: #7a5c42;
+    --pal-text: #2a1810; --pal-text-muted: #5a3a28;
+    --pal-card-border: rgba(42, 24, 16, 0.10); --pal-warm-overlay: #fff8e7;
+  }
+  [data-industry="salon"] {
+    --pal-bg: #f5f5f5; --pal-mid: #b8b0a8; --pal-deep: #3f3a35;
+    --pal-text: #0a0808; --pal-text-muted: #525252;
+    --pal-card-border: rgba(10, 8, 8, 0.10); --pal-warm-overlay: #ffffff;
+  }
+  [data-industry="beauty"] {
+    --pal-bg: #fef3f2; --pal-mid: #f0d7d3; --pal-deep: #c98c80;
+    --pal-text: #4a1f1a; --pal-text-muted: #7a3a32;
+    --pal-card-border: rgba(74, 31, 26, 0.10); --pal-warm-overlay: #fff5f3;
+  }
+
   body {
-    margin: 0; font-family: 'Sarabun', system-ui, sans-serif;
-    background: #f1f5f9; color: #0f172a; font-size: 16px;
+    margin: 0;
+    font-family: 'Sarabun','Noto Sans Thai','Sukhumvit Set','-apple-system','SF Pro',sans-serif;
+    background: #eef2f7; color: #0f172a;
+    font-size: 16px; line-height: 1.5;
     min-height: 100vh;
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     CONTROL PANEL (top · merchant-facing)
-     ═══════════════════════════════════════════════════════════════ */
-  .control { max-width: 880px; margin: 0 auto; padding: 20px 16px 0; }
-  .control h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
-  .control .sub { color: #64748b; font-size: 14px; margin: 0 0 18px; }
+  /* ════════════════════════════════════════════════════════════════
+     CONTROL PANEL · staff-mode only
+     ════════════════════════════════════════════════════════════════ */
+  body[data-mode="share"] .control-panel,
+  body[data-mode="share"] .action-bar { display: none; }
+  body[data-mode="share"] .phone-wrap { padding: 0; }
+  body[data-mode="share"] .phone {
+    border-radius: 0; padding: 0; box-shadow: none;
+    max-width: 100%;
+  }
+  body[data-mode="share"] .phone-screen { border-radius: 0; min-height: 100vh; }
 
+  .control-panel {
+    max-width: 880px; margin: 0 auto;
+    padding: 24px 16px 0;
+  }
+  .control-panel .header h1 {
+    margin: 0 0 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px; font-weight: 500;
+    color: #0f172a;
+  }
+  .control-panel .header .sub {
+    margin: 0 0 22px; color: #64748b; font-size: 14px;
+  }
+
+  /* ─── URL block (Path C: honest 2-URL) ─── */
   .url-block {
-    background: #fff; border: 1px solid #e2e8f0;
-    border-radius: 14px; padding: 14px 16px; margin-bottom: 18px;
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 18px;
   }
   .url-block .heading {
-    font-size: 13px; font-weight: 600; color: #475569;
-    margin-bottom: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    color: #94a3b8; margin-bottom: 8px;
   }
   .url-block .public-url {
-    font-family: ui-monospace, monospace; font-size: 18px;
-    color: #1e293b; font-weight: 600;
-    background: #f8fafc; padding: 12px 14px; border-radius: 10px;
-    border: 1px dashed #cbd5e1; word-break: break-all;
-    margin-bottom: 8px;
+    font-family: ui-monospace, monospace;
+    font-size: 22px; font-weight: 600;
+    color: #0f172a; padding: 10px 14px;
+    background: #f8fafc; border: 1px dashed #cbd5e1;
+    border-radius: 10px; word-break: break-all;
   }
-  .url-block .public-url .accent {
-    color: var(--brand); font-weight: 700;
+  .url-block .public-url .accent { color: var(--pal-deep); font-weight: 700; }
+  .url-block details { margin-top: 12px; }
+  .url-block details summary {
+    cursor: pointer; user-select: none;
+    font-size: 12px; color: #94a3b8; font-weight: 500;
+    list-style: none; padding: 6px 0;
   }
-  .url-block .test-url-row {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-    font-size: 12px; color: #64748b; margin-top: 8px;
+  .url-block details summary::-webkit-details-marker { display: none; }
+  .url-block details summary::before {
+    content: '▸ '; font-size: 9px; color: #cbd5e1; margin-right: 4px;
   }
-  .url-block .test-url-row .label { white-space: nowrap; font-weight: 500; }
-  .url-block .test-url-row .test-url {
-    flex: 1; min-width: 180px;
+  .url-block details[open] summary::before { content: '▾ '; }
+  .url-block .test-url {
     font-family: ui-monospace, monospace; font-size: 11px;
-    background: #f8fafc; padding: 6px 8px; border-radius: 6px;
-    color: #475569; word-break: break-all; max-height: 38px; overflow: hidden;
+    background: #f8fafc; padding: 8px 10px; border-radius: 6px;
+    color: #475569; word-break: break-all;
+    border: 1px solid #e2e8f0; margin-top: 6px;
   }
-  .url-block .note {
-    font-size: 12px; color: #94a3b8; margin-top: 8px;
+  .url-block .test-url-note {
+    font-size: 11px; color: #94a3b8; margin-top: 8px;
     line-height: 1.4;
   }
 
-  /* Template picker */
-  .templates {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 10px; margin-bottom: 20px;
+  /* ─── Industry badge (auto-detect + 1-tap cycle) ─── */
+  .industry-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 100px;
+    padding: 8px 14px; font-size: 13px;
+    cursor: pointer; font-family: inherit;
+    color: #475569; margin-bottom: 14px;
+    transition: border-color 0.15s;
   }
-  .tmpl-btn {
-    background: #fff; border: 2px solid #e2e8f0;
-    border-radius: 14px; padding: 14px 8px;
-    cursor: pointer; font-family: inherit; font-size: 14px;
-    color: #475569; text-align: center; transition: all 0.15s;
-    font-weight: 600;
+  .industry-badge:hover { border-color: var(--pal-deep); }
+  .industry-badge .label { color: #94a3b8; font-size: 11px; }
+  .industry-badge .industry-name {
+    color: #0f172a; font-weight: 700;
   }
-  .tmpl-btn .icon { font-size: 26px; margin-bottom: 4px; line-height: 1; display: block; }
-  .tmpl-btn:hover { border-color: #cbd5e1; }
-  .tmpl-btn.active {
-    border-color: var(--brand);
-    background: rgba(var(--brand-rgb), 0.05);
-    color: var(--brand);
+  .industry-badge .cycle-hint {
+    font-size: 11px; color: #cbd5e1;
+    border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     PHONE FRAME (center · what merchant + customer see)
-     ═══════════════════════════════════════════════════════════════ */
+  /* ─── Variant switcher ─── */
+  .variant-tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; background: #f1f5f9;
+    padding: 6px; border-radius: 100px;
+    margin-bottom: 22px;
+  }
+  .variant-tabs button {
+    background: transparent; border: none;
+    padding: 12px 8px; border-radius: 100px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; font-style: italic; font-weight: 500;
+    color: #475569; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .variant-tabs button:hover { color: #0f172a; }
+  .variant-tabs button.active {
+    background: #0f172a; color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     PHONE FRAME · always visible
+     ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
     padding: 0 16px 100px;
@@ -90,310 +171,481 @@
   .phone {
     width: 100%; max-width: 380px;
     background: #000; border-radius: 36px;
-    padding: 8px; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
     position: relative;
   }
   .phone-screen {
-    background: var(--bg, #fff);
+    background: var(--pal-bg);
     border-radius: 30px; overflow: hidden;
     min-height: 680px; display: flex; flex-direction: column;
-    color: var(--text, #0f172a);
   }
+
   .phone-status {
-    height: 28px; background: transparent;
+    height: 28px;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0 16px; font-size: 12px; font-weight: 600;
-    color: var(--text, #0f172a);
+    padding: 0 18px; font-size: 12px; font-weight: 600;
+    color: var(--pal-text);
+    flex-shrink: 0;
   }
   .phone-address {
-    background: #f1f5f9; margin: 0 8px 0;
-    padding: 8px 12px; border-radius: 10px;
-    font-family: ui-monospace, monospace; font-size: 13px;
-    color: #475569; display: flex; align-items: center; gap: 6px;
-    border: 1px solid #e2e8f0;
+    margin: 0 8px;
+    background: rgba(255,255,255,0.5); backdrop-filter: blur(8px);
+    padding: 8px 14px; border-radius: 10px;
+    font-family: ui-monospace, monospace; font-size: 12px;
+    color: var(--pal-text); display: flex; align-items: center; gap: 6px;
+    flex-shrink: 0;
   }
-  .phone-address .lock { font-size: 11px; }
-  .phone-address .url-thai { font-weight: 600; color: #1e293b; }
 
+  /* ─── Reset button (staff mode only) ─── */
   .reset-btn {
-    position: absolute; top: 18px; right: 18px;
-    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
-    border: 1px solid #cbd5e1; border-radius: 100px;
-    padding: 6px 10px; font-size: 11px; cursor: pointer;
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,0,0,0.08); border-radius: 100px;
+    padding: 6px 12px; font-size: 11px; cursor: pointer;
     color: #475569; font-family: inherit; font-weight: 500;
     z-index: 10;
   }
+  body[data-mode="share"] .reset-btn { display: none; }
 
-  /* ─── Phone screen content (the LIFF page itself) ─── */
+  /* ════════════════════════════════════════════════════════════════
+     LIFF CONTENT (the 5 screens)
+     ════════════════════════════════════════════════════════════════ */
   .liff-content {
-    flex: 1; padding: 20px 18px 100px; overflow-y: auto;
-    background: var(--bg, #fff);
+    flex: 1; padding: 16px 20px 80px; overflow-y: auto;
   }
   .liff-content .screen { display: none; }
-  .liff-content .screen.active { display: block; animation: fadeIn 0.2s ease; }
+  .liff-content .screen.active {
+    display: flex; flex-direction: column;
+    animation: fadeIn 0.25s ease;
+  }
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Cover screen */
-  .cover-hero {
-    width: 100%; aspect-ratio: 1.4;
-    background: linear-gradient(135deg, var(--accent, var(--brand)), var(--accent-2, var(--brand)));
-    border-radius: var(--radius, 16px);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 18px; position: relative; overflow: hidden;
+  /* ════════════════════════════════════════════════════════════════
+     SCREEN 1 · COVER (the editorial hero)
+     ════════════════════════════════════════════════════════════════ */
+  .cover-canvas {
+    position: relative;
+    aspect-ratio: 4/5;
+    border-radius: 18px; overflow: hidden;
+    background: linear-gradient(135deg, var(--pal-bg) 0%, var(--pal-mid) 50%, var(--pal-deep) 100%);
+    margin-bottom: 18px;
   }
-  .cover-hero::after {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.25), transparent 60%);
+  .cover-canvas .layer-warmth {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 25% 18%, var(--pal-warm-overlay) 0%, transparent 65%);
+    opacity: 0.45;
+    pointer-events: none;
   }
-  .cover-letter {
-    width: 88px; height: 88px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 44px; font-weight: 800;
-    color: var(--accent, var(--brand));
-    z-index: 1;
+  .cover-canvas .layer-grain {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
+    background-size: 3px 3px;
+    mix-blend-mode: multiply; opacity: 0.6;
+    pointer-events: none;
   }
-  .cover-shop-name {
-    margin: 0 0 8px; font-size: 26px;
-    font-weight: var(--weight-bold, 700);
-    color: var(--text, #0f172a); line-height: 1.2;
+  .cover-canvas .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center 50%, transparent 40%, rgba(0,0,0,0.22) 100%);
+    pointer-events: none; opacity: 0;
   }
-  .cover-tagline {
-    margin: 0 0 6px; color: var(--text-muted, #64748b);
-    font-size: 14px; line-height: 1.5;
+  [data-variant="luxury"] .cover-canvas .vignette { opacity: 1; }
+
+  .cover-canvas .brand-mark {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    text-align: center; color: var(--pal-text);
+    z-index: 5; padding: 0 20px;
   }
-  .cover-line-oa {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(6, 199, 85, 0.1); color: #06c755;
-    padding: 4px 10px; border-radius: 100px;
-    font-size: 12px; font-weight: 600; margin-bottom: 16px;
+  /* Variant: AIRY · center · large · letter-spaced wide */
+  [data-variant="airy"] .cover-canvas .brand-mark {
+    top: 50%; transform: translate(-50%, -50%);
+  }
+  [data-variant="airy"] .cover-canvas .brand-name {
+    font-size: clamp(15px, 4vw, 22px);
+    letter-spacing: 8px;
+    font-weight: 500;
+  }
+  [data-variant="airy"] .cover-canvas .brand-tagline { display: none; }
+  [data-variant="airy"] .cover-canvas .brand-est {
+    font-size: 10px; letter-spacing: 4px; margin-top: 12px;
+    opacity: 0.55;
   }
 
-  /* Service list */
-  .screen-title {
-    margin: 0 0 16px; font-size: 20px;
-    font-weight: var(--weight-bold, 700);
-    color: var(--text, #0f172a);
+  /* Variant: RELAXED · middle · 2-line · italic tagline */
+  [data-variant="relaxed"] .cover-canvas .brand-mark {
+    top: 45%; transform: translate(-50%, -50%);
   }
-  .service-list { display: flex; flex-direction: column; gap: 10px; }
+  [data-variant="relaxed"] .cover-canvas .brand-name {
+    font-size: clamp(14px, 3.6vw, 20px);
+    letter-spacing: 5px;
+    font-weight: 500;
+  }
+  [data-variant="relaxed"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(13px, 3vw, 17px);
+    margin-top: 10px;
+    opacity: 0.65; letter-spacing: 0;
+  }
+  [data-variant="relaxed"] .cover-canvas .brand-divider {
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--pal-text);
+    opacity: 0.4;
+    margin: 18px auto 0;
+  }
+  [data-variant="relaxed"] .cover-canvas .brand-est {
+    font-size: 9px; letter-spacing: 3px;
+    margin-top: 16px; opacity: 0.55;
+  }
+
+  /* Variant: LUXURY · center-lower · italic refined · vignette */
+  [data-variant="luxury"] .cover-canvas .brand-mark {
+    bottom: 22%; top: auto; transform: translateX(-50%);
+  }
+  [data-variant="luxury"] .cover-canvas .brand-name {
+    font-size: clamp(14px, 3.6vw, 20px);
+    letter-spacing: 6px;
+    font-weight: 500;
+  }
+  [data-variant="luxury"] .cover-canvas .brand-divider {
+    display: block;
+    width: 40px; height: 0.7px;
+    background: var(--pal-text); opacity: 0.45;
+    margin: 14px auto;
+  }
+  [data-variant="luxury"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(13px, 3.2vw, 17px);
+    opacity: 0.78;
+  }
+  [data-variant="luxury"] .cover-canvas .brand-est {
+    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
+    opacity: 0.55;
+  }
+
+  /* Brand mark · Latin script: serif italic + regular mix */
+  [data-script="latin"] .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    text-transform: uppercase;
+  }
+  [data-script="latin"] .brand-tagline {
+    font-family: 'Cormorant Garamond', serif;
+  }
+  [data-script="latin"] .brand-est {
+    font-family: 'Cormorant Garamond', serif;
+    text-transform: uppercase;
+  }
+
+  /* Brand mark · Thai script: Sarabun weight contrast */
+  [data-script="thai"] .brand-name {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 700;
+  }
+  [data-script="thai"] .brand-tagline {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 300;
+    font-style: normal !important;
+  }
+  [data-script="thai"] .brand-est {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 400;
+  }
+
+  /* Cover CTA */
+  .cover-cta {
+    text-align: center; padding: 8px 4px 0;
+  }
+  .cover-cta h2 {
+    margin: 0 0 6px; font-size: 22px;
+    color: var(--pal-text); font-weight: 700;
+  }
+  [data-script="latin"] .cover-cta h2 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
+    font-size: 28px;
+  }
+  .cover-cta p {
+    margin: 0 0 16px; color: var(--pal-text-muted);
+    font-size: 14px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     SHARED · screen titles + buttons + cards
+     ════════════════════════════════════════════════════════════════ */
+  .screen-title {
+    margin: 0 0 14px; font-size: 22px; font-weight: 700;
+    color: var(--pal-text);
+  }
+  [data-script="latin"] .screen-title {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; font-size: 28px;
+  }
+
+  .cta-btn {
+    width: 100%; padding: 14px;
+    background: var(--pal-deep); color: #fff;
+    border: none; border-radius: 12px;
+    font-family: 'Sarabun', sans-serif; font-size: 16px;
+    font-weight: 700; cursor: pointer; min-height: 52px;
+  }
+  .cta-btn:active { transform: translateY(1px); }
+  .cta-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .cta-btn.secondary {
+    background: transparent; color: var(--pal-text);
+    border: 1px solid var(--pal-card-border);
+  }
+
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; }
+  .nav-row .cta-btn.secondary { flex: 1; }
+  .nav-row .cta-btn { flex: 2; }
+
+  /* ════════════════════════════════════════════════════════════════
+     SCREEN 2 · SERVICE LIST
+     ════════════════════════════════════════════════════════════════ */
+  .service-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
   .service-card {
-    background: var(--panel-bg, #fff);
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 12px);
-    padding: 14px; cursor: pointer;
-    transition: all 0.15s;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 14px; padding: 14px 16px;
+    cursor: pointer; transition: all 0.15s;
   }
   .service-card:hover, .service-card.selected {
-    border-color: var(--accent, var(--brand));
-    box-shadow: 0 2px 8px rgba(var(--brand-rgb), 0.1);
+    border-color: var(--pal-deep);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   }
   .service-card.selected {
-    background: var(--accent-soft, rgba(var(--brand-rgb), 0.05));
+    background: rgba(255,255,255,0.85);
+  }
+  .service-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    color: var(--pal-text-muted); text-transform: uppercase;
+    margin-bottom: 6px;
   }
   .service-name {
-    font-weight: var(--weight-bold, 600); font-size: 15px;
-    color: var(--text, #0f172a); margin-bottom: 4px;
+    font-weight: 700; font-size: 16px;
+    color: var(--pal-text); margin-bottom: 4px;
+  }
+  [data-script="latin"] .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600; font-size: 18px;
+  }
+  .service-divider {
+    width: 36px; height: 1px;
+    background: var(--pal-deep); opacity: 0.4;
+    margin: 6px 0;
   }
   .service-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--text-muted, #64748b);
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 6px;
+  }
+  .service-duration {
+    font-size: 13px; color: var(--pal-text-muted);
+    font-variant-numeric: tabular-nums;
   }
   .service-price {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700; color: var(--text, #0f172a);
-    font-size: 15px;
+    font-size: 17px; font-weight: 800;
+    color: var(--pal-text); font-variant-numeric: tabular-nums;
   }
 
-  /* Date stepper + time picker */
+  /* ════════════════════════════════════════════════════════════════
+     SCREEN 3 · TIME PICKER
+     ════════════════════════════════════════════════════════════════ */
   .date-row {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 8px; margin-bottom: 18px;
   }
   .date-pill {
-    background: var(--panel-bg, #fff);
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 12px);
-    padding: 10px 4px; text-align: center; cursor: pointer;
-    font-size: 13px; transition: all 0.15s;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 12px; padding: 12px 4px;
+    text-align: center; cursor: pointer; transition: all 0.15s;
   }
-  .date-pill .day {
-    font-weight: var(--weight-bold, 600);
-    color: var(--text, #0f172a); font-size: 16px;
+  .date-pill .day-num {
+    font-size: 18px; font-weight: 700; color: var(--pal-text);
+    font-variant-numeric: tabular-nums;
   }
-  .date-pill .label { color: var(--text-muted, #64748b); font-size: 11px; }
+  .date-pill .day-label {
+    font-size: 11px; color: var(--pal-text-muted);
+  }
   .date-pill.selected {
-    background: var(--accent, var(--brand)); border-color: var(--accent, var(--brand));
+    background: var(--pal-deep); border-color: var(--pal-deep);
   }
-  .date-pill.selected .day,
-  .date-pill.selected .label { color: #fff; }
+  .date-pill.selected .day-num,
+  .date-pill.selected .day-label { color: #fff; }
 
   .time-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
   .time-pill {
-    background: var(--panel-bg, #fff);
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 12px);
-    padding: 12px 6px; text-align: center; cursor: pointer;
-    font-size: 14px; font-weight: 600;
-    color: var(--text, #0f172a);
-    transition: all 0.15s; font-variant-numeric: tabular-nums;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 12px; padding: 14px 6px;
+    text-align: center; cursor: pointer;
+    font-size: 15px; font-weight: 600;
+    color: var(--pal-text); font-variant-numeric: tabular-nums;
+    transition: all 0.15s;
   }
-  .time-pill:hover { border-color: var(--accent, var(--brand)); }
+  .time-pill:hover { border-color: var(--pal-deep); }
   .time-pill.selected {
-    background: var(--accent, var(--brand)); border-color: var(--accent, var(--brand));
-    color: #fff;
+    background: var(--pal-deep); border-color: var(--pal-deep); color: #fff;
   }
 
-  /* Pay screen */
+  /* ════════════════════════════════════════════════════════════════
+     SCREEN 4 · CONFIRM + PAY
+     ════════════════════════════════════════════════════════════════ */
   .summary-card {
-    background: var(--panel-bg, #fff);
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 12px);
-    padding: 14px; margin-bottom: 16px;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 14px; padding: 16px;
+    margin-bottom: 16px;
   }
   .summary-row {
     display: flex; justify-content: space-between;
-    font-size: 14px; padding: 6px 0;
+    padding: 6px 0; font-size: 14px;
+  }
+  .summary-label { color: var(--pal-text-muted); }
+  .summary-value {
+    color: var(--pal-text); font-weight: 600;
+    font-variant-numeric: tabular-nums; text-align: right;
   }
   .summary-row.total {
-    border-top: 1px dashed var(--card-border, #e2e8f0);
-    margin-top: 8px; padding-top: 10px;
-    font-weight: var(--weight-bold, 700); font-size: 16px;
-    color: var(--accent, var(--brand));
+    border-top: 1px dashed var(--pal-card-border);
+    margin-top: 8px; padding-top: 12px;
+    font-weight: 800; font-size: 17px;
   }
-  .summary-label { color: var(--text-muted, #64748b); }
-  .summary-value { color: var(--text, #0f172a); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary-row.total .summary-value { color: var(--pal-deep); font-size: 19px; }
 
   .input-thai {
     width: 100%; padding: 12px 14px;
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 10px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 12px;
     font-family: inherit; font-size: 15px;
-    background: var(--panel-bg, #fff); color: var(--text, #0f172a);
+    background: rgba(255,255,255,0.7); color: var(--pal-text);
     margin-bottom: 10px;
   }
-  .input-thai:focus { outline: none; border-color: var(--accent, var(--brand)); }
+  .input-thai:focus { outline: none; border-color: var(--pal-deep); }
   .input-label {
-    font-size: 13px; font-weight: 600; color: var(--text, #0f172a);
+    font-size: 13px; font-weight: 600; color: var(--pal-text);
     margin-bottom: 6px; display: block;
   }
 
-  .promptpay-mock {
-    background: var(--panel-bg, #fff);
-    border: 1px solid var(--card-border, #e2e8f0);
-    border-radius: var(--radius, 12px);
-    padding: 16px; text-align: center; margin-bottom: 14px;
+  .test-disclaimer {
+    background: rgba(255, 196, 0, 0.12); border: 1px solid rgba(255, 196, 0, 0.4);
+    color: #92400e; padding: 12px 14px; border-radius: 10px;
+    font-size: 13px; line-height: 1.5; margin: 14px 0;
   }
-  .promptpay-mock .qr {
-    width: 160px; height: 160px; margin: 0 auto 10px;
+  .test-disclaimer strong { color: #713f12; }
+
+  .promptpay-mock {
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border: 1px solid var(--pal-card-border);
+    border-radius: 14px; padding: 18px 16px;
+    text-align: center; margin-bottom: 14px;
+  }
+  .promptpay-mock .qr-canvas {
+    width: 160px; height: 160px; margin: 0 auto 12px;
     background: #fff; border: 2px solid #0f172a; border-radius: 8px;
     display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
     padding: 8px; gap: 1px;
   }
-  .promptpay-mock .qr div {
-    background: #0f172a;
-  }
-  .promptpay-mock .qr div.empty { background: transparent; }
+  .promptpay-mock .qr-canvas div { background: transparent; }
+  .promptpay-mock .qr-canvas div.fill { background: #0f172a; }
   .promptpay-mock .label {
-    font-size: 13px; color: var(--text-muted, #64748b);
+    font-size: 13px; color: var(--pal-text-muted);
   }
 
-  .test-disclaimer {
-    background: #fef3c7; border: 1px solid #facc15;
-    color: #854d0e; padding: 12px 14px; border-radius: 10px;
-    font-size: 13px; line-height: 1.5; margin-bottom: 14px;
-  }
-  .test-disclaimer strong { color: #713f12; }
-
-  .cta-btn {
-    width: 100%; padding: 14px;
-    background: var(--accent, var(--brand)); color: #fff;
-    border: none; border-radius: var(--radius, 12px);
-    font-family: inherit; font-size: 16px;
-    font-weight: var(--weight-bold, 700);
-    cursor: pointer; min-height: 52px;
-  }
-  .cta-btn:active { transform: translateY(1px); }
-  .cta-btn.secondary {
-    background: transparent; color: var(--text, #0f172a);
-    border: 1px solid var(--card-border, #e2e8f0);
-  }
-
-  /* Success screen */
+  /* ════════════════════════════════════════════════════════════════
+     SCREEN 5 · SUCCESS
+     ════════════════════════════════════════════════════════════════ */
   .success-icon {
     width: 80px; height: 80px;
-    background: #d1fae5; border-radius: 50%;
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid #10b981;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 44px; margin: 8px auto 18px;
+    font-size: 40px; color: #10b981;
+    margin: 8px auto 18px;
   }
-  .success-text { text-align: center; }
+  .success-text {
+    text-align: center;
+  }
   .success-text h2 {
-    margin: 0 0 8px; font-size: 22px;
-    font-weight: var(--weight-bold, 700);
-    color: var(--text, #0f172a);
+    margin: 0 0 8px; font-size: 24px; font-weight: 700;
+    color: var(--pal-text);
+  }
+  [data-script="latin"] .success-text h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 500; font-size: 28px;
   }
   .success-text p {
-    margin: 0 0 8px; color: var(--text-muted, #64748b);
+    margin: 0 0 6px; color: var(--pal-text-muted);
     font-size: 14px; line-height: 1.5;
   }
   .booking-qr {
-    margin: 18px auto; width: 130px; height: 130px;
-    background: #fff; border: 2px solid var(--card-border, #e2e8f0);
+    margin: 18px auto;
+    width: 130px; height: 130px;
+    background: #fff; border: 1px solid var(--pal-card-border);
     border-radius: 12px;
     display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr);
     padding: 8px; gap: 1px;
   }
-  .booking-qr div { background: #0f172a; }
-  .booking-qr div.empty { background: transparent; }
+  .booking-qr div { background: transparent; }
+  .booking-qr div.fill { background: #0f172a; }
 
-  /* Pagination dots */
+  /* ════════════════════════════════════════════════════════════════
+     PAGINATION DOTS
+     ════════════════════════════════════════════════════════════════ */
   .pagination {
     display: flex; justify-content: center; gap: 6px;
-    padding: 8px 0 16px; background: var(--bg, #fff);
+    padding: 12px 0 16px;
   }
   .pagination .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--card-border, #e2e8f0);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--pal-card-border);
     transition: all 0.15s;
   }
   .pagination .dot.active {
-    background: var(--accent, var(--brand)); width: 24px;
+    background: var(--pal-deep); width: 22px;
   }
 
-  /* Sticky bottom action bar (merchant tools) */
+  /* ════════════════════════════════════════════════════════════════
+     STICKY ACTION BAR · staff mode (merchant share/copy/QR)
+     ════════════════════════════════════════════════════════════════ */
   .action-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: #fff; border-top: 1px solid #e2e8f0;
     padding: 12px 16px;
     display: flex; gap: 8px; max-width: 880px; margin: 0 auto;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    z-index: 50;
   }
   .action-bar button {
     flex: 1; padding: 12px 8px;
     border: 1px solid #e2e8f0; border-radius: 12px;
     background: #fff; cursor: pointer;
     font-family: inherit; font-size: 13px; font-weight: 600;
-    color: #1e293b; min-height: 48px;
+    color: #1e293b; min-height: 50px;
     display: flex; flex-direction: column; align-items: center; gap: 2px;
   }
   .action-bar button .icon { font-size: 18px; }
   .action-bar button.primary {
-    background: var(--brand); color: #fff; border-color: var(--brand);
+    background: #0f172a; color: #fff; border-color: #0f172a;
     flex: 2;
   }
   .action-bar button:active { transform: translateY(1px); }
 
-  /* QR modal */
+  /* ─── QR modal ─── */
   .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
-    display: none; align-items: center; justify-content: center; z-index: 100;
-    padding: 20px;
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
   }
   .modal-backdrop.show { display: flex; }
   .modal {
@@ -405,159 +657,121 @@
   .modal p { font-size: 13px; color: #64748b; margin: 12px 0; line-height: 1.4; }
   .modal button { margin-top: 12px; }
 
-  /* Template-specific overrides */
-  [data-template="elegant"] .phone-screen {
-    --bg: #fafaf9; --panel-bg: #ffffff;
-    --text: #1c1917; --text-muted: #78716c;
-    --card-border: #e7e5e4; --radius: 8px;
-    --weight-bold: 600;
-  }
-  [data-template="elegant"] .cover-hero {
-    background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 70%, white));
-  }
-  [data-template="elegant"] .screen-title { letter-spacing: -0.01em; }
-
-  [data-template="cute"] .phone-screen {
-    --bg: #fef7f4; --panel-bg: #ffffff;
-    --text: #831843; --text-muted: #be185d;
-    --card-border: #fce7f3; --radius: 22px;
-    --weight-bold: 700;
-    --accent-soft: #fff1f2;
-  }
-  [data-template="cute"] .cover-hero {
-    background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, #fce7f3), #fce7f3);
-  }
-  [data-template="cute"] .cover-letter { background: #fff1f2; }
-
-  [data-template="bold"] .phone-screen {
-    --bg: #ffffff; --panel-bg: #f8fafc;
-    --text: #0f172a; --text-muted: #475569;
-    --card-border: #cbd5e1; --radius: 10px;
-    --weight-bold: 800;
-  }
-  [data-template="bold"] .cover-hero {
-    background: var(--accent);
-  }
-
-  /* Default brand fallback if no template attribute */
-  .phone-screen {
-    --bg: #ffffff; --panel-bg: #f8fafc;
-    --text: #0f172a; --text-muted: #64748b;
-    --card-border: #e2e8f0; --radius: 12px;
-    --weight-bold: 700;
-    --accent: var(--brand);
-  }
-
-  @media (max-width: 600px) {
-    .control { padding: 16px 12px 0; }
-    .control h1 { font-size: 18px; }
-    .url-block .public-url { font-size: 14px; }
-    .templates { gap: 6px; }
-    .tmpl-btn { padding: 10px 4px; font-size: 12px; }
-    .tmpl-btn .icon { font-size: 22px; }
+  /* ─── Mobile responsive ─── */
+  @media (max-width: 480px) {
+    .control-panel { padding: 16px 12px 0; }
+    .control-panel .header h1 { font-size: 22px; }
+    .url-block .public-url { font-size: 16px; }
+    .variant-tabs button { font-size: 12px; padding: 10px 4px; }
     .phone-wrap { padding: 0 8px 100px; }
+    .action-bar button { font-size: 12px; }
   }
 </style>
 </head>
-<body>
+<body data-industry="beauty" data-variant="airy" data-script="latin" data-mode="staff">
 
-<!-- ════════════════════════════════════════════════════════════════
-     CONTROL PANEL
-     ════════════════════════════════════════════════════════════════ -->
-<div class="control">
-  <h1 id="controlHeader">เว็บร้านพร้อมแล้ว ✨</h1>
-  <p class="sub">เลือก template แล้วส่งให้ลูกค้าลองจองได้เลย</p>
+<!-- ═══════════════════════════════════════════════════════════════
+     CONTROL PANEL · staff-mode only (hidden when ?mode=share)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="control-panel">
+  <div class="header">
+    <h1 id="controlHeader">Your shop preview</h1>
+    <p class="sub">เลือก variant แล้วส่งให้ลูกค้าลองจองได้เลย</p>
+  </div>
 
   <!-- URL block (Path C: honest 2-URL display) -->
   <div class="url-block">
-    <div class="heading">URL เว็บร้านของคุณ</div>
-    <div class="public-url">bookease.co/<span class="accent" id="publicUrlSlug">demoshop</span></div>
-    <div class="test-url-row">
-      <span class="label">📎 ลิงก์ทดสอบตอนนี้:</span>
-      <span class="test-url" id="testUrl"></span>
-    </div>
-    <div class="note">
-      ℹ️ URL เว็บร้านจริงจะใช้งานได้เมื่อ Atiz ติดตั้งระบบครบ · ตอนนี้ใช้ลิงก์ทดสอบแทน · merchant สามารถส่งให้ลูกค้าลองจอง flow ได้
-    </div>
+    <div class="heading">URL ของเว็บร้าน</div>
+    <div class="public-url">bookease.co/<span class="accent" id="publicSlug">demoshop</span></div>
+    <details>
+      <summary>ลิงก์ทดสอบตอนนี้ (admin only)</summary>
+      <div class="test-url" id="testUrl"></div>
+      <div class="test-url-note">URL จริง <code>bookease.co/&lt;ชื่อย่อร้าน&gt;</code> จะใช้ได้เมื่อ Atiz ติดตั้งระบบครบ · ตอนนี้ใช้ลิงก์ทดสอบให้ลูกค้าลอง flow ได้</div>
+    </details>
   </div>
 
-  <!-- Template picker -->
-  <div class="templates">
-    <button class="tmpl-btn active" data-tmpl="elegant">
-      <span class="icon">✨</span>
-      เรียบหรู
-    </button>
-    <button class="tmpl-btn" data-tmpl="cute">
-      <span class="icon">🌸</span>
-      สดใสน่ารัก
-    </button>
-    <button class="tmpl-btn" data-tmpl="bold">
-      <span class="icon">🌟</span>
-      เด่นสะดุดตา
-    </button>
+  <!-- Industry badge -->
+  <button class="industry-badge" id="industryBadge" type="button">
+    <span class="label">ตรวจพบประเภท:</span>
+    <span class="industry-name" id="industryName">Beauty</span>
+    <span class="cycle-hint">↻ แตะเปลี่ยน</span>
+  </button>
+
+  <!-- Variant switcher -->
+  <div class="variant-tabs" role="tablist">
+    <button data-variant="airy" class="active" type="button">A · โปร่ง · Airy</button>
+    <button data-variant="relaxed" type="button">B · ผ่อนคลาย · Relaxed</button>
+    <button data-variant="luxury" type="button">C · หรูหรา · Luxury</button>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════════
-     PHONE FRAME
-     ════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     PHONE FRAME · always visible (drops border in share mode on mobile)
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="phone-wrap">
   <div class="phone">
-    <button class="reset-btn" id="resetBtn">↻ เริ่มใหม่</button>
-    <div class="phone-screen" data-template="elegant" id="phoneScreen">
+    <button class="reset-btn" id="resetBtn" type="button">↻ เริ่มใหม่</button>
+    <div class="phone-screen" id="phoneScreen">
       <div class="phone-status">
         <span>9:41</span>
         <span>▰▰▰▰▰</span>
       </div>
       <div class="phone-address">
-        <span class="lock">🔒</span>
-        <span>bookease.co/<span class="url-thai" id="addressSlug">demoshop</span></span>
+        <span>🔒</span>
+        <span>bookease.co/<span id="addressSlug">demoshop</span></span>
       </div>
 
       <div class="liff-content">
 
-        <!-- Screen 1: Cover -->
+        <!-- Screen 1: COVER -->
         <div class="screen active" data-screen="1">
-          <div class="cover-hero">
-            <div class="cover-letter" id="coverLetter">B</div>
+          <div class="cover-canvas">
+            <div class="layer-warmth"></div>
+            <div class="layer-grain"></div>
+            <div class="vignette"></div>
+            <div class="brand-mark">
+              <div class="brand-name" id="brandName">DEMOSHOP</div>
+              <div class="brand-divider"></div>
+              <div class="brand-tagline" id="brandTagline">— a quiet ritual</div>
+              <div class="brand-est" id="brandEst">EST. 2024</div>
+            </div>
           </div>
-          <div class="cover-line-oa" id="coverLineOa" style="display: none;">
-            <span>💬</span> <span id="coverLineOaText"></span>
+          <div class="cover-cta">
+            <h2 id="coverShopName">Demoshop</h2>
+            <p>กดเลือกบริการ · ล็อกคิวด้วยมัดจำ ฿200</p>
+            <button class="cta-btn" data-go="2" type="button">เริ่มจอง</button>
           </div>
-          <h2 class="cover-shop-name" id="coverShopName">ร้านตัวอย่าง</h2>
-          <p class="cover-tagline">บริการของร้าน · จองออนไลน์ · ฿200 ล็อกคิว</p>
-          <button class="cta-btn" data-go="2" style="margin-top: 16px;">เริ่มจอง →</button>
         </div>
 
-        <!-- Screen 2: Service select -->
+        <!-- Screen 2: SERVICE LIST -->
         <div class="screen" data-screen="2">
           <h2 class="screen-title">เลือกบริการ</h2>
           <div class="service-list" id="serviceList"></div>
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
-            <button class="cta-btn secondary" data-go="1" style="flex: 1;">← ย้อน</button>
-            <button class="cta-btn" data-go="3" id="servicesNext" style="flex: 2;" disabled>ถัดไป →</button>
+          <div class="nav-row">
+            <button class="cta-btn secondary" data-go="1" type="button">ย้อน</button>
+            <button class="cta-btn" data-go="3" id="serviceNext" type="button" disabled>ถัดไป</button>
           </div>
         </div>
 
-        <!-- Screen 3: Time picker -->
+        <!-- Screen 3: TIME PICKER -->
         <div class="screen" data-screen="3">
           <h2 class="screen-title">เลือกวัน-เวลา</h2>
           <div class="date-row" id="dateRow"></div>
           <div class="time-grid" id="timeGrid"></div>
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
-            <button class="cta-btn secondary" data-go="2" style="flex: 1;">← ย้อน</button>
-            <button class="cta-btn" data-go="4" id="timeNext" style="flex: 2;" disabled>ถัดไป →</button>
+          <div class="nav-row">
+            <button class="cta-btn secondary" data-go="2" type="button">ย้อน</button>
+            <button class="cta-btn" data-go="4" id="timeNext" type="button" disabled>ถัดไป</button>
           </div>
         </div>
 
-        <!-- Screen 4: Confirm + pay -->
+        <!-- Screen 4: CONFIRM + PAY -->
         <div class="screen" data-screen="4">
           <h2 class="screen-title">ยืนยันการจอง</h2>
 
           <div class="summary-card">
             <div class="summary-row">
               <span class="summary-label">ร้าน</span>
-              <span class="summary-value" id="confirmShopName">ร้านตัวอย่าง</span>
+              <span class="summary-value" id="confirmShopName">Demoshop</span>
             </div>
             <div class="summary-row">
               <span class="summary-label">บริการ</span>
@@ -569,46 +783,45 @@
             </div>
             <div class="summary-row total">
               <span>มัดจำล็อกคิว</span>
-              <span>฿200</span>
+              <span class="summary-value">฿200</span>
             </div>
           </div>
 
-          <label class="input-label">ชื่อ-สกุล</label>
+          <label class="input-label" for="custName">ชื่อ-สกุล</label>
           <input class="input-thai" type="text" id="custName" placeholder="กรอกชื่อ" />
 
-          <label class="input-label">เบอร์โทร</label>
+          <label class="input-label" for="custPhone">เบอร์โทร</label>
           <input class="input-thai" type="tel" id="custPhone" placeholder="0XX-XXX-XXXX" />
 
           <div class="test-disclaimer">
-            <strong>⚠️ โหมดทดสอบ:</strong> นี่คือการลองจองให้ดู flow · <strong>ยังไม่หักเงินจริง</strong> · เริ่มรับเงินจริงเมื่อ Atiz ติดตั้งระบบครบ (~1 สัปดาห์)
+            <strong>โหมดทดสอบ:</strong> นี่คือการลองจองให้ดู flow · <strong>ยังไม่หักเงินจริง</strong> · เริ่มรับเงินจริงเมื่อ Atiz ติดตั้งระบบครบ (~1 สัปดาห์)
           </div>
 
           <div class="promptpay-mock">
-            <div class="qr" id="mockQr"></div>
+            <div class="qr-canvas" id="payQr"></div>
             <div class="label">QR PromptPay (mock) · ฿200</div>
           </div>
 
-          <div style="display: flex; gap: 8px;">
-            <button class="cta-btn secondary" data-go="3" style="flex: 1;">← ย้อน</button>
-            <button class="cta-btn" data-go="5" style="flex: 2;">จ่าย ฿200 (ทดสอบ)</button>
+          <div class="nav-row">
+            <button class="cta-btn secondary" data-go="3" type="button">ย้อน</button>
+            <button class="cta-btn" data-go="5" type="button">จ่าย ฿200 (ทดสอบ)</button>
           </div>
         </div>
 
-        <!-- Screen 5: Success -->
+        <!-- Screen 5: SUCCESS -->
         <div class="screen" data-screen="5">
           <div class="success-icon">✓</div>
           <div class="success-text">
             <h2>จองเรียบร้อย</h2>
-            <p>ร้าน <strong id="successShopName">ร้านตัวอย่าง</strong> จะยืนยันใน LINE chat ภายใน 30 นาที</p>
+            <p>ร้าน <strong id="successShopName">Demoshop</strong> จะยืนยันใน LINE chat ภายใน 30 นาที</p>
             <div class="booking-qr" id="bookingQr"></div>
             <p style="font-size: 12px;">QR สำหรับแสดงตอนเข้าร้าน</p>
           </div>
-          <button class="cta-btn secondary" data-go="1" style="margin-top: 16px;">← จองอีกครั้ง</button>
+          <button class="cta-btn secondary" data-go="1" type="button" style="margin-top: 16px;">จองอีกครั้ง</button>
         </div>
 
       </div><!-- /.liff-content -->
 
-      <!-- Pagination dots -->
       <div class="pagination" id="pagination">
         <div class="dot active"></div>
         <div class="dot"></div>
@@ -620,19 +833,19 @@
   </div><!-- /.phone -->
 </div>
 
-<!-- ════════════════════════════════════════════════════════════════
-     STICKY ACTION BAR (merchant tools)
-     ════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     ACTION BAR (sticky · merchant tools · staff mode only)
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="action-bar">
-  <button id="copyBtn">
+  <button id="copyBtn" type="button">
     <span class="icon">📋</span>
     คัดลอกลิงก์
   </button>
-  <button class="primary" id="shareBtn">
+  <button class="primary" id="shareBtn" type="button">
     <span class="icon">📲</span>
     ส่งให้ลูกค้าลองจอง
   </button>
-  <button id="qrBtn">
+  <button id="qrBtn" type="button">
     <span class="icon">📷</span>
     QR
   </button>
@@ -641,35 +854,36 @@
 <!-- QR modal -->
 <div class="modal-backdrop" id="qrModal">
   <div class="modal">
-    <h3>📷 QR สำหรับลูกค้าสแกน</h3>
+    <h3>QR สำหรับลูกค้าสแกน</h3>
     <img id="qrImage" alt="QR code" />
     <p>ให้ลูกค้าสแกน QR นี้บนมือถือเขา · จะเปิดเว็บร้านของคุณ</p>
-    <button class="cta-btn secondary" onclick="document.getElementById('qrModal').classList.remove('show')">ปิด</button>
+    <button class="cta-btn secondary" type="button" onclick="document.getElementById('qrModal').classList.remove('show')">ปิด</button>
   </div>
 </div>
 
 <script>
-  // ═══════════════════════════════════════════════════════════════
-  // Decode shop data from URL ?data=<base64>
-  // ═══════════════════════════════════════════════════════════════
-  function decodeData(b64) {
-    try {
-      return JSON.parse(decodeURIComponent(escape(atob(b64))));
-    } catch (e) {
-      return null;
-    }
-  }
+  // ════════════════════════════════════════════════════════════════
+  // 1. URL DECODE · shop data + mode
+  // ════════════════════════════════════════════════════════════════
   const params = new URLSearchParams(window.location.search);
   const dataB64 = params.get('data');
-  let shopData = dataB64 ? decodeData(dataB64) : null;
+  const urlMode = params.get('mode'); // 'share' or null
+  const urlIndustry = params.get('industry');
+  const urlVariant = params.get('variant');
 
-  // Fallback demo data if no ?data param OR decode failed
+  function decodeData(b64) {
+    try { return JSON.parse(decodeURIComponent(escape(atob(b64)))); }
+    catch (e) { return null; }
+  }
+
+  let shopData = dataB64 ? decodeData(dataB64) : null;
   if (!shopData) {
     shopData = {
       shopName: 'Bare Nail Spa',
       shortName: 'barenailspa',
       brandColor: '#A78B7A',
       lineOaId: '@barenailspa',
+      branch: 'Sukhumvit',
       services: [
         { serviceName: 'Manicure คลาสสิก', durationMin: 60, price: 500 },
         { serviceName: 'Pedicure คลาสสิก', durationMin: 60, price: 600 },
@@ -679,46 +893,95 @@
     };
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // Apply shop data to UI
-  // ═══════════════════════════════════════════════════════════════
-  const brand = shopData.brandColor || '#2563eb';
-  document.documentElement.style.setProperty('--brand', brand);
-  document.documentElement.style.setProperty('--brand-rgb', hexToRgb(brand));
+  // ════════════════════════════════════════════════════════════════
+  // 2. INDUSTRY DETECTION (5 industries · cycled by tap)
+  // ════════════════════════════════════════════════════════════════
+  const INDUSTRIES = ['beauty', 'nail', 'wellness', 'cafe', 'salon'];
+  const INDUSTRY_LABELS = {
+    beauty: 'Beauty',
+    nail: 'Nail · Beauty',
+    wellness: 'Massage · Wellness',
+    cafe: 'Cafe · Restaurant',
+    salon: 'Hair · Salon',
+  };
 
-  function hexToRgb(hex) {
-    const h = hex.replace('#', '');
-    const r = parseInt(h.substring(0, 2), 16);
-    const g = parseInt(h.substring(2, 4), 16);
-    const b = parseInt(h.substring(4, 6), 16);
-    return `${r}, ${g}, ${b}`;
+  function detectIndustry(shopName) {
+    const n = (shopName || '').toLowerCase();
+    // Order matters · most specific first. "Nail Spa" should be nail · not wellness.
+    if (/เล็บ|nail|มานิ|pedi|manicure|คิ้ว|ขนตา|\bbrow\b|\blash\b/i.test(n)) return 'nail';
+    if (/ตัดผม|ทำผม|salon|hair|barber|saloon/i.test(n)) return 'salon';
+    if (/คาเฟ่|cafe|coffee|กาแฟ|bistro|restaurant|ร้านอาหาร|kitchen/i.test(n)) return 'cafe';
+    // Wellness only matches massage-specific terms · NOT generic "spa" suffix
+    if (/นวด|massage|สปา|wellness|reflex|onsen|อบสมุนไพร/i.test(n)) return 'wellness';
+    return 'beauty';
   }
 
-  // Header + URL
-  document.getElementById('controlHeader').textContent = `เว็บร้าน ${shopData.shopName} พร้อมแล้ว ✨`;
-  document.getElementById('publicUrlSlug').textContent = shopData.shortName;
+  // ════════════════════════════════════════════════════════════════
+  // 3. SCRIPT DETECTION (Thai vs Latin)
+  // ════════════════════════════════════════════════════════════════
+  function detectScript(name) {
+    if (/[฀-๿]/.test(name)) return 'thai';
+    return 'latin';
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // 4. APPLY DATA TO BODY ATTRIBUTES + DOM
+  // ════════════════════════════════════════════════════════════════
+  let currentIndustry = urlIndustry && INDUSTRIES.includes(urlIndustry)
+    ? urlIndustry
+    : detectIndustry(shopData.shopName);
+  let currentVariant = urlVariant && ['airy','relaxed','luxury'].includes(urlVariant)
+    ? urlVariant
+    : 'airy';
+  const currentScript = detectScript(shopData.shopName);
+  const currentMode = urlMode === 'share' ? 'share' : 'staff';
+
+  document.body.dataset.industry = currentIndustry;
+  document.body.dataset.variant = currentVariant;
+  document.body.dataset.script = currentScript;
+  document.body.dataset.mode = currentMode;
+
+  // Inject shop data
+  document.getElementById('controlHeader').textContent = `เว็บร้าน${currentScript === 'thai' ? '' : ' '}${shopData.shopName}`;
+  document.getElementById('publicSlug').textContent = shopData.shortName;
   document.getElementById('addressSlug').textContent = shopData.shortName;
   document.getElementById('testUrl').textContent = window.location.href;
 
-  // Cover screen
-  document.getElementById('coverShopName').textContent = shopData.shopName;
-  document.getElementById('coverLetter').textContent = (shopData.shopName || '?').charAt(0).toUpperCase();
-  if (shopData.lineOaId) {
-    document.getElementById('coverLineOa').style.display = 'inline-flex';
-    document.getElementById('coverLineOaText').textContent = `เปิดผ่าน LINE OA ${shopData.lineOaId}`;
-  }
+  // Brand mark
+  const brandName = shopData.shopName.toUpperCase();
+  document.getElementById('brandName').textContent = brandName;
+  document.getElementById('brandEst').textContent =
+    `EST. 2024${shopData.branch ? ' · ' + shopData.branch.toUpperCase() : ''}`;
+  document.getElementById('brandTagline').textContent =
+    currentScript === 'thai' ? '· จองออนไลน์ ·' : '— a quiet ritual';
 
-  // Service list
-  const serviceListEl = document.getElementById('serviceList');
+  // Cover CTA shop name
+  document.getElementById('coverShopName').textContent = shopData.shopName;
+  document.getElementById('confirmShopName').textContent = shopData.shopName;
+  document.getElementById('successShopName').textContent = shopData.shopName;
+
+  // Industry badge
+  document.getElementById('industryName').textContent = INDUSTRY_LABELS[currentIndustry];
+
+  // Variant active button
+  document.querySelectorAll('.variant-tabs button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.variant === currentVariant);
+  });
+
+  // ════════════════════════════════════════════════════════════════
+  // 5. RENDER SERVICES
+  // ════════════════════════════════════════════════════════════════
+  const serviceList = document.getElementById('serviceList');
   let selectedService = null;
   (shopData.services || []).slice(0, 8).forEach((svc, idx) => {
     const card = document.createElement('div');
     card.className = 'service-card';
-    card.dataset.idx = idx;
     card.innerHTML = `
-      <div class="service-name">${svc.serviceName || 'บริการ'}</div>
+      ${idx === 0 ? '<div class="service-tag">SIGNATURE</div>' : ''}
+      <div class="service-name">${escapeHtml(svc.serviceName || 'บริการ')}</div>
+      <div class="service-divider"></div>
       <div class="service-meta">
-        <span>${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
+        <span class="service-duration">${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
         <span class="service-price">฿${(svc.price || 0).toLocaleString()}</span>
       </div>
     `;
@@ -726,16 +989,23 @@
       document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       selectedService = svc;
-      document.getElementById('servicesNext').disabled = false;
-      document.getElementById('confirmService').textContent = `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
+      document.getElementById('serviceNext').disabled = false;
+      document.getElementById('confirmService').textContent =
+        `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
     });
-    serviceListEl.appendChild(card);
+    serviceList.appendChild(card);
   });
-  if (!serviceListEl.children.length) {
-    serviceListEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 24px;">ยังไม่มีบริการ</div>';
+  if (!serviceList.children.length) {
+    serviceList.innerHTML = '<div style="text-align:center;padding:24px;opacity:0.6;">ยังไม่มีบริการ</div>';
   }
 
-  // Date row + time grid
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // 6. DATE + TIME PICKERS
+  // ════════════════════════════════════════════════════════════════
   const dateRow = document.getElementById('dateRow');
   const timeGrid = document.getElementById('timeGrid');
   let selectedDate = null, selectedTime = null;
@@ -746,11 +1016,9 @@
     const d = new Date(today.getTime() + i * 86400000);
     const pill = document.createElement('div');
     pill.className = 'date-pill';
-    pill.dataset.date = d.toISOString().slice(0, 10);
-    pill.dataset.dayLabel = i === 0 ? 'วันนี้' : days[d.getDay()];
     pill.innerHTML = `
-      <div class="day">${d.getDate()}</div>
-      <div class="label">${i === 0 ? 'วันนี้' : days[d.getDay()] + ' ' + monthsTh[d.getMonth()]}</div>
+      <div class="day-num">${d.getDate()}</div>
+      <div class="day-label">${i === 0 ? 'วันนี้' : days[d.getDay()] + ' ' + monthsTh[d.getMonth()]}</div>
     `;
     pill.addEventListener('click', () => {
       document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
@@ -760,7 +1028,6 @@
     });
     dateRow.appendChild(pill);
   }
-
   ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'].forEach(t => {
     const pill = document.createElement('div');
     pill.className = 'time-pill';
@@ -773,108 +1040,126 @@
     });
     timeGrid.appendChild(pill);
   });
-
   function checkTimeNext() {
     document.getElementById('timeNext').disabled = !(selectedDate && selectedTime);
     if (selectedDate && selectedTime) {
       const d = selectedDate;
       const dayLabel = d.toDateString() === today.toDateString() ? 'วันนี้' : days[d.getDay()];
-      document.getElementById('confirmDateTime').textContent = `${dayLabel} ${d.getDate()} ${monthsTh[d.getMonth()]} · ${selectedTime}`;
+      document.getElementById('confirmDateTime').textContent =
+        `${dayLabel} ${d.getDate()} ${monthsTh[d.getMonth()]} · ${selectedTime}`;
     }
   }
 
-  // Confirm screen shop name
-  document.getElementById('confirmShopName').textContent = shopData.shopName;
-  document.getElementById('successShopName').textContent = shopData.shopName;
-
-  // Mock QR codes (visual only, not real QR data)
-  function fillMockQr(elId, density) {
+  // ════════════════════════════════════════════════════════════════
+  // 7. MOCK QR (deterministic from shop name · looks scan-able)
+  // ════════════════════════════════════════════════════════════════
+  function fillMockQr(elId) {
     const el = document.getElementById(elId);
-    const cells = el.children.length || (parseInt(getComputedStyle(el).gridTemplateColumns.split(' ').length) * parseInt(getComputedStyle(el).gridTemplateRows.split(' ').length));
+    const cs = getComputedStyle(el);
+    const cols = parseInt(cs.gridTemplateColumns.split(' ').length);
+    const rows = parseInt(cs.gridTemplateRows.split(' ').length);
     el.innerHTML = '';
-    const cols = parseInt(getComputedStyle(el).gridTemplateColumns.split(' ').length);
-    const rows = parseInt(getComputedStyle(el).gridTemplateRows.split(' ').length);
-    const total = cols * rows;
-    // Create deterministic pattern from shop name
     const seed = shopData.shopName.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-    for (let i = 0; i < total; i++) {
+    for (let i = 0; i < cols * rows; i++) {
       const div = document.createElement('div');
       const x = i % cols, y = Math.floor(i / cols);
-      // Corner squares (QR finder pattern look)
       const isCorner = (x < 2 && y < 2) || (x >= cols - 2 && y < 2) || (x < 2 && y >= rows - 2);
       const fill = isCorner || ((seed + i * 7) % 3 === 0);
-      if (!fill) div.className = 'empty';
-      div.style.background = fill ? '#0f172a' : 'transparent';
+      if (fill) div.classList.add('fill');
       el.appendChild(div);
     }
   }
-  fillMockQr('mockQr');
+  fillMockQr('payQr');
   fillMockQr('bookingQr');
 
-  // ═══════════════════════════════════════════════════════════════
-  // Screen navigation (tap-through)
-  // ═══════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
+  // 8. SCREEN NAVIGATION
+  // ════════════════════════════════════════════════════════════════
   function goToScreen(n) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelector(`[data-screen="${n}"]`)?.classList.add('active');
+    const target = document.querySelector(`[data-screen="${n}"]`);
+    if (target) target.classList.add('active');
     document.querySelectorAll('.pagination .dot').forEach((d, i) => {
       d.classList.toggle('active', i === n - 1);
     });
     document.querySelector('.liff-content').scrollTop = 0;
   }
   document.querySelectorAll('[data-go]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = parseInt(btn.dataset.go);
-      goToScreen(target);
-    });
+    btn.addEventListener('click', () => goToScreen(parseInt(btn.dataset.go)));
   });
+
+  // Reset
   document.getElementById('resetBtn').addEventListener('click', () => {
     selectedService = null; selectedDate = null; selectedTime = null;
     document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-    document.getElementById('servicesNext').disabled = true;
+    document.getElementById('serviceNext').disabled = true;
     document.getElementById('timeNext').disabled = true;
     document.getElementById('custName').value = '';
     document.getElementById('custPhone').value = '';
     goToScreen(1);
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // Template switcher
-  // ═══════════════════════════════════════════════════════════════
-  document.querySelectorAll('.tmpl-btn').forEach(btn => {
+  // ════════════════════════════════════════════════════════════════
+  // 9. INDUSTRY CYCLE (1-tap correction)
+  // ════════════════════════════════════════════════════════════════
+  document.getElementById('industryBadge').addEventListener('click', () => {
+    const idx = INDUSTRIES.indexOf(currentIndustry);
+    currentIndustry = INDUSTRIES[(idx + 1) % INDUSTRIES.length];
+    document.body.dataset.industry = currentIndustry;
+    document.getElementById('industryName').textContent = INDUSTRY_LABELS[currentIndustry];
+    // Re-render mock QRs to update industry-tinted borders if any
+    fillMockQr('payQr');
+    fillMockQr('bookingQr');
+  });
+
+  // ════════════════════════════════════════════════════════════════
+  // 10. VARIANT SWITCHER
+  // ════════════════════════════════════════════════════════════════
+  document.querySelectorAll('.variant-tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tmpl-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.variant-tabs button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('phoneScreen').dataset.template = btn.dataset.tmpl;
+      currentVariant = btn.dataset.variant;
+      document.body.dataset.variant = currentVariant;
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // Action bar: share · copy · QR
-  // ═══════════════════════════════════════════════════════════════
-  const shareUrl = window.location.href;
-  const shareText = `ร้าน ${shopData.shopName} เปิดจองออนไลน์แล้ว ✨\nกดจองที่นี่ · ฿200 ล็อกคิว · มัดจำหักจากค่าบริการหน้าร้าน\n👉 `;
+  // ════════════════════════════════════════════════════════════════
+  // 11. ACTION BAR · share / copy / QR
+  // ════════════════════════════════════════════════════════════════
+  function buildShareUrl() {
+    // Persist current industry + variant in the share URL
+    const u = new URL(window.location.href);
+    u.searchParams.set('mode', 'share');
+    u.searchParams.set('industry', currentIndustry);
+    u.searchParams.set('variant', currentVariant);
+    return u.toString();
+  }
 
   document.getElementById('shareBtn').addEventListener('click', async () => {
+    const shareUrl = buildShareUrl();
+    const shareText = `ร้าน ${shopData.shopName} เปิดจองออนไลน์แล้ว\nกดจองที่นี่ · ฿200 ล็อกคิว · มัดจำหักจากค่าบริการหน้าร้าน\n${shareUrl}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: shopData.shopName, text: shareText, url: shareUrl });
       } catch (e) { /* user canceled */ }
     } else {
-      await navigator.clipboard.writeText(shareText + shareUrl);
+      await navigator.clipboard.writeText(shareText);
       alert('คัดลอกข้อความให้ลูกค้าแล้ว · paste ใน LINE ได้เลย');
     }
   });
 
   document.getElementById('copyBtn').addEventListener('click', async () => {
+    const shareUrl = buildShareUrl();
     await navigator.clipboard.writeText(shareUrl);
     const btn = document.getElementById('copyBtn');
     const orig = btn.innerHTML;
-    btn.innerHTML = '<span class="icon">✅</span>คัดลอกแล้ว';
+    btn.innerHTML = '<span class="icon">✓</span>คัดลอกแล้ว';
     setTimeout(() => { btn.innerHTML = orig; }, 1500);
   });
 
   document.getElementById('qrBtn').addEventListener('click', () => {
+    const shareUrl = buildShareUrl();
     const qrImg = document.getElementById('qrImage');
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(shareUrl)}`;
     document.getElementById('qrModal').classList.add('show');
