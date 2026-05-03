@@ -92,11 +92,15 @@
     margin-top: 14px; font-family: inherit;
     min-height: 52px;
   }
-  button.primary:disabled { background: #cbd5e1; cursor: not-allowed; }
   button.primary:hover:not(:disabled) { background: #0284c7; }
   button.primary:active:not(:disabled) { transform: translateY(1px); }
   button.primary.green { background: #10b981; }
   button.primary.green:hover:not(:disabled) { background: #059669; }
+  /* Disabled overrides ALL primary variants · placed AFTER .green so it wins */
+  button.primary:disabled,
+  button.primary.green:disabled {
+    background: #cbd5e1; cursor: not-allowed; color: #f8fafc;
+  }
 
   button.secondary {
     background: #f1f5f9; color: #334155;
@@ -645,10 +649,25 @@ Output ONLY valid JSON. No prose. No code fences.`;
       showStatus('prevStatus', '✅ ดึงข้อมูลแล้ว · ตรวจ + แก้ที่ด้านขวา', 'success');
       updateButtonStates();
     } catch (err) {
-      showStatus('prevStatus', '❌ ' + err.message, 'error');
+      showStatus('prevStatus', '❌ ' + err.message + ' · 💡 กรอกเองด้านขวาได้เลย', 'error');
+      // Auto-focus the shop name field so staff can start typing manually
+      setTimeout(() => document.getElementById('prevShopName').focus(), 100);
     } finally {
       prevExtractBtn.disabled = false;
     }
+  });
+
+  // Auto-slug from shop name when typing manually (only when shortName empty/auto-filled)
+  document.getElementById('prevShopName').addEventListener('input', (e) => {
+    const shortField = document.getElementById('prevShortName');
+    if (!shortField.value.trim() || shortField.dataset.autofilled === 'true') {
+      shortField.value = slugify(e.target.value);
+      shortField.dataset.autofilled = 'true';
+    }
+  });
+  // If user edits shortName manually · stop auto-fill from shopName
+  document.getElementById('prevShortName').addEventListener('input', (e) => {
+    e.target.dataset.autofilled = '';
   });
 
   function collectShopData() {
@@ -830,8 +849,10 @@ Output ONLY a JSON array. No prose. No code fences.`;
   function updateButtonStates() {
     prevExtractBtn.disabled = !prevImageData;
     menuExtractBtn.disabled = !menuImageData;
+    const shopName = document.getElementById('prevShopName').value.trim();
     const shortName = document.getElementById('prevShortName').value.trim();
-    prevCreateBtn.disabled = !shortName;
+    // Enable Create button when BOTH shop name + short name filled (manual or AI-extracted)
+    prevCreateBtn.disabled = !(shopName && shortName);
   }
   document.querySelectorAll('#mode-previsit input').forEach(input => {
     input.addEventListener('input', updateButtonStates);
