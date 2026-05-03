@@ -1,0 +1,208 @@
+<svg viewBox="0 0 1400 920" xmlns="http://www.w3.org/2000/svg" font-family="'Sarabun','Noto Sans Thai','Sukhumvit Set',-apple-system,'SF Pro',sans-serif">
+  <defs>
+    <filter id="cardShadow4" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="920" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="60" y="60" font-size="14" font-weight="800" letter-spacing="3" fill="#0ea5e9">OCR TOOL · STAFF UI</text>
+  <text x="60" y="100" font-size="32" font-weight="800" fill="#0f172a">เครื่องมือ on-site · 2 modes สำหรับ field staff</text>
+  <text x="60" y="130" font-size="15" fill="#475569">Tab "ค้นหาข้อมูลร้าน" (pre-visit) + Tab "ถ่ายเมนู" (in-shop) · ภาษาไทย · ไม่มี API key field</text>
+  <line x1="60" y1="160" x2="1340" y2="160" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- ═══ LEFT · Pre-visit prep ═══ -->
+  <text x="80" y="210" font-size="12" font-weight="800" letter-spacing="2" fill="#0ea5e9">MODE 1 · STEP 1</text>
+  <text x="80" y="236" font-size="22" font-weight="700" fill="#0f172a">ค้นหาข้อมูลร้าน</text>
+  <text x="80" y="258" font-size="13" fill="#64748b">ทำในรถ / คาเฟ่ก่อนเข้าร้าน · หา draft ของร้าน</text>
+
+  <g filter="url(#cardShadow4)">
+    <!-- Browser frame -->
+    <rect x="80" y="280" width="600" height="600" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <rect x="80" y="280" width="600" height="42" rx="14" fill="#f8fafc"/>
+    <rect x="80" y="310" width="600" height="12" fill="#f8fafc"/>
+    <circle cx="100" cy="301" r="5" fill="#ef4444"/>
+    <circle cx="116" cy="301" r="5" fill="#fbbf24"/>
+    <circle cx="132" cy="301" r="5" fill="#10b981"/>
+    <text x="380" y="306" text-anchor="middle" font-size="11" fill="#64748b">atiz-official.github.io/bookease-tools/menu-ocr.html</text>
+
+    <!-- Header -->
+    <text x="100" y="354" font-size="22" font-weight="700" fill="#0f172a">เครื่องมือ on-site</text>
+    <text x="100" y="376" font-size="13" fill="#64748b">ใช้ที่ร้าน · ถ่ายรูป → AI ดึงข้อมูลให้</text>
+
+    <!-- Tabs (Pre-visit active) -->
+    <rect x="100" y="392" width="280" height="48" rx="100" fill="#e2e8f0"/>
+    <rect x="104" y="396" width="138" height="40" rx="100" fill="#ffffff"/>
+    <text x="173" y="421" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">📍 ค้นหาข้อมูลร้าน</text>
+    <text x="320" y="421" text-anchor="middle" font-size="14" font-weight="600" fill="#475569">📋 ถ่ายเมนู</text>
+
+    <!-- 2-column grid -->
+    <!-- Left: upload -->
+    <rect x="100" y="464" width="270" height="380" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="116" y="490" font-size="15" font-weight="700" fill="#0f172a">1. รูปหน้า LINE OA ของร้าน</text>
+    <text x="116" y="510" font-size="11" fill="#64748b">screenshot จาก LINE app · IG · ป้ายร้าน</text>
+
+    <!-- Upload zone WITH photo (extracted state) -->
+    <rect x="116" y="524" width="240" height="160" rx="12" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+    <!-- Mock thumbnail -->
+    <rect x="170" y="540" width="132" height="128" rx="8" fill="#1c1c1e"/>
+    <rect x="180" y="554" width="112" height="98" rx="4" fill="#fff"/>
+    <text x="236" y="580" text-anchor="middle" font-size="9" font-weight="800" fill="#1c1c1e">BARE NAIL</text>
+    <text x="236" y="592" text-anchor="middle" font-size="8" fill="#1c1c1e">SPA</text>
+    <rect x="190" y="600" width="92" height="14" rx="2" fill="#f4e4d4"/>
+    <rect x="200" y="618" width="36" height="20" rx="2" fill="#0EA5E9"/>
+    <text x="218" y="632" text-anchor="middle" font-size="7" font-weight="700" fill="#fff">BOOK</text>
+
+    <!-- Extract button (success state) -->
+    <rect x="116" y="700" width="240" height="48" rx="12" fill="#10b981"/>
+    <text x="236" y="730" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">✓ ดึงข้อมูลแล้ว</text>
+
+    <!-- Status -->
+    <rect x="116" y="760" width="240" height="56" rx="10" fill="#d1fae5" stroke="#10b981"/>
+    <text x="128" y="780" font-size="12" font-weight="700" fill="#047857">✅ ดึงข้อมูลแล้ว</text>
+    <text x="128" y="798" font-size="11" fill="#065f46">ตรวจ + แก้ที่ด้านขวา</text>
+
+    <!-- Right: Result + edit -->
+    <rect x="390" y="464" width="270" height="380" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="406" y="490" font-size="15" font-weight="700" fill="#0f172a">2. ตรวจ + แก้ข้อมูล</text>
+    <text x="406" y="510" font-size="11" fill="#64748b">AI ดึงมา · แก้ตรงไหนก็ได้</text>
+
+    <!-- Field rows -->
+    <text x="406" y="538" font-size="11" font-weight="600" fill="#334155">ชื่อร้าน</text>
+    <rect x="406" y="546" width="238" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="418" y="568" font-size="13" font-weight="600" fill="#0f172a">Bare Nail Spa</text>
+
+    <text x="406" y="600" font-size="11" font-weight="600" fill="#334155">ชื่อย่อ (ตัวเล็กภาษาอังกฤษ)</text>
+    <rect x="406" y="608" width="120" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="418" y="630" font-size="13" font-weight="600" fill="#0f172a" font-family="ui-monospace,monospace">barenailspa</text>
+
+    <text x="540" y="600" font-size="11" font-weight="600" fill="#334155">ไอดี LINE OA</text>
+    <rect x="540" y="608" width="104" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="552" y="630" font-size="13" font-weight="600" fill="#0f172a" font-family="ui-monospace,monospace">@barenail</text>
+
+    <text x="406" y="662" font-size="11" font-weight="600" fill="#334155">สีของร้าน (auto)</text>
+    <rect x="406" y="670" width="160" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="418" y="692" font-size="13" font-weight="600" fill="#0f172a" font-family="ui-monospace,monospace">#A78B7A</text>
+    <rect x="572" y="670" width="34" height="34" rx="8" fill="#A78B7A"/>
+
+    <!-- Create button -->
+    <rect x="406" y="724" width="238" height="48" rx="12" fill="#10b981"/>
+    <text x="525" y="754" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">🚀 สร้างหน้าเว็บร้านตัวอย่าง</text>
+
+    <!-- Result link box -->
+    <rect x="406" y="784" width="238" height="48" rx="10" fill="#eff6ff" stroke="#3b82f6"/>
+    <text x="418" y="802" font-size="11" font-weight="700" fill="#1e40af">✓ เปิด tab ใหม่:</text>
+    <text x="418" y="820" font-size="11" font-family="ui-monospace,monospace" fill="#1e40af">bookease.co/barenailspa</text>
+  </g>
+
+  <!-- ═══ RIGHT · Menu OCR ═══ -->
+  <text x="720" y="210" font-size="12" font-weight="800" letter-spacing="2" fill="#0ea5e9">MODE 2 · STEP 2 (AT SHOP)</text>
+  <text x="720" y="236" font-size="22" font-weight="700" fill="#0f172a">ถ่ายเมนู</text>
+  <text x="720" y="258" font-size="13" fill="#64748b">ที่ร้าน · ถ่ายเมนู → AI ดึงรายการบริการ</text>
+
+  <g filter="url(#cardShadow4)">
+    <!-- Browser frame -->
+    <rect x="720" y="280" width="600" height="600" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <rect x="720" y="280" width="600" height="42" rx="14" fill="#f8fafc"/>
+    <rect x="720" y="310" width="600" height="12" fill="#f8fafc"/>
+    <circle cx="740" cy="301" r="5" fill="#ef4444"/>
+    <circle cx="756" cy="301" r="5" fill="#fbbf24"/>
+    <circle cx="772" cy="301" r="5" fill="#10b981"/>
+    <text x="1020" y="306" text-anchor="middle" font-size="11" fill="#64748b">atiz-official.github.io/bookease-tools/menu-ocr.html</text>
+
+    <!-- Tabs (Menu active) -->
+    <rect x="740" y="354" width="280" height="48" rx="100" fill="#e2e8f0"/>
+    <text x="813" y="383" text-anchor="middle" font-size="14" font-weight="600" fill="#475569">📍 ค้นหาข้อมูลร้าน</text>
+    <rect x="884" y="358" width="132" height="40" rx="100" fill="#ffffff"/>
+    <text x="950" y="383" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">📋 ถ่ายเมนู</text>
+
+    <!-- 2-column grid -->
+    <!-- Left: menu photo upload -->
+    <rect x="740" y="424" width="270" height="420" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="756" y="450" font-size="15" font-weight="700" fill="#0f172a">1. รูปเมนูของร้าน</text>
+    <text x="756" y="470" font-size="11" fill="#64748b">ถ่ายให้ชัด · เห็นบริการครบ</text>
+
+    <rect x="756" y="484" width="240" height="260" rx="12" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+    <!-- Mock menu photo -->
+    <rect x="780" y="500" width="192" height="228" rx="8" fill="#fff" stroke="#e7e5e4"/>
+    <text x="876" y="528" text-anchor="middle" font-size="11" font-weight="800" letter-spacing="2" fill="#7a5c42">— MENU —</text>
+    <line x1="800" y1="540" x2="952" y2="540" stroke="#7a5c42" stroke-width="0.5"/>
+
+    <!-- Mock menu items -->
+    <text x="800" y="560" font-size="9" fill="#1c1817">Manicure คลาสสิก</text>
+    <text x="952" y="560" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿500</text>
+    <text x="800" y="578" font-size="9" fill="#1c1817">Pedicure คลาสสิก</text>
+    <text x="952" y="578" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿600</text>
+    <text x="800" y="596" font-size="9" fill="#1c1817">Gel Polish</text>
+    <text x="952" y="596" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿800</text>
+    <text x="800" y="614" font-size="9" fill="#1c1817">Spa Manicure</text>
+    <text x="952" y="614" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿1200</text>
+    <text x="800" y="632" font-size="9" fill="#1c1817">Hand Treatment</text>
+    <text x="952" y="632" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿700</text>
+    <text x="800" y="650" font-size="9" fill="#1c1817">Foot Massage 30 min</text>
+    <text x="952" y="650" text-anchor="end" font-size="9" font-weight="700" fill="#1c1817">฿400</text>
+
+    <line x1="800" y1="678" x2="952" y2="678" stroke="#7a5c42" stroke-width="0.5"/>
+    <text x="876" y="700" text-anchor="middle" font-size="8" fill="#7a5c42">เปิดทุกวัน 10:00 - 21:00</text>
+    <text x="876" y="716" text-anchor="middle" font-size="8" font-weight="700" fill="#7a5c42">📞 02-XXX-XXXX</text>
+
+    <!-- Extract button (success state) -->
+    <rect x="756" y="760" width="240" height="48" rx="12" fill="#10b981"/>
+    <text x="876" y="790" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">✓ ดึงมาได้ 6 บริการ</text>
+
+    <!-- Right: services table -->
+    <rect x="1030" y="424" width="270" height="420" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="1046" y="450" font-size="15" font-weight="700" fill="#0f172a">2. ตรวจ + แก้รายการ</text>
+    <text x="1046" y="470" font-size="11" fill="#64748b">AI ดึงมา · แก้/ลบ/เพิ่มได้</text>
+
+    <!-- Table header -->
+    <rect x="1046" y="484" width="240" height="28" fill="#f8fafc"/>
+    <text x="1056" y="503" font-size="10" font-weight="700" fill="#475569">ชื่อบริการ</text>
+    <text x="1186" y="503" text-anchor="end" font-size="10" font-weight="700" fill="#475569">นาที</text>
+    <text x="1276" y="503" text-anchor="end" font-size="10" font-weight="700" fill="#475569">฿</text>
+
+    <!-- Service rows -->
+    <g font-size="11" font-family="'Sarabun',sans-serif">
+      <text x="1056" y="534" fill="#0f172a">Manicure คลาสสิก</text>
+      <text x="1186" y="534" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">60</text>
+      <text x="1276" y="534" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">500</text>
+      <line x1="1046" y1="544" x2="1286" y2="544" stroke="#f1f5f9"/>
+
+      <text x="1056" y="566" fill="#0f172a">Pedicure คลาสสิก</text>
+      <text x="1186" y="566" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">60</text>
+      <text x="1276" y="566" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">600</text>
+      <line x1="1046" y1="576" x2="1286" y2="576" stroke="#f1f5f9"/>
+
+      <text x="1056" y="598" fill="#0f172a">Gel Polish</text>
+      <text x="1186" y="598" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">75</text>
+      <text x="1276" y="598" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">800</text>
+      <line x1="1046" y1="608" x2="1286" y2="608" stroke="#f1f5f9"/>
+
+      <text x="1056" y="630" fill="#0f172a">Spa Manicure</text>
+      <text x="1186" y="630" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">90</text>
+      <text x="1276" y="630" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">1200</text>
+      <line x1="1046" y1="640" x2="1286" y2="640" stroke="#f1f5f9"/>
+
+      <text x="1056" y="662" fill="#0f172a">Hand Treatment</text>
+      <text x="1186" y="662" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">45</text>
+      <text x="1276" y="662" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">700</text>
+      <line x1="1046" y1="672" x2="1286" y2="672" stroke="#f1f5f9"/>
+
+      <text x="1056" y="694" fill="#0f172a">Foot Massage 30min</text>
+      <text x="1186" y="694" text-anchor="end" font-family="ui-monospace,monospace" font-weight="600" fill="#0f172a">30</text>
+      <text x="1276" y="694" text-anchor="end" font-family="ui-monospace,monospace" font-weight="700" fill="#0f172a">400</text>
+    </g>
+
+    <!-- Action buttons -->
+    <rect x="1046" y="724" width="110" height="38" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="1101" y="748" text-anchor="middle" font-size="12" font-weight="600" fill="#334155">+ เพิ่มเอง</text>
+
+    <rect x="1166" y="724" width="120" height="38" rx="10" fill="#10b981"/>
+    <text x="1226" y="748" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">🚀 ส่งเข้าระบบ</text>
+
+    <rect x="1046" y="780" width="240" height="44" rx="10" fill="#d1fae5" stroke="#10b981"/>
+    <text x="1058" y="800" font-size="11" font-weight="700" fill="#047857">✅ ดึงมาได้ 6 บริการ · ตรวจ + แก้ได้</text>
+  </g>
+</svg>
