@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BookEase · Caravan OCR Tool · Internal Staff Only</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Sarabun', 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header .badge { padding: 2px 8px; background: #fef3c7; color: #92400e; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  header .pill { padding: 2px 8px; background: #fee2e2; color: #b91c1c; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  header p { color: #64748b; margin: 4px 0 16px; font-size: 14px; }
+
+  .mode-tabs { display: flex; gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; width: fit-content; margin-bottom: 16px; }
+  .mode-tab { padding: 8px 16px; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: #475569; }
+  .mode-tab.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+  .card h3 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
+  .card .hint { font-size: 12px; color: #64748b; margin: -8px 0 12px; }
+
+  .api-key-section { background: #fef9c3; border: 1px solid #facc15; padding: 12px; border-radius: 12px; margin-bottom: 16px; }
+  .api-key-section.ok { background: #d1fae5; border-color: #10b981; }
+  .api-key-section label { font-size: 12px; font-weight: 500; }
+  .api-key-section input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 12px; margin-top: 4px; }
+
+  input[type="file"] { display: none; }
+  .upload-zone {
+    border: 2px dashed #cbd5e1; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .upload-zone:hover { border-color: #0EA5E9; background: #f0f9ff; }
+  .upload-zone.has-file { border-style: solid; border-color: #10b981; background: #f0fdf4; padding: 12px; }
+  .upload-zone img { max-width: 100%; max-height: 280px; border-radius: 8px; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-label { font-weight: 500; color: #475569; }
+  .upload-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+  button.primary {
+    background: #0EA5E9; color: #fff; border: none; padding: 10px 16px; border-radius: 10px;
+    font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; margin-top: 12px;
+  }
+  button.primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+  button.primary:hover:not(:disabled) { background: #0284c7; }
+  button.secondary {
+    background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; font-weight: 500;
+  }
+  button.secondary:hover { background: #e2e8f0; }
+  button.danger {
+    background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px; border-radius: 6px;
+    font-size: 12px; cursor: pointer;
+  }
+
+  .status { margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 13px; display: none; }
+  .status.show { display: block; }
+  .status.info { background: #dbeafe; color: #1e40af; }
+  .status.error { background: #fee2e2; color: #991b1b; }
+  .status.success { background: #d1fae5; color: #047857; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  table th { text-align: left; padding: 8px; background: #f8fafc; font-weight: 600; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
+  table td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; }
+  table input { width: 100%; padding: 4px 6px; border: 1px solid transparent; background: transparent; font-size: 13px; font-family: inherit; }
+  table input:focus { background: #fff; border-color: #0EA5E9; outline: none; border-radius: 4px; }
+  table input.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table .row-actions { text-align: right; }
+
+  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .actions button { flex: 1; min-width: 120px; }
+
+  .preview-output { background: #0f172a; color: #f1f5f9; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.4; max-height: 200px; overflow: auto; white-space: pre-wrap; }
+
+  .liff-link-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 10px; margin-top: 12px; }
+  .liff-link-box .url { font-family: monospace; font-size: 12px; color: #1e40af; word-break: break-all; }
+
+  .branding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .branding-field label { font-size: 12px; font-weight: 500; color: #475569; display: block; margin-bottom: 4px; }
+  .branding-field input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 13px; }
+  .color-swatch { display: inline-block; width: 16px; height: 16px; border-radius: 4px; vertical-align: middle; margin-right: 6px; border: 1px solid #cbd5e1; }
+
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>BookEase Caravan OCR Tool</h1>
+    <span class="badge">v0 · 2026-05-03</span>
+    <span class="pill">⚠️ Internal Staff Only · Do NOT share</span>
+  </header>
+  <p>Pre-visit prep + menu OCR for caravan field reps. Powered by Claude Vision API. Created services + branding feed into BookEase preview shop · merchant sees their shop alive in &lt;60 sec.</p>
+
+  <!-- API Key (one-time setup) -->
+  <div class="api-key-section" id="apiKeySection">
+    <label for="apiKey">🔑 Anthropic API Key</label>
+    <input id="apiKey" type="password" placeholder="sk-ant-api03-..." />
+    <div class="hint" style="margin-top: 6px;">Saved locally in your browser only. Never sent except to api.anthropic.com directly.</div>
+  </div>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="previsit">📍 Pre-visit prep</button>
+    <button class="mode-tab" data-mode="menu">📋 Menu OCR</button>
+  </div>
+
+  <!-- ========================================================================
+       MODE 1 · Pre-visit prep
+       Extract shop branding from LINE OA screenshot
+       ======================================================================== -->
+  <div id="mode-previsit">
+    <div class="grid">
+      <!-- Upload -->
+      <div class="card">
+        <h3>1. Upload screenshot ของ LINE OA</h3>
+        <div class="hint">หา LINE OA ของร้านจาก Google Maps / IG bio / ป้ายหน้าร้าน · screenshot Rich Menu page</div>
+
+        <label for="prevFile" class="upload-zone" id="prevUploadZone">
+          <div class="upload-icon">📷</div>
+          <div class="upload-label">กดเพื่อ upload screenshot</div>
+          <div class="upload-sub">JPG/PNG · &lt; 5 MB</div>
+        </label>
+        <input id="prevFile" type="file" accept="image/*" />
+
+        <button class="primary" id="prevExtractBtn" disabled>🤖 Extract shop branding</button>
+
+        <div class="status" id="prevStatus"></div>
+      </div>
+
+      <!-- Result + edit -->
+      <div class="card">
+        <h3>2. Review + edit shop branding</h3>
+        <div class="hint">AI ดึงมาให้ · staff ตรวจ + แก้ก่อน create draft preview shop</div>
+
+        <div class="branding-grid">
+          <div class="branding-field">
+            <label>ชื่อร้าน</label>
+            <input id="prevShopName" type="text" placeholder="Bare Nail Spa" />
+          </div>
+          <div class="branding-field">
+            <label>สาขา (ถ้ามี)</label>
+            <input id="prevBranchName" type="text" placeholder="สาขาเอกมัย" />
+          </div>
+          <div class="branding-field">
+            <label>shortName (URL slug)</label>
+            <input id="prevShortName" type="text" placeholder="barenailspa" />
+          </div>
+          <div class="branding-field">
+            <label>LINE OA ID</label>
+            <input id="prevLineOaId" type="text" placeholder="@barenailspa" />
+          </div>
+          <div class="branding-field">
+            <label>Brand color (hex)</label>
+            <input id="prevBrandColor" type="text" placeholder="#A78B7A" />
+          </div>
+          <div class="branding-field">
+            <label>Logo style</label>
+            <input id="prevLogoStyle" type="text" placeholder="minimalist · cream tones · serif" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" onclick="copyJSON('prevJson')">📋 Copy JSON</button>
+          <button class="primary" id="prevCreateBtn" disabled style="flex: 2;">🚀 Create preview LIFF</button>
+        </div>
+
+        <div class="liff-link-box" id="prevLiffBox" style="display: none;">
+          <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">✅ Preview LIFF URL (ready to show merchant):</div>
+          <div class="url" id="prevLiffUrl"></div>
+          <button class="secondary" style="margin-top: 8px;" onclick="copyText('prevLiffUrl')">📋 Copy URL</button>
+        </div>
+
+        <div class="preview-output" id="prevJson" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODE 2 · Menu OCR
+       Extract services from menu photo
+       ======================================================================== -->
+  <div id="mode-menu" style="display: none;">
+    <div class="grid">
+      <!-- Upload -->
+      <div class="card">
+        <h3>1. Upload รูปเมนูร้าน</h3>
+        <div class="hint">ถ่ายรูปเมนูที่ printed/laminated ในร้าน · clear lighting · all services visible</div>
+
+        <label for="menuFile" class="upload-zone" id="menuUploadZone">
+          <div class="upload-icon">📷</div>
+          <div class="upload-label">กดเพื่อ upload menu photo</div>
+          <div class="upload-sub">JPG/PNG · &lt; 5 MB</div>
+        </label>
+        <input id="menuFile" type="file" accept="image/*" />
+
+        <button class="primary" id="menuExtractBtn" disabled>🤖 Extract services (~15 sec)</button>
+
+        <div class="status" id="menuStatus"></div>
+      </div>
+
+      <!-- Services table -->
+      <div class="card">
+        <h3>2. Review + edit services</h3>
+        <div class="hint">AI ดึงมา · staff ตรวจ + แก้ก่อน publish · เพิ่มแถวด้วย "+ Add service"</div>
+
+        <div style="overflow-x: auto;">
+          <table id="menuTable">
+            <thead>
+              <tr>
+                <th style="width: 45%;">Service name</th>
+                <th style="width: 15%;">Duration (min)</th>
+                <th style="width: 15%;">Price (฿)</th>
+                <th style="width: 20%;">Category</th>
+                <th style="width: 5%;"></th>
+              </tr>
+            </thead>
+            <tbody id="menuTableBody">
+              <tr><td colspan="5" style="text-align: center; padding: 32px; color: #94a3b8;">No services yet · upload menu photo</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" onclick="addServiceRow()">+ Add service</button>
+          <button class="secondary" onclick="copyJSON('menuJson')">📋 Copy JSON</button>
+          <button class="primary" id="menuPublishBtn" disabled style="flex: 2;">🚀 Publish to shop catalog</button>
+        </div>
+
+        <div class="preview-output" id="menuJson" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>BookEase Caravan OCR Tool · v0</strong> · Internal staff only · All processing client-side or via Anthropic API only · Data never logged to Atiz servers · For caravan field rep use only<br/>
+    Spec: <code>specs/LIFF_BOOKING_SPEC_v0.md</code> · Workflow: <code>CARAVAN_PLAYBOOK.md §Phase -5 + §Phase 0</code>
+  </footer>
+</div>
+
+<script>
+  const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
+  const ANTHROPIC_VERSION = '2023-06-01';
+  const MODEL = 'claude-opus-4-7';
+  const LIFF_BASE = 'https://liff.line.me/';
+  const LIFF_ID_PLACEHOLDER = '<liff-id>';
+  const FRONTEND_BASE = 'https://bookease.co'; // for dev fallback URL
+
+  // ─────────────────────────────────────────────────────────────────
+  // API key persistence (localStorage)
+  // ─────────────────────────────────────────────────────────────────
+  const apiKeyInput = document.getElementById('apiKey');
+  const apiKeySection = document.getElementById('apiKeySection');
+  apiKeyInput.value = localStorage.getItem('bookease_anthropic_key') || '';
+  if (apiKeyInput.value) apiKeySection.classList.add('ok');
+  apiKeyInput.addEventListener('change', () => {
+    localStorage.setItem('bookease_anthropic_key', apiKeyInput.value.trim());
+    apiKeySection.classList.toggle('ok', !!apiKeyInput.value.trim());
+    updateButtonStates();
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // Mode switching
+  // ─────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mode = btn.dataset.mode;
+      document.getElementById('mode-previsit').style.display = mode === 'previsit' ? 'block' : 'none';
+      document.getElementById('mode-menu').style.display = mode === 'menu' ? 'block' : 'none';
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────────────────────────
+  function showStatus(id, msg, kind) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status show ' + kind;
+  }
+  function hideStatus(id) {
+    document.getElementById(id).className = 'status';
+  }
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        // strip the "data:image/...;base64," prefix
+        resolve(result.split(',')[1]);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function slugify(name) {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9ก-๙\s-]/gi, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 32);
+  }
+  function copyText(elementId) {
+    const el = document.getElementById(elementId);
+    const text = el.textContent || el.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = el.textContent;
+      el.textContent = '✅ Copied!';
+      setTimeout(() => { el.textContent = original; }, 1500);
+    });
+  }
+  function copyJSON(elementId) {
+    const el = document.getElementById(elementId);
+    if (el.style.display === 'none') {
+      // build JSON before copying
+      buildPreviewJson();
+      buildMenuJson();
+      el.style.display = 'block';
+    }
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      const orig = el.textContent;
+      el.textContent = '✅ Copied to clipboard!';
+      setTimeout(() => { el.textContent = orig; }, 1500);
+    });
+  }
+  async function callClaudeVision(base64Image, mediaType, prompt) {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) throw new Error('API key required');
+    const res = await fetch(ANTHROPIC_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': ANTHROPIC_VERSION,
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 2048,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Image } },
+            { type: 'text', text: prompt },
+          ],
+        }],
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`API ${res.status}: ${err}`);
+    }
+    const json = await res.json();
+    return json.content[0].text;
+  }
+  function extractJsonFromText(text) {
+    const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (codeBlockMatch) return JSON.parse(codeBlockMatch[1]);
+    const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (jsonMatch) return JSON.parse(jsonMatch[0]);
+    throw new Error('No JSON found in response');
+  }
+
+  // ─────────────────────────────────────────────────────────────────
+  // PRE-VISIT PREP MODE
+  // ─────────────────────────────────────────────────────────────────
+  const prevFile = document.getElementById('prevFile');
+  const prevUploadZone = document.getElementById('prevUploadZone');
+  const prevExtractBtn = document.getElementById('prevExtractBtn');
+  const prevCreateBtn = document.getElementById('prevCreateBtn');
+  let prevImageData = null;
+
+  prevFile.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showStatus('prevStatus', 'File too large (>5 MB)', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      prevUploadZone.innerHTML = `<img src="${ev.target.result}" alt="screenshot" />`;
+      prevUploadZone.classList.add('has-file');
+    };
+    reader.readAsDataURL(file);
+    prevImageData = { base64: await fileToBase64(file), mediaType: file.type };
+    updateButtonStates();
+  });
+
+  prevExtractBtn.addEventListener('click', async () => {
+    if (!prevImageData) return;
+    showStatus('prevStatus', '🤖 Calling Claude Vision API... (may take 5-15 sec)', 'info');
+    prevExtractBtn.disabled = true;
+    try {
+      const prompt = `This is a screenshot of a Thai service shop's LINE OA (Official Account) page. Extract the following branding info as JSON:
+
+{
+  "shopName": "...",         // shop name as visible (English or Thai)
+  "branchName": "...",       // branch/location if visible (e.g. "Ekkamai branch") or null
+  "shortName": "...",        // suggested URL slug (lowercase, no spaces, e.g. "barenailspa")
+  "lineOaId": "...",          // LINE OA handle if visible (e.g. "@barenailspa") or null
+  "brandColor": "#XXXXXX",   // primary brand color from logo/UI (hex)
+  "logoStyle": "..."          // brief logo description (e.g. "minimalist serif on cream")
+}
+
+Output ONLY valid JSON. No prose. No code fences.`;
+      const responseText = await callClaudeVision(prevImageData.base64, prevImageData.mediaType, prompt);
+      const data = extractJsonFromText(responseText);
+      document.getElementById('prevShopName').value = data.shopName || '';
+      document.getElementById('prevBranchName').value = data.branchName || '';
+      document.getElementById('prevShortName').value = data.shortName || slugify(data.shopName || '');
+      document.getElementById('prevLineOaId').value = data.lineOaId || '';
+      document.getElementById('prevBrandColor').value = data.brandColor || '';
+      document.getElementById('prevLogoStyle').value = data.logoStyle || '';
+      showStatus('prevStatus', '✅ Branding extracted · review + edit if needed', 'success');
+      updateButtonStates();
+    } catch (err) {
+      showStatus('prevStatus', `❌ ${err.message}`, 'error');
+    } finally {
+      prevExtractBtn.disabled = false;
+    }
+  });
+
+  prevCreateBtn.addEventListener('click', () => {
+    const shortName = document.getElementById('prevShortName').value.trim();
+    if (!shortName) {
+      showStatus('prevStatus', 'shortName required', 'error');
+      return;
+    }
+    const liffUrl = `${LIFF_BASE}${LIFF_ID_PLACEHOLDER}?shop=${encodeURIComponent(shortName)}`;
+    const previewUrl = `${FRONTEND_BASE}/liff/${encodeURIComponent(shortName)}`;
+    document.getElementById('prevLiffUrl').textContent = `${liffUrl}\n\n(dev preview: ${previewUrl})`;
+    document.getElementById('prevLiffBox').style.display = 'block';
+    buildPreviewJson();
+    showStatus('prevStatus', '✅ Preview ready · TODO v1: POST to backend /api/preview/shop', 'success');
+  });
+
+  function buildPreviewJson() {
+    const data = {
+      shopName: document.getElementById('prevShopName').value.trim(),
+      branchName: document.getElementById('prevBranchName').value.trim() || null,
+      shortName: document.getElementById('prevShortName').value.trim(),
+      lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
+      brandColor: document.getElementById('prevBrandColor').value.trim(),
+      logoStyle: document.getElementById('prevLogoStyle').value.trim(),
+      status: 'preview',
+      createdAt: new Date().toISOString(),
+    };
+    document.getElementById('prevJson').textContent = JSON.stringify(data, null, 2);
+  }
+
+  // ─────────────────────────────────────────────────────────────────
+  // MENU OCR MODE
+  // ─────────────────────────────────────────────────────────────────
+  const menuFile = document.getElementById('menuFile');
+  const menuUploadZone = document.getElementById('menuUploadZone');
+  const menuExtractBtn = document.getElementById('menuExtractBtn');
+  const menuPublishBtn = document.getElementById('menuPublishBtn');
+  let menuImageData = null;
+
+  menuFile.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showStatus('menuStatus', 'File too large (>5 MB)', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      menuUploadZone.innerHTML = `<img src="${ev.target.result}" alt="menu" />`;
+      menuUploadZone.classList.add('has-file');
+    };
+    reader.readAsDataURL(file);
+    menuImageData = { base64: await fileToBase64(file), mediaType: file.type };
+    updateButtonStates();
+  });
+
+  menuExtractBtn.addEventListener('click', async () => {
+    if (!menuImageData) return;
+    showStatus('menuStatus', '🤖 Calling Claude Vision API... (extracting services · ~15 sec)', 'info');
+    menuExtractBtn.disabled = true;
+    try {
+      const prompt = `This is a photo of a Thai service shop menu (likely spa, nail salon, or massage). Extract every service item as a JSON array. Each item must have:
+
+{
+  "serviceName": "...",        // exact name from menu (English or Thai)
+  "durationMin": 0,            // duration in minutes if visible (else null)
+  "price": 0,                  // price in THB as number (no commas, no currency symbol)
+  "category": "..."            // category if menu groups them (e.g. "spa", "nail") or null
+}
+
+Be thorough · extract every single service line, even bundle/combo deals. If duration ranges (e.g. "1 staff 90 mins / 2 staff 60 mins"), use the shorter one and note in serviceName.
+
+Output ONLY a JSON array. No prose. No code fences.`;
+      const responseText = await callClaudeVision(menuImageData.base64, menuImageData.mediaType, prompt);
+      const services = extractJsonFromText(responseText);
+      if (!Array.isArray(services)) throw new Error('Expected JSON array');
+      renderMenuTable(services);
+      showStatus('menuStatus', `✅ Extracted ${services.length} services · review + edit`, 'success');
+      updateButtonStates();
+    } catch (err) {
+      showStatus('menuStatus', `❌ ${err.message}`, 'error');
+    } finally {
+      menuExtractBtn.disabled = false;
+    }
+  });
+
+  function renderMenuTable(services) {
+    const body = document.getElementById('menuTableBody');
+    body.innerHTML = '';
+    services.forEach((s, idx) => {
+      addServiceRow(s);
+    });
+    if (services.length === 0) {
+      body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 32px; color: #94a3b8;">No services yet · upload menu photo</td></tr>';
+    }
+  }
+
+  function addServiceRow(s) {
+    s = s || { serviceName: '', durationMin: '', price: '', category: '' };
+    const body = document.getElementById('menuTableBody');
+    // remove placeholder row if present
+    if (body.children.length === 1 && body.children[0].children.length === 1) {
+      body.innerHTML = '';
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${(s.serviceName || '').replace(/"/g, '&quot;')}" /></td>
+      <td><input type="number" class="num" value="${s.durationMin ?? ''}" min="0" /></td>
+      <td><input type="number" class="num" value="${s.price ?? ''}" min="0" /></td>
+      <td><input type="text" value="${(s.category || '').replace(/"/g, '&quot;')}" /></td>
+      <td class="row-actions"><button class="danger" onclick="this.closest('tr').remove(); buildMenuJson();">×</button></td>
+    `;
+    tr.addEventListener('input', buildMenuJson);
+    body.appendChild(tr);
+    buildMenuJson();
+  }
+  // expose for inline onclick
+  window.addServiceRow = addServiceRow;
+
+  function buildMenuJson() {
+    const rows = document.querySelectorAll('#menuTableBody tr');
+    const services = [];
+    rows.forEach((tr, idx) => {
+      const inputs = tr.querySelectorAll('input');
+      if (inputs.length < 4) return; // placeholder row
+      const serviceName = inputs[0].value.trim();
+      if (!serviceName) return;
+      services.push({
+        serviceId: `SVC-${String(idx + 1).padStart(3, '0')}`,
+        serviceName,
+        durationMin: parseInt(inputs[1].value) || null,
+        price: parseInt(inputs[2].value) || 0,
+        category: inputs[3].value.trim() || null,
+      });
+    });
+    document.getElementById('menuJson').textContent = JSON.stringify({ services }, null, 2);
+    document.getElementById('menuPublishBtn').disabled = services.length === 0;
+  }
+
+  menuPublishBtn.addEventListener('click', () => {
+    buildMenuJson();
+    document.getElementById('menuJson').style.display = 'block';
+    showStatus('menuStatus', '✅ JSON ready · TODO v1: POST to backend /api/shop/<shortName>/services/bulk · for now copy JSON manually into shopv3 admin', 'success');
+  });
+
+  // ─────────────────────────────────────────────────────────────────
+  // Button states
+  // ─────────────────────────────────────────────────────────────────
+  function updateButtonStates() {
+    const hasKey = !!apiKeyInput.value.trim();
+    prevExtractBtn.disabled = !hasKey || !prevImageData;
+    menuExtractBtn.disabled = !hasKey || !menuImageData;
+    const shortName = document.getElementById('prevShortName').value.trim();
+    prevCreateBtn.disabled = !shortName;
+  }
+  document.querySelectorAll('#mode-previsit input').forEach(input => {
+    input.addEventListener('input', updateButtonStates);
+  });
+  updateButtonStates();
+</script>
+
+</body>
+</html>

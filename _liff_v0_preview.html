@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BookEase LIFF v0 Preview · 4-screen deposit flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Sarabun', 'Inter', system-ui, sans-serif; background: #f8fafc; }
+  .num { font-variant-numeric: tabular-nums; }
+  /* iPhone 14 Pro mock frame */
+  .phone {
+    width: 375px;
+    height: 760px;
+    background: #000;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,.05);
+    position: relative;
+  }
+  .phone-screen {
+    background: #fff;
+    border-radius: 32px;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  .notch {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 30px;
+    background: #000;
+    border-radius: 100px;
+    z-index: 50;
+  }
+  .status-bar {
+    padding: 16px 28px 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+  }
+  .liff-content { padding: 8px 16px 16px; height: calc(100% - 50px); overflow-y: auto; }
+  /* design system tokens */
+  .be-card { background: #fff; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04); }
+  .be-pill { border-radius: 9999px; padding: 8px 14px; font-size: 14px; font-weight: 500; }
+  .be-pill-default { background: #fff; border: 1px solid #e2e8f0; color: #334155; }
+  .be-pill-active { background: #0f172a; color: #fff; border: 1px solid #0f172a; }
+  /* 3-CTA color grammar from BookEase design system */
+  .cta-sky { background: #0EA5E9; color: #fff; }   /* trigger */
+  .cta-royal { background: #2D55EB; color: #fff; } /* commit */
+  .cta-electric { background: #2563EB; color: #fff; } /* action */
+  .pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .55; }
+  }
+  /* arrow between screens */
+  .arrow {
+    position: absolute;
+    top: 50%;
+    right: -36px;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 28px;
+    z-index: 10;
+  }
+  .screen-label {
+    position: absolute;
+    top: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .screen-label::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1e293b;
+  }
+  .qr-placeholder {
+    background:
+      linear-gradient(45deg, #000 25%, transparent 25%) 0 0/20px 20px,
+      linear-gradient(-45deg, #000 25%, transparent 25%) 0 10px/20px 20px,
+      linear-gradient(45deg, transparent 75%, #000 75%) 10px -10px/20px 20px,
+      linear-gradient(-45deg, transparent 75%, #000 75%) 10px 0/20px 20px,
+      #fff;
+    background-size: 8px 8px;
+  }
+  details summary { cursor: pointer; }
+  details summary::-webkit-details-marker { display: none; }
+</style>
+</head>
+<body class="text-slate-900">
+
+<header class="max-w-[1400px] mx-auto px-6 pt-10 pb-6">
+  <div class="flex items-baseline gap-3">
+    <h1 class="text-3xl font-bold tracking-tight">BookEase LIFF v0 · 4-screen deposit flow</h1>
+    <span class="text-xs px-2 py-1 bg-amber-100 text-amber-800 rounded font-medium">Wireframe · 2026-05-03</span>
+  </div>
+  <p class="text-slate-600 mt-2 max-w-3xl">
+    Customer flow: lookup ลูกค้ากดปุ่ม BOOKING ใน LINE OA ของร้าน → LIFF เปิดใน LINE app → 4 หน้า → จ่ายมัดจำ ฿200 → กลับไปแชทร้าน. <strong>ไม่ออกจาก LINE เลย.</strong>
+  </p>
+  <p class="text-slate-500 text-sm mt-2">URL ที่ replace BOOKING button ใน Rich Menu:
+    <code class="bg-slate-100 px-2 py-1 rounded text-[12px]">https://liff.line.me/&lt;liff-id&gt;?shop=barenailspa</code>
+  </p>
+</header>
+
+<!-- Flow context -->
+<section class="max-w-[1400px] mx-auto px-6 pb-12">
+  <div class="be-card p-5 mb-10">
+    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Context · ลูกค้ามาจากไหน</div>
+    <div class="flex items-center gap-4 text-sm">
+      <div class="flex-1 bg-slate-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">1. ลูกค้าอยู่ใน LINE chat ของร้าน</div>
+        <div class="text-slate-600">เห็น Rich Menu · กดปุ่ม "BOOKING"</div>
+      </div>
+      <div class="text-slate-400 text-xl">→</div>
+      <div class="flex-1 bg-blue-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">2. LIFF เปิดใน LINE app (in-app browser)</div>
+        <div class="text-slate-600">auto-auth · ไม่ต้อง OTP · ไม่ต้องสมัคร</div>
+      </div>
+      <div class="text-slate-400 text-xl">→</div>
+      <div class="flex-1 bg-emerald-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">3. หลังจ่าย → กลับมาที่แชทอัตโนมัติ</div>
+        <div class="text-slate-600">ลูกค้ารู้สึกว่าทุกอย่างเกิดใน LINE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 screens stacked horizontally -->
+<section class="max-w-[1400px] mx-auto px-6 pb-20 overflow-x-auto">
+  <div class="flex items-start gap-16 min-w-max pt-12">
+
+    <!-- ============ SCREEN 1 · Service Picker ============ -->
+    <div class="phone relative">
+      <div class="screen-label">หน้า 1 · เลือกบริการ</div>
+      <div class="arrow">›</div>
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <!-- Status bar -->
+        <div class="status-bar"><span>9:42</span><span>•••• 5G ▮</span></div>
+        <!-- Header -->
+        <div class="px-5 pb-4">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">B</div>
+            <div>
+              <div class="font-bold text-slate-900">Bare Nail Spa</div>
+              <div class="text-[11px] text-slate-500">สาขาเอกมัย</div>
+            </div>
+          </div>
+          <div class="text-sm text-slate-700 font-medium">เลือกบริการที่ต้องการจอง</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">9 บริการ · กดเพื่อจอง</div>
+        </div>
+        <!-- Service list -->
+        <div class="px-4 pb-4 space-y-2">
+          <div class="be-card p-3 flex items-center gap-3 active:bg-slate-50">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-100 to-rose-100"></div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-900 text-[14px]">Manicure express</div>
+              <div class="text-[11px] text-slate-500">30 นาที</div>
+            </div>
+            <div class="num font-bold text-slate-900">฿500</div>
+          </div>
+          <div class="be-card p-3 flex items-center gap-3">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-rose-100 to-fuchsia-100"></div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-900 text-[14px]">Manicure with normal color</div>
+              <div class="text-[11px] text-slate-500">40 นาที</div>
+            </div>
+            <div class="num font-bold text-slate-900">฿700</div>
+          </div>
+          <div class="be-card p-3 flex items-center gap-3 ring-2 ring-blue-500">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-100 to-fuchsia-200"></div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-900 text-[14px]">Manicure with gel color</div>
+              <div class="text-[11px] text-slate-500">40 นาที · ⭐ ยอดนิยม</div>
+            </div>
+            <div class="num font-bold text-blue-600">฿900</div>
+          </div>
+          <div class="be-card p-3 flex items-center gap-3">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100"></div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-900 text-[14px]">Hand spa</div>
+              <div class="text-[11px] text-slate-500">40 นาที</div>
+            </div>
+            <div class="num font-bold text-slate-900">฿600</div>
+          </div>
+          <div class="be-card p-3 flex items-center gap-3">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-100 to-cyan-100"></div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-900 text-[14px]">Foot spa</div>
+              <div class="text-[11px] text-slate-500">45 นาที</div>
+            </div>
+            <div class="num font-bold text-slate-900">฿700</div>
+          </div>
+        </div>
+        <!-- Bottom info -->
+        <div class="px-4 mt-2">
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[11px] text-amber-800 leading-snug">
+            ⭐ <strong>5 คิวแรกของวัน</strong> รับฟรี hand massage 5 นาที
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN 2 · Date/Time ============ -->
+    <div class="phone relative">
+      <div class="screen-label">หน้า 2 · วัน + เวลา</div>
+      <div class="arrow">›</div>
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:43</span><span>•••• 5G ▮</span></div>
+        <!-- Selected service summary -->
+        <div class="px-4 pt-2 pb-3">
+          <button class="text-[12px] text-blue-600 font-medium mb-2">‹ ย้อนกลับ</button>
+          <div class="be-card p-3 flex items-center gap-3 bg-slate-50">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-100 to-fuchsia-200"></div>
+            <div class="flex-1">
+              <div class="font-semibold text-[13px]">Manicure with gel color</div>
+              <div class="text-[11px] text-slate-500">40 นาที · ฿900</div>
+            </div>
+          </div>
+        </div>
+        <!-- Date picker -->
+        <div class="px-4 mb-4">
+          <div class="text-[13px] font-semibold mb-2">วันที่อยากมา</div>
+          <div class="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
+            <button class="be-pill be-pill-default whitespace-nowrap text-center min-w-[68px]">
+              <div class="text-[10px] text-slate-500">วันนี้</div>
+              <div class="font-semibold">ส 3</div>
+            </button>
+            <button class="be-pill be-pill-active whitespace-nowrap text-center min-w-[68px]">
+              <div class="text-[10px] opacity-80">พรุ่งนี้</div>
+              <div class="font-semibold">อา 4</div>
+            </button>
+            <button class="be-pill be-pill-default whitespace-nowrap text-center min-w-[68px]">
+              <div class="text-[10px] text-slate-500">จันทร์</div>
+              <div class="font-semibold">จ 5</div>
+            </button>
+            <button class="be-pill be-pill-default whitespace-nowrap text-center min-w-[68px]">
+              <div class="text-[10px] text-slate-500">อังคาร</div>
+              <div class="font-semibold">อ 6</div>
+            </button>
+            <button class="be-pill be-pill-default whitespace-nowrap text-center min-w-[68px]">
+              <div class="text-[10px] text-slate-500">พุธ</div>
+              <div class="font-semibold">พ 7</div>
+            </button>
+          </div>
+        </div>
+        <!-- Time -->
+        <div class="px-4 mb-4">
+          <div class="text-[13px] font-semibold mb-2">เวลาที่อยากมา</div>
+          <div class="flex gap-2 mb-2">
+            <button class="be-pill be-pill-default flex-1">เช้า</button>
+            <button class="be-pill be-pill-active flex-1">บ่าย</button>
+            <button class="be-pill be-pill-default flex-1">เย็น</button>
+            <button class="be-pill be-pill-default flex-1">ค่ำ</button>
+          </div>
+          <input type="text"
+                 value="14:30"
+                 class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-[14px] focus:outline-none focus:border-blue-500"
+                 placeholder="เช่น 14:30 หรือ บ่าย 2" />
+          <div class="text-[10px] text-slate-500 mt-1">ร้านจะยืนยันเวลาให้พี่ใน LINE chat ภายใน 30 นาที</div>
+        </div>
+        <!-- Continue -->
+        <div class="px-4 mt-auto pt-4">
+          <button class="cta-sky w-full rounded-xl py-3 font-bold text-[15px]">ดำเนินการต่อ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN 3 · Customer Info ============ -->
+    <div class="phone relative">
+      <div class="screen-label">หน้า 3 · ชื่อ + เบอร์</div>
+      <div class="arrow">›</div>
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:44</span><span>•••• 5G ▮</span></div>
+        <div class="px-4 pt-2 pb-3">
+          <button class="text-[12px] text-blue-600 font-medium mb-2">‹ ย้อนกลับ</button>
+          <!-- Booking summary -->
+          <div class="be-card p-3 bg-slate-50 space-y-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-100 to-fuchsia-200"></div>
+              <div class="flex-1">
+                <div class="font-semibold text-[13px]">Manicure with gel color</div>
+                <div class="text-[11px] text-slate-500">40 นาที · ฿900</div>
+              </div>
+            </div>
+            <div class="border-t border-slate-200 pt-2 flex justify-between text-[12px]">
+              <span class="text-slate-500">วันเวลา</span>
+              <span class="font-medium">อา 4 พ.ค. · บ่าย · 14:30</span>
+            </div>
+          </div>
+        </div>
+        <!-- Form -->
+        <div class="px-4 space-y-3">
+          <div>
+            <label class="text-[12px] text-slate-600 font-medium mb-1 block">ชื่อ</label>
+            <input class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-[14px]" value="สาริน ภิรมย์" />
+            <div class="text-[10px] text-slate-400 mt-0.5">ดึงจาก LINE profile · แก้ไขได้</div>
+          </div>
+          <div>
+            <label class="text-[12px] text-slate-600 font-medium mb-1 block">เบอร์โทร</label>
+            <div class="flex">
+              <div class="bg-slate-100 border border-slate-300 border-r-0 rounded-l-xl px-3 flex items-center text-[14px] font-medium">+66</div>
+              <input class="flex-1 bg-white border border-slate-300 rounded-r-xl px-3 py-2.5 text-[14px]" value="98 765 4321" />
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">ร้านจะใช้เบอร์นี้ติดต่อยืนยันการจอง</div>
+          </div>
+          <!-- Optional note -->
+          <div>
+            <label class="text-[12px] text-slate-600 font-medium mb-1 block">ข้อความเพิ่มเติม <span class="text-slate-400 font-normal">(ไม่บังคับ)</span></label>
+            <textarea rows="2"
+                      class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[13px]"
+                      placeholder="เช่น ขอช่างคนเดิม"></textarea>
+          </div>
+        </div>
+        <!-- Privacy + Continue -->
+        <div class="px-4 mt-3">
+          <div class="text-[10px] text-slate-500 leading-snug mb-3">
+            ผมยอมรับ <a class="text-blue-600 underline">นโยบายความเป็นส่วนตัว</a> และ <a class="text-blue-600 underline">เงื่อนไขการใช้งาน</a> ของ BookEase
+          </div>
+          <button class="cta-royal w-full rounded-xl py-3 font-bold text-[15px]">ไปขั้นตอนชำระเงิน</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN 4 · Payment ============ -->
+    <div class="phone relative">
+      <div class="screen-label">หน้า 4 · จ่ายมัดจำ ฿200</div>
+      <div class="arrow">›</div>
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:45</span><span>•••• 5G ▮</span></div>
+        <div class="px-4 pt-2 pb-3">
+          <button class="text-[12px] text-blue-600 font-medium mb-2">‹ ย้อนกลับ</button>
+          <!-- Booking summary collapsed -->
+          <details class="be-card p-3 bg-slate-50">
+            <summary class="flex justify-between items-center text-[12px]">
+              <div class="font-medium">Manicure with gel color · อา 4 พ.ค. 14:30</div>
+              <span class="text-slate-400">▾</span>
+            </summary>
+            <div class="mt-2 pt-2 border-t border-slate-200 space-y-1 text-[11px]">
+              <div class="flex justify-between"><span class="text-slate-500">ค่าบริการเต็ม</span><span class="num">฿900</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">มัดจำตอนนี้</span><span class="num font-semibold text-blue-600">฿200</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">เหลือจ่ายที่ร้าน</span><span class="num">฿700</span></div>
+            </div>
+          </details>
+        </div>
+        <!-- Deposit explanation -->
+        <div class="px-4 mb-3">
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-[12px] text-blue-900 font-semibold">มัดจำล็อกคิว</span>
+              <span class="num text-2xl font-bold text-blue-600">฿200</span>
+            </div>
+            <div class="text-[11px] text-blue-800 leading-snug">
+              ✓ หักจากค่าบริการหน้าร้านอัตโนมัติ<br/>
+              ✓ ถ้าร้านไม่ยืนยัน · refund อัตโนมัติ<br/>
+              ✓ ไม่ใช่ค่าใช้จ่ายเพิ่มเติม
+            </div>
+          </div>
+        </div>
+        <!-- QR -->
+        <div class="px-4 text-center">
+          <div class="text-[12px] font-semibold text-slate-700 mb-2">สแกน PromptPay เพื่อจ่าย</div>
+          <div class="qr-placeholder w-44 h-44 mx-auto rounded-lg ring-2 ring-slate-300 mb-2"></div>
+          <div class="text-[11px] text-slate-500">หรือเปิดในแอปธนาคาร</div>
+          <button class="cta-electric w-full rounded-xl py-3 font-bold text-[14px] mt-3">เปิดในแอปธนาคาร</button>
+        </div>
+        <!-- Status -->
+        <div class="px-4 mt-3 flex items-center justify-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-amber-500 pulse"></div>
+          <div class="text-[11px] text-slate-600">กำลังรอการชำระเงิน · หมดเวลาใน <span class="num font-semibold">14:32</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN 5 · Success ============ -->
+    <div class="phone relative">
+      <div class="screen-label">หน้า 5 · สำเร็จ → กลับ LINE</div>
+      <div class="notch"></div>
+      <div class="phone-screen flex flex-col">
+        <div class="status-bar"><span>9:46</span><span>•••• 5G ▮</span></div>
+        <div class="flex-1 flex flex-col items-center justify-center px-6 text-center">
+          <!-- Big checkmark -->
+          <div class="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+            <svg class="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div class="text-2xl font-bold text-slate-900 mb-1">สำเร็จแล้ว!</div>
+          <div class="text-[14px] text-slate-600 leading-snug mb-5">
+            ร้าน <strong>Bare Nail Spa</strong> จะยืนยัน<br/>
+            การจองให้พี่ใน LINE chat<br/>
+            ภายใน 30 นาที
+          </div>
+          <!-- Receipt -->
+          <div class="be-card p-3 w-full text-left bg-slate-50 mb-4">
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1.5 font-semibold">ใบเสร็จ</div>
+            <div class="space-y-1 text-[12px]">
+              <div class="flex justify-between"><span class="text-slate-500">บริการ</span><span class="font-medium">Manicure gel color</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">วันเวลา</span><span class="font-medium">อา 4 พ.ค. 14:30</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">มัดจำ</span><span class="num font-semibold text-emerald-600">฿200 · จ่ายแล้ว</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">เลขที่</span><span class="num text-slate-400">#BE-2026-001247</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="px-4 pb-6">
+          <button class="cta-electric w-full rounded-xl py-3.5 font-bold text-[15px]">
+            ← กลับไปแชทร้าน
+          </button>
+          <div class="text-[10px] text-slate-400 text-center mt-2">liff.closeWindow()</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- After-flow context -->
+<section class="max-w-[1400px] mx-auto px-6 pb-20">
+  <div class="be-card p-5">
+    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">สิ่งที่เกิดต่อ · ที่ฝั่งร้าน</div>
+    <div class="grid grid-cols-3 gap-4 text-sm">
+      <div class="bg-blue-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">1. shopv3 dashboard ของร้าน</div>
+        <div class="text-slate-600 text-[13px]">มี booking ใหม่ใน "/admin/payouts" queue · ฿200 deposit-paid</div>
+      </div>
+      <div class="bg-blue-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">2. Admin ของร้านเห็นใน LINE chat</div>
+        <div class="text-slate-600 text-[13px]">ลูกค้ายังคุยกับร้านใน LINE · admin ตอบกลับยืนยันเวลาเหมือนเดิม</div>
+      </div>
+      <div class="bg-emerald-50 rounded-lg p-3">
+        <div class="font-semibold mb-1">3. หลัง service จริง · disburse</div>
+        <div class="text-slate-600 text-[13px]">Atiz manual disburse Xendit dashboard ฿(200 - fee) เข้าบัญชีร้าน · ทดสอบแล้ว 10 วินาที</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="max-w-[1400px] mx-auto px-6 pb-12 text-[12px] text-slate-500">
+  <div class="border-t border-slate-200 pt-4">
+    <strong>Wireframe note:</strong> หน้าจริงจะใช้ design tokens ของ BookEase (Sarabun + Inter · sky/royal/electric · be-* prefix · status dots).
+    QR code จริงจาก Xendit Sessions API · auto-poll status · success state เมื่อ webhook <code>payment.paid</code> เข้า.
+    <br/><br/>
+    <strong>ขอบเขต v0:</strong> Confirm Later · ไม่ check inventory · ลูกค้าระบุเวลา preference · admin ของร้านยืนยันมือใน LINE chat.
+    <br/>
+    <strong>ขอบเขต v1+:</strong> Confirm Now · slot inventory · auto-confirm · ใช้ existing slot engine ที่ freeze ไว้.
+  </div>
+</footer>
+
+</body>
+</html>

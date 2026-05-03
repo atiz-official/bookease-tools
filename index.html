@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BookEase · Field Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Sarabun', 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+  .container { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+  h1 { margin: 0 0 8px; font-size: 26px; }
+  .sub { color: #64748b; font-size: 14px; margin: 0 0 28px; }
+  .pill { display: inline-block; padding: 2px 8px; background: #fef3c7; color: #92400e; border-radius: 6px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: middle; }
+  .card { display: block; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; text-decoration: none; color: inherit; transition: all 0.15s; }
+  .card:hover { border-color: #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,0.1); transform: translateY(-1px); }
+  .card h2 { margin: 0 0 6px; font-size: 18px; font-weight: 600; color: #0f172a; }
+  .card p { margin: 0; color: #64748b; font-size: 14px; line-height: 1.5; }
+  .card .url { margin-top: 8px; font-family: 'Inter', monospace; font-size: 12px; color: #2563eb; }
+  footer { margin-top: 32px; color: #94a3b8; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>BookEase Field Tools<span class="pill">staff</span></h1>
+    <p class="sub">Caravan onboarding tools · BYO Anthropic API key</p>
+
+    <a class="card" href="menu-ocr.html">
+      <h2>📸 Menu OCR Tool</h2>
+      <p>Upload printed menu photo → AI extracts service catalog (name · duration · price). Used in Phase 0 dopamine moment + Phase 2a onboarding.</p>
+      <div class="url">→ menu-ocr.html</div>
+    </a>
+
+    <a class="card" href="_liff_v0_preview.html">
+      <h2>📱 LIFF v0 Wireframe</h2>
+      <p>5-phone-screen reference for the customer-facing booking page. Open on laptop during caravan to demo flow.</p>
+      <div class="url">→ _liff_v0_preview.html</div>
+    </a>
+
+    <footer>atiz-official/bookease-tools · staff use</footer>
+  </div>
+</body>
+</html>
