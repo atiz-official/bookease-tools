@@ -312,8 +312,8 @@
               <input id="prevShopName" type="text" placeholder="เช่น Bare Nail Spa" />
             </div>
             <div class="branding-field">
-              <label>ชื่อย่อ (ภาษาอังกฤษ · สำหรับลิงก์)</label>
-              <input id="prevShortName" type="text" placeholder="เช่น barenailspa" />
+              <label>ชื่อย่อ (ตัวเล็กภาษาอังกฤษ · สำหรับลิงก์)</label>
+              <input id="prevShortName" type="text" placeholder="เช่น barenailspa" autocapitalize="off" autocomplete="off" spellcheck="false" />
             </div>
             <div class="branding-field">
               <label>ไอดี LINE OA</label>
@@ -667,7 +667,8 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const responseText = await callClaudeVision(prevImageData.base64, prevImageData.mediaType, prompt);
       const data = extractJsonFromText(responseText);
       document.getElementById('prevShopName').value = data.shopName || '';
-      document.getElementById('prevShortName').value = data.shortName || slugify(data.shopName || '');
+      // ALWAYS lowercase + slugify · never trust AI to return clean slug
+      document.getElementById('prevShortName').value = slugify(data.shortName || data.shopName || '');
       document.getElementById('prevLineOaId').value = data.lineOaId || '';
       document.getElementById('prevBrandColor').value = data.brandColor || '';
       showStatus('prevStatus', '✅ ดึงข้อมูลแล้ว · ตรวจ + แก้ที่ด้านขวา', 'success');
@@ -689,15 +690,24 @@ Output ONLY valid JSON. No prose. No code fences.`;
       shortField.dataset.autofilled = 'true';
     }
   });
-  // If user edits shortName manually · stop auto-fill from shopName
+  // shortName field: enforce slug rules on every keystroke (lowercase a-z, 0-9, -)
+  // Also stop auto-fill from shopName once user manually edits.
   document.getElementById('prevShortName').addEventListener('input', (e) => {
+    const cursor = e.target.selectionStart;
+    const cleaned = slugify(e.target.value);
+    if (cleaned !== e.target.value) {
+      e.target.value = cleaned;
+      const newPos = Math.min(cursor, cleaned.length);
+      try { e.target.setSelectionRange(newPos, newPos); } catch {}
+    }
     e.target.dataset.autofilled = '';
   });
 
   function collectShopData() {
     const data = {
       shopName: document.getElementById('prevShopName').value.trim(),
-      shortName: document.getElementById('prevShortName').value.trim(),
+      // Defensive: ensure slug is always slugify-clean even if input handler missed something
+      shortName: slugify(document.getElementById('prevShortName').value),
       lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
       brandColor: document.getElementById('prevBrandColor').value.trim() || '#2563eb',
       services: [],
