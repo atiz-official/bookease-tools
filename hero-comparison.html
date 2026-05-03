@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hero comparison · BookEase</title>
+<title>Style B · 3 variants · BookEase</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -26,14 +26,18 @@
     margin-bottom: 8px;
   }
   .top-card h1 {
-    margin: 0 0 8px; font-size: 22px; font-weight: 800; line-height: 1.2;
+    margin: 0 0 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 26px; font-weight: 500; line-height: 1.2;
   }
   .top-card p {
     margin: 0; font-size: 14px; color: #d1d5db; line-height: 1.5;
   }
+  .top-card strong { color: #fcd34d; }
 
   .industry-section {
-    margin-bottom: 36px;
+    margin-bottom: 44px;
   }
   .industry-name {
     font-family: 'Cormorant Garamond', serif;
@@ -44,31 +48,33 @@
   .industry-tagline {
     font-size: 11px; font-weight: 700; letter-spacing: 2px;
     color: #6b7280; text-transform: uppercase;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
-  /* ─── Hero card frame (phone-like shape) ─── */
+  .variant-label {
+    margin: 22px 0 10px;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .variant-label .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px; font-weight: 500;
+    color: #111827;
+  }
+  .variant-label .desc {
+    font-size: 11px; color: #6b7280;
+    font-weight: 500;
+  }
+
+  /* ─── Hero card frame ─── */
   .hero-card {
     width: 100%; aspect-ratio: 4/5;
     border-radius: 18px; overflow: hidden;
     position: relative;
     box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    margin-bottom: 8px;
   }
-  .hero-label {
-    font-size: 12px; font-weight: 700;
-    color: #374151; margin-bottom: 24px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .hero-label .pill {
-    background: #e5e7eb; color: #374151;
-    padding: 3px 8px; border-radius: 100px;
-    font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  }
-  .hero-label .pill.b { background: #dbeafe; color: #1e40af; }
-  .hero-label .pill.a { background: #fef3c7; color: #92400e; }
 
-  /* ─── Universal layers (used in both styles) ─── */
+  /* ─── Universal layers ─── */
   .layer { position: absolute; inset: 0; pointer-events: none; }
   .layer-warmth {
     background: radial-gradient(circle at 25% 18%, rgba(255, 248, 231, 0.45), rgba(255,248,231,0) 65%);
@@ -80,32 +86,8 @@
     opacity: 0.6;
   }
 
-  /* ─── Brand mark (letter-spaced caps) ─── */
-  .brand-mark {
-    position: absolute;
-    font-family: 'Cormorant Garamond', serif;
-    color: white; font-weight: 400;
-    letter-spacing: 4px;
-    font-size: 11px; line-height: 1;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
-    z-index: 5;
-    text-transform: uppercase;
-  }
-  .brand-mark.bottom-left {
-    bottom: 24px; left: 24px;
-    text-align: left;
-  }
-  .brand-mark.center-middle {
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    text-align: center; font-size: 14px; letter-spacing: 6px;
-  }
-  .brand-mark .est {
-    display: block; font-size: 9px; opacity: 0.7;
-    letter-spacing: 3px; margin-top: 4px;
-  }
-
   /* ═══════════════════════════════════════════════════════════
-     INDUSTRY PALETTES
+     INDUSTRY PALETTES (Style B always · no scene shapes)
      ═══════════════════════════════════════════════════════════ */
   .h-nail {
     background: linear-gradient(135deg, #f4e4d4 0%, #e8d5c4 45%, #c9a88e 100%);
@@ -119,134 +101,121 @@
   .h-salon {
     background: linear-gradient(135deg, #f5f5f5 0%, #b8b0a8 45%, #3f3a35 100%);
   }
-  .h-beauty {
-    background: linear-gradient(135deg, #fef3f2 0%, #f0d7d3 45%, #c98c80 100%);
+
+  /* ─── Brand mark base ─── */
+  .brand-mark {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    color: white; font-weight: 400;
+    letter-spacing: 4px;
+    line-height: 1; z-index: 5;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    text-transform: uppercase;
+  }
+  .brand-mark .est {
+    display: block; font-size: 9px; opacity: 0.75;
+    letter-spacing: 3px; margin-top: 6px;
+    font-weight: 400;
   }
 
-  /* Brand mark contrast variants for light bgs */
-  .h-nail .brand-mark, .h-cafe .brand-mark, .h-beauty .brand-mark {
-    color: #2a1810; text-shadow: none; opacity: 0.75;
+  /* Light bg → dark text (no shadow) */
+  .h-nail .brand-mark, .h-cafe .brand-mark {
+    color: #2a1810; text-shadow: none; opacity: 0.78;
+  }
+  .h-salon .brand-mark { color: #0a0808; text-shadow: none; opacity: 0.78; }
+
+  /* ═══════════════════════════════════════════════════════════
+     VARIANT 1 · "โปร่ง" (airy · gallery · Apple Music album)
+     Mark: center · large · letter-spaced wide
+     ═══════════════════════════════════════════════════════════ */
+  .var-airy .brand-mark {
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 16px; letter-spacing: 7px;
+  }
+  .var-airy .brand-mark .est {
+    font-size: 10px; letter-spacing: 4px; margin-top: 10px;
   }
 
   /* ═══════════════════════════════════════════════════════════
-     STYLE A · with abstract scene shapes (the SVG mockup approach)
+     VARIANT 2 · "เรียบ" (minimal · COS · Aesop · The xx)
+     Mark: bottom-left · small · hairline divider above
      ═══════════════════════════════════════════════════════════ */
-  /* Nail · Style A — bottle + plate + table */
-  .style-a .nail-shape-bottle {
-    position: absolute; left: 22%; top: 50%;
-    width: 16%; height: 22%;
-    background: rgba(255,255,255,0.85);
-    border-radius: 4px;
-    box-shadow: 0 6px 12px rgba(122,92,66,0.2);
+  .var-clean .brand-mark {
+    bottom: 32px; left: 28px;
+    text-align: left;
+    font-size: 11px; letter-spacing: 3px;
   }
-  .style-a .nail-shape-plate {
-    position: absolute; left: 56%; top: 56%;
-    width: 14%; height: 14%;
-    background: rgba(255,255,255,0.6);
-    border-radius: 50%;
+  .var-clean .brand-mark::before {
+    content: ''; display: block;
+    width: 28px; height: 1px;
+    background: currentColor; opacity: 0.55;
+    margin-bottom: 12px;
   }
-  .style-a .nail-shape-table {
-    position: absolute; left: 18%; top: 73%;
-    width: 60%; height: 3%;
-    background: rgba(122,92,66,0.4);
-    border-radius: 2px;
-    filter: blur(1px);
-  }
-
-  /* Wellness · Style A — stone + towel + plant shadow */
-  .style-a .wellness-shape-stone {
-    position: absolute; left: 28%; top: 56%;
-    width: 12%; height: 8%;
-    background: rgba(45,61,53,0.55);
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .style-a .wellness-shape-stone2 {
-    position: absolute; left: 40%; top: 52%;
-    width: 8%; height: 6%;
-    background: rgba(45,61,53,0.4);
-    border-radius: 50%;
-  }
-  .style-a .wellness-shape-towel {
-    position: absolute; left: 55%; top: 60%;
-    width: 22%; height: 8%;
-    background: rgba(255,255,255,0.55);
-    border-radius: 2px;
-  }
-
-  /* Cafe · Style A — cup + saucer + table edge */
-  .style-a .cafe-shape-cup {
-    position: absolute; left: 32%; top: 48%;
-    width: 18%; height: 22%;
-    background: rgba(42,24,16,0.7);
-    border-radius: 4px 4px 12px 12px;
-  }
-  .style-a .cafe-shape-saucer {
-    position: absolute; left: 26%; top: 68%;
-    width: 30%; height: 4%;
-    background: rgba(255,255,255,0.5);
-    border-radius: 50%;
-  }
-  .style-a .cafe-shape-bean {
-    position: absolute; left: 65%; top: 60%;
-    width: 4%; height: 5%;
-    background: rgba(42,24,16,0.6);
-    border-radius: 50%;
-  }
-
-  /* Salon · Style A — chair silhouette + mirror + counter line */
-  .style-a .salon-shape-chair {
-    position: absolute; left: 28%; top: 48%;
-    width: 22%; height: 28%;
-    background: rgba(63,58,53,0.6);
-    border-radius: 8px 8px 4px 4px;
-  }
-  .style-a .salon-shape-mirror {
-    position: absolute; left: 58%; top: 30%;
-    width: 22%; height: 30%;
-    background: rgba(245,245,245,0.4);
-    border-radius: 50%;
-  }
-  .style-a .salon-shape-counter {
-    position: absolute; left: 18%; top: 78%;
-    width: 64%; height: 1px;
-    background: rgba(63,58,53,0.5);
+  .var-clean .brand-mark .est {
+    font-size: 9px; letter-spacing: 2px; margin-top: 6px;
   }
 
   /* ═══════════════════════════════════════════════════════════
-     STYLE B · minimalist (gradient + warmth + grain + mark only)
-     The xx album cover energy · less = more
+     VARIANT 3 · "อบอุ่น" (warm boutique · luxury hotel)
+     Mark: center-lower · vignette edges · slightly richer
      ═══════════════════════════════════════════════════════════ */
-  /* Style B has NO scene shapes · just the universal layers + brand mark */
+  .var-warm {
+    position: relative;
+  }
+  .var-warm::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center 45%, transparent 35%, rgba(0,0,0,0.20) 100%);
+    pointer-events: none; z-index: 3;
+  }
+  .var-warm .brand-mark {
+    bottom: 28%; left: 50%; transform: translateX(-50%);
+    text-align: center;
+    font-size: 13px; letter-spacing: 5px;
+    z-index: 5;
+  }
+  .var-warm .brand-mark .est {
+    font-size: 9px; letter-spacing: 3px; margin-top: 7px;
+  }
+  /* Vignette darkens · push white-color marks brighter for contrast */
+  .h-wellness.var-warm .brand-mark { color: #ffffff; opacity: 1; }
+  .h-cafe.var-warm .brand-mark { color: #fff8e7; opacity: 0.95; text-shadow: none; }
 
-  /* ─── Comparison verdict box at bottom ─── */
+  /* ─── Verdict box ─── */
   .verdict {
     background: white; border: 1px solid #e5e7eb; border-radius: 16px;
-    padding: 20px; margin-top: 24px;
+    padding: 22px; margin-top: 28px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
   .verdict h2 {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 24px; font-weight: 500;
   }
   .verdict .row {
-    display: flex; gap: 12px; align-items: flex-start;
+    display: flex; gap: 12px;
     padding: 10px 0; font-size: 14px; line-height: 1.5;
     border-bottom: 1px solid #f3f4f6;
   }
   .verdict .row:last-of-type { border-bottom: none; }
-  .verdict .row .label {
-    font-weight: 700; min-width: 60px; color: #374151;
+  .verdict .label-pill {
+    flex-shrink: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px; font-weight: 500;
+    color: #111827;
+    min-width: 80px;
   }
-  .verdict .row .a-text { color: #92400e; font-weight: 600; }
-  .verdict .row .b-text { color: #1e40af; font-weight: 600; }
   .verdict .question {
-    margin-top: 16px; padding-top: 16px;
+    margin-top: 18px; padding-top: 18px;
     border-top: 1px solid #e5e7eb;
-    font-size: 15px; font-weight: 700; color: #111827;
+    font-size: 15px; font-weight: 600; color: #111827;
     text-align: center;
+  }
+  .verdict .question small {
+    display: block; margin-top: 6px;
+    font-size: 12px; color: #6b7280; font-weight: 500;
   }
 </style>
 </head>
@@ -255,9 +224,9 @@
 <div class="container">
 
   <div class="top-card">
-    <div class="eyebrow">DESIGNER TEST · DECISION</div>
-    <h1>Editorial hero · Style A หรือ B?</h1>
-    <p>เลือก style ที่ผ่าน "designer test" · merchant กล้าโชว์เพื่อนโดยไม่ต้องบอกว่า "ฉันใช้ AI"</p>
+    <div class="eyebrow">STYLE B · LOCKED · 3 VARIANTS</div>
+    <h1>Pick a feeling · per shop</h1>
+    <p>Industry palette = auto. <strong>Variant = merchant choice.</strong> 3 options ที่ทุกตัวผ่าน designer test · merchant เลือกตาม feel ของร้านตัวเอง · illusion of customization without color picker.</p>
   </div>
 
   <!-- ═══════════════ NAIL · BEAUTY ═══════════════ -->
@@ -265,30 +234,40 @@
     <h2 class="industry-name">Nail · Beauty</h2>
     <div class="industry-tagline">warm · soft · feminine</div>
 
-    <div class="hero-label">
-      <span>BARE NAIL SPA · BANGKOK</span>
-      <span class="pill a">Style A</span>
+    <div class="variant-label">
+      <span class="name">โปร่ง</span>
+      <span class="desc">airy · gallery · Apple Music cover</span>
     </div>
-    <div class="hero-card h-nail style-a">
-      <div class="nail-shape-table"></div>
-      <div class="nail-shape-bottle"></div>
-      <div class="nail-shape-plate"></div>
+    <div class="hero-card h-nail var-airy">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark bottom-left">
+      <div class="brand-mark">
         BARE NAIL SPA
         <span class="est">EST. 2024 · SUKHUMVIT</span>
       </div>
     </div>
 
-    <div class="hero-label">
-      <span>BARE NAIL SPA · BANGKOK</span>
-      <span class="pill b">Style B</span>
+    <div class="variant-label">
+      <span class="name">เรียบ</span>
+      <span class="desc">minimal · COS · Aesop</span>
     </div>
-    <div class="hero-card h-nail">
+    <div class="hero-card h-nail var-clean">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark center-middle">
+      <div class="brand-mark">
+        BARE NAIL SPA
+        <span class="est">EST. 2024 · SUKHUMVIT</span>
+      </div>
+    </div>
+
+    <div class="variant-label">
+      <span class="name">อบอุ่น</span>
+      <span class="desc">warm boutique · luxury hotel</span>
+    </div>
+    <div class="hero-card h-nail var-warm">
+      <div class="layer layer-warmth"></div>
+      <div class="layer layer-grain"></div>
+      <div class="brand-mark">
         BARE NAIL SPA
         <span class="est">EST. 2024 · SUKHUMVIT</span>
       </div>
@@ -300,30 +279,40 @@
     <h2 class="industry-name">Massage · Wellness</h2>
     <div class="industry-tagline">earthy · calm · zen</div>
 
-    <div class="hero-label">
-      <span>SABAI THAI MASSAGE · THONGLOR</span>
-      <span class="pill a">Style A</span>
+    <div class="variant-label">
+      <span class="name">โปร่ง</span>
+      <span class="desc">airy · gallery</span>
     </div>
-    <div class="hero-card h-wellness style-a">
-      <div class="wellness-shape-stone"></div>
-      <div class="wellness-shape-stone2"></div>
-      <div class="wellness-shape-towel"></div>
+    <div class="hero-card h-wellness var-airy">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark bottom-left">
+      <div class="brand-mark">
         SABAI THAI MASSAGE
         <span class="est">EST. 2018 · THONGLOR</span>
       </div>
     </div>
 
-    <div class="hero-label">
-      <span>SABAI THAI MASSAGE · THONGLOR</span>
-      <span class="pill b">Style B</span>
+    <div class="variant-label">
+      <span class="name">เรียบ</span>
+      <span class="desc">minimal · zen studio</span>
     </div>
-    <div class="hero-card h-wellness">
+    <div class="hero-card h-wellness var-clean">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark center-middle">
+      <div class="brand-mark">
+        SABAI THAI MASSAGE
+        <span class="est">EST. 2018 · THONGLOR</span>
+      </div>
+    </div>
+
+    <div class="variant-label">
+      <span class="name">อบอุ่น</span>
+      <span class="desc">warm spa retreat</span>
+    </div>
+    <div class="hero-card h-wellness var-warm">
+      <div class="layer layer-warmth"></div>
+      <div class="layer layer-grain"></div>
+      <div class="brand-mark">
         SABAI THAI MASSAGE
         <span class="est">EST. 2018 · THONGLOR</span>
       </div>
@@ -335,65 +324,85 @@
     <h2 class="industry-name">Cafe · Restaurant</h2>
     <div class="industry-tagline">warm · rich · inviting</div>
 
-    <div class="hero-label">
-      <span>SLOW BAR · ARI</span>
-      <span class="pill a">Style A</span>
+    <div class="variant-label">
+      <span class="name">โปร่ง</span>
+      <span class="desc">airy editorial · cafe magazine</span>
     </div>
-    <div class="hero-card h-cafe style-a">
-      <div class="cafe-shape-cup"></div>
-      <div class="cafe-shape-saucer"></div>
-      <div class="cafe-shape-bean"></div>
+    <div class="hero-card h-cafe var-airy">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark bottom-left">
+      <div class="brand-mark">
         SLOW BAR
         <span class="est">EST. 2021 · ARI</span>
       </div>
     </div>
 
-    <div class="hero-label">
-      <span>SLOW BAR · ARI</span>
-      <span class="pill b">Style B</span>
+    <div class="variant-label">
+      <span class="name">เรียบ</span>
+      <span class="desc">minimal · specialty coffee</span>
     </div>
-    <div class="hero-card h-cafe">
+    <div class="hero-card h-cafe var-clean">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark center-middle">
+      <div class="brand-mark">
+        SLOW BAR
+        <span class="est">EST. 2021 · ARI</span>
+      </div>
+    </div>
+
+    <div class="variant-label">
+      <span class="name">อบอุ่น</span>
+      <span class="desc">warm bistro · neighborhood</span>
+    </div>
+    <div class="hero-card h-cafe var-warm">
+      <div class="layer layer-warmth"></div>
+      <div class="layer layer-grain"></div>
+      <div class="brand-mark">
         SLOW BAR
         <span class="est">EST. 2021 · ARI</span>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════ SALON · BARBER ═══════════════ -->
+  <!-- ═══════════════ HAIR · SALON ═══════════════ -->
   <div class="industry-section">
     <h2 class="industry-name">Hair · Salon</h2>
     <div class="industry-tagline">edgy · modern · chic</div>
 
-    <div class="hero-label">
-      <span>EDGE STUDIO · SILOM</span>
-      <span class="pill a">Style A</span>
+    <div class="variant-label">
+      <span class="name">โปร่ง</span>
+      <span class="desc">airy · modern atelier</span>
     </div>
-    <div class="hero-card h-salon style-a">
-      <div class="salon-shape-chair"></div>
-      <div class="salon-shape-mirror"></div>
-      <div class="salon-shape-counter"></div>
+    <div class="hero-card h-salon var-airy">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark bottom-left">
+      <div class="brand-mark">
         EDGE STUDIO
         <span class="est">EST. 2020 · SILOM</span>
       </div>
     </div>
 
-    <div class="hero-label">
-      <span>EDGE STUDIO · SILOM</span>
-      <span class="pill b">Style B</span>
+    <div class="variant-label">
+      <span class="name">เรียบ</span>
+      <span class="desc">minimal · tight · designer</span>
     </div>
-    <div class="hero-card h-salon">
+    <div class="hero-card h-salon var-clean">
       <div class="layer layer-warmth"></div>
       <div class="layer layer-grain"></div>
-      <div class="brand-mark center-middle">
+      <div class="brand-mark">
+        EDGE STUDIO
+        <span class="est">EST. 2020 · SILOM</span>
+      </div>
+    </div>
+
+    <div class="variant-label">
+      <span class="name">อบอุ่น</span>
+      <span class="desc">warm boutique salon</span>
+    </div>
+    <div class="hero-card h-salon var-warm">
+      <div class="layer layer-warmth"></div>
+      <div class="layer layer-grain"></div>
+      <div class="brand-mark">
         EDGE STUDIO
         <span class="est">EST. 2020 · SILOM</span>
       </div>
@@ -402,18 +411,22 @@
 
   <!-- ═══════════════ VERDICT BOX ═══════════════ -->
   <div class="verdict">
-    <h2>Pros & cons</h2>
+    <h2>Lock check</h2>
     <div class="row">
-      <span class="label"><span class="a-text">Style A</span></span>
-      <span>มี depth · context (ลูกค้าเดาออกว่าเป็นร้านอะไร · เห็นวัตถุในภาพ) · risk = ดู clip-art ถ้า render ไม่ดี · ขึ้นกับ shape proportions</span>
+      <span class="label-pill">โปร่ง</span>
+      <span>brand mark center · letter-spaced wide · airy · big negative space upper. Apple Music album / Vogue cover.</span>
     </div>
     <div class="row">
-      <span class="label"><span class="b-text">Style B</span></span>
-      <span>The xx album · Apple Music · Vogue cover energy · ปลอดภัย · sophistication ผ่าน negative space + type · merchant ทำตามไม่ได้ (premium)</span>
+      <span class="label-pill">เรียบ</span>
+      <span>brand mark bottom-left · hairline divider above · negative space dominates upper 70%. COS / Aesop / The xx.</span>
+    </div>
+    <div class="row">
+      <span class="label-pill">อบอุ่น</span>
+      <span>brand mark center-lower · soft vignette darkens edges · richer feel. Boutique hotel / luxury spa.</span>
     </div>
     <div class="question">
-      เลือก A หรือ B?<br/>
-      <span style="font-size: 13px; color: #6b7280; font-weight: 500;">หรือ mix · เช่น "เอา B สำหรับทุก industry" / "A เฉพาะ cafe + salon · B เฉพาะ nail + wellness"</span>
+      เห็นพอใจ 3 variants นี้ไหม?
+      <small>(ถ้าใช่ → lock · ผมเอาเข้า liff-preview · ถ้าไม่ → ขอ feedback)</small>
     </div>
   </div>
 
