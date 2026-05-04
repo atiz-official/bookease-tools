@@ -1,0 +1,200 @@
+<svg viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg" font-family="'Sarabun','Noto Sans Thai','Sukhumvit Set',-apple-system,'SF Pro',sans-serif">
+  <defs>
+    <filter id="cardShadowR" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="1000" fill="#f1f5f9"/>
+
+  <!-- Title -->
+  <text x="60" y="60" font-size="14" font-weight="800" letter-spacing="3" fill="#5777ef">KYC REVIEW · ATIZ INTERNAL</text>
+  <text x="60" y="100" font-size="32" font-weight="800" fill="#0f172a">หน้า Atiz internal review · approve / reject / add notes</text>
+  <text x="60" y="130" font-size="15" fill="#475569">atizinfo.bookease.co (Chinnakrit's repo) · staff + accounting · ดู / verify / approve KYC submissions</text>
+  <line x1="60" y1="160" x2="1340" y2="160" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LEFT · LIST VIEW · ทั้งหมด (queue)
+       ═══════════════════════════════════════════════════════════ -->
+  <text x="60" y="200" font-size="12" font-weight="800" letter-spacing="2" fill="#94a3b8">VIEW 1 · QUEUE LIST</text>
+
+  <g filter="url(#cardShadowR)">
+    <rect x="60" y="220" width="600" height="700" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+
+    <!-- Header -->
+    <rect x="60" y="220" width="600" height="56" rx="12" fill="#f8fafc"/>
+    <rect x="60" y="260" width="600" height="16" fill="#f8fafc"/>
+    <text x="80" y="248" font-size="16" font-weight="700" fill="#0f172a">KYC submissions queue</text>
+    <text x="80" y="265" font-size="11" fill="#64748b">7 รอตรวจ · 2 ผ่านแล้ววันนี้ · 1 reject</text>
+
+    <!-- Filter pills -->
+    <rect x="80" y="296" width="98" height="28" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="129" y="313" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">⌛ รอตรวจ (7)</text>
+
+    <rect x="190" y="296" width="80" height="28" rx="14" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="230" y="313" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">✓ ผ่าน (2)</text>
+
+    <rect x="282" y="296" width="80" height="28" rx="14" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="322" y="313" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">✗ Reject (1)</text>
+
+    <rect x="374" y="296" width="80" height="28" rx="14" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="414" y="313" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">ทั้งหมด (10)</text>
+
+    <!-- Search -->
+    <rect x="80" y="338" width="560" height="36" rx="8" fill="#fafafa" stroke="#cbd5e1"/>
+    <text x="92" y="361" font-size="13" fill="#94a3b8">🔍 ค้นหาด้วย ชื่อร้าน · เลขบัญชี · เบอร์โทร</text>
+
+    <!-- Row 1 · pending -->
+    <g transform="translate(80, 388)">
+      <rect width="560" height="76" rx="10" fill="#fef3c7" stroke="#f59e0b"/>
+      <circle cx="20" cy="38" r="4" fill="#f59e0b"/>
+      <text x="36" y="28" font-size="13" font-weight="700" fill="#0f172a">Bare Nail Spa</text>
+      <text x="36" y="46" font-size="11" fill="#64748b">SPA-001 · 092-xxx-1234 · บางจาก ถ.สุขุมวิท</text>
+      <text x="36" y="62" font-size="11" fill="#92400e">ยื่น 14 พ.ค. 2569 · 10:24 · KBANK XXX-X-XXXXX-1234</text>
+      <text x="540" y="38" text-anchor="end" font-size="11" font-weight="700" fill="#92400e">⌛ รอตรวจ</text>
+      <text x="540" y="58" text-anchor="end" font-size="10" fill="#92400e">เปิดดู →</text>
+    </g>
+
+    <!-- Row 2 · pending -->
+    <g transform="translate(80, 472)">
+      <rect width="560" height="76" rx="10" fill="#fef3c7" stroke="#f59e0b"/>
+      <circle cx="20" cy="38" r="4" fill="#f59e0b"/>
+      <text x="36" y="28" font-size="13" font-weight="700" fill="#0f172a">Sabai Day Spa</text>
+      <text x="36" y="46" font-size="11" fill="#64748b">SPA-002 · 089-xxx-5678 · เอกมัย</text>
+      <text x="36" y="62" font-size="11" fill="#92400e">ยื่น 14 พ.ค. 2569 · 14:11 · SCB XXX-X-XXXXX-5678</text>
+      <text x="540" y="38" text-anchor="end" font-size="11" font-weight="700" fill="#92400e">⌛ รอตรวจ</text>
+    </g>
+
+    <!-- Row 3 · pending · NAME MISMATCH flag -->
+    <g transform="translate(80, 556)">
+      <rect width="560" height="76" rx="10" fill="#fef3c7" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="20" cy="38" r="4" fill="#dc2626"/>
+      <text x="36" y="28" font-size="13" font-weight="700" fill="#0f172a">Glow Beauty Studio</text>
+      <text x="36" y="46" font-size="11" fill="#64748b">SPA-003 · 081-xxx-2222 · ทองหล่อ</text>
+      <text x="36" y="62" font-size="11" font-weight="600" fill="#dc2626">⚠ name mismatch (60% match score) · ตรวจให้ดี</text>
+      <text x="540" y="38" text-anchor="end" font-size="11" font-weight="700" fill="#dc2626">⚠ flag</text>
+    </g>
+
+    <!-- Row 4 · verified -->
+    <g transform="translate(80, 640)">
+      <rect width="560" height="60" rx="10" fill="#d1fae5" stroke="#10b981"/>
+      <circle cx="20" cy="30" r="4" fill="#10b981"/>
+      <text x="36" y="24" font-size="13" font-weight="700" fill="#0f172a">at ease Thai Massage</text>
+      <text x="36" y="40" font-size="11" fill="#64748b">SPA-004 · 088-xxx-9999 · พร้อมพงษ์</text>
+      <text x="36" y="54" font-size="11" fill="#047857">✓ verified · 13 พ.ค. 2569 · พร้อมรับเงิน</text>
+    </g>
+
+    <!-- Row 5 · rejected -->
+    <g transform="translate(80, 708)">
+      <rect width="560" height="60" rx="10" fill="#fee2e2" stroke="#dc2626"/>
+      <circle cx="20" cy="30" r="4" fill="#dc2626"/>
+      <text x="36" y="24" font-size="13" font-weight="700" fill="#0f172a">[ทดสอบ] My Spa Test</text>
+      <text x="36" y="40" font-size="11" fill="#64748b">SPA-005 · ทดสอบ</text>
+      <text x="36" y="54" font-size="11" fill="#991b1b">✗ rejected · "เอกสารไม่ชัด ขอใหม่"</text>
+    </g>
+
+    <!-- More rows hint -->
+    <text x="360" y="800" text-anchor="middle" font-size="12" fill="#94a3b8">↓ และอื่นๆ · เลื่อนลง</text>
+
+    <!-- Stats footer -->
+    <rect x="80" y="824" width="560" height="76" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="100" y="848" font-size="11" font-weight="700" letter-spacing="1" fill="#64748b">7-DAY STATS</text>
+    <text x="100" y="868" font-size="13" fill="#0f172a">Submissions: <tspan font-weight="700">23</tspan> · Verified: <tspan font-weight="700">17</tspan> · Rejected: <tspan font-weight="700">3</tspan></text>
+    <text x="100" y="888" font-size="13" fill="#0f172a">Avg review time: <tspan font-weight="700">8 hr 24 min</tspan> (target: ≤24 hr) <tspan fill="#10b981" font-weight="700">✓ on track</tspan></text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       RIGHT · DETAIL VIEW · เปิดดู 1 ร้าน
+       ═══════════════════════════════════════════════════════════ -->
+  <text x="700" y="200" font-size="12" font-weight="800" letter-spacing="2" fill="#94a3b8">VIEW 2 · DETAIL · "เปิดดู Bare Nail Spa"</text>
+
+  <g filter="url(#cardShadowR)">
+    <rect x="700" y="220" width="640" height="780" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+
+    <!-- Header -->
+    <rect x="700" y="220" width="640" height="60" rx="12" fill="#f8fafc"/>
+    <rect x="700" y="270" width="640" height="10" fill="#f8fafc"/>
+    <text x="720" y="248" font-size="16" font-weight="700" fill="#0f172a">SPA-001 · Bare Nail Spa</text>
+    <text x="720" y="266" font-size="11" fill="#64748b">ยื่น 14 พ.ค. 2569 · 10:24 น. · status: ⌛ รอตรวจ</text>
+
+    <!-- Section: ข้อมูลร้าน -->
+    <text x="720" y="306" font-size="12" font-weight="800" letter-spacing="1" fill="#94a3b8">ข้อมูลร้าน</text>
+
+    <text x="720" y="330" font-size="11" fill="#64748b">เจ้าของ</text>
+    <text x="900" y="330" font-size="13" fill="#0f172a" font-weight="600">น.ส. สมหญิง ใจดี</text>
+
+    <text x="720" y="350" font-size="11" fill="#64748b">เบอร์</text>
+    <text x="900" y="350" font-size="13" fill="#0f172a" font-weight="600" font-family="ui-monospace,monospace">092-XXX-1234</text>
+
+    <text x="720" y="370" font-size="11" fill="#64748b">ที่อยู่</text>
+    <text x="900" y="370" font-size="13" fill="#0f172a" font-weight="600">บางจาก สุขุมวิท ซ.45</text>
+
+    <text x="720" y="390" font-size="11" fill="#64748b">LINE OA</text>
+    <text x="900" y="390" font-size="13" fill="#0f172a" font-weight="600">@barenailspa</text>
+
+    <line x1="720" y1="410" x2="1320" y2="410" stroke="#e2e8f0" stroke-dasharray="2 3"/>
+
+    <!-- Section: ข้อมูลธนาคาร -->
+    <text x="720" y="438" font-size="12" font-weight="800" letter-spacing="1" fill="#94a3b8">ข้อมูลธนาคาร</text>
+
+    <text x="720" y="462" font-size="11" fill="#64748b">ธนาคาร</text>
+    <text x="900" y="462" font-size="13" fill="#0f172a" font-weight="600">KBANK · ธนาคารกสิกรไทย</text>
+
+    <text x="720" y="482" font-size="11" fill="#64748b">เลขบัญชี</text>
+    <text x="900" y="482" font-size="13" fill="#0f172a" font-weight="700" font-family="ui-monospace,monospace">123-4-56789-0</text>
+
+    <text x="720" y="502" font-size="11" fill="#64748b">ชื่อบัญชี</text>
+    <text x="900" y="502" font-size="13" fill="#0f172a" font-weight="700">น.ส. สมหญิง ใจดี</text>
+
+    <text x="720" y="522" font-size="11" fill="#64748b">เลขผู้เสียภาษี</text>
+    <text x="900" y="522" font-size="13" fill="#94a3b8">— (ไม่ระบุ · ไม่บังคับ)</text>
+
+    <text x="720" y="544" font-size="11" font-weight="700" fill="#10b981">✓ Name match (เจ้าของ ↔ บัญชี): 100%</text>
+
+    <line x1="720" y1="564" x2="1320" y2="564" stroke="#e2e8f0" stroke-dasharray="2 3"/>
+
+    <!-- Section: เอกสาร -->
+    <text x="720" y="590" font-size="12" font-weight="800" letter-spacing="1" fill="#94a3b8">เอกสาร · click to enlarge</text>
+
+    <!-- Bank book thumbnail -->
+    <rect x="720" y="608" width="180" height="120" rx="8" fill="#fafafa" stroke="#cbd5e1"/>
+    <rect x="734" y="622" width="152" height="92" fill="#1e293b"/>
+    <text x="810" y="660" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">📒 สมุดบัญชี</text>
+    <text x="810" y="680" text-anchor="middle" font-size="10" fill="#94a3b8">หน้าแรก · KBANK</text>
+    <text x="810" y="744" text-anchor="middle" font-size="10" fill="#5777ef">[คลิกขยาย]</text>
+
+    <!-- ID card thumbnail -->
+    <rect x="912" y="608" width="180" height="120" rx="8" fill="#fafafa" stroke="#cbd5e1"/>
+    <rect x="926" y="622" width="152" height="92" fill="#1e293b"/>
+    <text x="1002" y="660" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">🪪 บัตรประชาชน</text>
+    <text x="1002" y="680" text-anchor="middle" font-size="10" fill="#94a3b8">หน้าบัตร</text>
+    <text x="1002" y="744" text-anchor="middle" font-size="10" fill="#5777ef">[คลิกขยาย]</text>
+
+    <!-- R2 link -->
+    <text x="1110" y="660" font-size="10" font-weight="700" letter-spacing="1" fill="#94a3b8">R2 STORAGE</text>
+    <text x="1110" y="680" font-size="11" fill="#475569" font-family="ui-monospace,monospace">cdn.bookease.co/</text>
+    <text x="1110" y="696" font-size="11" fill="#475569" font-family="ui-monospace,monospace">shop/SPA-001/</text>
+    <text x="1110" y="712" font-size="11" fill="#475569" font-family="ui-monospace,monospace">{uuid1}.jpg</text>
+    <text x="1110" y="728" font-size="11" fill="#475569" font-family="ui-monospace,monospace">{uuid2}.jpg</text>
+
+    <line x1="720" y1="768" x2="1320" y2="768" stroke="#e2e8f0" stroke-dasharray="2 3"/>
+
+    <!-- Section: Notes -->
+    <text x="720" y="794" font-size="12" font-weight="800" letter-spacing="1" fill="#94a3b8">บันทึกการตรวจ (ของ Atiz internal)</text>
+
+    <rect x="720" y="810" width="600" height="60" rx="8" fill="#fafafa" stroke="#cbd5e1"/>
+    <text x="734" y="832" font-size="12" fill="#94a3b8">เพิ่ม note ... (เช่น "ชื่อตรง · เอกสารชัด · approve")</text>
+
+    <!-- Approve / Reject buttons -->
+    <rect x="720" y="884" width="200" height="48" rx="24" fill="#10b981"/>
+    <text x="820" y="914" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">✓ Approve</text>
+
+    <rect x="932" y="884" width="200" height="48" rx="24" fill="#fff" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="1032" y="914" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626">✗ Reject + บันทึกเหตุผล</text>
+
+    <rect x="1144" y="884" width="176" height="48" rx="24" fill="#fff" stroke="#cbd5e1"/>
+    <text x="1232" y="914" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">⏸ ขอข้อมูลเพิ่ม</text>
+
+    <text x="1020" y="966" text-anchor="middle" font-size="11" fill="#94a3b8">หลัง approve · merchant ได้ status: verified · พร้อมรับเงินจาก booking ครั้งถัดไป</text>
+  </g>
+</svg>
