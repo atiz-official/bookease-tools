@@ -69,65 +69,39 @@
 
   .control-panel {
     max-width: 880px; margin: 0 auto;
-    padding: 24px 16px 0;
+    padding: 16px 16px 0;
   }
-  .control-panel .header h1 {
-    margin: 0 0 4px;
+  .control-panel .header-compact {
+    margin: 0 0 8px;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 28px; font-weight: 500;
+    font-size: 22px; font-weight: 500;
     color: #0f172a;
   }
-  .control-panel .header .sub {
-    margin: 0 0 22px; color: #64748b; font-size: 14px;
-  }
 
-  /* ─── URL block (Path C: honest 2-URL) ─── */
+  /* ─── URL block (compact · blend · Pass 22 Art's lock) ─── */
   .url-block {
-    background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
-    padding: 16px 18px; margin-bottom: 18px;
-  }
-  .url-block .heading {
-    font-size: 11px; font-weight: 700; letter-spacing: 2px;
-    color: #94a3b8; margin-bottom: 8px;
+    background: transparent; border: none; padding: 0;
+    margin-bottom: 10px;
   }
   .url-block .public-url {
     font-family: ui-monospace, monospace;
-    font-size: 22px; font-weight: 600;
-    color: #0f172a; padding: 10px 14px;
-    background: #f8fafc; border: 1px dashed #cbd5e1;
-    border-radius: 10px; word-break: break-all;
+    font-size: 16px; font-weight: 600;
+    color: #475569; padding: 0;
+    background: transparent; border: none;
+    word-break: break-all;
   }
-  .url-block .public-url .accent { color: var(--pal-deep); font-weight: 700; }
-  .url-block details { margin-top: 12px; }
-  .url-block details summary {
-    cursor: pointer; user-select: none;
-    font-size: 12px; color: #94a3b8; font-weight: 500;
-    list-style: none; padding: 6px 0;
-  }
-  .url-block details summary::-webkit-details-marker { display: none; }
-  .url-block details summary::before {
-    content: '▸ '; font-size: 9px; color: #cbd5e1; margin-right: 4px;
-  }
-  .url-block details[open] summary::before { content: '▾ '; }
-  .url-block .test-url {
-    font-family: ui-monospace, monospace; font-size: 11px;
-    background: #f8fafc; padding: 8px 10px; border-radius: 6px;
-    color: #475569; word-break: break-all;
-    border: 1px solid #e2e8f0; margin-top: 6px;
-  }
-  .url-block .test-url-note {
-    font-size: 11px; color: #94a3b8; margin-top: 8px;
-    line-height: 1.4;
+  .url-block .public-url .accent {
+    color: var(--pal-deep); font-weight: 700;
   }
 
-  /* ─── Industry badge (auto-detect + 1-tap cycle) ─── */
+  /* ─── Industry badge (auto-detect + 1-tap cycle · compact) ─── */
   .industry-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #fff; border: 1px solid #e2e8f0; border-radius: 100px;
-    padding: 8px 14px; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent; border: 1px solid #e2e8f0; border-radius: 100px;
+    padding: 5px 10px; font-size: 12px;
     cursor: pointer; font-family: inherit;
-    color: #475569; margin-bottom: 14px;
+    color: #475569; margin-bottom: 12px;
     transition: border-color 0.15s;
   }
   .industry-badge:hover { border-color: var(--pal-deep); }
@@ -140,18 +114,22 @@
     border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ─── Variant switcher ─── */
+  /* ─── Variant switcher (Pass 22 · moved BELOW preview) ─── */
+  .variant-tabs-wrap {
+    max-width: 880px; margin: 4px auto 0;
+    padding: 0 16px;
+  }
+  body[data-mode="share"] .variant-tabs-wrap { display: none; }
   .variant-tabs {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 8px; background: #f1f5f9;
-    padding: 6px; border-radius: 100px;
-    margin-bottom: 22px;
+    gap: 6px; background: #f1f5f9;
+    padding: 5px; border-radius: 100px;
   }
   .variant-tabs button {
     background: transparent; border: none;
-    padding: 12px 8px; border-radius: 100px;
+    padding: 10px 6px; border-radius: 100px;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 14px; font-style: italic; font-weight: 500;
+    font-size: 13px; font-style: italic; font-weight: 500;
     color: #475569; cursor: pointer;
     transition: all 0.15s;
   }
@@ -166,7 +144,7 @@
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
-    padding: 0 16px 100px;
+    padding: 0 16px 8px;
   }
   .phone {
     width: 100%; max-width: 380px;
@@ -649,14 +627,12 @@
     z-index: 50;
   }
   .action-bar button {
-    flex: 1; padding: 12px 8px;
-    border: 1px solid #e2e8f0; border-radius: 12px;
+    flex: 1; padding: 14px 8px;
+    border: 1px solid #e2e8f0; border-radius: 100px;
     background: #fff; cursor: pointer;
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    color: #1e293b; min-height: 50px;
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: #1e293b; min-height: 48px;
   }
-  .action-bar button .icon { font-size: 18px; }
   .action-bar button.primary {
     background: #0f172a; color: #fff; border-color: #0f172a;
     flex: 2;
@@ -694,37 +670,27 @@
 
 <!-- ═══════════════════════════════════════════════════════════════
      CONTROL PANEL · staff-mode only (hidden when ?mode=share)
+     Pass 22 (Art's lock 2026-05-04): ultra-compact · preview seen right away
+     - Drop sub-text + URL heading + collapsible test URL
+     - Variant selector moved BELOW preview (between phone + action bar)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="control-panel">
-  <div class="header">
-    <h1 id="controlHeader">Your shop preview</h1>
-    <p class="sub">เลือก variant แล้วส่งให้ลูกค้าลองจองได้เลย</p>
-  </div>
+  <h1 id="controlHeader" class="header-compact">Your shop preview</h1>
 
-  <!-- URL block (Path C: honest 2-URL display) -->
+  <!-- URL block · single line · no heading -->
   <div class="url-block">
-    <div class="heading">URL ของเว็บร้าน</div>
     <div class="public-url">bookease.co/<span class="accent" id="publicSlug">demoshop</span></div>
-    <details>
-      <summary>ลิงก์ทดสอบตอนนี้ (admin only)</summary>
-      <div class="test-url" id="testUrl"></div>
-      <div class="test-url-note">URL จริง <code>bookease.co/&lt;ชื่อย่อร้าน&gt;</code> จะใช้ได้เมื่อ Atiz ติดตั้งระบบครบ · ตอนนี้ใช้ลิงก์ทดสอบให้ลูกค้าลอง flow ได้</div>
-    </details>
   </div>
 
-  <!-- Industry badge -->
+  <!-- Industry badge · compact pill -->
   <button class="industry-badge" id="industryBadge" type="button">
-    <span class="label">ตรวจพบประเภท:</span>
+    <span class="label">ตรวจพบ:</span>
     <span class="industry-name" id="industryName">Beauty</span>
-    <span class="cycle-hint">↻ แตะเปลี่ยน</span>
+    <span class="cycle-hint">↻</span>
   </button>
 
-  <!-- Variant switcher -->
-  <div class="variant-tabs" role="tablist">
-    <button data-variant="airy" class="active" type="button">A · โปร่ง · Airy</button>
-    <button data-variant="relaxed" type="button">B · ผ่อนคลาย · Relaxed</button>
-    <button data-variant="luxury" type="button">C · หรูหรา · Luxury</button>
-  </div>
+  <!-- Hidden test URL for clipboard fallback (kept in DOM for share/copy logic) -->
+  <span id="testUrl" style="display: none;"></span>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -861,21 +827,23 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
+     VARIANT SWITCHER (Pass 22 · moved BELOW preview · Art's lock 2026-05-04)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="variant-tabs-wrap">
+  <div class="variant-tabs" role="tablist">
+    <button data-variant="airy" class="active" type="button">A · โปร่ง · Airy</button>
+    <button data-variant="relaxed" type="button">B · ผ่อนคลาย · Relaxed</button>
+    <button data-variant="luxury" type="button">C · หรูหรา · Luxury</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
      ACTION BAR (sticky · merchant tools · staff mode only)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="action-bar">
-  <button id="copyBtn" type="button">
-    <span class="icon">📋</span>
-    คัดลอกลิงก์
-  </button>
-  <button class="primary" id="shareBtn" type="button">
-    <span class="icon">📲</span>
-    ส่งให้ลูกค้าลองจอง
-  </button>
-  <button id="qrBtn" type="button">
-    <span class="icon">📷</span>
-    QR
-  </button>
+  <button id="copyBtn" type="button">คัดลอก</button>
+  <button class="primary" id="shareBtn" type="button">ส่งให้ลูกค้า</button>
+  <button id="qrBtn" type="button">QR</button>
 </div>
 
 <!-- QR modal -->
@@ -1217,9 +1185,9 @@
     const shareUrl = buildShareUrl();
     await navigator.clipboard.writeText(shareUrl);
     const btn = document.getElementById('copyBtn');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<span class="icon">✓</span>คัดลอกแล้ว';
-    setTimeout(() => { btn.innerHTML = orig; }, 1500);
+    const orig = btn.textContent;
+    btn.textContent = 'คัดลอกแล้ว';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
   });
 
   document.getElementById('qrBtn').addEventListener('click', () => {
