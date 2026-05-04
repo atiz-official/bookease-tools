@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Variant pill compare · BookEase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Sarabun', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a;
+  }
+  .wrap { max-width: 540px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  h1 {
+    margin: 0 0 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 26px; font-weight: 500;
+  }
+  .sub { color: #64748b; font-size: 14px; margin: 0 0 28px; }
+
+  .label-pill {
+    display: inline-block;
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .label-a { background: #fef3c7; color: #92400e; }
+  .label-b { background: #dbeafe; color: #1e40af; }
+
+  /* Mock phone preview · just the bottom half */
+  .phone-frame {
+    background: #0f172a;
+    border-radius: 28px;
+    padding: 6px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+    margin-bottom: 8px;
+  }
+  .phone-screen {
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4e4d4 0%, #e8d5c4 50%, #c9a88e 100%);
+    padding: 28px 20px 20px;
+    min-height: 320px;
+    position: relative;
+  }
+  .phone-screen .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1c1410; opacity: 0.85;
+    font-size: 16px; letter-spacing: 6px;
+    text-align: center; margin-top: 80px;
+  }
+  .phone-screen .est {
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center; margin-top: 14px;
+    font-size: 10px; letter-spacing: 3px;
+    color: #1c1410; opacity: 0.5;
+    text-transform: uppercase;
+  }
+  .phone-screen .footer-band {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #f1f5f9;
+    padding: 10px 16px;
+  }
+
+  /* ════════════════════════════════════════
+     VERSION A · 2-line · minimal · NO pill bg
+     ════════════════════════════════════════ */
+  .va-tabs {
+    display: flex; justify-content: center; align-items: center;
+    gap: 0;
+  }
+  .va-tabs button {
+    flex: 1;
+    background: transparent; border: none;
+    padding: 4px 4px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer; line-height: 1.15;
+    color: #94a3b8;
+  }
+  .va-tabs button .th {
+    display: block;
+    font-size: 15px; font-weight: 500;
+    color: inherit;
+  }
+  .va-tabs button .en {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 11px;
+    margin-top: 1px;
+    color: #cbd5e1;
+  }
+  .va-tabs button.active .th { color: #0f172a; font-weight: 700; }
+  .va-tabs button.active .en { color: #64748b; }
+  .va-divider {
+    color: #cbd5e1; font-size: 13px; user-select: none;
+    padding: 0 1px;
+  }
+
+  /* ════════════════════════════════════════
+     VERSION B · 1-line Thai 16px · WITH pill bg
+     ════════════════════════════════════════ */
+  .vb-tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 4px; background: #f1f5f9;
+    padding: 4px; border-radius: 100px;
+  }
+  .vb-tabs button {
+    background: transparent; border: none;
+    padding: 8px 6px; border-radius: 100px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px; font-weight: 500;
+    color: #94a3b8; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .vb-tabs button:hover { color: #475569; }
+  .vb-tabs button.active {
+    background: #fff; color: #0f172a; font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .verdict {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 14px; padding: 18px;
+    margin-top: 28px;
+    font-size: 14px; line-height: 1.5;
+  }
+  .verdict h2 {
+    margin: 0 0 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px; font-weight: 500;
+  }
+  .verdict .row {
+    padding: 6px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .verdict .row:last-of-type { border-bottom: none; }
+  .verdict .row strong { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Variant pill compare</h1>
+  <p class="sub">เลือก style ที่ feel ดีที่สุด · ติดอยู่กับ design language ของ BookEase</p>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- VERSION A · 2-line · minimal · Apple News -->
+  <!-- ════════════════════════════════════════ -->
+  <span class="label-pill label-a">VERSION A · 2-LINE · NO PILL BG</span>
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="brand-name">BARE NAIL SPA</div>
+      <div class="est">EST. 2024 · SUKHUMVIT</div>
+      <div class="footer-band">
+        <div class="va-tabs">
+          <button class="active">
+            <span class="th">โปร่ง</span>
+            <span class="en">Airy</span>
+          </button>
+          <span class="va-divider" aria-hidden="true">·</span>
+          <button>
+            <span class="th">ผ่อนคลาย</span>
+            <span class="en">Relaxed</span>
+          </button>
+          <span class="va-divider" aria-hidden="true">·</span>
+          <button>
+            <span class="th">หรูหรา</span>
+            <span class="en">Luxury</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- VERSION B · 1-line · Thai pill bg -->
+  <!-- ════════════════════════════════════════ -->
+  <span class="label-pill label-b" style="margin-top: 32px;">VERSION B · 1-LINE THAI 16PX · WITH PILL BG</span>
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="brand-name">BARE NAIL SPA</div>
+      <div class="est">EST. 2024 · SUKHUMVIT</div>
+      <div class="footer-band">
+        <div class="vb-tabs">
+          <button class="active">โปร่ง</button>
+          <button>ผ่อนคลาย</button>
+          <button>หรูหรา</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <h2>Pros & cons</h2>
+    <div class="row">
+      <strong>Version A</strong> · ✓ ใจเย็น · ✓ Apple News feel · ✓ subtle · ✓ Thai+Latin · ✗ taller (~50-58px) · ✗ ต้องอ่าน 2 บรรทัด · ✗ active state แค่ bold · อาจไม่ obvious
+    </div>
+    <div class="row">
+      <strong>Version B</strong> · ✓ เตี้ยกว่า (~44px) · ✓ Thai ใหญ่อ่านง่าย · ✓ active = pill ขาว obvious · ✗ มี container pill · ✗ ดู nav bar · ✗ เลื่อน eye flow ขึ้นจาก phone preview
+    </div>
+    <div class="row">
+      <em>เลือก Version ไหน?</em> ตอบ A / B / mix · ผม ship ทันที.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
