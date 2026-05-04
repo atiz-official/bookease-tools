@@ -114,7 +114,7 @@
     border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ─── Variant switcher (Pass 22 · single line · Thai 16px · Art's lock) ─── */
+  /* ─── Variant switcher (Pass 22 · Version A · Apple News tab style · Art's lock) ─── */
   .variant-tabs-wrap {
     position: fixed; left: 0; right: 0;
     bottom: 72px;
@@ -130,25 +130,34 @@
   body[data-mode="share"] .variant-tabs-wrap { display: none; }
   .variant-tabs {
     display: flex; justify-content: center; align-items: center;
-    gap: 4px;
+    gap: 0;
   }
   .variant-tabs button {
     flex: 1;
     background: transparent; border: none;
-    padding: 8px 4px; border-radius: 8px;
+    padding: 4px 4px;
     font-family: 'Sarabun', sans-serif;
-    font-size: 16px; font-weight: 500;
-    color: #94a3b8; cursor: pointer;
-    transition: all 0.15s;
-    line-height: 1.1;
+    cursor: pointer; line-height: 1.15;
+    color: #94a3b8;
   }
-  .variant-tabs button:hover { color: #475569; }
-  .variant-tabs button.active {
-    color: #0f172a; font-weight: 700;
+  .variant-tabs button .th {
+    display: block;
+    font-size: 15px; font-weight: 500;
+    color: inherit;
   }
+  .variant-tabs button .en {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 11px;
+    margin-top: 1px;
+    color: #cbd5e1;
+  }
+  .variant-tabs button:hover .th { color: #475569; }
+  .variant-tabs button.active .th { color: #0f172a; font-weight: 700; }
+  .variant-tabs button.active .en { color: #64748b; }
   .variant-tabs .variant-divider {
-    color: #cbd5e1; font-size: 14px; user-select: none;
-    padding: 0 2px;
+    color: #cbd5e1; font-size: 13px; user-select: none;
+    padding: 0 1px;
   }
 
   /* ════════════════════════════════════════════════════════════════
@@ -156,7 +165,7 @@
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
-    padding: 0 16px 120px; /* clear sticky variant-tabs (~44px) + action-bar (~72px) */
+    padding: 0 16px 140px; /* clear sticky variant-tabs (~52px · 2-line Apple News) + action-bar (~72px) */
   }
   body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
   .phone {
@@ -844,11 +853,20 @@
      ═══════════════════════════════════════════════════════════════ -->
 <div class="variant-tabs-wrap">
   <div class="variant-tabs" role="tablist">
-    <button data-variant="airy" class="active" type="button">โปร่ง</button>
+    <button data-variant="airy" class="active" type="button">
+      <span class="th">โปร่ง</span>
+      <span class="en">Airy</span>
+    </button>
     <span class="variant-divider" aria-hidden="true">·</span>
-    <button data-variant="relaxed" type="button">ผ่อนคลาย</button>
+    <button data-variant="relaxed" type="button">
+      <span class="th">ผ่อนคลาย</span>
+      <span class="en">Relaxed</span>
+    </button>
     <span class="variant-divider" aria-hidden="true">·</span>
-    <button data-variant="luxury" type="button">หรูหรา</button>
+    <button data-variant="luxury" type="button">
+      <span class="th">หรูหรา</span>
+      <span class="en">Luxury</span>
+    </button>
   </div>
 </div>
 
