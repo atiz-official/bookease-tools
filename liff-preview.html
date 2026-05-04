@@ -373,6 +373,28 @@
     font-size: 14px;
   }
 
+  /* Pass 22 (Art's lock 2026-05-04) · open hours trust badge */
+  .cover-open-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 100px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    margin: 0 auto 16px; font-size: 13px;
+    color: #047857; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .cover-open-badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #10b981;
+    animation: pulse-dot 2s infinite;
+  }
+  .cover-open-badge .label { color: #047857; font-weight: 500; }
+  .cover-open-badge .hours { color: #065f46; font-weight: 700; }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
   /* ════════════════════════════════════════════════════════════════
      SHARED · screen titles + buttons + cards
      ════════════════════════════════════════════════════════════════ */
@@ -739,6 +761,11 @@
           <div class="cover-cta">
             <h2 id="coverShopName">Demoshop</h2>
             <p>กดเลือกบริการ · ล็อกคิวด้วยมัดจำ ฿200</p>
+            <div id="coverOpenBadge" class="cover-open-badge" style="display: none;">
+              <span class="dot"></span>
+              <span class="label">เปิดวันนี้</span>
+              <span class="hours" id="coverOpenHours">10:00 - 21:00</span>
+            </div>
             <button class="cta-btn" data-go="2" type="button">เริ่มจอง</button>
           </div>
         </div>
@@ -955,6 +982,13 @@
   document.getElementById('brandTagline').textContent =
     currentScript === 'thai' ? '· จองออนไลน์ ·' : '— a quiet ritual';
 
+  // Pass 22 · open hours badge on cover screen (trust signal)
+  if (shopData.openTime && shopData.openTime.includes('-')) {
+    const [open, close] = shopData.openTime.split('-').map(s => s.trim());
+    document.getElementById('coverOpenHours').textContent = `${open} - ${close}`;
+    document.getElementById('coverOpenBadge').style.display = 'inline-flex';
+  }
+
   // Cover CTA shop name
   document.getElementById('coverShopName').textContent = shopData.shopName;
   document.getElementById('confirmShopName').textContent = shopData.shopName;
@@ -1028,7 +1062,37 @@
     });
     dateRow.appendChild(pill);
   }
-  ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'].forEach(t => {
+  // Pass 22 (Art's lock 2026-05-04) · smart mock slots within shop's openTime
+  // - Reads shopData.openTime if provided (from OCR auto-detect or manual entry)
+  // - Generates slots every 1.5 hr from open to (close - service buffer)
+  // - Falls back to fixed mock if openTime not provided
+  // - NO real availability tracking · still mock · just respects shop hours
+  function parseHourMinutes(hhmm) {
+    const m = /^(\d{1,2}):(\d{2})$/.exec((hhmm || '').trim());
+    if (!m) return null;
+    return parseInt(m[1]) + parseInt(m[2]) / 60;
+  }
+  function formatHour(decimalHr) {
+    const h = Math.floor(decimalHr);
+    const m = Math.round((decimalHr - h) * 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+  function generateSmartSlots(openTime, serviceBuffer = 1) {
+    const fixedFallback = ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'];
+    if (!openTime || !openTime.includes('-')) return fixedFallback;
+    const [openStr, closeStr] = openTime.split('-').map(s => s.trim());
+    const open = parseHourMinutes(openStr);
+    const close = parseHourMinutes(closeStr);
+    if (open === null || close === null || close <= open) return fixedFallback;
+    const lastStartable = close - serviceBuffer; // last slot start time · finishes by close
+    const slots = [];
+    for (let t = open; t <= lastStartable + 0.001; t += 1.5) {
+      slots.push(formatHour(t));
+      if (slots.length >= 8) break; // cap mobile UX
+    }
+    return slots.length > 0 ? slots : fixedFallback;
+  }
+  generateSmartSlots(shopData.openTime).forEach(t => {
     const pill = document.createElement('div');
     pill.className = 'time-pill';
     pill.textContent = t;
