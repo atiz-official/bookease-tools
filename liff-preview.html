@@ -165,7 +165,7 @@
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
-    padding: 0 16px 140px; /* clear sticky variant-tabs (~52px · 2-line Apple News) + action-bar (~72px) */
+    padding: 0 16px calc(140px + env(safe-area-inset-bottom)); /* clear variant-tabs (~52px) + action-bar (~76px + safe-area) */
   }
   body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
   .phone {
@@ -640,26 +640,48 @@
   /* ════════════════════════════════════════════════════════════════
      STICKY ACTION BAR · staff mode (merchant share/copy/QR)
      ════════════════════════════════════════════════════════════════ */
+  /* ─── Action bar · Apple-grade · single primary + QR icon (Art's lock 2026-05-04) ─── */
   .action-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: #fff; border-top: 1px solid #e2e8f0;
-    padding: 12px 16px;
-    display: flex; gap: 8px; max-width: 880px; margin: 0 auto;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    display: flex; gap: 10px; align-items: center;
+    max-width: 880px; margin: 0 auto;
     z-index: 50;
   }
-  .action-bar button {
-    flex: 1; padding: 14px 8px;
-    border: 1px solid #e2e8f0; border-radius: 100px;
-    background: #fff; cursor: pointer;
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    color: #1e293b; min-height: 48px;
+  .action-bar .primary {
+    flex: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    background: #0f172a; color: #fff;
+    border: none; border-radius: 100px;
+    font-family: inherit; font-size: 16px; font-weight: 700;
+    letter-spacing: 0.2px;
+    min-height: 52px; padding: 0 24px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 20px rgba(15, 23, 42, 0.14);
   }
-  .action-bar button.primary {
-    background: #0f172a; color: #fff; border-color: #0f172a;
-    flex: 2;
+  .action-bar .primary:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
   }
-  .action-bar button:active { transform: translateY(1px); }
+  .action-bar .primary .arrow { flex-shrink: 0; transform: translateY(-1px); }
+  .action-bar .icon-btn {
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff; color: #0f172a;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: transform 0.12s ease, background-color 0.12s ease;
+  }
+  .action-bar .icon-btn:hover { background: #f8fafc; }
+  .action-bar .icon-btn:active { transform: scale(0.94); }
 
   /* ─── QR modal ─── */
   .modal-backdrop {
@@ -683,8 +705,10 @@
     .header-compact { font-size: 20px; }
     .url-block .public-url { font-size: 15px; }
     /* Variant pills: keep 16px Thai for legibility (Pass 22 lock) */
-    .phone-wrap { padding: 0 8px 120px; }
-    .action-bar button { font-size: 13px; }
+    .phone-wrap { padding: 0 8px calc(140px + env(safe-area-inset-bottom)); }
+    .action-bar { gap: 8px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
+    .action-bar .primary { font-size: 15px; min-height: 50px; padding: 0 20px; }
+    .action-bar .icon-btn { width: 50px; height: 50px; }
   }
 </style>
 </head>
@@ -874,9 +898,21 @@
      ACTION BAR (sticky · merchant tools · staff mode only)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="action-bar">
-  <button id="copyBtn" type="button">คัดลอก</button>
-  <button class="primary" id="shareBtn" type="button">ส่งให้ลูกค้า</button>
-  <button id="qrBtn" type="button">QR</button>
+  <button class="primary" id="shareBtn" type="button">
+    <span>ส่งให้ลูกค้า</span>
+    <svg class="arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7 17 17 7"/>
+      <path d="M9 7h8v8"/>
+    </svg>
+  </button>
+  <button class="icon-btn" id="qrBtn" type="button" aria-label="แสดง QR สำหรับสแกน">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
+      <path d="M14 14h3v3M20 14h1M14 20h1M17 17v4M20 17h1"/>
+    </svg>
+  </button>
 </div>
 
 <!-- QR modal -->
@@ -1214,14 +1250,8 @@
     }
   });
 
-  document.getElementById('copyBtn').addEventListener('click', async () => {
-    const shareUrl = buildShareUrl();
-    await navigator.clipboard.writeText(shareUrl);
-    const btn = document.getElementById('copyBtn');
-    const orig = btn.textContent;
-    btn.textContent = 'คัดลอกแล้ว';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  });
+  // copyBtn removed (Apple lock 2026-05-04) · Web Share OS sheet has Copy natively
+  // Desktop fallback: shareBtn writes to clipboard if navigator.share is missing
 
   document.getElementById('qrBtn').addEventListener('click', () => {
     const shareUrl = buildShareUrl();
