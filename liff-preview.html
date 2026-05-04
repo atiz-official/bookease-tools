@@ -114,14 +114,14 @@
     border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ─── Variant switcher (Pass 22 · sticky · floats above action bar) ─── */
+  /* ─── Variant switcher (Pass 22 · single line · Thai 16px · Art's lock) ─── */
   .variant-tabs-wrap {
     position: fixed; left: 0; right: 0;
-    bottom: 72px; /* sits above action bar */
+    bottom: 72px;
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
     border-top: 1px solid #f1f5f9;
-    padding: 8px 16px;
+    padding: 6px 16px 8px;
     z-index: 49;
   }
   .variant-tabs-wrap > .variant-tabs {
@@ -129,22 +129,26 @@
   }
   body[data-mode="share"] .variant-tabs-wrap { display: none; }
   .variant-tabs {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 6px; background: #f1f5f9;
-    padding: 5px; border-radius: 100px;
+    display: flex; justify-content: center; align-items: center;
+    gap: 4px;
   }
   .variant-tabs button {
+    flex: 1;
     background: transparent; border: none;
-    padding: 10px 6px; border-radius: 100px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px; font-style: italic; font-weight: 500;
-    color: #475569; cursor: pointer;
+    padding: 8px 4px; border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px; font-weight: 500;
+    color: #94a3b8; cursor: pointer;
     transition: all 0.15s;
+    line-height: 1.1;
   }
-  .variant-tabs button:hover { color: #0f172a; }
+  .variant-tabs button:hover { color: #475569; }
   .variant-tabs button.active {
-    background: #0f172a; color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    color: #0f172a; font-weight: 700;
+  }
+  .variant-tabs .variant-divider {
+    color: #cbd5e1; font-size: 14px; user-select: none;
+    padding: 0 2px;
   }
 
   /* ════════════════════════════════════════════════════════════════
@@ -152,7 +156,7 @@
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
-    padding: 0 16px 140px; /* clear sticky variant-tabs (~64px) + action-bar (~72px) */
+    padding: 0 16px 120px; /* clear sticky variant-tabs (~44px) + action-bar (~72px) */
   }
   body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
   .phone {
@@ -840,9 +844,11 @@
      ═══════════════════════════════════════════════════════════════ -->
 <div class="variant-tabs-wrap">
   <div class="variant-tabs" role="tablist">
-    <button data-variant="airy" class="active" type="button">A · โปร่ง · Airy</button>
-    <button data-variant="relaxed" type="button">B · ผ่อนคลาย · Relaxed</button>
-    <button data-variant="luxury" type="button">C · หรูหรา · Luxury</button>
+    <button data-variant="airy" class="active" type="button">โปร่ง</button>
+    <span class="variant-divider" aria-hidden="true">·</span>
+    <button data-variant="relaxed" type="button">ผ่อนคลาย</button>
+    <span class="variant-divider" aria-hidden="true">·</span>
+    <button data-variant="luxury" type="button">หรูหรา</button>
   </div>
 </div>
 
