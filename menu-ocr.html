@@ -341,6 +341,15 @@
               <button class="secondary" onclick="copyText('prevLiffUrl')" style="flex: 1;">📋 คัดลอกลิงก์</button>
               <button class="primary" id="prevOpenPreviewBtn" style="flex: 1; margin-top: 0;">🚀 เปิดดูใหม่</button>
             </div>
+
+            <!-- ↓↓↓ commit step · ส่งข้อมูลไป signup จริง ↓↓↓ -->
+            <div style="border-top: 1px dashed #cbd5e1; margin-top: 14px; padding-top: 14px;">
+              <div style="font-size: 13px; color: #047857; font-weight: 700; margin-bottom: 8px;">เมื่อร้านอนุมัติ → เปิดร้านจริง:</div>
+              <button class="primary green" id="prevOpenSignupBtn" style="margin-top: 0;">✓ ตกลง · เปิดร้านที่ shop.bookease.co</button>
+              <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
+                ปุ่มนี้จะส่งชื่อร้าน · slug · เวลาเปิด · บริการทั้งหมด ไปที่ <b>shop.bookease.co/signup</b> โดยอัตโนมัติ · ร้านยืนยันด้วย OTP เพียงครั้งเดียว
+              </div>
+            </div>
           </div>
         </div>
 
@@ -749,6 +758,13 @@ Output ONLY valid JSON. No prose. No code fences.`;
     return fullPath + '?data=' + encodeURIComponent(encodeShopData(data));
   }
 
+  // Path A locked 2026-05-04 · caravan target = shop.bookease.co (Bitbucket master)
+  // NOT shopv3 · NEVER shopv3
+  // Per memory feedback_caravan_uses_shop_bookease_not_shopv3.md
+  function buildShopSignupUrl(data) {
+    return 'https://shop.bookease.co/signup?prefill=' + encodeURIComponent(encodeShopData(data));
+  }
+
   function doCreatePreview() {
     const data = collectShopData();
     if (!data.shopName) {
@@ -774,6 +790,22 @@ Output ONLY valid JSON. No prose. No code fences.`;
 
   prevCreateBtn.addEventListener('click', doCreatePreview);
   document.getElementById('prevOpenPreviewBtn').addEventListener('click', doCreatePreview);
+
+  // Open real signup at shop.bookease.co with prefilled data
+  document.getElementById('prevOpenSignupBtn').addEventListener('click', () => {
+    const data = collectShopData();
+    if (!data.shopName) {
+      showStatus('prevStatus', '⚠️ ใส่ชื่อร้านก่อน', 'error');
+      return;
+    }
+    if (!data.shortName) {
+      showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
+      return;
+    }
+    const signupUrl = buildShopSignupUrl(data);
+    window.open(signupUrl, '_blank', 'noopener');
+    showStatus('prevStatus', '✅ เปิด shop.bookease.co/signup ใน tab ใหม่ · ร้านยืนยัน OTP ก็จบ', 'success');
+  });
 
   // ═══════════════════════════════════════════════════════════════
   // MODE 2 · ถ่ายเมนู
