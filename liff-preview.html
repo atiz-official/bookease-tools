@@ -114,10 +114,18 @@
     border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ─── Variant switcher (Pass 22 · moved BELOW preview) ─── */
+  /* ─── Variant switcher (Pass 22 · sticky · floats above action bar) ─── */
   .variant-tabs-wrap {
-    max-width: 880px; margin: 4px auto 0;
-    padding: 0 16px;
+    position: fixed; left: 0; right: 0;
+    bottom: 72px; /* sits above action bar */
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #f1f5f9;
+    padding: 8px 16px;
+    z-index: 49;
+  }
+  .variant-tabs-wrap > .variant-tabs {
+    max-width: 880px; margin: 0 auto;
   }
   body[data-mode="share"] .variant-tabs-wrap { display: none; }
   .variant-tabs {
@@ -144,8 +152,9 @@
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
     display: flex; justify-content: center;
-    padding: 0 16px 8px;
+    padding: 0 16px 140px; /* clear sticky variant-tabs (~64px) + action-bar (~72px) */
   }
+  body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
   .phone {
     width: 100%; max-width: 380px;
     background: #000; border-radius: 36px;
