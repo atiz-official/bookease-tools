@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>💸 Money Shot · BookEase merchant dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --green: #10b981;
+    --green-dark: #059669;
+    --money: #16a34a;
+    --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.10);
+  }
+  body {
+    margin: 0;
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .wrap {
+    max-width: 480px; margin: 0 auto;
+    padding: 12px 12px 110px;
+    position: relative;
+  }
+  .header {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .header .shop-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--text);
+    margin: 0 0 4px;
+  }
+  .header .stats {
+    display: flex; gap: 12px; align-items: baseline;
+    font-size: 13px; color: var(--muted);
+  }
+  .header .stats strong {
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .header .date {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  .booking {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex; gap: 14px; align-items: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .booking .time {
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    width: 64px;
+    flex-shrink: 0;
+  }
+  .booking .body { flex: 1; min-width: 0; }
+  .booking .body .customer {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .booking .body .service {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .booking .price {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--money);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* NEW booking · slide in from top with green halo */
+  .booking.is-new {
+    animation: slideInTop 0.5s ease-out;
+    border: 2px solid var(--green);
+    background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%);
+  }
+  .booking.is-new .badge-new {
+    background: var(--green);
+    color: #fff;
+    font-size: 9px; letter-spacing: 1px;
+    padding: 2px 6px; border-radius: 4px;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  @keyframes slideInTop {
+    from { transform: translateY(-30px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Top toast · the money moment hero */
+  .money-toast {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-dark) 100%);
+    color: #fff;
+    padding: 24px 20px;
+    text-align: center;
+    transform: translateY(-100%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+  }
+  .money-toast.show { transform: translateY(0); }
+  .money-toast .pop {
+    font-size: 14px; font-weight: 600; opacity: 0.92;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .money-toast .amount {
+    font-size: 56px;
+    font-weight: 800;
+    margin: 6px 0 4px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
+  }
+  .money-toast .meta {
+    font-size: 14px; opacity: 0.95;
+    font-weight: 500;
+  }
+
+  /* Confetti canvas · top layer */
+  #confetti {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  /* Sticky simulate button at bottom */
+  .sim-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    display: flex; gap: 10px; align-items: center;
+    max-width: 480px; margin: 0 auto;
+    z-index: 50;
+  }
+  .sim-btn {
+    flex: 1;
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-dark) 100%);
+    color: #fff;
+    border: none; border-radius: 100px;
+    font-family: inherit; font-size: 16px; font-weight: 700;
+    min-height: 52px; padding: 0 24px;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.18), 0 6px 20px rgba(5, 150, 105, 0.30);
+  }
+  .sim-btn:active { transform: scale(0.97); }
+  .sim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .sim-btn .label { display: inline-flex; align-items: center; gap: 8px; }
+
+  /* First-tap unlock prompt */
+  .unlock-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.94);
+    color: #fff;
+    z-index: 200;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    cursor: pointer;
+  }
+  .unlock-overlay .emoji { font-size: 64px; margin-bottom: 16px; }
+  .unlock-overlay h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px;
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+  .unlock-overlay p {
+    font-size: 14px; opacity: 0.75; text-align: center;
+    margin: 0 0 24px; line-height: 1.6;
+  }
+  .unlock-overlay .pulse-cta {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    50%      { box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- First-tap audio unlock (Web autoplay policy workaround) -->
+<div class="unlock-overlay" id="unlockOverlay">
+  <div class="emoji">🔔</div>
+  <h1>เปิดเสียงแจ้งเตือน</h1>
+  <p>กดปุ่มข้างล่าง 1 ครั้ง · เพื่อให้ browser ปลดล็อคเสียง<br>(ทำครั้งเดียวต่อเซสชัน)</p>
+  <button class="pulse-cta" id="unlockBtn">▶ เริ่มใช้งาน</button>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<!-- Money toast (slide-in from top) -->
+<div class="money-toast" id="moneyToast">
+  <div class="pop">💸 มัดจำเข้าแล้ว</div>
+  <div class="amount">+฿200</div>
+  <div class="meta" id="toastMeta">คุณมิ้นต์ · Gel Polish · พรุ่งนี้ 14:00</div>
+</div>
+
+<div class="wrap">
+  <!-- Shop dashboard mock -->
+  <div class="header">
+    <h1 class="shop-name">Bare Nail Spa</h1>
+    <div class="stats">
+      <span><strong id="todayCount">8</strong> นัด</span>
+      <span>·</span>
+      <span><strong id="todayRevenue">฿9,800</strong> วันนี้</span>
+    </div>
+    <div class="date">ส 5 พ.ค. 69 · ตารางวันนี้</div>
+  </div>
+
+  <!-- Booking list (mock data + new bookings prepended on simulate) -->
+  <div id="bookingList">
+    <div class="booking">
+      <div class="time">10:00</div>
+      <div class="body">
+        <div class="customer">คุณนา</div>
+        <div class="service">Manicure คลาสสิก · 60 นาที</div>
+      </div>
+      <div class="price">฿500</div>
+    </div>
+    <div class="booking">
+      <div class="time">11:30</div>
+      <div class="body">
+        <div class="customer">คุณกี้</div>
+        <div class="service">Gel Polish · 75 นาที</div>
+      </div>
+      <div class="price">฿800</div>
+    </div>
+    <div class="booking">
+      <div class="time">14:00</div>
+      <div class="body">
+        <div class="customer">คุณแอน</div>
+        <div class="service">Spa Manicure · 90 นาที</div>
+      </div>
+      <div class="price">฿1,200</div>
+    </div>
+    <div class="booking">
+      <div class="time">16:00</div>
+      <div class="body">
+        <div class="customer">คุณตูน</div>
+        <div class="service">Pedicure · 60 นาที</div>
+      </div>
+      <div class="price">฿600</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sticky simulate button (caravan demo trigger) -->
+<div class="sim-bar">
+  <button class="sim-btn" id="simBtn">
+    <span class="label">💸 จำลอง booking ใหม่ (฿200)</span>
+  </button>
+</div>
+
+<audio id="orderSound" preload="auto" src="sounds/bookease-order.m4a"></audio>
+
+<script>
+(function () {
+  // ──────────────────────────────────────────────────────────────────────
+  // CONFIG
+  // ──────────────────────────────────────────────────────────────────────
+  const SOUND_VOLUME = 1.0;
+  const TOAST_DURATION_MS = 3000;
+  const VIBRATE_PATTERN = [80, 50, 80, 50, 120];
+  const CONFETTI_DURATION_MS = 2400;
+
+  // Pool of fake customers/services for the demo · cycled per simulate
+  const MOCK_CUSTOMERS = [
+    { name: 'คุณมิ้นต์', service: 'Gel Polish',          duration: '75 นาที', time: '15:30', deposit: 200 },
+    { name: 'คุณเบนซ์',  service: 'Spa Manicure',        duration: '90 นาที', time: '16:30', deposit: 200 },
+    { name: 'คุณนิว',    service: 'Pedicure คลาสสิก',     duration: '60 นาที', time: '17:00', deposit: 200 },
+    { name: 'คุณบีม',    service: 'Manicure + Gel',      duration: '90 นาที', time: '18:00', deposit: 200 },
+    { name: 'คุณแก้ม',   service: 'Eyebrow Tinting',     duration: '45 นาที', time: '13:00', deposit: 200 },
+  ];
+  let mockIndex = 0;
+  let queue = [];
+  let queueRunning = false;
+
+  // ──────────────────────────────────────────────────────────────────────
+  // AUDIO · unlock + play
+  // ──────────────────────────────────────────────────────────────────────
+  const audio = document.getElementById('orderSound');
+  audio.volume = SOUND_VOLUME;
+
+  function unlockAudio() {
+    // Play silent then return to normal · primes audio context
+    const v = audio.volume;
+    audio.volume = 0;
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = v;
+    }).catch(() => {
+      audio.volume = v; // even if blocked · the user-gesture is now banked
+    });
+  }
+
+  function playDing() {
+    audio.currentTime = 0;
+    audio.play().catch((err) => {
+      console.warn('audio play failed', err);
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // CONFETTI · canvas-based · pure JS · ~80 lines
+  // ──────────────────────────────────────────────────────────────────────
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let confettiAnimating = false;
+
+  function sizeCanvas() {
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+
+  const COLORS = ['#10b981', '#34d399', '#f59e0b', '#fb923c', '#ec4899', '#a855f7', '#3b82f6'];
+
+  function spawnConfetti(count = 90) {
+    const W = window.innerWidth;
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: W / 2 + (Math.random() - 0.5) * 80,
+        y: -20 - Math.random() * 100,
+        vx: (Math.random() - 0.5) * 8,
+        vy: 2 + Math.random() * 6,
+        size: 6 + Math.random() * 8,
+        color: COLORS[(Math.random() * COLORS.length) | 0],
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.4,
+        life: 0,
+        maxLife: 100 + Math.random() * 80,
+      });
+    }
+    if (!confettiAnimating) {
+      confettiAnimating = true;
+      requestAnimationFrame(tickConfetti);
+    }
+    // Stop spawning · particles drain naturally
+    setTimeout(() => {}, CONFETTI_DURATION_MS);
+  }
+
+  function tickConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = particles.filter((p) => p.life < p.maxLife);
+    particles.forEach((p) => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.18; // gravity
+      p.rot += p.vrot;
+      const opacity = 1 - p.life / p.maxLife;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = opacity;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+    if (particles.length > 0) {
+      requestAnimationFrame(tickConfetti);
+    } else {
+      confettiAnimating = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // VIBRATE (Android only · iOS Safari ignores)
+  // ──────────────────────────────────────────────────────────────────────
+  function vibrate() {
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(VIBRATE_PATTERN); } catch {}
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // MONEY MOMENT · the dopamine cascade
+  // ──────────────────────────────────────────────────────────────────────
+  function fireMoneyMoment(booking) {
+    // 1. Sound (immediate)
+    playDing();
+    // 2. Vibrate
+    vibrate();
+    // 3. Confetti
+    spawnConfetti(120);
+    // 4. Toast · slide in
+    const toast = document.getElementById('moneyToast');
+    document.getElementById('toastMeta').textContent =
+      `${booking.name} · ${booking.service} · ${booking.time}`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), TOAST_DURATION_MS);
+    // 5. Booking row · prepend with NEW badge
+    prependBooking(booking);
+    // 6. Update header stats (count + revenue)
+    bumpStats(booking.deposit);
+  }
+
+  function prependBooking(booking) {
+    const list = document.getElementById('bookingList');
+    const row = document.createElement('div');
+    row.className = 'booking is-new';
+    row.innerHTML = `
+      <div class="time">${booking.time}</div>
+      <div class="body">
+        <div class="customer">${booking.name}<span class="badge-new">NEW</span></div>
+        <div class="service">${booking.service} · ${booking.duration} · มัดจำ ฿${booking.deposit}</div>
+      </div>
+      <div class="price">฿${booking.deposit}</div>
+    `;
+    list.insertBefore(row, list.firstChild);
+    // Demote NEW state after 8 sec
+    setTimeout(() => row.classList.remove('is-new'), 8000);
+  }
+
+  function bumpStats(deposit) {
+    const countEl = document.getElementById('todayCount');
+    const revEl = document.getElementById('todayRevenue');
+    countEl.textContent = (parseInt(countEl.textContent) + 1).toString();
+    const cur = parseInt(revEl.textContent.replace(/[^\d]/g, ''));
+    revEl.textContent = '฿' + (cur + deposit).toLocaleString('en-US');
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // QUEUE · burst-handling · 1.5s gap between rapid simulates
+  // ──────────────────────────────────────────────────────────────────────
+  function enqueue(booking) {
+    queue.push(booking);
+    if (!queueRunning) processQueue();
+  }
+  function processQueue() {
+    if (queue.length === 0) {
+      queueRunning = false;
+      return;
+    }
+    queueRunning = true;
+    const next = queue.shift();
+    fireMoneyMoment(next);
+    setTimeout(processQueue, 1500);
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // UI WIRE
+  // ──────────────────────────────────────────────────────────────────────
+  document.getElementById('unlockBtn').addEventListener('click', () => {
+    unlockAudio();
+    document.getElementById('unlockOverlay').style.display = 'none';
+  });
+  document.getElementById('unlockOverlay').addEventListener('click', () => {
+    // Tap anywhere on overlay also unlocks (mobile-friendly)
+    unlockAudio();
+    document.getElementById('unlockOverlay').style.display = 'none';
+  });
+
+  document.getElementById('simBtn').addEventListener('click', () => {
+    const booking = MOCK_CUSTOMERS[mockIndex % MOCK_CUSTOMERS.length];
+    mockIndex++;
+    enqueue(booking);
+  });
+
+  // URL param · auto-fire on load (e.g. ?fire=1 or ?fire=3 for 3 in a row)
+  const params = new URLSearchParams(window.location.search);
+  const autoFire = parseInt(params.get('fire') || '0');
+  if (autoFire > 0) {
+    // Wait for unlock first
+    document.getElementById('unlockBtn').addEventListener('click', () => {
+      setTimeout(() => {
+        for (let i = 0; i < autoFire; i++) {
+          setTimeout(() => {
+            const booking = MOCK_CUSTOMERS[(mockIndex + i) % MOCK_CUSTOMERS.length];
+            enqueue(booking);
+          }, i * 1800);
+        }
+        mockIndex += autoFire;
+      }, 600);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
