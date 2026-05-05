@@ -418,7 +418,7 @@
 
           <div class="actions">
             <button class="secondary" onclick="addServiceRow()">+ เพิ่มบริการเอง</button>
-            <button class="primary green" id="menuPublishBtn" disabled style="flex: 2;">🚀 ส่งบริการเข้าระบบ</button>
+            <button class="primary green" id="menuPublishBtn" disabled style="flex: 2;">🚀 ส่งบริการเข้าร้าน</button>
           </div>
 
           <div class="status" id="menuPublishStatus"></div>
@@ -601,7 +601,7 @@
         throw new Error(`⏳ ใช้งานเยอะเกินไป · รอสักครู่แล้วลองใหม่`);
       }
       if (bodyText.includes('overloaded')) {
-        throw new Error(`🌐 Anthropic ระบบขัดข้อง · ลองใหม่อีก 30 วินาที`);
+        throw new Error(`🌐 Anthropic ขัดข้อง · ลองใหม่อีก 30 วินาที`);
       }
       if (res.status === 401) throw new Error(`Key ใช้ไม่ได้ (401) · เช็คว่า paste ครบไม่มี space · หรือ key ถูก revoke แล้ว · ${snippet}`);
       if (res.status === 404) throw new Error(`Model ไม่พบ (404) · account อาจไม่มี ${MODEL} · ${snippet}`);
