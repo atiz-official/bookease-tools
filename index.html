@@ -3,220 +3,552 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>เปิดร้านบน BookEase · ดูเว็บร้านคุณใน 60 วินาที</title>
-<meta name="description" content="พิมพ์ชื่อร้าน · เห็นเว็บร้านคุณทันที · ฟรี · ไม่ต้องสมัคร" />
+<title>BookEase · ทำเว็บร้าน + ระบบจองใน LINE · ฟรี</title>
+<meta name="description" content="AI ออกแบบเว็บร้านให้ใน 60 วินาที · ระบบจอง + รับมัดจำผ่าน LINE chat ของร้าน · ฟรี · ไม่ต้องสมัคร" />
+<meta property="og:title" content="ทำเว็บร้าน + ระบบจองใน LINE · ฟรี" />
+<meta property="og:description" content="AI ออกแบบให้ใน 60 วินาที · ลูกค้าจ่ายมัดจำผ่าน LINE · ไม่ต้องลง app" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  * { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
-    margin: 0;
-    font-family: 'Sarabun', system-ui, sans-serif;
-    background: linear-gradient(180deg, #fef3f2 0%, #f0ebe3 50%, #f4e4d4 100%);
-    color: #1c1410;
-    min-height: 100vh;
+    font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #0a0a0a;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
   }
-  .wrap {
-    max-width: 540px; margin: 0 auto;
-    padding: 60px 24px 60px;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ─────────── Top bar ─────────── */
+  .nav {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-weight: 500;
-    font-size: 28px;
-    color: #5a463a;
-    margin: 0 0 8px;
+  .nav-brand {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0a0a0a;
   }
-  .tag {
-    font-size: 13px; color: #7a5c42;
-    letter-spacing: 4px; text-transform: uppercase;
-    margin: 0 0 32px;
+  .nav-brand .by {
+    font-weight: 400;
+    color: #888;
+    font-size: 13px;
+    margin-left: 4px;
+  }
+  .nav-login {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: background 0.15s ease;
+  }
+  .nav-login:hover { background: rgba(0, 0, 0, 0.04); }
+
+  /* ─────────── Hero ─────────── */
+  .hero {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
   }
 
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: clamp(28px, 6.5vw, 42px);
-    line-height: 1.15;
-    margin: 0 0 16px;
-    color: #1c1410;
-  }
-  h1 em {
-    font-style: italic;
-    color: #c98c80;
-  }
-  .subtitle {
-    font-size: 16px; line-height: 1.6;
-    color: #5a463a;
-    margin: 0 0 40px;
-    max-width: 420px;
-  }
-
-  /* The single input · the "do it" moment */
-  .input-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(28, 20, 16, 0.05),
-                0 12px 40px rgba(28, 20, 16, 0.08);
-    border: 1px solid rgba(28, 20, 16, 0.06);
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0a0a0a;
+    background: #f4f4f4;
+    padding: 8px 14px;
+    border-radius: 100px;
     margin-bottom: 28px;
   }
-  .input-card label {
-    display: block;
-    font-size: 13px; font-weight: 600;
-    color: #5a463a;
-    margin-bottom: 10px;
-    letter-spacing: 0.3px;
-  }
-  .input-card input {
-    width: 100%;
-    background: #fff;
-    border: 1px solid rgba(28, 20, 16, 0.12);
-    border-radius: 14px;
-    padding: 16px 18px;
-    font-family: inherit;
-    font-size: 18px; font-weight: 500;
-    color: #1c1410;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  .input-card input:focus {
-    outline: none;
-    border-color: #c98c80;
-    box-shadow: 0 0 0 4px rgba(201, 140, 128, 0.15);
-  }
-  .input-card .helper {
-    font-size: 12px; color: #7a5c42;
-    opacity: 0.75;
-    margin-top: 8px;
-  }
-
-  .cta {
-    width: 100%;
-    background: #1c1410;
-    color: #fef3f2;
-    border: none;
-    border-radius: 100px;
-    padding: 18px 28px;
-    font-family: inherit;
-    font-size: 17px; font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
-    box-shadow: 0 1px 2px rgba(28, 20, 16, 0.12),
-                0 8px 24px rgba(28, 20, 16, 0.18);
-  }
-  .cta:active { transform: scale(0.97); }
-  .cta:disabled {
-    opacity: 0.4; cursor: not-allowed;
-    transform: none;
-  }
-  .cta .arrow { display: inline-block; margin-left: 6px; transition: transform 0.2s ease; }
-  .cta:not(:disabled):hover .arrow { transform: translateX(3px); }
-
-  /* Trust strip */
-  .trust {
-    margin-top: 40px;
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  .trust .item {
-    display: flex; align-items: flex-start; gap: 12px;
-    font-size: 14px;
-  }
-  .trust .icon {
-    flex-shrink: 0;
-    width: 28px; height: 28px;
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
     border-radius: 50%;
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 1px 2px rgba(28, 20, 16, 0.08);
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
   }
-  .trust .text { color: #5a463a; line-height: 1.5; }
-  .trust .text strong { color: #1c1410; font-weight: 600; }
 
-  /* Pass 25 v3 (2026-05-05 PM) · skip-link removed · preview-first is THE
-     default · don't offer escape · Art's lock per
-     feedback_remote_caravan_share_to_friend.md */
-
-  /* Already have a shop · login link */
-  .login-link {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #5a463a;
+  .hero h1 {
+    margin: 0 0 24px;
+    font-weight: 800;
+    font-size: clamp(40px, 6.2vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: #0a0a0a;
   }
-  .login-link a {
-    color: #1c1410;
-    text-decoration: none;
+  .hero h1 em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: #06c755;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub {
+    margin: 0 0 36px;
+    font-size: 18px;
+    line-height: 1.55;
+    color: #525252;
+    max-width: 520px;
+  }
+  .hero-sub strong {
+    color: #0a0a0a;
     font-weight: 600;
   }
 
+  /* ─────────── Form row ─────────── */
+  .form-row {
+    display: flex;
+    gap: 8px;
+    background: #f4f4f4;
+    border-radius: 100px;
+    padding: 6px;
+    max-width: 520px;
+    transition: box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .form-row:focus-within {
+    background: #fff;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.08),
+      0 8px 28px rgba(0, 0, 0, 0.12);
+  }
+  .form-row input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    color: #0a0a0a;
+    outline: none;
+    min-width: 0;
+  }
+  .form-row input::placeholder { color: #a1a1a1; font-weight: 400; }
+  .form-row .cta {
+    background: #0a0a0a;
+    color: #ffffff;
+    border: none;
+    border-radius: 100px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    transition: transform 0.12s ease, opacity 0.15s ease;
+    white-space: nowrap;
+  }
+  .form-row .cta:active { transform: scale(0.96); }
+  .form-row .cta:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .hero-secondary {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #737373;
+  }
+  .hero-secondary a {
+    color: #0a0a0a;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 1px;
+  }
+  .hero-secondary a:hover { border-bottom-color: #0a0a0a; }
+
+  /* ─────────── Phone mockup ─────────── */
+  .mockup-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 600px;
+  }
+  .phone {
+    position: relative;
+    width: 320px;
+    height: 640px;
+    border-radius: 48px;
+    background: #0a0a0a;
+    padding: 12px;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.1),
+      0 40px 80px -20px rgba(0, 0, 0, 0.3),
+      0 20px 40px -10px rgba(0, 0, 0, 0.15);
+    transform: rotate(-3deg);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .phone:hover { transform: rotate(0deg) translateY(-4px); }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg,
+        #2a1810 0%,
+        #5a3825 35%,
+        #b87750 70%,
+        #e6c4a8 100%);
+    position: relative;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 28px;
+    background: #0a0a0a;
+    border-radius: 100px;
+    z-index: 10;
+  }
+  .phone-status {
+    padding: 18px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 5;
+  }
+  .phone-cover {
+    flex: 1;
+    padding: 60px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .phone-shop-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+  .phone-shop-name {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .phone-shop-meta {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-bottom: 28px;
+  }
+  .phone-cta {
+    background: #ffffff;
+    color: #0a0a0a;
+    border-radius: 100px;
+    padding: 14px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .phone-services {
+    background: rgba(0, 0, 0, 0.92);
+    padding: 18px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .phone-service {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+  }
+  .phone-service-name { opacity: 0.85; }
+  .phone-service-price {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Floating chips */
+  .chip {
+    position: absolute;
+    border-radius: 100px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 20;
+  }
+  .chip-deposit {
+    top: 60px; right: -14px;
+    background: #06c755;
+    color: #fff;
+    transform: rotate(4deg);
+  }
+  .chip-saved {
+    bottom: 80px; left: -28px;
+    background: #ffffff;
+    color: #0a0a0a;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transform: rotate(-5deg);
+  }
+  .chip-saved .check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  /* ─────────── Proof strip ─────────── */
+  .proof {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 32px 28px;
+    background: #fafafa;
+  }
+  .proof-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .proof-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .proof-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #737373;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .proof-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0a0a0a;
+    line-height: 1.3;
+  }
+
+  /* ─────────── Footer ─────────── */
+  .foot {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 32px 28px 40px;
+    font-size: 13px;
+    color: #a1a1a1;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .foot a { color: #525252; }
+  .foot a:hover { color: #0a0a0a; }
+
+  /* ─────────── Mobile ─────────── */
+  @media (max-width: 880px) {
+    .nav { padding: 18px 20px; }
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 56px;
+      padding: 24px 20px 64px;
+    }
+    .mockup-wrap {
+      min-height: 540px;
+      order: 2;
+    }
+    .phone {
+      width: 280px;
+      height: 560px;
+    }
+    .phone-shop-name { font-size: 30px; }
+    .chip-deposit { right: -8px; }
+    .chip-saved { left: -8px; }
+    .proof-inner {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .form-row {
+      flex-direction: column;
+      background: transparent;
+      padding: 0;
+      gap: 10px;
+    }
+    .form-row input {
+      background: #f4f4f4;
+      border-radius: 14px;
+      padding: 16px 20px;
+      font-size: 17px;
+    }
+    .form-row:focus-within { box-shadow: none; background: transparent; }
+    .form-row:focus-within input {
+      background: #fff;
+      box-shadow: 0 0 0 1px #0a0a0a;
+    }
+    .form-row .cta {
+      border-radius: 14px;
+      padding: 16px 24px;
+      font-size: 16px;
+    }
+  }
+
   @media (max-width: 480px) {
-    .wrap { padding: 40px 20px; }
-    .input-card { padding: 18px; }
+    .hero h1 { font-size: 38px; }
+    .hero-sub { font-size: 16px; }
+    .phone {
+      width: 260px;
+      height: 520px;
+      transform: rotate(-2deg);
+    }
+    .chip-deposit { top: 40px; padding: 8px 12px; font-size: 12px; }
+    .chip-saved { bottom: 60px; padding: 8px 12px; font-size: 12px; }
   }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="brand">BookEase</div>
-  <div class="tag">FOR THAI SERVICE SHOPS</div>
+<!-- ─────────── Top bar ─────────── -->
+<nav class="nav">
+  <div class="nav-brand">BookEase<span class="by">by Atiz</span></div>
+  <a class="nav-login" href="https://shop.bookease.co/login">เข้าสู่ระบบ</a>
+</nav>
 
-  <h1>ดูเว็บร้านคุณ <em>ใน 60 วินาที</em></h1>
-  <p class="subtitle">
-    พิมพ์ชื่อร้าน · เห็นทันที · <strong>ฟรี</strong> · ไม่ต้องสมัคร
-  </p>
+<!-- ─────────── Hero ─────────── -->
+<section class="hero">
 
-  <div class="input-card">
-    <label for="shopName">ชื่อร้านของคุณ</label>
-    <input type="text" id="shopName" placeholder="เช่น Bare Nail Spa · ร้านนวดสุขใจ" autofocus autocomplete="off" />
-  </div>
-
-  <button class="cta" id="goBtn" disabled>
-    เปิดดู <span class="arrow">→</span>
-  </button>
-
-  <!-- Phase C (Pass 25 v6 · 2026-05-05 PM · Art's lock):
-       AI OCR power-option · users with menu/LINE OA photos can let AI
-       pre-fill faster than typing services manually. Subtle link · doesn't
-       distract from primary type-name flow. -->
-  <div style="text-align: center; margin-top: -6px; font-size: 13px;">
-    <a href="menu-ocr.html" style="color: #c98c80; text-decoration: none;">
-      📷 หรือถ่ายรูปเมนูร้าน · AI กรอกให้
-    </a>
-  </div>
-
-  <div class="trust">
-    <div class="item">
-      <div class="icon">🎨</div>
-      <div class="text"><strong>6 สไตล์</strong> · เปลี่ยนได้สด · เลือกอันที่ใช่</div>
+  <div class="hero-text">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      ออกแบบให้ฟรี · ใช้กับร้านที่อยู่ใน LINE OA
     </div>
-    <div class="item">
-      <div class="icon">💸</div>
-      <div class="text">ลูกค้าจ่าย <strong>มัดจำ ฿200</strong> · ล็อกคิวทันที</div>
-    </div>
-    <div class="item">
-      <div class="icon">🚀</div>
-      <div class="text">ใน <strong>LINE chat</strong> ของร้าน · ไม่ต้องลง app</div>
+
+    <h1>
+      ทำเว็บร้าน<br>
+      ลูกค้าจองใน&nbsp;<em>LINE</em>
+    </h1>
+
+    <p class="hero-sub">
+      AI ออกแบบเว็บร้านให้ใน <strong>60 วินาที</strong> ·
+      ลูกค้าจ่าย <strong>มัดจำ ฿200</strong> ผ่าน LINE chat
+      ของร้าน · ล็อกคิวทันที · <strong>ไม่ต้องสมัคร</strong>
+    </p>
+
+    <form class="form-row" id="goForm" autocomplete="off">
+      <input type="text" id="shopName" placeholder="พิมพ์ชื่อร้านของคุณ" autofocus />
+      <button type="submit" class="cta" id="goBtn" disabled>เปิดดู</button>
+    </form>
+
+    <div class="hero-secondary">
+      มีรูปเมนูร้าน?
+      <a href="menu-ocr.html">📷 ให้ AI กรอกบริการให้</a>
     </div>
   </div>
 
-  <div class="login-link">
-    เปิดร้านแล้ว? <a href="https://shop.bookease.co/login">เข้าสู่ระบบ</a>
+  <!-- Phone mockup -->
+  <div class="mockup-wrap">
+
+    <div class="chip chip-deposit">
+      ✓ จ่ายมัดจำ ฿200
+    </div>
+
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-status">
+          <span>9:41</span>
+          <span>●●●●&nbsp;&nbsp;100%</span>
+        </div>
+
+        <div class="phone-cover">
+          <div class="phone-shop-tag">Luxury × Nail</div>
+          <div class="phone-shop-name">Bare Nail<br>Spa</div>
+          <div class="phone-shop-meta">เปิด 10:00 — 21:00 · ทองหล่อ 13</div>
+          <div class="phone-cta">จองคิว · จ่ายมัดจำ ฿200</div>
+        </div>
+
+        <div class="phone-services">
+          <div class="phone-service">
+            <span class="phone-service-name">Gel manicure</span>
+            <span class="phone-service-price">฿890</span>
+          </div>
+          <div class="phone-service">
+            <span class="phone-service-name">Spa pedicure</span>
+            <span class="phone-service-price">฿1,290</span>
+          </div>
+          <div class="phone-service">
+            <span class="phone-service-name">Nail art design</span>
+            <span class="phone-service-price">฿1,490</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chip chip-saved">
+      <span class="check">✓</span>
+      บันทึกแล้ว · ฟรี
+    </div>
+
   </div>
-</div>
+</section>
+
+<!-- ─────────── Proof strip ─────────── -->
+<section class="proof">
+  <div class="proof-inner">
+    <div class="proof-item">
+      <div class="proof-label">ใช้กับ</div>
+      <div class="proof-value">LINE OA ของร้าน · ไม่ต้องลง app</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-label">ค่าใช้จ่าย</div>
+      <div class="proof-value">ฟรี · จ่ายเฉพาะค่าธรรมเนียม 4.9% ต่อบุ๊กกิ้ง</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-label">เริ่มยังไง</div>
+      <div class="proof-value">พิมพ์ชื่อร้าน · เห็นเว็บทันที · ไม่ต้องสมัคร</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── Footer ─────────── -->
+<footer class="foot">
+  <div>BookEase by Atiz · © 2026</div>
+  <div>
+    <a href="https://shop.bookease.co/login">เข้าสู่ระบบ</a>
+    &nbsp;·&nbsp;
+    <a href="menu-ocr.html">เครื่องมือ AI</a>
+  </div>
+</footer>
 
 <script>
 (function () {
   const input = document.getElementById('shopName');
   const btn = document.getElementById('goBtn');
+  const form = document.getElementById('goForm');
 
   function slugify(s) {
     return (s || '')
@@ -246,15 +578,11 @@
     btn.disabled = !input.value.trim();
   });
 
-  function go() {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
     const name = input.value.trim();
     if (!name) return;
     window.location.href = buildPreviewUrl(name);
-  }
-
-  btn.addEventListener('click', go);
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') go();
   });
 })();
 </script>
