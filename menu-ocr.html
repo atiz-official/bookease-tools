@@ -329,6 +329,19 @@
             </div>
           </div>
 
+          <!-- Pass 23 · variant picker · captured in prefill so signup persists merchant's choice
+               (per memory feedback_no_potemkin_demos.md · no theatrical demos) -->
+          <div class="ocr-variant-picker" style="margin: 14px 0 10px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">สไตล์ร้าน</label>
+            <input type="hidden" id="prevVariant" value="airy" />
+            <div id="prevVariantGroup" style="display: flex; gap: 6px;">
+              <button type="button" data-pick-variant="airy" class="variant-pick active" style="flex: 1; padding: 10px 8px; border: 1px solid #0f172a; background: #0f172a; color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">โปร่ง · Airy</button>
+              <button type="button" data-pick-variant="relaxed" class="variant-pick" style="flex: 1; padding: 10px 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer;">ผ่อนคลาย · Relaxed</button>
+              <button type="button" data-pick-variant="luxury" class="variant-pick" style="flex: 1; padding: 10px 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer;">หรูหรา · Luxury</button>
+            </div>
+            <p style="font-size: 11px; color: #64748b; margin: 6px 0 0;">เลือกได้ตามที่เจ้าของร้านชอบ · จะถูกบันทึกในระบบ · ลูกค้าเห็นแบบเดียวกัน</p>
+          </div>
+
           <button class="primary green" id="prevCreateBtn" disabled>🚀 สร้างหน้าเว็บร้านตัวอย่าง</button>
 
           <div class="link-box" id="prevLiffBox" style="display: none;">
@@ -721,6 +734,23 @@ Output ONLY valid JSON. No prose. No code fences.`;
     e.target.dataset.autofilled = '';
   });
 
+  // Pass 23 · variant picker logic (Art's lock 2026-05-05 · per
+  // feedback_no_potemkin_demos.md · choice persists end-to-end).
+  document.querySelectorAll('[data-pick-variant]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-pick-variant');
+      document.getElementById('prevVariant').value = v;
+      document.querySelectorAll('[data-pick-variant]').forEach(b => {
+        const isActive = b === btn;
+        b.classList.toggle('active', isActive);
+        b.style.background = isActive ? '#0f172a' : '#fff';
+        b.style.color = isActive ? '#fff' : '#475569';
+        b.style.border = isActive ? '1px solid #0f172a' : '1px solid #cbd5e1';
+        b.style.fontWeight = isActive ? '600' : '500';
+      });
+    });
+  });
+
   function collectShopData() {
     const data = {
       shopName: document.getElementById('prevShopName').value.trim(),
@@ -730,6 +760,10 @@ Output ONLY valid JSON. No prose. No code fences.`;
       brandColor: document.getElementById('prevBrandColor').value.trim() || '#2563eb',
       // Pass 22 · openTime captured for liff-preview smart slots + cover badge
       openTime: document.getElementById('prevOpenTime').value.trim() || null,
+      // Pass 23 · merchant's chosen design variant · persisted via signup
+      // ?prefill=<base64> → register_form context → /register-shop POST →
+      // shop-backend Mongo `shopinfo.variant`. Per feedback_no_potemkin_demos.md.
+      variant: document.getElementById('prevVariant').value || 'airy',
       services: [],
     };
     // Pull services from menu-OCR mode if any rows have data
