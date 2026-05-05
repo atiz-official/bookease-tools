@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>เครื่องมือ on-site · BookEase</title>
+<title>ทำเว็บร้านด้วย AI · BookEase · ฟรี · ไม่ต้องสมัคร</title>
+<meta name="description" content="ถ่ายรูปเมนูร้าน + LINE OA · AI กรอกให้ทันที · เห็นเว็บร้านสวยใน 60 วินาที · ฟรี · ไม่ต้องสมัคร" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -232,8 +233,8 @@
 
 <div class="container">
   <header>
-    <h1>เครื่องมือ on-site</h1>
-    <p>ใช้ที่ร้าน · ถ่ายรูป → AI ดึงข้อมูลให้</p>
+    <h1>ทำเว็บร้านด้วย AI</h1>
+    <p>ถ่ายรูปเมนู + LINE OA · AI กรอกให้ทันที · ฟรี · ไม่ต้องสมัคร</p>
   </header>
 
   <!-- Pass 25 v6 (2026-05-05 PM · Art's lock): caravan banner removed.
@@ -250,15 +251,17 @@
 
   <!-- ═══════════════════════════════════════════════════════════════
        Admin panel · API key management (collapsed by default)
-       Art uses this to paste a new key OR reset · staff ignores it
+       After Phase A (CF Worker proxy ships) · this section will be hidden
+       and tool works for anyone with zero setup. Until then · admin keeps
+       a key in localStorage for staff/own-network use.
        ═══════════════════════════════════════════════════════════════ -->
   <details class="admin-panel" id="adminPanel">
-    <summary>⚙️ Admin · ตั้งค่า API key (สำหรับ Art เท่านั้น)</summary>
+    <summary>⚙️ ตั้งค่า API key (1 ครั้งต่อเครื่อง)</summary>
     <div class="admin-content">
       <div class="admin-status" id="adminStatus"></div>
       <input id="apiKey" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
       <button class="primary" id="saveApiKeyBtn" style="margin-top: 0;">💾 บันทึก key</button>
-      <div class="admin-hint">⚠️ Staff ไม่ต้องแตะส่วนนี้ · Art only</div>
+      <div class="admin-hint">เร็วๆ นี้ไม่ต้องตั้ง · Atiz เป็นผู้รับผิดชอบ</div>
     </div>
   </details>
 
@@ -267,9 +270,12 @@
        ═══════════════════════════════════════════════════════════════ -->
   <div id="setupNeeded" class="setup-needed" style="display: none;">
     <div class="icon">🔒</div>
-    <h2>เครื่องนี้ยังไม่ได้ตั้งค่า</h2>
-    <p>กรุณาแจ้งคุณอาท เพื่อเปิดใช้งานเครื่องมือ<br/>ใน 1 นาทีสามารถใช้งานได้เลย</p>
-    <a class="contact" href="https://line.me/ti/p/~artsb" target="_blank">📞 ทักหา Art ทาง LINE</a>
+    <h2>ยังไม่ได้ตั้งค่า</h2>
+    <p>เครื่องนี้ต้องตั้ง API key 1 ครั้งก่อนใช้<br/>กดที่ "ตั้งค่า API key" ด้านบน</p>
+    <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
+      หรือถ้าไม่มี key · พิมพ์ชื่อร้านเองที่<br/>
+      <a href="landing.html" style="color: #5777EF;">landing.html</a> (ไม่ต้องใช้ AI)
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════
@@ -428,15 +434,25 @@
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  // API key bootstrap
+  // CF Worker proxy URL (Pass 25 v6 · Art's Phase A · 2026-05-05 PM)
+  //
+  // Once Art deploys the Cloudflare Worker per WORKER_SETUP.md, paste the
+  // URL here · push 1-line update · tool flips to fully open mode (no API
+  // key setup needed for users · Atiz sponsors via Worker rate-limit).
+  //
+  // Empty string = legacy localStorage admin-key flow (Art-network only).
+  // ═══════════════════════════════════════════════════════════════
+  const WORKER_URL = '';
+
+  // ═══════════════════════════════════════════════════════════════
+  // API key bootstrap (legacy flow · superseded once WORKER_URL is set)
   //
   // Two paths to get an API key onto a staff laptop:
   //   1. ?setup=KEY URL — used by Art ONCE per device. Saves to
   //      localStorage, strips the param from URL, shows success.
   //   2. localStorage already has key — silent use.
   //
-  // If neither: show "ติดต่อ Art" block and hide the tool.
-  // Staff never sees an API key field.
+  // If neither AND no Worker: show "ตั้งค่า API key" prompt.
   // ═══════════════════════════════════════════════════════════════
   const KEY_STORAGE = 'bookease_anthropic_key';
   const params = new URLSearchParams(window.location.search);
@@ -452,12 +468,18 @@
   }
 
   const STORED_KEY = localStorage.getItem(KEY_STORAGE) || '';
-  if (!STORED_KEY) {
+  // Pass 25 v6 · Worker proxy supersedes localStorage key flow when active
+  if (!STORED_KEY && !WORKER_URL) {
     document.getElementById('setupNeeded').style.display = 'block';
     document.getElementById('mainTool').style.display = 'none';
   } else {
     document.getElementById('setupNeeded').style.display = 'none';
     document.getElementById('mainTool').style.display = 'block';
+    // Hide admin panel + remove "ตั้งค่า API key" UI once Worker active
+    if (WORKER_URL) {
+      const ap = document.getElementById('adminPanel');
+      if (ap) ap.style.display = 'none';
+    }
   }
 
   // ── Admin panel: paste/replace key in-page ──
@@ -526,7 +548,18 @@
   const MODEL = 'claude-sonnet-4-6'; // Sonnet 4.6 — better default for vision OCR · widely available
   const TOOL_BASE = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
 
+  // WORKER_URL declared at top of script · used for Phase A proxy mode.
+
   async function callAnthropic(key, body) {
+    // PROXY MODE · CF Worker handles auth + rate-limiting · key never client-side
+    if (WORKER_URL) {
+      return fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    }
+    // LEGACY MODE · client-side key from localStorage (admin set)
     return fetch(ANTHROPIC_API, {
       method: 'POST',
       headers: {
@@ -540,7 +573,10 @@
   }
 
   async function callClaudeVision(base64Image, mediaType, prompt) {
-    if (!STORED_KEY) throw new Error('เครื่องนี้ยังไม่ได้ตั้งค่า · ติดต่อคุณอาท');
+    // Phase A integration · Worker mode bypasses STORED_KEY check
+    if (!WORKER_URL && !STORED_KEY) {
+      throw new Error('ยังไม่ได้ตั้ง API key · กดที่ "ตั้งค่า API key" ด้านบน');
+    }
     const res = await callAnthropic(STORED_KEY, {
       model: MODEL,
       max_tokens: 2048,
