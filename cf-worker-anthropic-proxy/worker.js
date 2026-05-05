@@ -27,7 +27,8 @@ const ANTHROPIC_VERSION = '2023-06-01';
 
 // Origin whitelist · prevents random sites from using our quota
 const ALLOWED_ORIGINS = [
-  'https://atiz-official.github.io',
+  'https://make.bookease.co',          // primary · GH Pages custom domain (Pass 25 v7)
+  'https://atiz-official.github.io',   // legacy GH Pages (still serves both)
   'https://shop.bookease.co',
   'https://shopv3.bookease.co',
   'https://bookease.co',
