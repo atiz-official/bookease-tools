@@ -663,18 +663,24 @@
     flex: 1;
     display: inline-flex; align-items: center; justify-content: center;
     gap: 8px;
-    background: var(--pal-deep); color: #fff;
+    /* Pass 23 (2026-05-05 PM): green commit color · semantic "go/save"
+       distinct from the merchant's chosen palette · trust signal */
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%); color: #fff;
     border: none; border-radius: 100px;
     font-family: inherit; font-size: 16px; font-weight: 700;
     letter-spacing: 0.2px;
     min-height: 52px; padding: 0 24px;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 20px rgba(15, 23, 42, 0.14);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
+    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.18), 0 6px 20px rgba(5, 150, 105, 0.28);
   }
   .action-bar .primary:active {
     transform: scale(0.97);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.18);
+  }
+  .action-bar .primary:disabled {
+    background: #cbd5e1; color: #fff; cursor: not-allowed; box-shadow: none;
+    transform: none;
   }
   .action-bar .primary .arrow { flex-shrink: 0; transform: translateY(-1px); }
   .action-bar .icon-btn {
@@ -748,22 +754,12 @@
     <span class="cycle-hint">↻</span>
   </button>
 
-  <!-- Pass 23 (Art's lock 2026-05-05 PM) · "Open signup" CTA moved here from
-       menu-ocr · merchant picks variant on demo phone (live WYSIWYG below) ·
-       staff confirms with this button → signup opens with chosen variant.
-       Hidden in share mode (customer view) · hidden if services=[] (Potemkin
-       guard per feedback_no_potemkin_demos.md). -->
-  <div class="staff-cta-row" id="staffCtaRow" style="margin-top: 12px;">
-    <button id="openSignupCta"
-            style="width: 100%; padding: 14px 20px; background: linear-gradient(180deg, #10b981 0%, #059669 100%); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: transform 0.12s ease;">
-      ✓ ตกลง · เปิดร้านที่ shop.bookease.co
-    </button>
-    <p style="margin: 8px 0 0; font-size: 11px; color: #64748b; line-height: 1.5; text-align: center;">
-      ให้เจ้าของร้านเลือกสไตล์ที่ชอบจาก 3 ปุ่มด้านล่าง · ดู preview สด · เมื่อพอใจกดปุ่มเขียวข้างบน
-    </p>
-    <div id="ctaWarn" style="display:none; margin-top: 10px; padding: 10px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 12px; color: #78350f; line-height: 1.5;">
-      ⚠️ ยังไม่มีบริการ · กลับไป OCR tool · แท็บ "ถ่ายเมนู" · ก่อนจะเปิดร้าน
-    </div>
+  <!-- Pass 23 (Art's lock 2026-05-05 PM) · "Open signup" CTA moved to action
+       bar at very bottom (Elon-mode · users decide AFTER seeing options).
+       Anti-Potemkin warning still surfaces near top so staff knows BEFORE
+       merchant picks variant if menu is missing. -->
+  <div id="ctaWarn" style="display:none; margin-top: 10px; padding: 10px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 12px; color: #78350f; line-height: 1.5;">
+    ⚠️ ยังไม่มีบริการ · กลับไป OCR tool · แท็บ "ถ่ายเมนู" · ก่อนจะเปิดร้าน
   </div>
 
   <!-- Hidden test URL for clipboard fallback (kept in DOM for share/copy logic) -->
@@ -929,8 +925,13 @@
      ACTION BAR (sticky · merchant tools · staff mode only)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="action-bar">
-  <button class="primary" id="shareBtn" type="button">
-    <span>ส่งให้ลูกค้า</span>
+  <!-- Pass 23 (Art's lock 2026-05-05 PM · Elon-mode): primary action moved
+       to BOTTOM where user's thumb lands after deciding. "ส่งให้ลูกค้า" was
+       leftover pre-caravan · removed (preview URL ≠ live shop URL anyway).
+       Now: variant tabs above → merchant compares + decides → big green CTA
+       at bottom · single thumb action. -->
+  <button class="primary" id="openSignupCta" type="button">
+    <span>✓ ตกลง · เปิดร้านที่ shop.bookease.co</span>
     <svg class="arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M7 17 17 7"/>
       <path d="M9 7h8v8"/>
@@ -1322,7 +1323,9 @@
     const hasServices = Array.isArray(shopData.services) && shopData.services.length > 0;
     if (!hasServices) {
       cta.disabled = true;
-      cta.textContent = '✗ ต้องมีบริการก่อน';
+      // Only update the text span · preserve the arrow SVG.
+      const textSpan = cta.querySelector('span');
+      if (textSpan) textSpan.textContent = '✗ ต้องมีบริการก่อน';
       warn.style.display = 'block';
     }
   })();
@@ -1352,18 +1355,10 @@
     return u.toString();
   }
 
-  document.getElementById('shareBtn').addEventListener('click', async () => {
-    const shareUrl = buildShareUrl();
-    const shareText = `ร้าน ${shopData.shopName} เปิดจองออนไลน์แล้ว\nกดจองที่นี่ · ฿200 ล็อกคิว · มัดจำหักจากค่าบริการหน้าร้าน\n${shareUrl}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: shopData.shopName, text: shareText, url: shareUrl });
-      } catch (e) { /* user canceled */ }
-    } else {
-      await navigator.clipboard.writeText(shareText);
-      alert('คัดลอกข้อความให้ลูกค้าแล้ว · paste ใน LINE ได้เลย');
-    }
-  });
+  // Pass 23 (Art's lock 2026-05-05 PM · Elon-mode): old shareBtn ('ส่งให้ลูกค้า')
+  // removed · replaced by openSignupCta (handler defined in section 10b above).
+  // Preview URL ≠ live shop URL · sharing it during caravan was wrong anyway ·
+  // post-signup share happens on real /<slug> page, not this preview tool.
 
   document.getElementById('copyBtn').addEventListener('click', async () => {
     const shareUrl = buildShareUrl();
