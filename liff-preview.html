@@ -700,6 +700,22 @@
   .service-list {
     display: flex; flex-direction: column; gap: 10px;
   }
+  /* Pass 25 v3 · inline "+ เพิ่มบริการ" · staff-mode only */
+  .add-service-inline {
+    display: block; width: 100%;
+    background: transparent;
+    border: 1.5px dashed var(--pal-deep);
+    color: var(--pal-deep);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background-color 0.15s ease, transform 0.12s ease;
+  }
+  .add-service-inline:hover { background: rgba(255, 255, 255, 0.4); }
+  .add-service-inline:active { transform: scale(0.98); }
+  body[data-mode="share"] .add-service-inline { display: none; }
   .service-card {
     background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
     border: 1px solid var(--pal-card-border);
@@ -1090,6 +1106,13 @@
         <div class="screen" data-screen="2">
           <h2 class="screen-title">เลือกบริการ</h2>
           <div class="service-list" id="serviceList"></div>
+          <!-- Pass 25 v3 (2026-05-05 PM · Art's lock 'ship A') · inline
+               service editor · closes self-serve loop · merchant types
+               name+price+duration in modal · row appears + save button
+               unblocks (anti-Potemkin guard auto-clears) -->
+          <button id="addServiceInlineBtn" class="add-service-inline" type="button">
+            + เพิ่มบริการ
+          </button>
           <div class="nav-row">
             <button class="cta-btn secondary" data-go="1" type="button">ย้อน</button>
             <button class="cta-btn" data-go="3" id="serviceNext" type="button" disabled>ถัดไป</button>
@@ -1276,6 +1299,42 @@
   </div>
 </div>
 
+<!-- Pass 25 v3 · inline service editor modal · merchant adds 1 service in
+     ~10 sec inside the preview · self-serve loop closes -->
+<div class="modal-backdrop" id="addServiceModal">
+  <div class="modal" style="max-width: 360px;">
+    <h3 style="margin: 0 0 4px;">เพิ่มบริการ</h3>
+    <p style="margin: 0 0 16px; font-size: 13px; color: var(--pal-text-muted);">
+      ตรงที่ลูกค้าจะเลือก · พิมพ์เร็วๆ · แก้ภายหลังก็ได้
+    </p>
+    <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ชื่อบริการ</label>
+    <input id="addSvcName" type="text" placeholder="เช่น Manicure คลาสสิก"
+           style="width:100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px; margin-bottom: 12px;" />
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <div style="flex: 1;">
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ระยะเวลา</label>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <input id="addSvcDur" type="number" min="5" step="5" placeholder="60"
+                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px;" />
+          <span style="font-size: 13px; color: #64748b;">นาที</span>
+        </div>
+      </div>
+      <div style="flex: 1;">
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ราคา</label>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 13px; color: #64748b;">฿</span>
+          <input id="addSvcPrice" type="number" min="0" step="50" placeholder="500"
+                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px;" />
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="cta-btn secondary" id="addSvcCancel" type="button" style="flex: 1;">ยกเลิก</button>
+      <button class="cta-btn" id="addSvcSave" type="button" style="flex: 1;">+ เพิ่ม</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ════════════════════════════════════════════════════════════════
   // 1. URL DECODE · shop data + mode
@@ -1391,68 +1450,156 @@
   });
 
   // ════════════════════════════════════════════════════════════════
-  // 5. RENDER SERVICES
+  // 5. RENDER SERVICES · re-callable (Pass 25 v3 · inline service editor)
   // ════════════════════════════════════════════════════════════════
   const serviceList = document.getElementById('serviceList');
   let selectedService = null;
-  (shopData.services || []).slice(0, 8).forEach((svc, idx) => {
-    const card = document.createElement('div');
-    card.className = 'service-card';
-    card.innerHTML = `
-      ${idx === 0 ? '<div class="service-tag">SIGNATURE</div>' : ''}
-      <div class="service-name">${escapeHtml(svc.serviceName || 'บริการ')}</div>
-      <div class="service-divider"></div>
-      <div class="service-meta">
-        <span class="service-duration">${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
-        <span class="service-price">฿${(svc.price || 0).toLocaleString()}</span>
-      </div>
-    `;
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedService = svc;
-      document.getElementById('serviceNext').disabled = false;
-      document.getElementById('confirmService').textContent =
-        `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
-    });
-    serviceList.appendChild(card);
-  });
-  if (!serviceList.children.length) {
-    // Per memory feedback_no_potemkin_demos.md · empty service state must NOT
-    // be a dead-end. Provide LINE OA fallback so customer can contact merchant
-    // directly instead of bouncing.
-    const lineOaId = shopData.lineOaId || '';
-    const lineOaUrl = lineOaId
-      ? `https://line.me/R/ti/p/${encodeURIComponent(lineOaId.replace(/^@/, '@'))}`
-      : '';
-    serviceList.innerHTML = `
-      <div style="text-align:center; padding: 24px 16px; background: rgba(255,255,255,0.6); border-radius: 14px; border: 1px solid var(--pal-card-border);">
-        <div style="font-size: 36px; margin-bottom: 12px;">💬</div>
-        <div style="font-weight: 700; color: var(--pal-text); margin-bottom: 6px;">เมนูยังไม่ขึ้นระบบ</div>
-        <div style="font-size: 13px; color: var(--pal-text-muted); line-height: 1.5; margin-bottom: 14px;">
-          ติดต่อร้านที่ LINE โดยตรง · ร้านจะส่งเมนู + ลิงก์จองให้
-        </div>
-        ${lineOaUrl ? `
-          <a href="${lineOaUrl}" target="_blank" rel="noopener noreferrer"
-             style="display:inline-flex; align-items:center; gap:8px; background:#06c755; color:#fff; padding:12px 20px; border-radius:100px; font-weight:700; font-size:14px; text-decoration:none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-            ทักร้านที่ LINE
-          </a>
-        ` : `
-          <div style="font-size: 12px; color: var(--pal-text-muted); font-style: italic;">
-            ลูกค้ากดในร้าน LINE OA จริงจะเห็นปุ่มทักร้าน
-          </div>
-        `}
-      </div>
-    `;
-    // Disable "next" button so flow doesn't pretend to continue
-    const nextBtn = document.getElementById('serviceNext');
-    if (nextBtn) nextBtn.disabled = true;
-  }
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
+
+  function renderServices() {
+    serviceList.innerHTML = '';
+    selectedService = null;
+    const nextBtn = document.getElementById('serviceNext');
+    if (nextBtn) nextBtn.disabled = true;
+
+    (shopData.services || []).slice(0, 8).forEach((svc, idx) => {
+      const card = document.createElement('div');
+      card.className = 'service-card';
+      card.innerHTML = `
+        ${idx === 0 ? '<div class="service-tag">SIGNATURE</div>' : ''}
+        <div class="service-name">${escapeHtml(svc.serviceName || 'บริการ')}</div>
+        <div class="service-divider"></div>
+        <div class="service-meta">
+          <span class="service-duration">${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
+          <span class="service-price">฿${(svc.price || 0).toLocaleString()}</span>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedService = svc;
+        document.getElementById('serviceNext').disabled = false;
+        document.getElementById('confirmService').textContent =
+          `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
+      });
+      serviceList.appendChild(card);
+    });
+
+    if (!serviceList.children.length) {
+      // Per memory feedback_no_potemkin_demos.md · empty service state must NOT
+      // be a dead-end. Provide LINE OA fallback so customer can contact merchant
+      // directly instead of bouncing.
+      const lineOaId = shopData.lineOaId || '';
+      const lineOaUrl = lineOaId
+        ? `https://line.me/R/ti/p/${encodeURIComponent(lineOaId.replace(/^@/, '@'))}`
+        : '';
+      serviceList.innerHTML = `
+        <div style="text-align:center; padding: 24px 16px; background: rgba(255,255,255,0.6); border-radius: 14px; border: 1px solid var(--pal-card-border);">
+          <div style="font-size: 36px; margin-bottom: 12px;">💬</div>
+          <div style="font-weight: 700; color: var(--pal-text); margin-bottom: 6px;">เมนูยังไม่ขึ้นระบบ</div>
+          <div style="font-size: 13px; color: var(--pal-text-muted); line-height: 1.5; margin-bottom: 14px;">
+            ติดต่อร้านที่ LINE โดยตรง · ร้านจะส่งเมนู + ลิงก์จองให้
+          </div>
+          ${lineOaUrl ? `
+            <a href="${lineOaUrl}" target="_blank" rel="noopener noreferrer"
+               style="display:inline-flex; align-items:center; gap:8px; background:#06c755; color:#fff; padding:12px 20px; border-radius:100px; font-weight:700; font-size:14px; text-decoration:none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+              ทักร้านที่ LINE
+            </a>
+          ` : `
+            <div style="font-size: 12px; color: var(--pal-text-muted); font-style: italic;">
+              ลูกค้ากดในร้าน LINE OA จริงจะเห็นปุ่มทักร้าน
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    // Pass 25 v3 · re-evaluate anti-Potemkin guard on save CTA after services change
+    refreshSaveCtaState();
+  }
+
+  function refreshSaveCtaState() {
+    const cta = document.getElementById('openSignupCta');
+    const warn = document.getElementById('ctaWarn');
+    if (!cta || !warn) return;
+    const hasServices = Array.isArray(shopData.services) && shopData.services.length > 0;
+    const span = cta.querySelector('span');
+    if (hasServices) {
+      cta.disabled = false;
+      if (span) span.textContent = '✓ บันทึกร้านนี้';
+      warn.style.display = 'none';
+    } else {
+      cta.disabled = true;
+      if (span) span.textContent = '✗ ต้องมีบริการก่อน';
+      warn.style.display = 'block';
+    }
+  }
+
+  renderServices();
+
+  // ────────────────────────────────────────────────────────────────────
+  // 5b. INLINE SERVICE EDITOR · Pass 25 v3 · 2026-05-05 PM (Art's lock)
+  // Closes self-serve loop · merchant types name+price+duration in modal ·
+  // service appears · save CTA unblocks · no need to bounce back to OCR.
+  // ────────────────────────────────────────────────────────────────────
+  function openAddServiceModal() {
+    const m = document.getElementById('addServiceModal');
+    if (!m) return;
+    document.getElementById('addSvcName').value = '';
+    document.getElementById('addSvcDur').value = '';
+    document.getElementById('addSvcPrice').value = '';
+    m.classList.add('show');
+    setTimeout(() => document.getElementById('addSvcName')?.focus(), 50);
+  }
+  function closeAddServiceModal() {
+    document.getElementById('addServiceModal')?.classList.remove('show');
+  }
+
+  document.getElementById('addServiceInlineBtn')?.addEventListener('click', openAddServiceModal);
+  document.getElementById('addSvcCancel')?.addEventListener('click', closeAddServiceModal);
+  document.getElementById('addServiceModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'addServiceModal') closeAddServiceModal();
+  });
+
+  document.getElementById('addSvcSave')?.addEventListener('click', () => {
+    const name = (document.getElementById('addSvcName')?.value || '').trim();
+    const dur = parseInt(document.getElementById('addSvcDur')?.value || '0');
+    const price = parseInt(document.getElementById('addSvcPrice')?.value || '0');
+    if (!name) {
+      document.getElementById('addSvcName')?.focus();
+      return;
+    }
+    if (!dur || dur < 5) {
+      document.getElementById('addSvcDur')?.focus();
+      return;
+    }
+    if (!price || price < 0) {
+      document.getElementById('addSvcPrice')?.focus();
+      return;
+    }
+    shopData.services = shopData.services || [];
+    shopData.services.push({
+      serviceName: name,
+      durationMin: dur,
+      price: price,
+    });
+    closeAddServiceModal();
+    renderServices();
+  });
+
+  // Allow Enter-key to save in modal
+  ['addSvcName', 'addSvcDur', 'addSvcPrice'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('addSvcSave')?.click();
+      }
+    });
+  });
 
   // ════════════════════════════════════════════════════════════════
   // 6. DATE + TIME PICKERS
@@ -1692,22 +1839,9 @@
     return 'https://shop.bookease.co/signup?prefill=' + encodeURIComponent(b64);
   }
 
-  // Anti-Potemkin guard (per memory feedback_no_potemkin_demos.md):
-  // ห้าม ship ร้านที่ services=[] · ลูกค้าจะเข้า LIFF เห็น "ยังไม่มีบริการ" =
-  // dead end. Disable button + show warning · staff goes back to OCR.
-  (function applyPotemkinGuard() {
-    const cta = document.getElementById('openSignupCta');
-    const warn = document.getElementById('ctaWarn');
-    if (!cta || !warn) return;
-    const hasServices = Array.isArray(shopData.services) && shopData.services.length > 0;
-    if (!hasServices) {
-      cta.disabled = true;
-      // Only update the text span · preserve the arrow SVG.
-      const textSpan = cta.querySelector('span');
-      if (textSpan) textSpan.textContent = '✗ ต้องมีบริการก่อน';
-      warn.style.display = 'block';
-    }
-  })();
+  // Anti-Potemkin guard moved to refreshSaveCtaState() · called by
+  // renderServices() so it auto-clears when merchant adds a service via
+  // the inline editor. Per memory feedback_no_potemkin_demos.md.
 
   document.getElementById('openSignupCta')?.addEventListener('click', () => {
     if (!shopData.shopName || !shopData.shortName) {
