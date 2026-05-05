@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ทำเว็บร้านด้วย AI · BookEase · ฟรี · ไม่ต้องสมัคร</title>
-<meta name="description" content="ถ่ายรูปเมนูร้าน + LINE OA · AI กรอกให้ทันที · เห็นเว็บร้านสวยใน 60 วินาที · ฟรี · ไม่ต้องสมัคร" />
+<title>ถ่ายเมนู → เว็บร้าน · 60 วินาที · BookEase · ฟรี</title>
+<meta name="description" content="ถ่ายรูปเมนูร้าน + LINE OA · กรอกให้อัตโนมัติ · เห็นเว็บร้านสวยใน 60 วินาที · ฟรี · ไม่ต้องสมัคร" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -233,8 +233,8 @@
 
 <div class="container">
   <header>
-    <h1>ทำเว็บร้านด้วย AI</h1>
-    <p>ถ่ายรูปเมนู + LINE OA · AI กรอกให้ทันที · ฟรี · ไม่ต้องสมัคร</p>
+    <h1>ถ่ายเมนู · เห็นเว็บร้านใน 60 วินาที</h1>
+    <p>ถ่ายรูปเมนู + LINE OA · กรอกให้อัตโนมัติ · ฟรี · ไม่ต้องสมัคร</p>
   </header>
 
   <!-- Pass 25 v6 (2026-05-05 PM · Art's lock): caravan banner removed.
@@ -273,8 +273,8 @@
     <h2>ยังไม่ได้ตั้งค่า</h2>
     <p>เครื่องนี้ต้องตั้ง API key 1 ครั้งก่อนใช้<br/>กดที่ "ตั้งค่า API key" ด้านบน</p>
     <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
-      หรือถ้าไม่มี key · พิมพ์ชื่อร้านเองที่<br/>
-      <a href="/" style="color: #5777EF;">make.bookease.co</a> (ไม่ต้องใช้ AI)
+      หรือพิมพ์ชื่อร้านเองที่<br/>
+      <a href="/" style="color: #5777EF;">make.bookease.co</a> (ไม่ต้องอัปโหลดรูป)
     </p>
   </div>
 
@@ -315,7 +315,7 @@
         <!-- Result + edit card -->
         <div class="card">
           <h3>2. ตรวจ + แก้ข้อมูล</h3>
-          <div class="hint">AI ดึงมาให้ · ตรวจดูแล้วแก้ตรงไหนก็ได้</div>
+          <div class="hint">ดึงมาให้อัตโนมัติ · ตรวจดูแล้วแก้ตรงไหนก็ได้</div>
 
           <div class="branding-grid">
             <div class="branding-field full">
@@ -398,7 +398,7 @@
         <!-- Services table card -->
         <div class="card">
           <h3>2. ตรวจ + แก้รายการ</h3>
-          <div class="hint">AI ดึงมา · ตรวจดูแล้วแก้/ลบ/เพิ่มได้</div>
+          <div class="hint">ดึงมาให้ · ตรวจดูแล้วแก้/ลบ/เพิ่มได้</div>
 
           <div style="overflow-x: auto;">
             <table id="menuTable">
@@ -605,7 +605,7 @@
       }
       if (res.status === 401) throw new Error(`Key ใช้ไม่ได้ (401) · เช็คว่า paste ครบไม่มี space · หรือ key ถูก revoke แล้ว · ${snippet}`);
       if (res.status === 404) throw new Error(`Model ไม่พบ (404) · account อาจไม่มี ${MODEL} · ${snippet}`);
-      throw new Error(`AI ตอบ ${res.status}: ${snippet}`);
+      throw new Error(`ระบบตอบ ${res.status}: ${snippet}`);
     }
     const json = await res.json();
     return json.content[0].text;
@@ -633,7 +633,7 @@
     if (codeBlockMatch) return JSON.parse(codeBlockMatch[1]);
     const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
     if (jsonMatch) return JSON.parse(jsonMatch[0]);
-    throw new Error('AI ตอบกลับมาไม่ถูกต้อง · ลองใหม่');
+    throw new Error('ตอบกลับมาไม่ถูกต้อง · ลองใหม่');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -710,7 +710,7 @@
 
   prevExtractBtn.addEventListener('click', async () => {
     if (!prevImageData) return;
-    showStatus('prevStatus', '🤖 AI กำลังอ่านรูป · รอแป๊บนึง...', 'info');
+    showStatus('prevStatus', '📷 กำลังอ่านรูป · รอแป๊บนึง...', 'info');
     prevExtractBtn.disabled = true;
     try {
       const prompt = `This is a screenshot of a Thai service shop's LINE OA (Official Account) page. Extract the following branding info as JSON:
@@ -877,7 +877,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
 
   menuExtractBtn.addEventListener('click', async () => {
     if (!menuImageData) return;
-    showStatus('menuStatus', '🤖 AI กำลังอ่านเมนู · รอ ~15 วินาที...', 'info');
+    showStatus('menuStatus', '📷 กำลังอ่านเมนู · รอ ~15 วินาที...', 'info');
     menuExtractBtn.disabled = true;
     try {
       const prompt = `This is a photo of a Thai service shop menu (likely spa, nail salon, or massage). Extract every service item as a JSON array. Each item must have:
@@ -893,7 +893,7 @@ Be thorough · extract every single service line, even bundle/combo deals. If du
 Output ONLY a JSON array. No prose. No code fences.`;
       const responseText = await callClaudeVision(menuImageData.base64, menuImageData.mediaType, prompt);
       const services = extractJsonFromText(responseText);
-      if (!Array.isArray(services)) throw new Error('AI ตอบกลับไม่ถูกต้อง · ลองใหม่');
+      if (!Array.isArray(services)) throw new Error('ตอบกลับไม่ถูกต้อง · ลองใหม่');
       renderMenuTable(services);
       showStatus('menuStatus', `✅ ดึงมาได้ ${services.length} บริการ · ตรวจ + แก้ได้เลย`, 'success');
       updateButtonStates();
