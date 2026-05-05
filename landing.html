@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>เปิดร้านบน BookEase · ดูเว็บร้านคุณใน 60 วินาที</title>
+<meta name="description" content="พิมพ์ชื่อร้าน · เห็นเว็บร้านคุณทันที · ฟรี · ไม่ต้องสมัคร" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: linear-gradient(180deg, #fef3f2 0%, #f0ebe3 50%, #f4e4d4 100%);
+    color: #1c1410;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 540px; margin: 0 auto;
+    padding: 60px 24px 60px;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 500;
+    font-size: 28px;
+    color: #5a463a;
+    margin: 0 0 8px;
+  }
+  .tag {
+    font-size: 13px; color: #7a5c42;
+    letter-spacing: 4px; text-transform: uppercase;
+    margin: 0 0 32px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(28px, 6.5vw, 42px);
+    line-height: 1.15;
+    margin: 0 0 16px;
+    color: #1c1410;
+  }
+  h1 em {
+    font-style: italic;
+    color: #c98c80;
+  }
+  .subtitle {
+    font-size: 16px; line-height: 1.6;
+    color: #5a463a;
+    margin: 0 0 40px;
+    max-width: 420px;
+  }
+
+  /* The single input · the "do it" moment */
+  .input-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(28, 20, 16, 0.05),
+                0 12px 40px rgba(28, 20, 16, 0.08);
+    border: 1px solid rgba(28, 20, 16, 0.06);
+    margin-bottom: 28px;
+  }
+  .input-card label {
+    display: block;
+    font-size: 13px; font-weight: 600;
+    color: #5a463a;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .input-card input {
+    width: 100%;
+    background: #fff;
+    border: 1px solid rgba(28, 20, 16, 0.12);
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-family: inherit;
+    font-size: 18px; font-weight: 500;
+    color: #1c1410;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .input-card input:focus {
+    outline: none;
+    border-color: #c98c80;
+    box-shadow: 0 0 0 4px rgba(201, 140, 128, 0.15);
+  }
+  .input-card .helper {
+    font-size: 12px; color: #7a5c42;
+    opacity: 0.75;
+    margin-top: 8px;
+  }
+
+  .cta {
+    width: 100%;
+    background: #1c1410;
+    color: #fef3f2;
+    border: none;
+    border-radius: 100px;
+    padding: 18px 28px;
+    font-family: inherit;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
+    box-shadow: 0 1px 2px rgba(28, 20, 16, 0.12),
+                0 8px 24px rgba(28, 20, 16, 0.18);
+  }
+  .cta:active { transform: scale(0.97); }
+  .cta:disabled {
+    opacity: 0.4; cursor: not-allowed;
+    transform: none;
+  }
+  .cta .arrow { display: inline-block; margin-left: 6px; transition: transform 0.2s ease; }
+  .cta:not(:disabled):hover .arrow { transform: translateX(3px); }
+
+  /* Trust strip */
+  .trust {
+    margin-top: 40px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .trust .item {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px;
+  }
+  .trust .icon {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(28, 20, 16, 0.08);
+  }
+  .trust .text { color: #5a463a; line-height: 1.5; }
+  .trust .text strong { color: #1c1410; font-weight: 600; }
+
+  /* Skip link · power user fast-track */
+  .skip-link {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #7a5c42;
+    opacity: 0.7;
+  }
+  .skip-link a {
+    color: #c98c80;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Already have a shop · login link */
+  .login-link {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #5a463a;
+  }
+  .login-link a {
+    color: #1c1410;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 40px 20px; }
+    .input-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand">BookEase</div>
+  <div class="tag">FOR THAI SERVICE SHOPS</div>
+
+  <h1>ดูเว็บร้านคุณ <em>ใน 60 วินาที</em></h1>
+  <p class="subtitle">
+    พิมพ์ชื่อร้าน · เลือกสไตล์ที่ชอบ · เห็นทันทีว่าลูกค้าจะเห็นยังไง <strong>ฟรี</strong> · ไม่ต้องสมัคร
+  </p>
+
+  <div class="input-card">
+    <label for="shopName">ชื่อร้านของคุณ</label>
+    <input type="text" id="shopName" placeholder="เช่น Bare Nail Spa · ร้านนวดสุขใจ" autofocus autocomplete="off" />
+    <div class="helper">เริ่มจากชื่อก่อน · เพิ่มเมนู + รูปได้ทีหลัง</div>
+  </div>
+
+  <button class="cta" id="goBtn" disabled>
+    เปิดดูเว็บร้านของคุณ <span class="arrow">→</span>
+  </button>
+
+  <div class="trust">
+    <div class="item">
+      <div class="icon">🎨</div>
+      <div class="text"><strong>6 สไตล์</strong> ให้เลือก · เปลี่ยนได้ตลอด · เห็นเปลี่ยนสด</div>
+    </div>
+    <div class="item">
+      <div class="icon">💸</div>
+      <div class="text">ลูกค้ากด <strong>มัดจำ ฿200</strong> · ล็อกคิวให้ทันที</div>
+    </div>
+    <div class="item">
+      <div class="icon">🚀</div>
+      <div class="text">ใช้ผ่าน <strong>LINE chat</strong> ของร้าน · ไม่ต้องลง app · ไม่ต้องเรียนใหม่</div>
+    </div>
+  </div>
+
+  <div class="skip-link">
+    <a href="https://shop.bookease.co/signup">หรือข้ามไป signup เร็ว →</a>
+  </div>
+
+  <div class="login-link">
+    เปิดร้านแล้ว? <a href="https://shop.bookease.co/login">เข้าสู่ระบบ</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  const input = document.getElementById('shopName');
+  const btn = document.getElementById('goBtn');
+
+  function slugify(s) {
+    return (s || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[฀-๿]+/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40) || 'myshop';
+  }
+
+  function buildPreviewUrl(shopName) {
+    const data = {
+      shopName: shopName.trim(),
+      shortName: slugify(shopName),
+      lineOaId: null,
+      brandColor: '#c9a88e',
+      openTime: '10:00-21:00',
+      variant: 'airy',
+      services: [],
+    };
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    return 'liff-preview.html?data=' + encodeURIComponent(b64);
+  }
+
+  input.addEventListener('input', () => {
+    btn.disabled = !input.value.trim();
+  });
+
+  function go() {
+    const name = input.value.trim();
+    if (!name) return;
+    window.location.href = buildPreviewUrl(name);
+  }
+
+  btn.addEventListener('click', go);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') go();
+  });
+})();
+</script>
+
+</body>
+</html>

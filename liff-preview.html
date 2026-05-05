@@ -136,35 +136,112 @@
   }
   body[data-mode="share"] .variant-tabs-wrap { display: none; }
   .variant-tabs {
+    display: flex; flex-direction: column;
+    gap: 2px;
+  }
+  .variant-tabs .row {
     display: flex; justify-content: center; align-items: center;
     gap: 0;
   }
   .variant-tabs button {
     flex: 1;
     background: transparent; border: none;
-    padding: 4px 4px;
+    padding: 3px 4px;
     font-family: 'Sarabun', sans-serif;
     cursor: pointer; line-height: 1.15;
     color: #94a3b8;
   }
   .variant-tabs button .th {
     display: block;
-    font-size: 15px; font-weight: 500;
+    font-size: 13px; font-weight: 500;
     color: inherit;
   }
   .variant-tabs button .en {
     display: block;
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 11px;
+    font-style: italic; font-size: 10px;
     margin-top: 1px;
     color: #cbd5e1;
   }
   .variant-tabs button:hover .th { color: #475569; }
   .variant-tabs button.active .th { color: #0f172a; font-weight: 700; }
   .variant-tabs button.active .en { color: #64748b; }
+  .variant-tabs button[data-variant="surprise"] .th {
+    color: #b45309;
+  }
+  .variant-tabs button[data-variant="surprise"] .en {
+    color: #d97706;
+  }
   .variant-tabs .variant-divider {
-    color: #cbd5e1; font-size: 13px; user-select: none;
+    color: #cbd5e1; font-size: 12px; user-select: none;
     padding: 0 1px;
+  }
+
+  /* Surprise reveal toast · centered above variant tabs */
+  .surprise-toast {
+    position: fixed;
+    bottom: 168px; left: 50%;
+    transform: translate(-50%, 20px);
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #78350f;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(180, 83, 9, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 51;
+    white-space: nowrap;
+  }
+  .surprise-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* Soft prompt · "save before closing" · 60-sec engagement timer */
+  .soft-prompt {
+    position: fixed;
+    bottom: -200px;
+    left: 16px; right: 16px;
+    max-width: 480px; margin: 0 auto;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.18), 0 1px 3px rgba(15, 23, 42, 0.08);
+    z-index: 60;
+    transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid var(--pal-deep);
+  }
+  .soft-prompt.show { bottom: 160px; }
+  body[data-mode="share"] .soft-prompt { display: none; }
+  .soft-prompt .head {
+    font-size: 14px; font-weight: 700; color: var(--pal-text);
+    margin-bottom: 4px;
+  }
+  .soft-prompt .body {
+    font-size: 12px; color: var(--pal-text-muted);
+    line-height: 1.5;
+  }
+  .soft-prompt .row-actions {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .soft-prompt .save-now {
+    flex: 1;
+    background: linear-gradient(180deg, #10b981, #059669);
+    color: #fff; border: none;
+    border-radius: 100px;
+    padding: 10px 14px;
+    font-weight: 700; font-size: 14px;
+    cursor: pointer;
+  }
+  .soft-prompt .dismiss {
+    background: transparent;
+    color: var(--pal-text-muted);
+    border: none;
+    padding: 10px 14px;
+    font-size: 13px;
+    cursor: pointer;
   }
 
   /* ════════════════════════════════════════════════════════════════
@@ -333,6 +410,191 @@
   [data-variant="luxury"] .cover-canvas .brand-est {
     font-size: 9px; letter-spacing: 3px; margin-top: 14px;
     opacity: 0.55;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     ROW 2 VARIANTS · Pass 24 (2026-05-05 PM · Art's lock)
+     Energy/bold styles · injected via Surprise OR direct pick
+     ════════════════════════════════════════════════════════════════ */
+
+  /* Variant: FUN · sunshine pop · large bold · top-anchor */
+  [data-variant="fun"] .cover-canvas {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 35%, #fbbf24 100%);
+  }
+  [data-variant="fun"] .cover-canvas .layer-warmth {
+    background: radial-gradient(circle at 80% 30%, #fef9c3 0%, transparent 50%),
+                radial-gradient(circle at 20% 75%, #fde68a 0%, transparent 50%);
+    opacity: 0.7;
+  }
+  [data-variant="fun"] .cover-canvas .brand-mark {
+    top: 38%; transform: translate(-50%, -50%);
+    color: #78350f;
+  }
+  [data-variant="fun"] .cover-canvas .brand-name {
+    font-size: clamp(18px, 5.5vw, 28px);
+    letter-spacing: 2px; font-weight: 800;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5);
+  }
+  [data-variant="fun"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: normal; font-weight: 600;
+    font-size: clamp(13px, 3vw, 16px);
+    margin-top: 8px;
+    color: #b45309; letter-spacing: 1px;
+  }
+  [data-variant="fun"] .cover-canvas .brand-est {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 2px; margin-top: 14px;
+    background: #78350f; color: #fef3c7;
+    padding: 4px 10px; border-radius: 100px;
+    font-weight: 700;
+  }
+
+  /* Variant: REFRESHING · mint clean · airy modern */
+  [data-variant="refreshing"] .cover-canvas {
+    background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 50%, #6ee7b7 100%);
+  }
+  [data-variant="refreshing"] .cover-canvas .layer-warmth {
+    background: radial-gradient(circle at 70% 20%, #ecfeff 0%, transparent 60%);
+    opacity: 0.6;
+  }
+  [data-variant="refreshing"] .cover-canvas .brand-mark {
+    top: 50%; transform: translate(-50%, -50%);
+    color: #064e3b;
+  }
+  [data-variant="refreshing"] .cover-canvas .brand-name {
+    font-size: clamp(16px, 4.4vw, 24px);
+    letter-spacing: 4px; font-weight: 600;
+  }
+  [data-variant="refreshing"] .cover-canvas .brand-divider {
+    display: block;
+    width: 60px; height: 2px;
+    background: #10b981; opacity: 0.85;
+    margin: 14px auto;
+    border-radius: 100px;
+  }
+  [data-variant="refreshing"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: normal; font-weight: 400;
+    font-size: clamp(12px, 2.8vw, 15px);
+    color: #047857; letter-spacing: 1px;
+    text-transform: lowercase;
+  }
+  [data-variant="refreshing"] .cover-canvas .brand-est {
+    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
+    color: #065f46; opacity: 0.7;
+  }
+
+  /* Surprise variants (hidden · revealed only via Surprise reroll) */
+
+  /* Variant: BOLD · magazine-cover · dark + neon accent */
+  [data-variant="bold"] .cover-canvas {
+    background: linear-gradient(180deg, #0a0a0a 0%, #1c1917 100%);
+  }
+  [data-variant="bold"] .cover-canvas .layer-warmth { display: none; }
+  [data-variant="bold"] .cover-canvas .layer-grain {
+    opacity: 0.2; mix-blend-mode: screen;
+  }
+  [data-variant="bold"] .cover-canvas .brand-mark {
+    bottom: 12%; top: auto; transform: translateX(-50%);
+    color: #fafaf9; padding: 0 24px;
+  }
+  [data-variant="bold"] .cover-canvas .brand-name {
+    font-size: clamp(20px, 6.5vw, 36px);
+    letter-spacing: 1px; font-weight: 800;
+    line-height: 1; color: #fafaf9;
+  }
+  [data-variant="bold"] .cover-canvas .brand-divider {
+    display: block;
+    width: 50px; height: 3px;
+    background: #facc15; opacity: 1;
+    margin: 14px auto;
+  }
+  [data-variant="bold"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: normal; font-weight: 500;
+    font-size: clamp(11px, 2.6vw, 13px);
+    color: #facc15; letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  [data-variant="bold"] .cover-canvas .brand-est {
+    display: none;
+  }
+
+  /* Variant: SOFT · pastel watercolor · feminine handwritten feel */
+  [data-variant="soft"] .cover-canvas {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 35%, #f9a8d4 100%);
+  }
+  [data-variant="soft"] .cover-canvas .layer-warmth {
+    background: radial-gradient(circle at 30% 25%, #fef3c7 0%, transparent 40%),
+                radial-gradient(circle at 75% 65%, #ddd6fe 0%, transparent 45%);
+    opacity: 0.55;
+  }
+  [data-variant="soft"] .cover-canvas .brand-mark {
+    top: 50%; transform: translate(-50%, -50%);
+    color: #831843;
+  }
+  [data-variant="soft"] .cover-canvas .brand-name {
+    font-size: clamp(20px, 5.6vw, 30px);
+    letter-spacing: 0.5px; font-weight: 500;
+    font-style: italic !important;
+    text-transform: none !important;
+  }
+  [data-variant="soft"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(12px, 2.8vw, 15px);
+    margin-top: 6px;
+    color: #be185d; opacity: 0.75;
+    letter-spacing: 0;
+  }
+  [data-variant="soft"] .cover-canvas .brand-est {
+    font-size: 10px; letter-spacing: 2px; margin-top: 14px;
+    color: #9d174d; opacity: 0.6;
+  }
+  [data-variant="soft"] [data-script="latin"] .cover-canvas .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* Variant: NEON · cyberpunk dark · electric accents */
+  [data-variant="neon"] .cover-canvas {
+    background: linear-gradient(135deg, #0c0a09 0%, #1e1b4b 60%, #5b21b6 100%);
+  }
+  [data-variant="neon"] .cover-canvas .layer-warmth {
+    background: radial-gradient(circle at 75% 30%, #ec4899 0%, transparent 40%),
+                radial-gradient(circle at 20% 70%, #06b6d4 0%, transparent 45%);
+    opacity: 0.45;
+    mix-blend-mode: screen;
+  }
+  [data-variant="neon"] .cover-canvas .layer-grain { opacity: 0.15; }
+  [data-variant="neon"] .cover-canvas .brand-mark {
+    top: 50%; transform: translate(-50%, -50%);
+    color: #f0abfc;
+  }
+  [data-variant="neon"] .cover-canvas .brand-name {
+    font-size: clamp(18px, 5vw, 26px);
+    letter-spacing: 4px; font-weight: 700;
+    text-shadow: 0 0 20px rgba(236, 72, 153, 0.7),
+                 0 0 40px rgba(168, 85, 247, 0.4);
+    color: #f0abfc;
+  }
+  [data-variant="neon"] .cover-canvas .brand-divider {
+    display: block;
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+    margin: 16px auto; opacity: 1;
+  }
+  [data-variant="neon"] .cover-canvas .brand-tagline {
+    display: block;
+    font-style: normal; font-weight: 400;
+    font-size: clamp(11px, 2.6vw, 13px);
+    color: #67e8f9; letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+  }
+  [data-variant="neon"] .cover-canvas .brand-est {
+    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
+    color: #c4b5fd; opacity: 0.85;
   }
 
   /* Brand mark · Latin script: serif italic + regular mix */
@@ -904,20 +1166,53 @@
      ═══════════════════════════════════════════════════════════════ -->
 <div class="variant-tabs-wrap">
   <div class="variant-tabs" role="tablist">
-    <button data-variant="airy" class="active" type="button">
-      <span class="th">โปร่ง</span>
-      <span class="en">Airy</span>
-    </button>
-    <span class="variant-divider" aria-hidden="true">·</span>
-    <button data-variant="relaxed" type="button">
-      <span class="th">ผ่อนคลาย</span>
-      <span class="en">Relaxed</span>
-    </button>
-    <span class="variant-divider" aria-hidden="true">·</span>
-    <button data-variant="luxury" type="button">
-      <span class="th">หรูหรา</span>
-      <span class="en">Luxury</span>
-    </button>
+    <!-- Row 1 · curated calm -->
+    <div class="row">
+      <button data-variant="airy" class="active" type="button">
+        <span class="th">โปร่ง</span>
+        <span class="en">Airy</span>
+      </button>
+      <span class="variant-divider" aria-hidden="true">·</span>
+      <button data-variant="relaxed" type="button">
+        <span class="th">ผ่อนคลาย</span>
+        <span class="en">Relaxed</span>
+      </button>
+      <span class="variant-divider" aria-hidden="true">·</span>
+      <button data-variant="luxury" type="button">
+        <span class="th">หรูหรา</span>
+        <span class="en">Luxury</span>
+      </button>
+    </div>
+    <!-- Row 2 · energy/bold + Surprise wildcard (Pass 24 · 2026-05-05 PM) -->
+    <div class="row">
+      <button data-variant="fun" type="button">
+        <span class="th">สนุก</span>
+        <span class="en">Fun</span>
+      </button>
+      <span class="variant-divider" aria-hidden="true">·</span>
+      <button data-variant="refreshing" type="button">
+        <span class="th">สดชื่น</span>
+        <span class="en">Refreshing</span>
+      </button>
+      <span class="variant-divider" aria-hidden="true">·</span>
+      <button data-variant="surprise" type="button">
+        <span class="th">🎲 เซอร์ไพรส์</span>
+        <span class="en">Surprise</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Surprise reveal toast (transient · shows variant name when Surprise rerolls) -->
+<div class="surprise-toast" id="surpriseToast"></div>
+
+<!-- Soft prompt · "save before closing" · 60-sec engagement timer -->
+<div class="soft-prompt" id="softPrompt">
+  <div class="head">🔒 อย่าให้สิ่งที่คุณเลือกหายไป</div>
+  <div class="body">เห็นแล้วใช่มั้ย? บันทึกร้านนี้ไว้ก่อนปิดหน้า · ลูกค้าจะเห็นแบบเดียวกันตอนจอง</div>
+  <div class="row-actions">
+    <button class="save-now" id="softPromptSave">✓ บันทึกร้านนี้</button>
+    <button class="dismiss" id="softPromptDismiss">เล่นต่อ</button>
   </div>
 </div>
 
@@ -931,7 +1226,7 @@
        Now: variant tabs above → merchant compares + decides → big green CTA
        at bottom · single thumb action. -->
   <button class="primary" id="openSignupCta" type="button">
-    <span>✓ ตกลง · เปิดร้านที่ shop.bookease.co</span>
+    <span>✓ บันทึกร้านนี้</span>
     <svg class="arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M7 17 17 7"/>
       <path d="M9 7h8v8"/>
@@ -1035,7 +1330,7 @@
   let currentIndustry = urlIndustry && INDUSTRIES.includes(urlIndustry)
     ? urlIndustry
     : detectIndustry(shopData.shopName);
-  let currentVariant = urlVariant && ['airy','relaxed','luxury'].includes(urlVariant)
+  let currentVariant = urlVariant && ['airy','relaxed','luxury','fun','refreshing','bold','soft','neon'].includes(urlVariant)
     ? urlVariant
     : 'airy';
   const currentScript = detectScript(shopData.shopName);
@@ -1284,15 +1579,79 @@
   });
 
   // ════════════════════════════════════════════════════════════════
-  // 10. VARIANT SWITCHER
+  // 10. VARIANT SWITCHER · 6 variants + Surprise wildcard
+  //     (Pass 24 · 2026-05-05 PM · Art's lock · preview-first model)
   // ════════════════════════════════════════════════════════════════
+
+  // Surprise pool · 3 hidden variants only revealed via 🎲 reroll
+  const SURPRISE_VARIANTS = [
+    { id: 'bold',    label: 'Bold Editorial' },
+    { id: 'soft',    label: 'Soft Watercolor' },
+    { id: 'neon',    label: 'Neon Dreams' },
+  ];
+  let surpriseIdx = -1;
+
+  function showSurpriseToast(label) {
+    const t = document.getElementById('surpriseToast');
+    if (!t) return;
+    t.textContent = '🎲 ' + label;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function activateVariantTab(btn) {
+    document.querySelectorAll('.variant-tabs button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+
   document.querySelectorAll('.variant-tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.variant-tabs button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentVariant = btn.dataset.variant;
-      document.body.dataset.variant = currentVariant;
+      const v = btn.dataset.variant;
+      if (v === 'surprise') {
+        // Reroll · cycle through hidden surprise variants
+        surpriseIdx = (surpriseIdx + 1) % SURPRISE_VARIANTS.length;
+        const pick = SURPRISE_VARIANTS[surpriseIdx];
+        currentVariant = pick.id;
+        document.body.dataset.variant = currentVariant;
+        showSurpriseToast(pick.label);
+        activateVariantTab(btn); // keep Surprise button highlighted across rerolls
+      } else {
+        currentVariant = v;
+        document.body.dataset.variant = currentVariant;
+        activateVariantTab(btn);
+      }
+      // Mark merchant has interacted with variants · used by soft-prompt timer
+      window._variantInteractions = (window._variantInteractions || 0) + 1;
     });
+  });
+
+  // ────────────────────────────────────────────────────────────────────
+  // 10c. SOFT PROMPT · "save before closing" timer
+  // (Pass 24 · 2026-05-05 PM)
+  // Triggers if merchant taps variants ≥3 times within 60s engagement
+  // window · catches the "playing but not committing" sweet spot.
+  // ────────────────────────────────────────────────────────────────────
+  let softPromptShown = false;
+  function maybeShowSoftPrompt() {
+    if (softPromptShown) return;
+    if ((window._variantInteractions || 0) < 3) return;
+    if (document.body.dataset.mode === 'share') return; // never in customer view
+    // Don't pop if shop empty (anti-Potemkin still wins · button is disabled anyway)
+    if (!Array.isArray(shopData.services) || shopData.services.length === 0) return;
+    const prompt = document.getElementById('softPrompt');
+    if (!prompt) return;
+    prompt.classList.add('show');
+    softPromptShown = true;
+  }
+  setTimeout(maybeShowSoftPrompt, 60 * 1000); // 60 sec post-load
+
+  document.getElementById('softPromptDismiss')?.addEventListener('click', () => {
+    document.getElementById('softPrompt').classList.remove('show');
+  });
+  document.getElementById('softPromptSave')?.addEventListener('click', () => {
+    document.getElementById('softPrompt').classList.remove('show');
+    document.getElementById('openSignupCta')?.click();
   });
 
   // ════════════════════════════════════════════════════════════════
