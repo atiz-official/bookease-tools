@@ -1198,18 +1198,8 @@
     <span class="cycle-hint">↻</span>
   </button>
 
-  <!-- Pass 25 (2026-05-05 PM · Art's lock) · viral share button.
-       Creator (you/staff/friend) builds preview · sends to receiver who
-       opens · sees their shop already done · "บันทึกเป็นของฉัน." Same URL
-       carries all data + optional ?from=NAME for sender attribution. -->
-  <button id="sharePeerBtn" type="button"
-          style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px;
-                 background: transparent; border: 1px solid #cbd5e1; border-radius: 100px;
-                 padding: 6px 12px; font-size: 12px; cursor: pointer;
-                 color: #334155; font-family: inherit;">
-    <span>↗</span>
-    <span>ส่งต่อให้เพื่อน · เขาบันทึกเองได้</span>
-  </button>
+  <!-- Pass 25 v5 (2026-05-05 PM · Art's lock) · top pill removed · share
+       icon at bottom action bar is sufficient · less clutter. -->
 
   <!-- Pass 23 (Art's lock 2026-05-05 PM) · "Open signup" CTA moved to action
        bar at very bottom (Elon-mode · users decide AFTER seeing options).
@@ -1424,16 +1414,19 @@
      ACTION BAR (sticky · merchant tools · staff mode only)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="action-bar">
-  <!-- Pass 23 (Art's lock 2026-05-05 PM · Elon-mode): primary action moved
-       to BOTTOM where user's thumb lands after deciding. "ส่งให้ลูกค้า" was
-       leftover pre-caravan · removed (preview URL ≠ live shop URL anyway).
-       Now: variant tabs above → merchant compares + decides → big green CTA
-       at bottom · single thumb action. -->
+  <!-- Pass 25 v5 (Art's lock 2026-05-05 PM):
+       · Arrow ↗ removed from save CTA (was duplicating "→ goes elsewhere"
+         signal · clean text only)
+       · QR button dropped (preview URL ≠ live shop · re-add when shop real)
+       · Order: Save (primary) · Share (Web Share API) · Copy (clipboard) -->
   <button class="primary" id="openSignupCta" type="button">
     <span>✓ บันทึกร้านนี้</span>
-    <svg class="arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M7 17 17 7"/>
-      <path d="M9 7h8v8"/>
+  </button>
+  <button class="icon-btn" id="shareBtn" type="button" aria-label="แชร์ผ่าน LINE / IG / อื่นๆ">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+      <polyline points="16 6 12 2 8 6"/>
+      <line x1="12" y1="2" x2="12" y2="15"/>
     </svg>
   </button>
   <button class="icon-btn" id="copyBtn" type="button" aria-label="คัดลอกลิงก์">
@@ -1443,14 +1436,6 @@
     </svg>
     <svg class="icon-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M5 12l5 5L20 7"/>
-    </svg>
-  </button>
-  <button class="icon-btn" id="qrBtn" type="button" aria-label="แสดง QR สำหรับสแกน">
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="7" height="7" rx="1"/>
-      <rect x="14" y="3" width="7" height="7" rx="1"/>
-      <rect x="3" y="14" width="7" height="7" rx="1"/>
-      <path d="M14 14h3v3M20 14h1M14 20h1M17 17v4M20 17h1"/>
     </svg>
   </button>
 </div>
@@ -2037,22 +2022,8 @@
     return u.toString();
   }
 
-  document.getElementById('sharePeerBtn')?.addEventListener('click', async () => {
-    const url = buildPeerShareUrl();
-    const text = `เว็บร้านที่ทำให้คุณ · เปิดดู + บันทึกเป็นของคุณได้เลย\n${url}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: shopData.shopName, text, url });
-      } catch (e) { /* canceled */ }
-    } else {
-      try {
-        await navigator.clipboard.writeText(text);
-        alert('คัดลอก link พร้อมข้อความแล้ว · paste ใน LINE · IG · FB ได้เลย');
-      } catch {
-        prompt('Copy link นี้ส่งให้เพื่อน:', url);
-      }
-    }
-  });
+  // Pass 25 v5 · top sharePeerBtn HTML removed · share via bottom Copy icon
+  // (now wired to Web Share API + peer URL · receiver gets save-as-own flow)
 
 
   // ════════════════════════════════════════════════════════════════
@@ -2067,30 +2038,38 @@
     return u.toString();
   }
 
-  // Pass 23 (Art's lock 2026-05-05 PM · Elon-mode): old shareBtn ('ส่งให้ลูกค้า')
-  // removed · replaced by openSignupCta (handler defined in section 10b above).
-  // Preview URL ≠ live shop URL · sharing it during caravan was wrong anyway ·
-  // post-signup share happens on real /<slug> page, not this preview tool.
+  // Pass 25 v5 · Action bar share + copy · both use PEER share URL (no mode
+   // flag · receiver gets save-as-own flow · friend-merchant pattern)
 
-  document.getElementById('copyBtn').addEventListener('click', async () => {
-    const shareUrl = buildShareUrl();
+  // SHARE · Web Share API · OS share sheet · falls back to clipboard
+  document.getElementById('shareBtn')?.addEventListener('click', async () => {
+    const url = buildPeerShareUrl();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: shopData.shopName, url });
+      } catch (e) { /* user canceled · silent */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        const btn = document.getElementById('shareBtn');
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1400);
+      } catch {}
+    }
+  });
+
+  // COPY · clipboard only · paste-anywhere (LINE chat · email · etc.)
+  document.getElementById('copyBtn')?.addEventListener('click', async () => {
+    const url = buildPeerShareUrl();
     try {
-      await navigator.clipboard.writeText(shareUrl);
-    } catch (e) { /* clipboard blocked · silent */ }
+      await navigator.clipboard.writeText(url);
+    } catch (e) { /* silent */ }
     const btn = document.getElementById('copyBtn');
     btn.classList.add('copied');
     setTimeout(() => btn.classList.remove('copied'), 1400);
   });
 
-  document.getElementById('qrBtn').addEventListener('click', () => {
-    const shareUrl = buildShareUrl();
-    const qrImg = document.getElementById('qrImage');
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(shareUrl)}`;
-    document.getElementById('qrModal').classList.add('show');
-  });
-  document.getElementById('qrModal').addEventListener('click', (e) => {
-    if (e.target.id === 'qrModal') e.currentTarget.classList.remove('show');
-  });
+  // QR button removed in v5 · re-add when shop URL is real (post-save)
 </script>
 
 </body>
