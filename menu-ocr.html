@@ -341,18 +341,11 @@
             </div>
           </div>
 
-          <!-- Pass 23 · variant picker · captured in prefill so signup persists merchant's choice
-               (per memory feedback_no_potemkin_demos.md · no theatrical demos) -->
-          <div class="ocr-variant-picker" style="margin: 14px 0 10px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">สไตล์ร้าน</label>
-            <input type="hidden" id="prevVariant" value="airy" />
-            <div id="prevVariantGroup" style="display: flex; gap: 6px;">
-              <button type="button" data-pick-variant="airy" class="variant-pick active" style="flex: 1; padding: 10px 8px; border: 1px solid #0f172a; background: #0f172a; color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">โปร่ง · Airy</button>
-              <button type="button" data-pick-variant="relaxed" class="variant-pick" style="flex: 1; padding: 10px 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer;">ผ่อนคลาย · Relaxed</button>
-              <button type="button" data-pick-variant="luxury" class="variant-pick" style="flex: 1; padding: 10px 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer;">หรูหรา · Luxury</button>
-            </div>
-            <p style="font-size: 11px; color: #64748b; margin: 6px 0 0;">เลือกได้ตามที่เจ้าของร้านชอบ · จะถูกบันทึกในระบบ · ลูกค้าเห็นแบบเดียวกัน</p>
-          </div>
+          <!-- Pass 23 (Art's lock 2026-05-05 PM): variant picker moved to liff-preview
+               for live WYSIWYG · merchant sees variant change in real time on the
+               actual demo phone before committing. Hidden default 'airy' kept for
+               backwards compat with collectShopData. -->
+          <input type="hidden" id="prevVariant" value="airy" />
 
           <button class="primary green" id="prevCreateBtn" disabled>🚀 สร้างหน้าเว็บร้านตัวอย่าง</button>
 
@@ -367,13 +360,12 @@
               <button class="primary" id="prevOpenPreviewBtn" style="flex: 1; margin-top: 0;">🚀 เปิดดูใหม่</button>
             </div>
 
-            <!-- ↓↓↓ commit step · ส่งข้อมูลไป signup จริง ↓↓↓ -->
-            <div style="border-top: 1px dashed #cbd5e1; margin-top: 14px; padding-top: 14px;">
-              <div style="font-size: 13px; color: #047857; font-weight: 700; margin-bottom: 8px;">เมื่อร้านอนุมัติ → เปิดร้านจริง:</div>
-              <button class="primary green" id="prevOpenSignupBtn" style="margin-top: 0;">✓ ตกลง · เปิดร้านที่ shop.bookease.co</button>
-              <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
-                ปุ่มนี้จะส่งชื่อร้าน · slug · เวลาเปิด · บริการทั้งหมด ไปที่ <b>shop.bookease.co/signup</b> โดยอัตโนมัติ · ร้านยืนยันด้วย OTP เพียงครั้งเดียว
-              </div>
+            <!-- Pass 23 (Art's lock 2026-05-05 PM): "เปิดร้านที่ shop.bookease.co"
+                 button moved INTO the LIFF preview tool itself · merchant picks
+                 variant + sees live WYSIWYG · staff confirms and clicks signup
+                 button on the preview page. Less hop · cleaner caravan flow. -->
+            <div style="border-top: 1px dashed #cbd5e1; margin-top: 14px; padding-top: 14px; font-size: 12px; color: #64748b; line-height: 1.5;">
+              💡 <b>ขั้นต่อไป:</b> เปิด tab preview ที่ขึ้นข้างบน · ให้เจ้าของร้านเลือกสไตล์ (โปร่ง / ผ่อนคลาย / หรูหรา) · กดปุ่ม <b>"✓ ตกลง · เปิดร้าน"</b> ที่ปลายหน้า → signup เปิดอัตโนมัติพร้อมข้อมูล + สไตล์ที่เลือก
             </div>
           </div>
         </div>
@@ -746,22 +738,9 @@ Output ONLY valid JSON. No prose. No code fences.`;
     e.target.dataset.autofilled = '';
   });
 
-  // Pass 23 · variant picker logic (Art's lock 2026-05-05 · per
-  // feedback_no_potemkin_demos.md · choice persists end-to-end).
-  document.querySelectorAll('[data-pick-variant]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const v = btn.getAttribute('data-pick-variant');
-      document.getElementById('prevVariant').value = v;
-      document.querySelectorAll('[data-pick-variant]').forEach(b => {
-        const isActive = b === btn;
-        b.classList.toggle('active', isActive);
-        b.style.background = isActive ? '#0f172a' : '#fff';
-        b.style.color = isActive ? '#fff' : '#475569';
-        b.style.border = isActive ? '1px solid #0f172a' : '1px solid #cbd5e1';
-        b.style.fontWeight = isActive ? '600' : '500';
-      });
-    });
-  });
+  // Pass 23 (Art's lock 2026-05-05 PM): variant picker moved to liff-preview
+  // for live WYSIWYG · merchant picks on actual demo phone, staff confirms
+  // there + click signup button on LIFF preview. Less hop · cleaner.
 
   function collectShopData() {
     const data = {
@@ -837,35 +816,9 @@ Output ONLY valid JSON. No prose. No code fences.`;
   prevCreateBtn.addEventListener('click', doCreatePreview);
   document.getElementById('prevOpenPreviewBtn').addEventListener('click', doCreatePreview);
 
-  // Open real signup at shop.bookease.co with prefilled data
-  document.getElementById('prevOpenSignupBtn').addEventListener('click', () => {
-    const data = collectShopData();
-    if (!data.shopName) {
-      showStatus('prevStatus', '⚠️ ใส่ชื่อร้านก่อน', 'error');
-      return;
-    }
-    if (!data.shortName) {
-      showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
-      return;
-    }
-    // Pass 23+ · per feedback_no_potemkin_demos.md · ห้าม ship ร้านเปล่า ·
-    // ลูกค้าจะเข้า LIFF เห็น "ยังไม่มีบริการ" = dead end = wedge แตก
-    if (!data.services || data.services.length === 0) {
-      showStatus('prevStatus',
-        '⚠️ ต้องมีบริการอย่างน้อย 1 รายการ · ไปแท็บ "ถ่ายเมนู" ก่อน · หรือกรอกบริการเองในตาราง',
-        'error');
-      // visually highlight the menu tab to guide staff
-      const menuTab = document.querySelector('[data-tab="menu"]');
-      if (menuTab) {
-        menuTab.style.boxShadow = '0 0 0 3px #f59e0b';
-        setTimeout(() => { menuTab.style.boxShadow = ''; }, 3000);
-      }
-      return;
-    }
-    const signupUrl = buildShopSignupUrl(data);
-    window.open(signupUrl, '_blank', 'noopener');
-    showStatus('prevStatus', '✅ เปิด shop.bookease.co/signup ใน tab ใหม่ · ร้านยืนยัน OTP ก็จบ', 'success');
-  });
+  // Pass 23 (Art's lock 2026-05-05 PM): "Open signup" button moved to
+  // liff-preview.html · staff clicks there after merchant picks variant
+  // (live WYSIWYG). prevOpenSignupBtn removed from this tool.
 
   // ═══════════════════════════════════════════════════════════════
   // MODE 2 · ถ่ายเมนู
