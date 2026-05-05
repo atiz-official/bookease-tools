@@ -1041,37 +1041,7 @@
   <span id="testUrl" style="display: none;"></span>
 </div>
 
-<!-- Pass 25 · Receiver banner · shows above page when ?from=NAME in URL ·
-     "Art ทำเว็บร้านให้คุณ · ถ้าชอบ · บันทึกเป็นของคุณ" -->
-<div id="senderBanner" class="sender-banner" style="display:none;">
-  <div class="sender-banner-inner">
-    <div class="ico">👋</div>
-    <div class="msg">
-      <strong id="senderName">เพื่อน</strong> สร้างเว็บร้านนี้ให้คุณ · ถ้าชอบ · กดปุ่มเขียวข้างล่าง <b>"บันทึกเป็นร้านของคุณ"</b>
-    </div>
-  </div>
-</div>
-
-<style>
-  .sender-banner {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-    border-bottom: 1px solid #10b981;
-    padding: 14px 16px;
-    margin-bottom: 0;
-  }
-  .sender-banner-inner {
-    max-width: 880px; margin: 0 auto;
-    display: flex; gap: 12px; align-items: center;
-  }
-  .sender-banner .ico {
-    flex-shrink: 0; font-size: 22px;
-  }
-  .sender-banner .msg {
-    font-size: 13px; line-height: 1.5; color: #064e3b;
-  }
-  .sender-banner .msg strong { color: #047857; font-weight: 700; }
-  body[data-mode="share"] .sender-banner { display: none !important; }
-</style>
+<!-- Pass 25 v2 · receiver banner removed · LINE chat already conveys "from whom" -->
 
 <!-- ═══════════════════════════════════════════════════════════════
      PHONE FRAME · always visible (drops border in share mode on mobile)
@@ -1705,23 +1675,9 @@
   //     (Pass 25 · 2026-05-05 PM · receiver mode + share button)
   // ════════════════════════════════════════════════════════════════
 
-  // Pass 25 · receiver mode · if URL has ?from=NAME · this URL was sent
-  // FROM that sender. Show banner + adapt CTA wording to "บันทึกเป็นร้านของฉัน"
-  const fromSender = params.get('from');
-  if (fromSender && fromSender.trim()) {
-    const banner = document.getElementById('senderBanner');
-    const nameEl = document.getElementById('senderName');
-    if (banner && nameEl) {
-      nameEl.textContent = fromSender.trim().slice(0, 40);
-      banner.style.display = 'block';
-    }
-    // Adapt the CTA copy
-    const cta = document.getElementById('openSignupCta');
-    if (cta) {
-      const span = cta.querySelector('span');
-      if (span) span.textContent = '✓ บันทึกเป็นร้านของฉัน';
-    }
-  }
+  // Pass 25 v2 (2026-05-05 PM): sender attribution dropped · LINE chat
+  // already shows who sent + adds zero value beyond "who" which medium
+  // already conveys. Visual IS the message. Less friction · cleaner.
 
   function buildShopSignupUrlFromPreview() {
     // Re-encode shopData INCLUDING the live currentVariant the merchant just
@@ -1771,32 +1727,19 @@
   //     (Pass 25 · 2026-05-05 PM · viral coefficient mechanic ·
   //      Art's lock · friend-makes-for-friend pattern)
   // ════════════════════════════════════════════════════════════════
-  function buildPeerShareUrl(senderName) {
+  function buildPeerShareUrl() {
     // Re-encode shopData with current variant so receiver sees what creator chose.
     const finalData = { ...shopData, variant: currentVariant };
     const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
     const u = new URL(window.location.href);
-    u.search = ''; // clear all current params
+    u.search = '';
     u.searchParams.set('data', b64);
-    if (senderName && senderName.trim()) {
-      u.searchParams.set('from', senderName.trim().slice(0, 40));
-    }
     return u.toString();
   }
 
   document.getElementById('sharePeerBtn')?.addEventListener('click', async () => {
-    // Optional: ask for sender name once · cache in localStorage
-    let sender = localStorage.getItem('bookease_sender_name') || '';
-    if (!sender) {
-      sender = prompt('ใส่ชื่อคุณ (ไว้บอกเพื่อนว่าใครส่ง · ข้ามได้):', '') || '';
-      if (sender.trim()) {
-        localStorage.setItem('bookease_sender_name', sender.trim().slice(0, 40));
-      }
-    }
-    const url = buildPeerShareUrl(sender);
-    const text = sender
-      ? `${sender} ทำเว็บร้านให้คุณ · เปิดดู + บันทึกเป็นของคุณได้เลย\n${url}`
-      : `เว็บร้านที่ผมทำให้คุณ · เปิดดู + บันทึกเป็นของคุณได้เลย\n${url}`;
+    const url = buildPeerShareUrl();
+    const text = `เว็บร้านที่ทำให้คุณ · เปิดดู + บันทึกเป็นของคุณได้เลย\n${url}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: shopData.shopName, text, url });
