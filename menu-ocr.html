@@ -236,6 +236,18 @@
     <p>ใช้ที่ร้าน · ถ่ายรูป → AI ดึงข้อมูลให้</p>
   </header>
 
+  <!-- Caravan checklist · 2 photos required for shop to be usable -->
+  <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; border-radius: 10px; padding: 14px 16px; margin: 12px 0 20px; font-size: 14px; line-height: 1.5;">
+    <div style="font-weight: 700; color: #92400e; margin-bottom: 6px;">📸 ต้องถ่าย 2 รูปต่อร้าน</div>
+    <div style="color: #78350f;">
+      <b>1.</b> หน้า LINE OA (ชื่อร้าน · เวลาเปิด-ปิด) → แท็บ "ค้นหาข้อมูลร้าน"<br>
+      <b>2.</b> เมนูบริการ (รายการ + ราคา) → แท็บ "ถ่ายเมนู"
+    </div>
+    <div style="color: #92400e; font-size: 12px; margin-top: 8px; font-style: italic;">
+      ⚠️ ขาดเมนู = ลูกค้าจองไม่ได้ · ปุ่ม "เปิดร้าน" ถูกล็อค
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════════════════════════
        Setup-success (shown briefly after ?setup=KEY URL)
        ═══════════════════════════════════════════════════════════════ -->
@@ -834,6 +846,20 @@ Output ONLY valid JSON. No prose. No code fences.`;
     }
     if (!data.shortName) {
       showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
+      return;
+    }
+    // Pass 23+ · per feedback_no_potemkin_demos.md · ห้าม ship ร้านเปล่า ·
+    // ลูกค้าจะเข้า LIFF เห็น "ยังไม่มีบริการ" = dead end = wedge แตก
+    if (!data.services || data.services.length === 0) {
+      showStatus('prevStatus',
+        '⚠️ ต้องมีบริการอย่างน้อย 1 รายการ · ไปแท็บ "ถ่ายเมนู" ก่อน · หรือกรอกบริการเองในตาราง',
+        'error');
+      // visually highlight the menu tab to guide staff
+      const menuTab = document.querySelector('[data-tab="menu"]');
+      if (menuTab) {
+        menuTab.style.boxShadow = '0 0 0 3px #f59e0b';
+        setTimeout(() => { menuTab.style.boxShadow = ''; }, 3000);
+      }
       return;
     }
     const signupUrl = buildShopSignupUrl(data);
