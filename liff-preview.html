@@ -1206,7 +1206,7 @@
        Anti-Potemkin warning still surfaces near top so staff knows BEFORE
        merchant picks variant if menu is missing. -->
   <div id="ctaWarn" style="display:none; margin-top: 10px; padding: 10px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 12px; color: #78350f; line-height: 1.5;">
-    ⚠️ ยังไม่มีบริการ · กลับไป OCR tool · แท็บ "ถ่ายเมนู" · ก่อนจะเปิดร้าน
+    💡 ยังไม่มีบริการ · กดปุ่ม "+ เพิ่มบริการ" ด้านล่าง หรือใช้ OCR tool ถ่ายรูปเมนู
   </div>
 
   <!-- Hidden test URL for clipboard fallback (kept in DOM for share/copy logic) -->
@@ -1685,7 +1685,7 @@
       warn.style.display = 'none';
     } else {
       cta.disabled = true;
-      if (span) span.textContent = '✗ ต้องมีบริการก่อน';
+      if (span) span.textContent = 'เพิ่มบริการก่อนบันทึก';
       warn.style.display = 'block';
     }
   }
@@ -2000,7 +2000,7 @@
       return;
     }
     if (!shopData.services || shopData.services.length === 0) {
-      alert('⚠️ ต้องมีบริการก่อน · กลับไป OCR tool · แท็บ "ถ่ายเมนู"');
+      alert('เพิ่มบริการก่อนบันทึก · กดปุ่ม "+ เพิ่มบริการ" หรือกลับไปใช้ OCR tool');
       return;
     }
     const url = buildShopSignupUrlFromPreview();
