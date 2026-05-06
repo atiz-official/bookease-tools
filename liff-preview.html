@@ -121,66 +121,77 @@
     border-left: 1px solid #e2e8f0; padding-left: 10px;
   }
 
-  /* ─── Variant switcher (Pass 22 · Version A · Apple News tab style · Art's lock) ─── */
+  /* ─── Variant switcher (Pass 25 v12 · 1-row horizontal scroll · Art's lock 2026-05-06) ─── */
   .variant-tabs-wrap {
     position: fixed; left: 0; right: 0;
     bottom: 72px;
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid #f1f5f9;
-    padding: 6px 16px 8px;
+    padding: 6px 0 8px;
     z-index: 49;
   }
-  .variant-tabs-wrap > .variant-tabs {
+  .variant-tabs-wrap > .variant-tabs-scroll {
     max-width: 880px; margin: 0 auto;
+    position: relative;
   }
   body[data-mode="share"] .variant-tabs-wrap { display: none; }
+  /* horizontal scroll · scroll-snap · gradient fade right edge as scroll indicator */
   .variant-tabs {
-    display: flex; flex-direction: column;
-    gap: 2px;
+    display: flex; flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 16px;
+    gap: 4px;
   }
-  .variant-tabs .row {
-    display: flex; justify-content: center; align-items: center;
-    gap: 0;
-  }
+  .variant-tabs::-webkit-scrollbar { display: none; }
   .variant-tabs button {
-    flex: 1;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
     background: transparent; border: none;
-    padding: 3px 4px;
+    padding: 6px 14px;
     font-family: 'Sarabun', sans-serif;
-    cursor: pointer; line-height: 1.15;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; line-height: 1.2;
     color: #94a3b8;
+    border-radius: 999px;
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
   }
-  .variant-tabs button .th {
-    display: block;
-    font-size: 13px; font-weight: 500;
-    color: inherit;
+  .variant-tabs button:hover { color: #475569; }
+  .variant-tabs button.active {
+    color: #0f172a; font-weight: 700;
+    background: rgba(15, 23, 42, 0.06);
   }
-  .variant-tabs button .en {
-    display: block;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 10px;
-    margin-top: 1px;
-    color: #cbd5e1;
+  .variant-tabs button[data-variant="surprise"] { color: #b45309; }
+  .variant-tabs button[data-variant="surprise"].active {
+    color: #92400e; background: rgba(217, 119, 6, 0.10);
   }
-  .variant-tabs button:hover .th { color: #475569; }
-  .variant-tabs button.active .th { color: #0f172a; font-weight: 700; }
-  .variant-tabs button.active .en { color: #64748b; }
-  .variant-tabs button[data-variant="surprise"] .th {
-    color: #b45309;
+  /* scroll indicator · right-edge fade hint */
+  .variant-tabs-scroll::after {
+    content: '›';
+    position: absolute;
+    right: 4px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    color: #94a3b8;
+    font-size: 18px; font-weight: 600;
+    pointer-events: none;
+    box-shadow: -4px 0 8px rgba(255, 255, 255, 0.85);
+    opacity: 0.85;
+    transition: opacity 0.2s;
   }
-  .variant-tabs button[data-variant="surprise"] .en {
-    color: #d97706;
-  }
-  .variant-tabs .variant-divider {
-    color: #cbd5e1; font-size: 12px; user-select: none;
-    padding: 0 1px;
-  }
+  .variant-tabs-scroll.scrolled-end::after { opacity: 0; }
 
   /* Surprise reveal toast · centered above variant tabs */
   .surprise-toast {
     position: fixed;
-    bottom: 168px; left: 50%;
+    bottom: 144px; left: 50%; /* clears 1-row variant-tabs (~38) + action-bar (~76) + spacer (~30) */
     transform: translate(-50%, 20px);
     background: linear-gradient(135deg, #fef3c7, #fde68a);
     color: #78350f;
@@ -248,10 +259,32 @@
      PHONE FRAME · always visible
      ════════════════════════════════════════════════════════════════ */
   .phone-wrap {
-    display: flex; justify-content: center;
-    padding: 0 16px calc(140px + env(safe-area-inset-bottom)); /* clear variant-tabs (~52px) + action-bar (~76px + safe-area) */
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 16px calc(120px + env(safe-area-inset-bottom)); /* clear variant-tabs (~38px · 1-row) + action-bar (~76px + safe-area) */
   }
   body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
+  /* Pass 25 v13 · subtle "preview" chip · disambiguates phone mockup from real app
+     (Art's lock 2026-05-06 · tells merchant "this is what customer sees")
+     Hidden in share mode (customer side) since context is obvious. */
+  .preview-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin: 0 0 10px;
+    padding: 4px 12px;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    color: #475569;
+    letter-spacing: 0.01em;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .preview-tag .eye {
+    width: 12px; height: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #64748b;
+  }
+  body[data-mode="share"] .preview-tag { display: none; }
   .phone {
     width: 100%; max-width: 380px;
     background: #000; border-radius: 36px;
@@ -1168,7 +1201,7 @@
     .header-compact { font-size: 20px; }
     .url-block .public-url { font-size: 15px; }
     /* Variant pills: keep 16px Thai for legibility (Pass 22 lock) */
-    .phone-wrap { padding: 0 8px calc(140px + env(safe-area-inset-bottom)); }
+    .phone-wrap { padding: 0 8px calc(120px + env(safe-area-inset-bottom)); }
     .action-bar { gap: 8px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
     .action-bar .primary { font-size: 15px; min-height: 50px; padding: 0 20px; }
     .action-bar .icon-btn { width: 50px; height: 50px; }
@@ -1219,6 +1252,14 @@
      PHONE FRAME · always visible (drops border in share mode on mobile)
      ═══════════════════════════════════════════════════════════════ -->
 <div class="phone-wrap">
+  <!-- Pass 25 v13 · subtle preview chip · disambiguates mockup from real app -->
+  <span class="preview-tag" aria-hidden="true">
+    <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+    ตัวอย่าง · นี่คือสิ่งที่ลูกค้าจะเห็น
+  </span>
   <div class="phone">
     <button class="reset-btn" id="resetBtn" type="button">↻ เริ่มใหม่</button>
     <div class="phone-screen" id="phoneScreen">
@@ -1356,43 +1397,19 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     VARIANT SWITCHER (Pass 22 · moved BELOW preview · Art's lock 2026-05-04)
+     VARIANT SWITCHER (Pass 25 v12 · 1-row horizontal scroll · Art's lock 2026-05-06)
+     · drop English subtitle to save vertical space
+     · scroll indicator (›) on right edge · fades on scroll-end
      ═══════════════════════════════════════════════════════════════ -->
 <div class="variant-tabs-wrap">
-  <div class="variant-tabs" role="tablist">
-    <!-- Row 1 · curated calm -->
-    <div class="row">
-      <button data-variant="airy" class="active" type="button">
-        <span class="th">โปร่ง</span>
-        <span class="en">Airy</span>
-      </button>
-      <span class="variant-divider" aria-hidden="true">·</span>
-      <button data-variant="relaxed" type="button">
-        <span class="th">ผ่อนคลาย</span>
-        <span class="en">Relaxed</span>
-      </button>
-      <span class="variant-divider" aria-hidden="true">·</span>
-      <button data-variant="luxury" type="button">
-        <span class="th">หรูหรา</span>
-        <span class="en">Luxury</span>
-      </button>
-    </div>
-    <!-- Row 2 · energy/bold + Surprise wildcard (Pass 24 · 2026-05-05 PM) -->
-    <div class="row">
-      <button data-variant="fun" type="button">
-        <span class="th">สนุก</span>
-        <span class="en">Fun</span>
-      </button>
-      <span class="variant-divider" aria-hidden="true">·</span>
-      <button data-variant="refreshing" type="button">
-        <span class="th">สดชื่น</span>
-        <span class="en">Refreshing</span>
-      </button>
-      <span class="variant-divider" aria-hidden="true">·</span>
-      <button data-variant="surprise" type="button">
-        <span class="th">เซอร์ไพรส์</span>
-        <span class="en">Surprise</span>
-      </button>
+  <div class="variant-tabs-scroll" id="variantTabsScroll">
+    <div class="variant-tabs" role="tablist">
+      <button data-variant="airy" class="active" type="button" aria-label="โปร่ง · Airy">โปร่ง</button>
+      <button data-variant="relaxed" type="button" aria-label="ผ่อนคลาย · Relaxed">ผ่อนคลาย</button>
+      <button data-variant="luxury" type="button" aria-label="หรูหรา · Luxury">หรูหรา</button>
+      <button data-variant="fun" type="button" aria-label="สนุก · Fun">สนุก</button>
+      <button data-variant="refreshing" type="button" aria-label="สดชื่น · Refreshing">สดชื่น</button>
+      <button data-variant="surprise" type="button" aria-label="เซอร์ไพรส์ · Surprise">เซอร์ไพรส์</button>
     </div>
   </div>
 </div>
@@ -1674,19 +1691,25 @@
   }
 
   function refreshSaveCtaState() {
+    // Pass 25 v14 (Art's lock 2026-05-06) · "wall→door"
+    // Disabled gray pill ("เพิ่มบริการก่อนบันทึก") was a dead-end.
+    // Now: when no services → active green pill "+ เพิ่มบริการของคุณ"
+    //      → clicking opens the inline service modal (same as in-screen "+ เพิ่มบริการ" btn)
+    //      After adding ≥1 service → pill flips to "✓ บันทึกร้านนี้" (commit to signup)
     const cta = document.getElementById('openSignupCta');
     const warn = document.getElementById('ctaWarn');
-    if (!cta || !warn) return;
+    if (!cta) return;
     const hasServices = Array.isArray(shopData.services) && shopData.services.length > 0;
     const span = cta.querySelector('span');
+    cta.disabled = false;
     if (hasServices) {
-      cta.disabled = false;
+      cta.dataset.state = 'save';
       if (span) span.textContent = '✓ บันทึกร้านนี้';
-      warn.style.display = 'none';
+      if (warn) warn.style.display = 'none';
     } else {
-      cta.disabled = true;
-      if (span) span.textContent = 'เพิ่มบริการก่อนบันทึก';
-      warn.style.display = 'block';
+      cta.dataset.state = 'add-service';
+      if (span) span.textContent = '+ เพิ่มบริการของคุณ';
+      if (warn) warn.style.display = 'none'; // CTA itself communicates state · no redundant yellow box
     }
   }
 
@@ -1934,10 +1957,26 @@
         document.body.dataset.variant = currentVariant;
         activateVariantTab(btn);
       }
+      // scroll active tab into center view (helps when tabs overflow)
+      try { btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch {}
       // Mark merchant has interacted with variants · used by soft-prompt timer
       window._variantInteractions = (window._variantInteractions || 0) + 1;
     });
   });
+
+  // Pass 25 v12 · scroll-end indicator · hide '›' chevron when scrolled to end
+  (function () {
+    const scrollWrap = document.getElementById('variantTabsScroll');
+    const scrollInner = scrollWrap?.querySelector('.variant-tabs');
+    if (!scrollWrap || !scrollInner) return;
+    const updateIndicator = () => {
+      const remaining = scrollInner.scrollWidth - scrollInner.clientWidth - scrollInner.scrollLeft;
+      scrollWrap.classList.toggle('scrolled-end', remaining < 8);
+    };
+    scrollInner.addEventListener('scroll', updateIndicator, { passive: true });
+    window.addEventListener('resize', updateIndicator);
+    setTimeout(updateIndicator, 100);
+  })();
 
   // ────────────────────────────────────────────────────────────────────
   // 10c. SOFT PROMPT · "save before closing" timer
@@ -1999,14 +2038,25 @@
   // the inline editor. Per memory feedback_no_potemkin_demos.md.
 
   document.getElementById('openSignupCta')?.addEventListener('click', () => {
+    // Pass 25 v14 · branch on state · "wall→door"
     if (!shopData.shopName || !shopData.shortName) {
       alert('ไม่มีข้อมูลร้าน · กลับไป OCR tool ก่อน');
       return;
     }
-    if (!shopData.services || shopData.services.length === 0) {
-      alert('เพิ่มบริการก่อนบันทึก · กดปุ่ม "+ เพิ่มบริการ" หรือกลับไปใช้ OCR tool');
+    const cta = document.getElementById('openSignupCta');
+    const state = cta?.dataset.state;
+    if (state === 'add-service') {
+      // Wall→door · open the same inline service modal (no redirect · no friction)
+      // Auto-jump to screen 2 first so the new service is visible after add
+      const target = document.querySelector('[data-screen="2"]');
+      if (target) {
+        document.querySelectorAll('.liff-content .screen').forEach(s => s.classList.remove('active'));
+        target.classList.add('active');
+      }
+      openAddServiceModal();
       return;
     }
+    // state === 'save' · commit to signup
     const url = buildShopSignupUrlFromPreview();
     window.open(url, '_blank', 'noopener');
   });
