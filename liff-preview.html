@@ -1666,9 +1666,11 @@
 
       if (!isShareMode) {
         // STAFF · 2 ghost sample services + nudge to "+ เพิ่มบริการ"
+        // Pass 25 v24 fix (Art's catch 2026-05-06 PM): duration ใน name string
+        // ทำให้แสดง 2 ที่ ("60 นาที" + "— นาที"). Move duration to bottom row only.
         const samples = [
-          { name: 'นวดอโรม่า · 60 นาที',  price: 890 },
-          { name: 'สปาเท้า · 90 นาที',    price: 1290 },
+          { name: 'นวดอโรม่า', durationMin: 60, price: 890 },
+          { name: 'สปาเท้า',   durationMin: 90, price: 1290 },
         ];
         const sampleHtml = samples.map((s, idx) => `
           <div class="service-card" style="opacity: 0.42; pointer-events: none; position: relative;" aria-hidden="true">
@@ -1676,7 +1678,7 @@
             <div class="service-name">${escapeHtml(s.name)}</div>
             <div class="service-divider"></div>
             <div class="service-meta">
-              <span class="service-duration">— นาที</span>
+              <span class="service-duration">${s.durationMin} นาที</span>
               <span class="service-price">฿${s.price.toLocaleString()}</span>
             </div>
           </div>
@@ -1905,9 +1907,16 @@
   fillMockQr('bookingQr');
 
   // ════════════════════════════════════════════════════════════════
-  // 8. SCREEN NAVIGATION
+  // 8. SCREEN NAVIGATION (Pass 25 v24 · 2026-05-06 PM · Art's lock):
+  //    + swipe gesture (touch) between screens
+  //    + dot click direct navigation
   // ════════════════════════════════════════════════════════════════
+  let currentScreen = 1;
+  const TOTAL_SCREENS = 5;
+
   function goToScreen(n) {
+    if (n < 1 || n > TOTAL_SCREENS) return;
+    currentScreen = n;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const target = document.querySelector(`[data-screen="${n}"]`);
     if (target) target.classList.add('active');
@@ -1919,6 +1928,54 @@
   document.querySelectorAll('[data-go]').forEach(btn => {
     btn.addEventListener('click', () => goToScreen(parseInt(btn.dataset.go)));
   });
+
+  // Pagination dot clickable · direct navigation
+  document.querySelectorAll('.pagination .dot').forEach((d, i) => {
+    d.style.cursor = 'pointer';
+    d.addEventListener('click', () => goToScreen(i + 1));
+  });
+
+  // Swipe gesture (left = next · right = prev)
+  // Listen on phone-screen (the iPhone-frame inner area) so swipe works
+  // anywhere on the mockup — not just inside .liff-content.
+  (function () {
+    const swipeArea = document.getElementById('phoneScreen');
+    if (!swipeArea) return;
+
+    let startX = 0, startY = 0, startTime = 0;
+    let tracking = false;
+
+    const SWIPE_THRESHOLD_X = 60;   // min horizontal travel
+    const SWIPE_THRESHOLD_Y = 50;   // max vertical drift (else = scroll)
+    const SWIPE_MAX_TIME = 600;     // ms · fast flick
+
+    swipeArea.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startTime = Date.now();
+      tracking = true;
+    }, { passive: true });
+
+    swipeArea.addEventListener('touchend', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      const dt = Date.now() - startTime;
+      if (dt > SWIPE_MAX_TIME) return;
+      if (Math.abs(dx) < SWIPE_THRESHOLD_X) return;
+      if (Math.abs(dy) > SWIPE_THRESHOLD_Y) return;
+      // Don't swipe if user touched a button/input (let click bubble normally)
+      if (e.target.closest('button, input, textarea, a, [role="button"]')) return;
+      // dx < 0 = finger moved left = next screen
+      // dx > 0 = finger moved right = prev screen
+      goToScreen(currentScreen + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    swipeArea.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
+  })();
 
   // Reset
   document.getElementById('resetBtn').addEventListener('click', () => {
