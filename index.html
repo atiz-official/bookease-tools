@@ -158,18 +158,108 @@
   .form-row .cta:active { transform: scale(0.96); }
   .form-row .cta:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .hero-secondary {
-    margin-top: 18px;
-    font-size: 14px;
-    color: #737373;
+  /* Pass 25 v25 (Art's lock 2026-05-06 PM): OCR-first ladder
+     · OCR card = primary visual anchor (caravan use case · merchant has menu in hand)
+     · "หรือพิมพ์ชื่อร้าน" divider · neutral
+     · typing form = compact secondary (cold web fallback)
+     Per feedback_north_star_owner_in_60_sec · OCR is the dopamine moment. */
+  .ocr-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    max-width: 520px;
+    padding: 22px 22px 22px 24px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%);
+    border: 1px solid rgba(16, 185, 129, 0.20);
+    border-radius: 24px;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 12px 32px rgba(16, 185, 129, 0.10);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
-  .hero-secondary a {
+  .ocr-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 18px 40px rgba(16, 185, 129, 0.16);
+    border-color: rgba(16, 185, 129, 0.32);
+  }
+  .ocr-card:active { transform: translateY(0); }
+  .ocr-card .ocr-icon {
+    flex-shrink: 0;
+    width: 64px; height: 64px;
+    background: #ffffff;
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.10);
+  }
+  .ocr-card .ocr-text { flex: 1; min-width: 0; }
+  .ocr-card .ocr-h {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: #0a0a0a;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    padding-bottom: 1px;
+    line-height: 1.2;
   }
-  .hero-secondary a:hover { border-bottom-color: #0a0a0a; }
+  .ocr-card .ocr-sub {
+    font-size: 13px;
+    color: #525252;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .ocr-card .ocr-arrow {
+    flex-shrink: 0;
+    color: #059669;
+    font-size: 20px;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+  }
+  .ocr-card:hover .ocr-arrow { transform: translateX(3px); }
+
+  /* "หรือพิมพ์ชื่อร้าน" divider */
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 520px;
+    margin: 18px 0 14px;
+    color: #a1a1a1;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .or-divider::before,
+  .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  /* Compact typing form · secondary */
+  .form-row.compact {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    padding: 4px;
+    box-shadow: none;
+  }
+  .form-row.compact:focus-within {
+    background: #fff;
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+  .form-row.compact input {
+    padding: 11px 16px;
+    font-size: 15px;
+  }
+  .form-row.compact .cta {
+    padding: 11px 18px;
+    font-size: 14px;
+  }
 
   /* ─────────── Phone mockup ─────────── */
   .mockup-wrap {
@@ -442,15 +532,22 @@
       ล็อกคิวทันที · <strong>ไม่ต้องสมัคร</strong>
     </p>
 
-    <form class="form-row" id="goForm" autocomplete="off">
-      <input type="text" id="shopName" placeholder="พิมพ์ชื่อร้านของคุณ" autofocus />
+    <!-- Pass 25 v25 · OCR-first ladder (Art's lock 2026-05-06 PM) -->
+    <a class="ocr-card" href="https://atiz-official.github.io/bookease-tools/menu-ocr.html">
+      <div class="ocr-icon">📷</div>
+      <div class="ocr-text">
+        <div class="ocr-h">ถ่ายภาพเมนูร้าน</div>
+        <div class="ocr-sub">เห็นทุกบริการในเว็บ · ภายใน 60 วินาที</div>
+      </div>
+      <div class="ocr-arrow">→</div>
+    </a>
+
+    <div class="or-divider">หรือพิมพ์ชื่อร้าน</div>
+
+    <form class="form-row compact" id="goForm" autocomplete="off">
+      <input type="text" id="shopName" placeholder="ชื่อร้านของคุณ" />
       <button type="submit" class="cta" id="goBtn" disabled>เปิดดู</button>
     </form>
-
-    <div class="hero-secondary">
-      มีรูปเมนูร้าน?
-      <a href="https://atiz-official.github.io/bookease-tools/menu-ocr.html">📷 ถ่ายส่ง · กรอกให้อัตโนมัติ</a>
-    </div>
   </div>
 
   <!-- Phone mockup -->
