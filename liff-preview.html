@@ -1987,7 +1987,11 @@
       variant: currentVariant,
     };
     const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
-    return 'https://shop.bookease.co/signup?prefill=' + encodeURIComponent(b64);
+    // Pass 25 v12 (2026-05-06 · Art's chain-cohesion lock):
+    // Point to shopv3 because v1 master doesn't have the prefill decoder
+    // yet (Mod cherry-pick pending). After CF DNS flip (shop CNAME → v3 VM),
+    // change back to canonical shop.bookease.co · same code serves both.
+    return 'https://shopv3.bookease.co/signup?prefill=' + encodeURIComponent(b64);
   }
 
   // Anti-Potemkin guard moved to refreshSaveCtaState() · called by

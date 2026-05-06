@@ -816,7 +816,11 @@ Output ONLY valid JSON. No prose. No code fences.`;
   // NOT shopv3 · NEVER shopv3
   // Per memory feedback_caravan_uses_shop_bookease_not_shopv3.md
   function buildShopSignupUrl(data) {
-    return 'https://shop.bookease.co/signup?prefill=' + encodeURIComponent(encodeShopData(data));
+    // Pass 25 v12 (2026-05-06 · Art's chain-cohesion lock):
+    // Point to shopv3 because v1 master doesn't have the prefill decoder yet
+    // (Mod cherry-pick pending). After CF DNS flip (shop CNAME → v3 VM),
+    // change back to canonical shop.bookease.co · same code serves both.
+    return 'https://shopv3.bookease.co/signup?prefill=' + encodeURIComponent(encodeShopData(data));
   }
 
   function doCreatePreview() {
