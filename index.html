@@ -228,13 +228,24 @@
     font-weight: 600;
     z-index: 5;
   }
+  /* Pass 25 v18 (2026-05-06 PM · Art's lock 'high-touch imagery'):
+     Real Unsplash photo · luxury nail aesthetic · matches the "Luxury × Nail"
+     phone-shop-tag · gradient overlay 60% bottom for white text legibility.
+     Future: 6 variants by industry (nail / spa / clinic / fitness / cafe / other) */
   .phone-cover {
     flex: 1;
     padding: 60px 28px 24px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    color: #ffffff;
+    background-image:
+      linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.75) 100%),
+      url('https://images.unsplash.com/photo-1604654894611-6973b376cbde?auto=format&fit=crop&w=600&q=70');
+    background-size: cover;
+    background-position: center;
   }
+  .phone-cover * { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45); }
   .phone-shop-tag {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
@@ -407,7 +418,7 @@
 
 <!-- ─────────── Top bar ─────────── -->
 <nav class="nav">
-  <div class="nav-brand">BookEase<span class="by">by Atiz</span></div>
+  <div class="nav-brand">BookEase</div>
   <a class="nav-login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
 </nav>
 
@@ -494,7 +505,7 @@
 
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
-  <div>BookEase by Atiz · © 2026</div>
+  <div>BookEase · a product of Atiz Co., Ltd. · © 2026</div>
   <div>
     <a href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
     &nbsp;·&nbsp;

@@ -1657,9 +1657,39 @@
     });
 
     if (!serviceList.children.length) {
-      // Per memory feedback_no_potemkin_demos.md · empty service state must NOT
-      // be a dead-end. Provide LINE OA fallback so customer can contact merchant
-      // directly instead of bouncing.
+      // Pass 25 v17 (Art's lock 2026-05-06 PM · "show, don't tell"):
+      // Empty state branches by mode:
+      //   - Staff mode (preview tool · merchant building): show 2 ghost sample
+      //     services greyed-out + helper "↓ แทนด้วยของคุณ" → trailer pattern
+      //   - Share mode (customer side · published shop): existing LINE OA fallback
+      const isShareMode = document.body.dataset.mode === 'share';
+
+      if (!isShareMode) {
+        // STAFF · 2 ghost sample services + nudge to "+ เพิ่มบริการ"
+        const samples = [
+          { name: 'นวดอโรม่า · 60 นาที',  price: 890 },
+          { name: 'สปาเท้า · 90 นาที',    price: 1290 },
+        ];
+        const sampleHtml = samples.map((s, idx) => `
+          <div class="service-card" style="opacity: 0.42; pointer-events: none; position: relative;" aria-hidden="true">
+            ${idx === 0 ? '<div class="service-tag" style="opacity:0.7;">ตัวอย่าง</div>' : ''}
+            <div class="service-name">${escapeHtml(s.name)}</div>
+            <div class="service-divider"></div>
+            <div class="service-meta">
+              <span class="service-duration">— นาที</span>
+              <span class="service-price">฿${s.price.toLocaleString()}</span>
+            </div>
+          </div>
+        `).join('');
+        serviceList.innerHTML = sampleHtml + `
+          <div style="text-align:center; padding: 4px 8px 0; font-size: 12px; color: var(--pal-text-muted);">
+            ↑ ตัวอย่าง · กดปุ่ม "+ เพิ่มบริการ" ด้านล่างเพื่อแทนด้วยของคุณ
+          </div>
+        `;
+        return;
+      }
+
+      // SHARE mode (customer view) · LINE OA fallback (per feedback_no_potemkin_demos)
       const lineOaId = shopData.lineOaId || '';
       const lineOaUrl = lineOaId
         ? `https://line.me/R/ti/p/${encodeURIComponent(lineOaId.replace(/^@/, '@'))}`
