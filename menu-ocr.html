@@ -379,10 +379,10 @@
       <button class="mode-tab active" data-mode="previsit">📲 หน้าจอ LINE OA ของร้าน</button>
       <button class="mode-tab" data-mode="menu">📷 รูปเมนูที่ร้าน</button>
     </div>
-    <div class="mode-tabs-hint" id="modeTabsHint">
-      <span id="modeHintPrevisit">หรือ <span class="target">Google</span> · <span class="target">IG</span> · <span class="target">ป้ายร้าน</span> ก็ได้</span>
-      <span id="modeHintMenu" style="display:none;">ถ่ายสดที่ร้าน · หรืออัปรูปเมนูที่ถ่ายไว้ก็ได้</span>
-    </div>
+    <!-- Pass 25 v37 iter7 (Art's lock 2026-05-07 PM): tab hint REMOVED.
+         95% case = LINE OA screenshot · 5% edge = Google/IG/sign · ตัด edge
+         · simpler · less duplication with card heading. -->
+
 
     <!-- ───────────────────────────────────────────────────────────
          MODE 1 · ค้นหาข้อมูลร้าน (เตรียมก่อนเข้าร้าน)
@@ -393,7 +393,7 @@
         <!-- Upload card -->
         <div class="card">
           <h3>1. รูปหน้า LINE OA ของร้าน</h3>
-          <div class="hint">screenshot จาก LINE app · หรือรูปจาก Google Maps · IG · หรือป้ายร้าน</div>
+          <div class="hint">screenshot จาก LINE app</div>
 
           <label for="prevFile" class="upload-zone" id="prevUploadZone">
             <div class="upload-icon">📷</div>
@@ -774,11 +774,8 @@
       const mode = btn.dataset.mode;
       document.getElementById('mode-previsit').style.display = mode === 'previsit' ? 'block' : 'none';
       document.getElementById('mode-menu').style.display = mode === 'menu' ? 'block' : 'none';
-      // Pass 25 v37: swap edge-case hint per mode
-      const hPrev = document.getElementById('modeHintPrevisit');
-      const hMenu = document.getElementById('modeHintMenu');
-      if (hPrev) hPrev.style.display = mode === 'previsit' ? 'inline' : 'none';
-      if (hMenu) hMenu.style.display = mode === 'menu' ? 'inline' : 'none';
+      // Pass 25 v37 iter7: tab hint removed · less clutter · Mode 1 focused on
+      // LINE OA · Mode 2 focused on physical menu · card heading bears the role
       // Pass 25 v37 iter6: per-mode atmospheric (B+D combo · sage/cream)
       document.body.dataset.mode = mode;
     });
