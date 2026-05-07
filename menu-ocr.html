@@ -7,7 +7,7 @@
 <meta name="description" content="สร้างเว็บร้านพร้อมใช้ใน 60 วินาที · กรอกให้อัตโนมัติ · ฟรี" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@700;800&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
   body {
@@ -18,6 +18,19 @@
 
   header h1 { margin: 0 0 4px; font-size: 24px; font-weight: 700; }
   header p  { margin: 0 0 24px; color: #64748b; font-size: 15px; }
+  /* Pass 25 v37 (Art's lock 2026-05-07): BookEase wordmark dual-blue
+     · Book navy #1E40AF + Ease sky #38BDF8 · Inter 800
+     · ฿25K ad equity preserved */
+  .brand-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .brand-wordmark .book { color: #1E40AF; }
+  .brand-wordmark .ease { color: #38BDF8; }
 
   /* ───── Setup-needed block (shown when no API key) ───── */
   .setup-needed {
@@ -243,6 +256,7 @@
 
 <div class="container">
   <header>
+    <div class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
     <h1>สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</h1>
     <p>กรอกให้อัตโนมัติ — ฟรี</p>
   </header>
