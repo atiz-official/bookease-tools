@@ -9,7 +9,7 @@
 <meta property="og:description" content="ออกแบบเว็บร้าน + รับจอง + รับมัดจำผ่าน LINE chat · ฟรี · ไม่ต้องสมัคร" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@600;700;800&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -33,13 +33,21 @@
     align-items: center;
     justify-content: space-between;
   }
+  /* Pass 25 v37 (Art's lock 2026-05-07): BookEase wordmark dual-blue
+     · "Book" navy #1E40AF + "Ease" sky #38BDF8
+     · preserves ฿25K ad spend brand equity
+     · Inter 800 weight matches official logo · letter-spacing tight */
   .nav-brand {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 19px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #0a0a0a;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1;
   }
+  .nav-brand .book { color: #1E40AF; }
+  .nav-brand .ease { color: #38BDF8; }
   .nav-brand .by {
+    font-family: 'Sarabun', system-ui, sans-serif;
     font-weight: 400;
     color: #888;
     font-size: 13px;
@@ -67,6 +75,9 @@
     align-items: center;
   }
 
+  /* Pass 25 v37 (Art's lock 2026-05-07): eyebrow Cool Mist tint
+     · subtle BookEase brand association · matches /payment trust theme
+     · green dot (live signal) preserved */
   .hero-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -74,7 +85,8 @@
     font-size: 13px;
     font-weight: 600;
     color: #0a0a0a;
-    background: #f4f4f4;
+    background: #f5f8fc;
+    border: 1px solid rgba(30, 64, 175, 0.08);
     padding: 8px 14px;
     border-radius: 100px;
     margin-bottom: 28px;
@@ -247,10 +259,12 @@
     padding: 4px;
     box-shadow: none;
   }
+  /* Pass 25 v37 (Art's lock 2026-05-07): form focus = BookEase navy ring
+     · brand-coherent at moment of intent · matches /payment input focus */
   .form-row.compact:focus-within {
     background: #fff;
-    border-color: rgba(0, 0, 0, 0.16);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border-color: #1E40AF;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
   }
   .form-row.compact input {
     padding: 11px 16px;
@@ -508,7 +522,7 @@
 
 <!-- ─────────── Top bar ─────────── -->
 <nav class="nav">
-  <div class="nav-brand">BookEase</div>
+  <div class="nav-brand"><span class="book">Book</span><span class="ease">Ease</span></div>
   <a class="nav-login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
 </nav>
 
@@ -569,7 +583,7 @@
           <div class="phone-shop-tag">Luxury × Nail</div>
           <div class="phone-shop-name">Bare Nail<br>Spa</div>
           <div class="phone-shop-meta">เปิด 10:00 — 21:00 · ทองหล่อ 13</div>
-          <div class="phone-cta">จองคิว · จ่ายมัดจำ</div>
+          <div class="phone-cta">จ่ายมัดจำ ฿200</div>
         </div>
 
         <div class="phone-services">
@@ -602,7 +616,10 @@
 
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
-  <div>BookEase · a product of Atiz Co., Ltd. · © 2026</div>
+  <div>
+    <span class="nav-brand" style="font-size:14px"><span class="book">Book</span><span class="ease">Ease</span></span>
+    <span style="font-weight:400;color:#888;font-size:12px;margin-left:6px">by Atiz · © 2026</span>
+  </div>
   <div>
     <a href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
     &nbsp;·&nbsp;
