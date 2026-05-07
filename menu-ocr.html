@@ -159,9 +159,11 @@
     background: #f0fdf4; padding: 12px;
   }
   .upload-zone img { max-width: 100%; max-height: 280px; border-radius: 10px; }
-  .upload-icon { font-size: 44px; margin-bottom: 8px; line-height: 1; }
-  .upload-label { font-weight: 600; color: #334155; font-size: 16px; }
-  .upload-sub { font-size: 13px; color: #94a3b8; margin-top: 6px; }
+  /* Pass 25 v37 iter8 (Art's lock 2026-05-07 PM): bigger icon · upload zone =
+     primary visual since card heading dropped · matches "photo/icon over words" */
+  .upload-icon { font-size: 56px; margin-bottom: 12px; line-height: 1; }
+  .upload-label { font-weight: 700; color: #1e293b; font-size: 17px; }
+  .upload-sub { font-size: 12.5px; color: #94a3b8; margin-top: 6px; }
 
   /* ───── Buttons (BIG · easy to tap) ───── */
   button.primary {
@@ -392,12 +394,14 @@
 
         <!-- Upload card -->
         <div class="card">
-          <h3>1. รูปหน้า LINE OA ของร้าน</h3>
-          <div class="hint">screenshot จาก LINE app</div>
+          <!-- Pass 25 v37 iter8 (Art's lock 2026-05-07 PM): card heading dropped ·
+               redundant with tab + upload zone · "1. รูปหน้า LINE OA" appeared 3x
+               (tab + heading + upload label) · upload zone speaks for itself -->
+          <div class="hint" style="text-align: center; margin-bottom: 14px;">screenshot ของร้าน · จาก LINE app</div>
 
           <label for="prevFile" class="upload-zone" id="prevUploadZone">
             <div class="upload-icon">📷</div>
-            <div class="upload-label">แตะเลือกรูป</div>
+            <div class="upload-label">เลือก screenshot</div>
             <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
           </label>
           <input id="prevFile" type="file" accept="image/*" />
@@ -475,12 +479,14 @@
 
         <!-- Upload card -->
         <div class="card">
-          <h3>1. รูปเมนูของร้าน</h3>
-          <div class="hint">ถ่ายรูปเมนูที่พิมพ์ไว้ในร้าน · ให้แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
+          <!-- Pass 25 v37 iter8 (Art's lock 2026-05-07 PM): card heading dropped ·
+               "รูปเมนู" appeared 3x (tab + heading + upload label) · keep one tip
+               with photography guidance · upload zone speaks for itself -->
+          <div class="hint" style="text-align: center; margin-bottom: 14px;">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
 
           <label for="menuFile" class="upload-zone" id="menuUploadZone">
             <div class="upload-icon">📷</div>
-            <div class="upload-label">แตะเลือกรูปเมนู</div>
+            <div class="upload-label">ถ่าย / เลือกรูป</div>
             <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
           </label>
           <input id="menuFile" type="file" accept="image/*" />
