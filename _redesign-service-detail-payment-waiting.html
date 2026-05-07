@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surfaces 3 + 4b · ServiceDetail + PaymentWaiting + Cancel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', system-ui, sans-serif; background: #18181b; color: #e5e5e5; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+  .doc-head { margin-bottom: 28px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(28px,4vw,38px); color: #fafafa; margin-bottom: 12px; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 800px; line-height: 1.7; }
+
+  .surface-section {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid #292524;
+  }
+  .surface-tag { display: inline-block; padding: 5px 12px; background: #1c1917; color: #f59e0b; border: 1px solid #44403c; border-radius: 999px; font-family: monospace; font-size: 12px; margin-bottom: 16px; }
+  .surface-section h2 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; color: #fafafa; margin-bottom: 8px; }
+  .surface-section .lead { font-size: 13.5px; color: #a3a3a3; margin-bottom: 24px; max-width: 800px; line-height: 1.6; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 920px) { .compare { grid-template-columns: 1fr; } }
+  .col-head { text-align: center; margin-bottom: 12px; }
+  .col-tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .tag-bad { background: #7f1d1d; color: #fecaca; }
+  .tag-good { background: #14532d; color: #bbf7d0; }
+  .col-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: #fafafa; }
+  .col-sub { font-size: 11.5px; color: #a3a3a3; margin-top: 4px; line-height: 1.5; }
+
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone { background: #292524; border-radius: 32px; padding: 10px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); width: 320px; }
+  .screen { border-radius: 22px; overflow: hidden; height: 600px; display: flex; flex-direction: column; color: #1c1917; background: white; position: relative; font-size: 12px; }
+  .status-bar { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #44403c; }
+  .wordmark { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+  .wordmark .book { color: #1E40AF; } .wordmark .ease { color: #38BDF8; }
+
+
+  /* Service detail · OLD */
+  .sd-old { background: white; }
+  .sd-old-hero { height: 130px; background: linear-gradient(135deg, #fbbf24, #f59e0b); position: relative; padding: 12px; display: flex; align-items: flex-end; }
+  .sd-old-back { position: absolute; top: 8px; left: 8px; width: 28px; height: 28px; background: rgba(255,255,255,0.92); border-radius: 50%; display: grid; place-items: center; font-size: 14px; }
+  .sd-old-svc-name { color: white; font-size: 18px; font-weight: 800; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+  .sd-old-body { padding: 12px; flex: 1; }
+  .sd-old-shop-row { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+  .sd-old-price-row { font-size: 22px; font-weight: 800; color: #4E6EDE; margin-bottom: 8px; }
+  .sd-old-meta { font-size: 11px; color: #6b7280; line-height: 1.5; margin-bottom: 14px; }
+  .sd-old-time-tag { font-size: 11px; font-weight: 700; color: #4E6EDE; margin-bottom: 6px; }
+  .sd-old-time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+  .sd-old-time-slot { padding: 6px 4px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 11px; text-align: center; color: #1f2937; }
+  .sd-old-time-slot.active { background: #4E6EDE; color: white; border-color: #4E6EDE; }
+  .sd-old-cta { margin: auto 12px 12px; padding: 12px; background: #4E6EDE; color: white; border-radius: 10px; text-align: center; font-size: 13px; font-weight: 700; }
+
+
+  /* Service detail · NEW · variant 100% · zone 1 */
+  .sd-new { background: #fef7f0; }
+  .sd-new-back { position: absolute; top: 32px; left: 12px; width: 30px; height: 30px; background: white; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); font-size: 14px; z-index: 5; }
+  .sd-new-hero { padding: 18px 18px 12px; }
+  .sd-new-shop-crumb { font-size: 10.5px; color: #b45309; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .sd-new-svc-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; font-weight: 600; color: #1c1917; line-height: 1.1; margin-bottom: 4px; }
+  .sd-new-meta { font-size: 11px; color: #78716c; }
+
+  .sd-new-price-card { margin: 0 14px 12px; background: white; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: baseline; }
+  .sd-new-price-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: #44403c; }
+  .sd-new-price-value { font-size: 20px; font-weight: 700; color: #b45309; }
+  .sd-new-deposit-hint { font-size: 9.5px; color: #78716c; }
+
+  .sd-new-section-h { padding: 0 14px; font-size: 10.5px; font-weight: 700; color: #44403c; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+
+  .sd-new-time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 14px; margin-bottom: 12px; }
+  .sd-new-time-slot { padding: 7px 4px; background: white; border: 1px solid #fef3c7; border-radius: 8px; font-size: 11px; text-align: center; color: #1c1917; font-weight: 600; }
+  .sd-new-time-slot.active { background: #0a0a0a; color: white; border-color: #0a0a0a; }
+  .sd-new-time-slot.unavail { background: #fafaf9; color: #d6d3d1; }
+
+  .sd-new-cta-zone { margin-top: auto; padding: 10px 14px 6px; }
+  .sd-new-cta { background: #0a0a0a; color: white; border-radius: 12px; padding: 13px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
+  .sd-new-cta .price { font-size: 14px; font-weight: 800; }
+  .sd-new-foot { text-align: center; font-size: 9px; color: #a8a29e; padding: 4px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+
+
+  /* Payment waiting · OLD */
+  .pw-old { background: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; height: 100%; }
+  .pw-old-spinner { width: 48px; height: 48px; border: 4px solid #e5e7eb; border-top-color: #4E6EDE; border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pw-old-h { font-size: 16px; font-weight: 700; color: #1f2937; text-align: center; }
+  .pw-old-sub { font-size: 12px; color: #6b7280; text-align: center; }
+
+
+  /* Payment waiting · NEW */
+  .pw-new { background: #f5f8fc; padding: 0; display: flex; flex-direction: column; }
+  .pw-new-trust { padding: 14px 18px 0; display: flex; align-items: center; gap: 8px; }
+  .pw-new-trust .wordmark { font-size: 14px; }
+  .pw-new-trust .meta { font-size: 10px; color: #57534e; font-weight: 600; }
+  .pw-new-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; }
+  .pw-new-spinner { width: 56px; height: 56px; border: 3px solid #dbeafe; border-top-color: #1E40AF; border-radius: 50%; animation: spin 1s linear infinite; }
+  .pw-new-h { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; font-weight: 600; color: #1c1917; text-align: center; }
+  .pw-new-sub { font-size: 11.5px; color: #57534e; text-align: center; max-width: 240px; line-height: 1.5; }
+  .pw-new-detail { background: white; border-radius: 12px; padding: 10px 14px; font-size: 11px; color: #44403c; min-width: 200px; }
+  .pw-new-detail .row { display: flex; justify-content: space-between; padding: 2px 0; }
+  .pw-new-detail .row .v { font-weight: 600; }
+  .pw-new-foot { text-align: center; font-size: 9px; color: #a8a29e; padding: 6px; }
+
+
+  /* Payment cancel · OLD */
+  .pc-old { background: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; height: 100%; }
+  .pc-old-icon { font-size: 48px; }
+  .pc-old-h { font-size: 16px; font-weight: 700; color: #1f2937; text-align: center; }
+  .pc-old-sub { font-size: 12px; color: #6b7280; text-align: center; max-width: 240px; }
+  .pc-old-actions { display: flex; gap: 8px; width: 100%; }
+  .pc-old-btn { flex: 1; padding: 11px; border-radius: 8px; font-size: 12px; font-weight: 700; text-align: center; }
+  .pc-old-btn.primary { background: #4E6EDE; color: white; }
+  .pc-old-btn.ghost { background: white; border: 1px solid #e5e7eb; color: #1f2937; }
+
+
+  /* Payment cancel · NEW */
+  .pc-new { background: #f5f8fc; padding: 0; display: flex; flex-direction: column; }
+  .pc-new-trust { padding: 14px 18px 0; display: flex; align-items: center; gap: 8px; }
+  .pc-new-trust .wordmark { font-size: 14px; }
+  .pc-new-trust .meta { font-size: 10px; color: #57534e; font-weight: 600; }
+  .pc-new-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; }
+  .pc-new-icon-wrap { width: 64px; height: 64px; background: #fef3c7; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
+  .pc-new-h { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; font-weight: 600; color: #1c1917; text-align: center; }
+  .pc-new-sub { font-size: 11.5px; color: #57534e; text-align: center; line-height: 1.55; max-width: 240px; }
+  .pc-new-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 16px; }
+  .pc-new-cta { padding: 13px; background: #0a0a0a; color: white; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .pc-new-ghost { padding: 11px; background: transparent; color: #57534e; border-radius: 12px; text-align: center; font-size: 12px; font-weight: 600; }
+
+
+  /* Annotations */
+  .annotations { margin-top: 12px; padding: 12px 14px; background: #1c1917; border-radius: 10px; border: 1px solid #292524; font-size: 11.5px; }
+  .annotations h4 { font-size: 12px; color: #fafafa; margin-bottom: 8px; font-weight: 700; }
+  .annotations .row { display: flex; gap: 6px; padding: 3px 0; line-height: 1.5; color: #d4d4d8; }
+  .annotations .row .icon { flex-shrink: 0; width: 14px; font-weight: 700; }
+  .annotations .row.bad .icon { color: #f87171; }
+  .annotations .row.good .icon { color: #4ade80; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Surface 3 + 4b · ServiceDetail + PaymentWaiting/Cancel</div>
+    <h1>3 lighter surfaces · OLD vs NEW · ดราฟต์เร็ว</h1>
+    <p>
+      Surface 3 (/<slug>/<service>) เป็น flow ระหว่าง shop home + payment · zone 1 (variant 100%).<br>
+      Surface 4b (/payment/success polling + /payment/cancel) เป็น Cool Mist trust theme เหมือน /payment.
+    </p>
+  </div>
+
+
+  <!-- ========== SURFACE 3 · ServiceDetailPage ========== -->
+  <div class="surface-section">
+    <span class="surface-tag">Surface 3 · /&lt;slug&gt;/&lt;service&gt;</span>
+    <h2>ServiceDetailPage · variant 100% (zone 1)</h2>
+    <p class="lead">ลูกค้าเลือก service + เวลานัดที่นี่ · per zone 1: variant accent · italic Cormorant · "Powered by BookEase" footer · same look-feel กับ DetailPage</p>
+
+    <div class="compare">
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-bad">OLD</span>
+          <div class="col-name">BookEase blue chrome</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen sd-old">
+              <div class="status-bar">12:44</div>
+              <div class="sd-old-hero">
+                <div class="sd-old-back">‹</div>
+                <div class="sd-old-svc-name">ทำสี Premium</div>
+              </div>
+              <div class="sd-old-body">
+                <div class="sd-old-shop-row">ที่ Moya · ทำสีผม</div>
+                <div class="sd-old-price-row">฿1,590</div>
+                <div class="sd-old-meta">⏱ 2 ชม. · มัดจำ ฿200</div>
+                <div class="sd-old-time-tag">📅 วันนี้ 15 พ.ค.</div>
+                <div class="sd-old-time-grid">
+                  <div class="sd-old-time-slot">10:00</div>
+                  <div class="sd-old-time-slot">12:00</div>
+                  <div class="sd-old-time-slot active">14:00</div>
+                  <div class="sd-old-time-slot">16:00</div>
+                </div>
+              </div>
+              <div class="sd-old-cta">จองเลย ฿1,590</div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>OLD · ปัญหา</h4>
+          <div class="row bad"><span class="icon">×</span><span>BookEase blue (#4E6EDE) · ขัด zone 1 lock</span></div>
+          <div class="row bad"><span class="icon">×</span><span>Service name plain Sarabun · ไม่มี editorial</span></div>
+          <div class="row bad"><span class="icon">×</span><span>Time slots plain border · ไม่ Apple-grade</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-good">NEW · zone 1 variant</span>
+          <div class="col-name">italic Cormorant + black CTA</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen sd-new">
+              <div class="status-bar">12:44</div>
+              <div class="sd-new-back">‹</div>
+              <div class="sd-new-hero">
+                <div class="sd-new-shop-crumb">ที่ Moya</div>
+                <div class="sd-new-svc-name">ทำสี Premium</div>
+                <div class="sd-new-meta">⏱ 2 ชม. · นัด 1 ครั้ง · มัดจำ ฿200</div>
+              </div>
+              <div class="sd-new-price-card">
+                <div class="sd-new-price-label">ราคาบริการ</div>
+                <div>
+                  <div class="sd-new-price-value">฿1,590</div>
+                  <div class="sd-new-deposit-hint">มัดจำ ฿200 · เหลือที่ร้าน ฿1,390</div>
+                </div>
+              </div>
+              <div class="sd-new-section-h">📅 วันนี้ 15 พ.ค.</div>
+              <div class="sd-new-time-grid">
+                <div class="sd-new-time-slot unavail">10:00</div>
+                <div class="sd-new-time-slot">12:00</div>
+                <div class="sd-new-time-slot active">14:00</div>
+                <div class="sd-new-time-slot">16:00</div>
+              </div>
+              <div class="sd-new-cta-zone">
+                <div class="sd-new-cta">
+                  <span>จ่ายมัดจำ</span>
+                  <span class="price">฿200</span>
+                </div>
+                <div class="sd-new-foot">
+                  <span style="font-size:9px">Powered by</span>
+                  <span class="wordmark" style="font-size:10px"><span class="book">Book</span><span class="ease">Ease</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>NEW · zone 1 wins</h4>
+          <div class="row good"><span class="icon">✓</span><span>variant cream (Moya peach) · zone 1 lock</span></div>
+          <div class="row good"><span class="icon">✓</span><span>Italic Cormorant 26px service name · editorial DREAM</span></div>
+          <div class="row good"><span class="icon">✓</span><span>Black CTA "จ่ายมัดจำ ฿200" · matches /payment + /liff</span></div>
+          <div class="row good"><span class="icon">✓</span><span>"Powered by BookEase" tiny footer · zone 1 rule</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== SURFACE 4b · PaymentWaiting ========== -->
+  <div class="surface-section">
+    <span class="surface-tag">Surface 4b · /payment/success</span>
+    <h2>PaymentWaitingPage · Cool Mist polling state</h2>
+    <p class="lead">หน้านี้ poll Xendit หลัง redirect · waiting for "Complete" status · per Pass 25 v37: Cool Mist + BookEase wordmark + italic headline · ไม่ใช่ generic SaaS spinner</p>
+
+    <div class="compare">
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-bad">OLD</span>
+          <div class="col-name">Generic spinner · BookEase blue</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen pw-old">
+              <div class="pw-old-spinner"></div>
+              <div class="pw-old-h">กำลังตรวจสอบการชำระเงิน...</div>
+              <div class="pw-old-sub">โปรดรอสักครู่ · ห้ามปิดหน้าจอ</div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>OLD · ปัญหา</h4>
+          <div class="row bad"><span class="icon">×</span><span>Plain white · ไม่มี trust signal</span></div>
+          <div class="row bad"><span class="icon">×</span><span>BookEase blue spinner · ไม่ Pass 25 v37</span></div>
+          <div class="row bad"><span class="icon">×</span><span>ไม่บอกอะไร poll · ลูกค้าไม่รู้ว่าจะนานแค่ไหน</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-good">NEW · Cool Mist trust</span>
+          <div class="col-name">BookEase wordmark + transaction summary</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen pw-new">
+              <div class="status-bar">12:44</div>
+              <div class="pw-new-trust">
+                <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+                <span class="meta">🔒 ปลอดภัย</span>
+              </div>
+              <div class="pw-new-content">
+                <div class="pw-new-spinner"></div>
+                <div class="pw-new-h">กำลังตรวจสอบ<br>การชำระเงิน...</div>
+                <div class="pw-new-sub">Xendit ยืนยันใน 30 วินาที · ห้ามปิดหน้าจอ</div>
+                <div class="pw-new-detail">
+                  <div class="row"><span>ร้าน</span><span class="v">Moya</span></div>
+                  <div class="row"><span>มัดจำ</span><span class="v" style="color:#1E40AF">฿200</span></div>
+                </div>
+              </div>
+              <div class="pw-new-foot">Powered by Xendit · PCI DSS</div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>NEW · wins</h4>
+          <div class="row good"><span class="icon">✓</span><span>Cool Mist bg · BookEase trust wordmark top</span></div>
+          <div class="row good"><span class="icon">✓</span><span>Italic Cormorant headline · DREAM-grade</span></div>
+          <div class="row good"><span class="icon">✓</span><span>Transaction summary card · ลูกค้ารู้ว่ากำลัง verify อะไร</span></div>
+          <div class="row good"><span class="icon">✓</span><span>"30 วินาที" SLA · expectation set</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== SURFACE 4b · PaymentCancel ========== -->
+  <div class="surface-section">
+    <span class="surface-tag">Surface 4b · /payment/cancel</span>
+    <h2>PaymentCancelPage · retry path</h2>
+    <p class="lead">ลูกค้ากด cancel ใน Xendit · กลับมาที่หน้านี้ · per Pass 25 v37: Cool Mist + warm message + clear retry/back paths</p>
+
+    <div class="compare">
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-bad">OLD</span>
+          <div class="col-name">Plain · cold</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen pc-old">
+              <div class="pc-old-icon">⚠️</div>
+              <div class="pc-old-h">การชำระเงินถูกยกเลิก</div>
+              <div class="pc-old-sub">คุณยังสามารถลองชำระเงินอีกครั้งได้</div>
+              <div class="pc-old-actions">
+                <div class="pc-old-btn primary">ลองอีกครั้ง</div>
+                <div class="pc-old-btn ghost">กลับหน้าแรก</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>OLD · ปัญหา</h4>
+          <div class="row bad"><span class="icon">×</span><span>⚠️ emoji feels error/scolding · ไม่ welcome</span></div>
+          <div class="row bad"><span class="icon">×</span><span>BookEase blue button · ไม่ Pass 25 v37</span></div>
+          <div class="row bad"><span class="icon">×</span><span>"คุณยัง" wording · feels condescending</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="col-head">
+          <span class="col-tag tag-good">NEW · warm + clear</span>
+          <div class="col-name">No blame · clear retry</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="screen pc-new">
+              <div class="status-bar">12:44</div>
+              <div class="pc-new-trust">
+                <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+                <span class="meta">ไม่มีการหักเงิน</span>
+              </div>
+              <div class="pc-new-content">
+                <div class="pc-new-icon-wrap">↩</div>
+                <div class="pc-new-h">ยกเลิกแล้ว</div>
+                <div class="pc-new-sub">ไม่มีการหักเงิน · ข้อมูลร้านยังเก็บไว้ · ลองใหม่ได้ทันที</div>
+                <div class="pc-new-actions">
+                  <div class="pc-new-cta">ลองชำระอีกครั้ง</div>
+                  <div class="pc-new-ghost">กลับไปดูร้านอื่น</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="annotations">
+          <h4>NEW · wins</h4>
+          <div class="row good"><span class="icon">✓</span><span>Cool Mist bg · warm not cold</span></div>
+          <div class="row good"><span class="icon">✓</span><span>↩ icon (return) · ไม่ใช่ ⚠️ blame</span></div>
+          <div class="row good"><span class="icon">✓</span><span>"ไม่มีการหักเงิน" reassure · กังวลเรื่องเงินก่อน</span></div>
+          <div class="row good"><span class="icon">✓</span><span>Black CTA "ลองชำระอีกครั้ง" · primary action prominent</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+</body>
+</html>
