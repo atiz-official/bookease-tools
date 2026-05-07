@@ -10,9 +10,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@700;800&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
+  /* Pass 25 v37 iter6 (Art's lock 2026-05-07 PM): per-mode atmospheric
+     palette · Mode 1 sage (pre-visit · fresh start) · Mode 2 cream
+     (at-visit · hospitality) · transitions smooth ·  zero color collision
+     with celebration bursts (navy/amber for Mode 1 · green/amber for Mode 2) */
   body {
     margin: 0; font-family: 'Sarabun', system-ui, sans-serif;
-    background: #f8fafc; color: #0f172a; font-size: 16px;
+    background: #f0fdf4; /* Mode 1 sage default · pre-visit */
+    color: #0f172a; font-size: 16px;
+    transition: background 0.4s ease;
+  }
+  body[data-mode="menu"] {
+    background: #fef7f0; /* Mode 2 cream · at-visit hospitality */
   }
   .container { max-width: 980px; margin: 0 auto; padding: 20px 16px; }
 
@@ -75,6 +84,53 @@
     line-height: 1.5;
   }
   .mode-tabs-hint .target { color: #1e40af; font-weight: 600; }
+  /* Mode-aware accent · target color adapts to mode */
+  body[data-mode="menu"] .mode-tabs-hint .target { color: #b45309; }
+  body[data-mode="menu"] .mode-tabs { background: #fed7aa; }
+  body[data-mode="menu"] .mode-tab.active { color: #9a3412; }
+
+  /* Pass 25 v37 iter6 · celebration burst (B+D combo) ·
+     fires when extraction success · 1.4s · NOT infinite loop in production */
+  .celebration-zone {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    display: none;
+  }
+  .celebration-zone.fire { display: block; }
+  .celebration-zone .burst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: ce-burst 1.4s ease-out forwards;
+  }
+  /* Mode 1 (pre-visit · sage) · burst palette = navy + sky + amber (no green · avoid clash) */
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(1) { background: #1E40AF; --x: 80px; --y: -60px; animation-delay: 0s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(2) { background: #38BDF8; --x: -70px; --y: -50px; animation-delay: 0.05s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(3) { background: #f59e0b; --x: 60px; --y: 50px; animation-delay: 0.1s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(4) { background: #1E40AF; --x: -65px; --y: 60px; animation-delay: 0.15s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(5) { background: #38BDF8; --x: 0; --y: -90px; animation-delay: 0.2s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(6) { background: #f59e0b; --x: 90px; --y: 0; animation-delay: 0.25s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(7) { background: #38BDF8; --x: -90px; --y: 0; animation-delay: 0.3s; }
+  body:not([data-mode="menu"]) .celebration-zone .burst:nth-child(8) { background: #1E40AF; --x: 0; --y: 90px; animation-delay: 0.35s; }
+  /* Mode 2 (at-visit · cream) · burst palette = green + amber + sky (warm · matches cream) */
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(1) { background: #4ade80; --x: 80px; --y: -60px; animation-delay: 0s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(2) { background: #f59e0b; --x: -70px; --y: -50px; animation-delay: 0.05s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(3) { background: #38BDF8; --x: 60px; --y: 50px; animation-delay: 0.1s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(4) { background: #4ade80; --x: -65px; --y: 60px; animation-delay: 0.15s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(5) { background: #f59e0b; --x: 0; --y: -90px; animation-delay: 0.2s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(6) { background: #4ade80; --x: 90px; --y: 0; animation-delay: 0.25s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(7) { background: #f59e0b; --x: -90px; --y: 0; animation-delay: 0.3s; }
+  body[data-mode="menu"] .celebration-zone .burst:nth-child(8) { background: #38BDF8; --x: 0; --y: 90px; animation-delay: 0.35s; }
+  @keyframes ce-burst {
+    0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(1.4); opacity: 0; }
+  }
 
   /* ───── Cards ───── */
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
@@ -252,7 +308,14 @@
   }
 </style>
 </head>
-<body>
+<body data-mode="previsit">
+
+<!-- Pass 25 v37 iter6 · celebration burst (B+D combo) ·
+     fires on extraction success · 1.4s · palette adapts per body[data-mode] -->
+<div class="celebration-zone" id="celebrationZone" aria-hidden="true">
+  <span class="burst"></span><span class="burst"></span><span class="burst"></span><span class="burst"></span>
+  <span class="burst"></span><span class="burst"></span><span class="burst"></span><span class="burst"></span>
+</div>
 
 <div class="container">
   <header>
@@ -716,7 +779,33 @@
       const hMenu = document.getElementById('modeHintMenu');
       if (hPrev) hPrev.style.display = mode === 'previsit' ? 'inline' : 'none';
       if (hMenu) hMenu.style.display = mode === 'menu' ? 'inline' : 'none';
+      // Pass 25 v37 iter6: per-mode atmospheric (B+D combo · sage/cream)
+      document.body.dataset.mode = mode;
     });
+  });
+
+  // Pass 25 v37 iter6 · celebration burst (B+D combo)
+  // Fires when extraction success · single-shot · 1.4s
+  function fireCelebration() {
+    const zone = document.getElementById('celebrationZone');
+    if (!zone) return;
+    zone.classList.remove('fire');
+    void zone.offsetWidth; // force reflow to restart animation
+    zone.classList.add('fire');
+    setTimeout(() => zone.classList.remove('fire'), 1400);
+  }
+  // Hook into status text · fires when text contains success cue
+  // (works without modifying existing extraction logic · observes DOM changes)
+  ['prevStatus', 'status'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      const text = el.textContent || '';
+      if (text.includes('✅') || text.includes('สำเร็จ') || text.includes('เสร็จ')) {
+        fireCelebration();
+      }
+    });
+    obs.observe(el, { childList: true, characterData: true, subtree: true });
   });
 
   // ═══════════════════════════════════════════════════════════════
