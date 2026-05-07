@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shopv3/login · ship-ready · Apple-grade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #0a0a0a; color: #e5e5e5;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .doc-head { margin-bottom: 32px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Sarabun', sans-serif; font-weight: 800; font-size: clamp(28px,4vw,42px); color: #fafafa; margin-bottom: 12px; line-height: 1.15; letter-spacing: -0.01em; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 760px; line-height: 1.7; }
+
+  .principle {
+    margin-top: 18px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(30,64,175,0.12), rgba(56,189,248,0.06));
+    border-left: 3px solid #1E40AF;
+    border-radius: 8px;
+    color: #fafafa;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .principle b { color: #38BDF8; }
+
+  /* Side-by-side */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 40px;
+    align-items: start;
+  }
+  @media (max-width: 920px) { .compare { grid-template-columns: 1fr; } }
+
+  .col-head { text-align: center; margin-bottom: 16px; }
+  .col-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .tag-bad { background: #7f1d1d; color: #fecaca; }
+  .tag-good { background: #14532d; color: #bbf7d0; }
+  .col-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fafafa;
+    margin-bottom: 4px;
+  }
+  .col-sub { font-size: 12px; color: #a3a3a3; }
+
+  /* Phone */
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone {
+    background: #292524;
+    border-radius: 36px;
+    padding: 14px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 0 0 1px #44403c;
+    width: 380px;
+    max-width: 100%;
+  }
+  .screen {
+    background: #f5f8fc;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 760px;
+    display: flex;
+    flex-direction: column;
+    color: #1c1917;
+    position: relative;
+  }
+  .status-bar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #44403c;
+  }
+
+
+  /* ─────── OLD layout ─────── */
+  .old-screen { background: #f5f8fc; }
+  .old-padding {
+    padding: 60px 30px 0;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .old-emoji {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .old-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .old-wordmark .book { color: #1E40AF; }
+  .old-wordmark .ease { color: #38BDF8; }
+  .old-headline {
+    font-family: 'Sarabun', sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 22px;
+    color: #1c1917;
+    margin-bottom: 4px;
+  }
+  .old-sub { font-size: 13px; color: #57534e; margin-bottom: 24px; }
+  .old-input-wrap {
+    margin: 0 -30px 0 -8px;
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: left;
+    color: #a8a29e;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  .old-cta {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    background: #1E40AF;
+    color: white;
+    padding: 16px;
+    border-radius: 14px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+
+  /* ─────── NEW · ship-ready ─────── */
+  .new-screen { background: #f5f8fc; padding: 0; }
+
+  .new-nav {
+    padding: 18px 24px 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .new-back {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 3px rgba(28,25,23,0.06);
+    color: #1c1917;
+    font-size: 18px;
+  }
+
+  .new-content {
+    padding: 48px 28px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .new-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+  .new-wordmark .book { color: #1E40AF; }
+  .new-wordmark .ease { color: #38BDF8; }
+
+  .new-h1 {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: #0a0a0a;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .new-sub {
+    font-size: 14px;
+    color: #57534e;
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  .new-input-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #57534e;
+    margin-bottom: 6px;
+  }
+  .new-input {
+    width: 100%;
+    padding: 16px 18px;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    color: #1c1917;
+    margin-bottom: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .new-input:focus,
+  .new-input.focus {
+    outline: 0;
+    border-color: #1E40AF;
+    box-shadow: 0 0 0 3px rgba(30,64,175,0.12);
+  }
+  .new-input::placeholder { color: #a8a29e; }
+
+  .new-helper {
+    font-size: 12px;
+    color: #78716c;
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+
+  .new-cta-zone {
+    padding: 16px 28px 24px;
+  }
+  .new-cta {
+    width: 100%;
+    background: #1E40AF;
+    color: white;
+    border: 0;
+    border-radius: 14px;
+    padding: 18px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(30,64,175,0.25);
+    transition: transform 0.1s, background 0.15s;
+  }
+  .new-cta:hover { background: #1d3a9a; }
+  .new-cta:active { transform: scale(0.99); }
+
+  .new-foot {
+    text-align: center;
+    font-size: 11.5px;
+    color: #78716c;
+    padding: 8px 28px 16px;
+  }
+  .new-foot a { color: #1E40AF; font-weight: 600; text-decoration: none; }
+
+
+  /* Annotations */
+  .annotations {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: #1c1917;
+    border-radius: 12px;
+    border: 1px solid #292524;
+    font-size: 12.5px;
+  }
+  .annotations h4 {
+    font-size: 13px;
+    color: #fafafa;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .annotations .row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    line-height: 1.6;
+    color: #d4d4d8;
+  }
+  .annotations .row .icon {
+    flex-shrink: 0;
+    width: 16px;
+    font-weight: 700;
+  }
+  .annotations .row.bad .icon { color: #f87171; }
+  .annotations .row.good .icon { color: #4ade80; }
+
+
+  /* Principles section */
+  .principles-final {
+    margin-top: 56px;
+    padding: 28px 32px;
+    background: #1c1917;
+    border-radius: 16px;
+    border: 1px solid #292524;
+  }
+  .principles-final h2 {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 22px;
+    color: #fafafa;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .principles-final p {
+    font-size: 14px;
+    color: #d4d4d8;
+    line-height: 1.7;
+    max-width: 800px;
+  }
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  @media (max-width: 720px) { .principle-grid { grid-template-columns: 1fr; } }
+  .principle-item {
+    padding: 16px 18px;
+    background: #0a0a0a;
+    border-radius: 10px;
+    border-left: 3px solid #1E40AF;
+  }
+  .principle-item h4 { color: #fafafa; font-size: 14px; margin-bottom: 6px; font-weight: 700; }
+  .principle-item p { color: #a3a3a3; font-size: 12.5px; line-height: 1.55; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Iter5 · /login ship-ready</div>
+    <h1>shopv3/login · drop the lock emoji · ship Apple-grade</h1>
+    <p>Art catch ถูก: trust mark ≠ 🔒 emoji เสมอไป · Apple ไม่ใช้ platform emoji เป็น trust mark · เพราะ render ต่างกันทุก device + amateur look · ใช้ <b style="color:#fafafa">typography + brand wordmark</b> เป็น trust signal แทน · เหมือน Apple iCloud login · เหมือน Stripe login</p>
+    <div class="principle">
+      <b>Apple's actual pattern:</b> wordmark = trust signal · ทรง logo + พื้นที่หายใจ + clean typography · ไม่มี decorative icon · ไม่มี emoji · ไม่มี shield · ไม่มี lock · Apple iCloud ที่ <code>icloud.com/auth</code> ไม่มี lock icon เลย · Apple Pay sheet ไม่มี · Stripe login ไม่มี · เพราะ <b>ของจริง brand recognition ทำหน้าที่นี้</b>
+    </div>
+  </div>
+
+
+  <!-- Side-by-side -->
+  <div class="compare">
+
+    <!-- OLD -->
+    <div>
+      <div class="col-head">
+        <span class="col-tag tag-bad">CURRENT · iter3 mockup</span>
+        <div class="col-name">มี 🔒 emoji + italic Thai + input overflow</div>
+        <div class="col-sub">trust signal มาจาก emoji · amateur look</div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen old-screen">
+            <div class="status-bar">12:44</div>
+            <div class="old-padding">
+              <div class="old-emoji">🔒</div>
+              <div class="old-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+              <div class="old-headline">เข้าสู่ระบบ</div>
+              <div class="old-sub">สำหรับเจ้าของร้าน</div>
+              <div class="old-input-wrap">เบอร์โทร · 081-234-5678</div>
+            </div>
+            <div class="old-cta">รับ OTP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <h4>ปัญหาที่ Art catch + เพิ่มเติม</h4>
+        <div class="row bad"><span class="icon">×</span><span><b>🔒 emoji</b> render ต่างกัน Win/Mac/Android · ไม่ scale · ไม่ branded</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>"เข้าสู่ระบบ" italic</b> · Thai script ไม่มี italic tradition · synthetic oblique = ดูเอียงๆ ผิดธรรมชาติ</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>Input overflow</b> ทางซ้าย · margin negative ผิด · text หาย</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>Center-aligned everything</b> · empty middle · ไม่มี hierarchy ที่จับตา</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>Wordmark 30px</b> ใหญ่เกิน · กลบ headline · brand ครอบงำ</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>"สำหรับเจ้าของร้าน"</b> redundant · context login URL ก็บอกอยู่แล้ว</span></div>
+        <div class="row bad"><span class="icon">×</span><span><b>CTA ติด bottom เหนียว</b> · empty space ระหว่าง input + button = wasted</span></div>
+      </div>
+    </div>
+
+
+    <!-- NEW · ship-ready -->
+    <div>
+      <div class="col-head">
+        <span class="col-tag tag-good">SHIP-READY · Apple-grade</span>
+        <div class="col-name">drop emoji · left-align · breathing typography</div>
+        <div class="col-sub">wordmark = trust signal · iCloud login pattern</div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen new-screen">
+            <div class="status-bar">12:44</div>
+
+            <div class="new-nav">
+              <div class="new-back">‹</div>
+            </div>
+
+            <div class="new-content">
+              <div class="new-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+              <h1 class="new-h1">เข้าสู่ระบบ</h1>
+              <p class="new-sub">สำหรับเจ้าของร้านที่เปิดร้านกับเรา · ส่ง OTP ไปยังเบอร์ที่ลงทะเบียนไว้</p>
+
+              <div class="new-input-label">เบอร์โทรศัพท์</div>
+              <input class="new-input focus" type="tel" placeholder="081 234 5678" value="081 234 5678">
+              <p class="new-helper">เราจะส่ง OTP 6 หลักไปยังเบอร์นี้</p>
+            </div>
+
+            <div class="new-cta-zone">
+              <button class="new-cta">รับ OTP</button>
+            </div>
+
+            <div class="new-foot">
+              ยังไม่มีบัญชี? <a>เปิดร้านใหม่ที่ make.bookease.co</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <h4>ที่เปลี่ยน · ship-ready</h4>
+        <div class="row good"><span class="icon">✓</span><span><b>ลบ 🔒 emoji</b> · wordmark ทำหน้าที่ trust mark · iCloud/Stripe pattern</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>"เข้าสู่ระบบ" Sarabun bold 800</b> · ไม่ italic · Thai-native typography (Apple Thai pattern)</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Left-aligned content</b> · Apple iOS pattern · easier scan · clear hierarchy (logo → h1 → sub → field → button)</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Wordmark 26px</b> · subordinate to h1 · brand visible แต่ไม่กลบ task</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Real input</b> · proper padding · placeholder fade · focus ring navy</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Helper text</b> "เราจะส่ง OTP 6 หลัก..." · expectation set · ลด surprise</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Sub copy เพิ่ม value</b> · "สำหรับเจ้าของร้านที่เปิดร้านกับเรา · ส่ง OTP ไปยังเบอร์ที่ลงทะเบียนไว้" · กว่าซ้ำคำ</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Back button</b> · top-left · 36×36 · circle · proper nav (Apple iOS pattern)</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>CTA navy + shadow</b> · BookEase brand color · primary action obvious · hover/active states</span></div>
+        <div class="row good"><span class="icon">✓</span><span><b>Bottom helper</b> "ยังไม่มีบัญชี?" · routes to make.bookease.co · onboarding bridge</span></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Apple's actual references -->
+  <div class="principles-final">
+    <h2>Apple's actual pattern · references จริง</h2>
+    <p>Apple ไม่ได้ใช้ lock emoji เป็น trust mark ที่ login screen · ที่ Apple ใช้คือ <b style="color:#fafafa">typography + brand wordmark + พื้นที่หายใจ</b> · ดูตัวอย่างจริง:</p>
+
+    <div class="principle-grid">
+      <div class="principle-item">
+        <h4>Apple iCloud (icloud.com/auth)</h4>
+        <p>White bg · Apple logo at top (small) · "Sign in to iCloud" · email field · forgot password link · NO lock icon · NO shield · trust = brand recognition</p>
+      </div>
+      <div class="principle-item">
+        <h4>Stripe login (dashboard.stripe.com/login)</h4>
+        <p>White bg · Stripe wordmark (purple) · "Sign in to Stripe" · email · password · NO lock icon · trust = wordmark + clean form</p>
+      </div>
+      <div class="principle-item">
+        <h4>Apple Pay sheet</h4>
+        <p>White bg · Apple Pay logo · merchant name · total · card thumbnail · "Touch ID" prompt · NO lock icon · trust = Apple logo + clean total</p>
+      </div>
+      <div class="principle-item">
+        <h4>1Password (1password.com/signin)</h4>
+        <p>White bg · 1Password logo · email · master password · NO lock icon (เป็น password manager แท้ๆ ก็ไม่ใช้!) · trust = brand + clean copy</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; padding: 18px 20px; background: linear-gradient(135deg, rgba(30,64,175,0.08), rgba(56,189,248,0.04)); border-left: 3px solid #38BDF8; border-radius: 8px;">
+      <p style="font-size: 13.5px; color: #fafafa; line-height: 1.7;">
+        <b style="color: #38BDF8;">หลักการที่ apply ทั้ง product:</b> 🔒 emoji ใช้ในกรณี <b>functional</b> เท่านั้น (e.g. password input prefix · payment-method indicator) · ไม่ใช้เป็น <b>decorative trust signal</b> · brand wordmark + clean copy ทำหน้าที่นั้นได้ดีกว่า + scale ได้ + recognition strong กว่า
+        <br><br>
+        ผมจะ apply กับ <b>/payment trust strip</b> ด้วย · ลบ 🔒 ตรง trust strip ออก · ใช้ wordmark + "ปลอดภัย" text แทน · จะ revise mockup payment ใน iter5 อีกรอบ
+      </p>
+    </div>
+  </div>
+
+
+  <!-- Where Lock icon DOES make sense -->
+  <div class="principles-final" style="margin-top: 28px;">
+    <h2>เมื่อไหร่ Lock icon makes sense</h2>
+    <p>ไม่ใช่ "ห้ามใช้ Lock เลย" · มี context ที่ใช้ได้ · แต่ <b style="color:#fafafa">functional</b> ไม่ใช่ <b style="color:#fafafa">decorative</b>:</p>
+
+    <div class="principle-grid">
+      <div class="principle-item" style="border-color: #4ade80;">
+        <h4>✓ ใช้ได้ · password input</h4>
+        <p>Password field with lock icon prefix = functional · บอก "นี่คือ secret input · ฉันจะ mask มัน" · Apple ใช้พอประมาณ</p>
+      </div>
+      <div class="principle-item" style="border-color: #4ade80;">
+        <h4>✓ ใช้ได้ · HTTPS indicator</h4>
+        <p>Browser address bar lock = functional · บอก "connection secure" · ไม่ใช่ decorative</p>
+      </div>
+      <div class="principle-item" style="border-color: #f87171;">
+        <h4>× ห้ามใช้ · login screen header</h4>
+        <p>"นี่คือหน้าปลอดภัย" decorative trust signal = redundant · brand wordmark + clean form ทำหน้าที่นี้</p>
+      </div>
+      <div class="principle-item" style="border-color: #f87171;">
+        <h4>× ห้ามใช้ · payment trust strip</h4>
+        <p>"BookEase · 🔒 ปลอดภัย" · 🔒 ที่นี่ decorative · drop · ใช้ wordmark + "ชำระเงินกับ BookEase" text แทน</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

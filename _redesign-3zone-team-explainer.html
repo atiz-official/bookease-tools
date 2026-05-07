@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BookEase · 3-Zone Visual Language · Team Explainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #fafaf9;
+    color: #1c1917;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .hero {
+    background: linear-gradient(135deg, #18181b 0%, #292524 100%);
+    color: #fafaf9;
+    padding: 48px 40px;
+    border-radius: 24px;
+    margin-bottom: 48px;
+  }
+  .hero .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f59e0b;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 52px);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .hero p {
+    font-size: 16px;
+    color: #d4d4d8;
+    max-width: 760px;
+    margin-bottom: 12px;
+  }
+  .hero .lock-line {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 3px solid #f59e0b;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* 4-zone map */
+  .zone-map {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 980px) { .zone-map { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .zone-map { grid-template-columns: 1fr; } }
+
+  .zone-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(28,25,23,0.06);
+    border-top: 4px solid;
+  }
+  .zone-card.zone-1 { border-color: #b45309; }
+  .zone-card.zone-2 { border-color: #1c1917; }
+  .zone-card.zone-3 { border-color: #14532d; }
+  .zone-card.zone-4 { border-color: #2563eb; }
+
+  .zone-card .url {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #57534e;
+    margin-bottom: 8px;
+    word-break: break-all;
+  }
+  .zone-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .zone-card .desc {
+    font-size: 12.5px;
+    color: #57534e;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .zone-card .swatch-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .swatch-label {
+    font-size: 10.5px;
+    color: #78716c;
+    margin-left: 4px;
+  }
+
+  /* Section anchors */
+  .section {
+    margin-bottom: 64px;
+    padding-top: 24px;
+    border-top: 1px solid #e7e5e4;
+  }
+  .section-head {
+    margin-bottom: 24px;
+  }
+  .section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .tag-1 { background: #fef3c7; color: #92400e; }
+  .tag-2 { background: #1c1917; color: #fafaf9; }
+  .tag-3 { background: #d1fae5; color: #065f46; }
+  .tag-4 { background: #dbeafe; color: #1e40af; }
+
+  .section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .section .lead {
+    font-size: 15px;
+    color: #44403c;
+    max-width: 760px;
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  /* Phone frames · mini */
+  .phones-row {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+  .phone-col {
+    flex: 0 0 auto;
+    width: 280px;
+  }
+  .phone-col .col-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #57534e;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .phone-col .col-state {
+    font-size: 11px;
+    margin-bottom: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .state-bad { background: #fee2e2; color: #991b1b; }
+  .state-good { background: #d1fae5; color: #065f46; }
+  .state-neutral { background: #fef3c7; color: #92400e; }
+
+  .phone-mini {
+    background: #18181b;
+    border-radius: 28px;
+    padding: 10px;
+    box-shadow: 0 12px 32px rgba(28,25,23,0.18);
+  }
+  .phone-screen {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 540px;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+  }
+
+  /* ─── ZONE 1 · /<slug> · variant 100% ─── */
+  .z1-screen { background: #fef7f0; color: #1c1917; }
+  .z1-status { height: 22px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #44403c; }
+  .z1-hero {
+    height: 140px;
+    background: linear-gradient(135deg, #fef3e2 0%, #fdebd0 100%);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .z1-hero::after {
+    content: "";
+    position: absolute;
+    bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, #fbbf24 0%, transparent 70%);
+    opacity: 0.3;
+  }
+  .z1-hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: #b45309;
+    z-index: 1;
+  }
+  .z1-body { padding: 14px 16px; }
+  .z1-shop-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1c1917;
+    margin-bottom: 2px;
+  }
+  .z1-tagline { font-size: 10.5px; color: #78716c; margin-bottom: 12px; font-style: italic; }
+  .z1-svc {
+    background: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border-left: 2px solid #b45309;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .z1-svc .name { font-size: 11.5px; font-weight: 600; }
+  .z1-svc .price { font-size: 11.5px; color: #b45309; font-weight: 700; }
+  .z1-cta {
+    margin: 12px 16px;
+    padding: 10px;
+    background: #b45309;
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .z1-url { padding: 6px; text-align: center; font-size: 9px; color: #78716c; border-top: 1px solid #fde68a; }
+
+  /* ─── ZONE 2 · /<slug>/payment · BookEase chrome + variant accent ─── */
+  .z2-screen { background: #faf7f2; color: #1c1917; }
+  .z2-status { height: 22px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #44403c; }
+  .z2-trust-bar {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .z2-back {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: white;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .z2-trust-text {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #44403c;
+    line-height: 1.3;
+  }
+  .z2-trust-text .crumb { color: #b45309; font-weight: 700; }
+
+  .z2-card {
+    margin: 10px 14px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(28,25,23,0.06);
+  }
+  .z2-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; }
+  .z2-row .k { color: #78716c; }
+  .z2-row .v { color: #1c1917; font-weight: 500; }
+  .z2-divider { height: 1px; background: #f5f5f4; margin: 6px 0; }
+  .z2-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 4px;
+  }
+  .z2-total .k { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 12px; }
+  .z2-total .v { font-size: 16px; font-weight: 700; color: #b45309; }
+
+  .z2-fields { padding: 0 14px; }
+  .z2-input {
+    background: white;
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 5px;
+    font-size: 10.5px;
+    color: #a8a29e;
+    border: 1px solid #f5f5f4;
+  }
+  .z2-microcopy {
+    font-size: 9.5px;
+    color: #78716c;
+    margin: 8px 14px 0;
+    line-height: 1.5;
+  }
+  .z2-cta-zone { padding: 10px 14px; }
+  .z2-cta {
+    background: #0a0a0a;
+    color: white;
+    border-radius: 12px;
+    padding: 11px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .z2-cta .label { display: flex; flex-direction: column; }
+  .z2-cta .sla { font-size: 8.5px; opacity: 0.7; font-weight: 500; }
+  .z2-footer {
+    text-align: center;
+    font-size: 9px;
+    color: #78716c;
+    padding: 6px;
+  }
+
+  /* OLD live screen (zone 2 · current state) */
+  .z2-old-screen { background: white; color: #1f2937; }
+  .z2-old-header { padding: 10px 14px; border-bottom: 1px solid #f3f4f6; text-align: center; font-size: 11px; font-weight: 600; }
+  .z2-old-summary { padding: 12px 14px; }
+  .z2-old-pill { display: inline-block; padding: 3px 8px; background: #f3f4f6; color: #6b7280; font-size: 9px; border-radius: 999px; margin-bottom: 8px; }
+  .z2-old-svc { font-size: 11px; margin: 4px 0; color: #4E6EDE; }
+  .z2-old-divider { height: 1px; background: #e5e7eb; margin: 8px 0; }
+  .z2-old-total-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; }
+  .z2-old-total-row .k { font-size: 10.5px; color: #6b7280; }
+  .z2-old-total-row .v { font-size: 14px; font-weight: 700; }
+  .z2-old-discount {
+    margin: 10px 14px;
+    display: flex;
+    gap: 6px;
+  }
+  .z2-old-discount input {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 10px;
+    color: #9ca3af;
+    background: white;
+  }
+  .z2-old-discount button {
+    padding: 0 14px;
+    background: #c4b5fd;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .z2-old-section { padding: 0 14px; font-size: 9.5px; color: #6b7280; margin: 8px 0 4px; }
+  .z2-old-input {
+    margin: 0 14px 4px;
+    padding: 7px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 10px;
+    color: #9ca3af;
+  }
+  .z2-old-tos { padding: 10px 14px; font-size: 9.5px; color: #6b7280; }
+  .z2-old-tos .check { display: inline-block; width: 11px; height: 11px; border: 1px solid #d1d5db; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+  .z2-old-cta {
+    margin: 4px 14px 8px;
+    padding: 10px;
+    background: #c4b5fd;
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  /* LIFF preview screen (zone 2 · reference inspiration) */
+  .liff-screen { background: #fef7f0; color: #1c1917; }
+  .liff-header {
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .liff-h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #b45309;
+  }
+  .liff-card {
+    margin: 8px 14px;
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .liff-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 10.5px; }
+  .liff-row .k { color: #78716c; }
+  .liff-row .v { color: #1c1917; font-weight: 600; }
+  .liff-divider { height: 1px; background: #f5f5f4; margin: 6px 0 8px; }
+  .liff-deposit { display: flex; justify-content: space-between; align-items: baseline; }
+  .liff-deposit .k { font-weight: 700; }
+  .liff-deposit .v { font-size: 16px; font-weight: 700; color: #b45309; }
+  .liff-fields { padding: 0 14px; margin-top: 8px; }
+  .liff-fields .label { font-size: 10px; color: #78716c; margin: 6px 0 3px; }
+  .liff-input { background: white; border: 1px solid #f5f5f4; border-radius: 8px; padding: 7px 10px; font-size: 10px; color: #a8a29e; }
+  .liff-test { margin: 8px 14px; padding: 8px 10px; background: #fef3c7; border-radius: 8px; font-size: 9px; color: #92400e; line-height: 1.4; }
+  .liff-cta-row { display: flex; gap: 8px; padding: 0 14px; }
+  .liff-cta-back { flex: 1; padding: 10px; background: white; border: 1px solid #e7e5e4; border-radius: 10px; text-align: center; font-size: 11px; font-weight: 600; }
+  .liff-cta-pay { flex: 2; padding: 10px; background: #b45309; color: white; border-radius: 10px; text-align: center; font-size: 11px; font-weight: 700; }
+
+  /* ─── ZONE 3 · /<slug>/booking-success · hybrid ─── */
+  .z3-screen { background: #fef7f0; color: #1c1917; }
+  .z3-confetti {
+    height: 60px;
+    background: linear-gradient(135deg, #fef3e2, #fdebd0);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .z3-check {
+    width: 36px; height: 36px;
+    background: #14532d;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 18px;
+  }
+  .z3-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #1c1917;
+    text-align: center;
+    margin: 14px 14px 6px;
+  }
+  .z3-shop-line {
+    text-align: center;
+    font-size: 12px;
+    color: #78716c;
+    margin-bottom: 14px;
+  }
+  .z3-shop-line .shop { color: #b45309; font-weight: 700; }
+  .z3-qr-box {
+    margin: 0 14px 12px;
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .z3-qr {
+    width: 100px;
+    height: 100px;
+    background: #f5f5f4;
+    margin: 0 auto;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 9px;
+    color: #78716c;
+  }
+  .z3-code {
+    text-align: center;
+    margin-top: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1c1917;
+  }
+  .z3-confirmed-badge {
+    margin: 0 14px 8px;
+    padding: 6px 10px;
+    background: #f5f5f4;
+    border-radius: 999px;
+    font-size: 9.5px;
+    color: #57534e;
+    text-align: center;
+  }
+  .z3-confirmed-badge b { color: #44403c; }
+  .z3-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px;
+  }
+  .z3-actions .btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .z3-actions .primary { background: #b45309; color: white; }
+  .z3-actions .ghost { background: white; border: 1px solid #e7e5e4; color: #44403c; }
+
+  /* ─── ZONE 4 · /<slug>/mkt · BookEase blue 100% ─── */
+  .z4-screen { background: white; color: #1f2937; }
+  .z4-header {
+    background: #4E6EDE;
+    color: white;
+    padding: 14px 14px;
+    text-align: center;
+  }
+  .z4-header .brand { font-size: 16px; font-weight: 800; letter-spacing: 0.02em; }
+  .z4-header .tag { font-size: 10px; opacity: 0.85; margin-top: 2px; }
+  .z4-search {
+    margin: 12px 14px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+  .z4-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 0 14px;
+    overflow-x: auto;
+    margin-bottom: 12px;
+  }
+  .z4-tab {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    font-size: 10.5px;
+    color: #4b5563;
+  }
+  .z4-tab.active { background: #4E6EDE; color: white; border-color: #4E6EDE; }
+  .z4-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px; }
+  .z4-shop-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .z4-shop-img {
+    height: 60px;
+    background: linear-gradient(135deg, #4E6EDE 0%, #6366f1 100%);
+    opacity: 0.8;
+  }
+  .z4-shop-info { padding: 7px 9px; }
+  .z4-shop-name { font-size: 10px; font-weight: 600; color: #1f2937; }
+  .z4-shop-meta { font-size: 9px; color: #6b7280; margin-top: 2px; }
+
+  /* Why-it-works section */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+  @media (max-width: 720px) { .principle-grid { grid-template-columns: 1fr; } }
+  .principle-item {
+    padding: 18px 20px;
+    background: white;
+    border-radius: 12px;
+    border-left: 3px solid #f59e0b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .principle-item h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .principle-item p {
+    font-size: 13px;
+    color: #57534e;
+    line-height: 1.6;
+  }
+
+  /* Footnote */
+  .footnote {
+    margin-top: 56px;
+    padding: 24px;
+    background: #1c1917;
+    color: #d4d4d8;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .footnote h4 { color: #fafaf9; font-size: 15px; margin-bottom: 8px; }
+  .footnote ul { margin-top: 8px; padding-left: 20px; }
+  .footnote li { margin: 4px 0; }
+  .footnote a { color: #f59e0b; text-decoration: none; }
+
+  .annotations {
+    margin-top: 12px;
+    list-style: none;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+  .annotations li { padding: 3px 0; color: #57534e; }
+  .annotations li::before { margin-right: 5px; font-size: 10px; }
+  .annotations li.bad::before { content: "❌"; }
+  .annotations li.good::before { content: "✅"; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ════════════════════ HERO ════════════════════ -->
+  <div class="hero">
+    <div class="eyebrow">LOCKED 2026-05-07 · Pass 25 v37</div>
+    <h1>BookEase 3-Zone Visual Language</h1>
+    <p>4 surfaces · 3 brand chromes · 1 first-principle. Variant ครองหน้าก่อน + หลัง · BookEase ครองช่วง money-commit · marketplace ใช้ blue OG · ที่นี่คือคู่มือ</p>
+    <div class="lock-line">
+      <b>First principle:</b> BookEase = invisible rail สำหรับ Thai service shops · shops own customers · we own merchants. ทุก surface design subordinates ต่อ merchant funnel · ไม่ใช่ BookEase brand awareness.
+      <br><br>
+      <b>Pattern reference:</b> Apple Pay sheet · Stripe Checkout · Booking.com payment screen — platform brand kicks in ตอน trust handoff · merchant brand ครองส่วนที่เหลือ
+    </div>
+  </div>
+
+  <!-- ════════════════════ 4-ZONE MAP ════════════════════ -->
+  <div class="zone-map">
+    <div class="zone-card zone-1">
+      <div class="url">bookease.co/&lt;slug&gt;</div>
+      <h3>Zone 1 · Shop Home <span style="font-size:10px;background:#d1fae5;color:#065f46;padding:2px 6px;border-radius:6px;margin-left:4px">DIRECT</span></h3>
+      <p class="desc">ลูกค้า browse ร้าน · ดูบริการ · เลือกเวลา · ก่อน commit เงิน</p>
+      <p class="desc" style="font-size:11px;background:#f5f5f4;padding:6px 8px;border-radius:6px;margin-top:6px"><b>Fee:</b> 3-tier transaction only · 2.9% / 4.9% / 5.9% ตาม payment method · ไม่มี commission</p>
+      <div class="swatch-row">
+        <span class="swatch" style="background:#fef7f0"></span>
+        <span class="swatch" style="background:#b45309"></span>
+        <span class="swatch-label">variant 100%</span>
+      </div>
+    </div>
+    <div class="zone-card zone-2">
+      <div class="url">bookease.co/&lt;slug&gt;/payment</div>
+      <h3>Zone 2 · Payment</h3>
+      <p class="desc">Money-commit moment · BookEase chrome (cream) + variant accent · Chope middleground</p>
+      <div class="swatch-row">
+        <span class="swatch" style="background:#faf7f2"></span>
+        <span class="swatch" style="background:#0a0a0a"></span>
+        <span class="swatch" style="background:#b45309"></span>
+        <span class="swatch-label">cream + black + variant accent</span>
+      </div>
+    </div>
+    <div class="zone-card zone-3">
+      <div class="url">bookease.co/&lt;slug&gt;/booking-success</div>
+      <h3>Zone 3 · Confirmation</h3>
+      <p class="desc">Variant กลับมา · BookEase confirmed mark เล็กๆ · hybrid celebration</p>
+      <div class="swatch-row">
+        <span class="swatch" style="background:#fef7f0"></span>
+        <span class="swatch" style="background:#14532d"></span>
+        <span class="swatch-label">variant + green check</span>
+      </div>
+    </div>
+    <div class="zone-card zone-4">
+      <div class="url">bookease.co/&lt;slug&gt;/mkt</div>
+      <h3>Zone 4 · Marketplace <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:6px;margin-left:4px">INDIRECT · FUTURE</span></h3>
+      <p class="desc">BookEase พา customer มาเอง (OTA model) · platform brand earns this surface · OG blue</p>
+      <p class="desc" style="font-size:11px;background:#f5f5f4;padding:6px 8px;border-radius:6px;margin-top:6px"><b>Fee:</b> OTA bundled commission ~10-25% (รวม transaction fee แล้ว · เหมือน Booking.com / Agoda / Klook) · <b>Phase ถัดไป · ยังไม่ใช่ v0</b></p>
+      <div class="swatch-row">
+        <span class="swatch" style="background:#4E6EDE"></span>
+        <span class="swatch" style="background:white"></span>
+        <span class="swatch-label">BookEase blue 100%</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════ ZONE 1 ════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag tag-1">Zone 1 · Shop Home</span>
+      <h2>variant 100% · shop owns the experience</h2>
+      <p class="lead">ลูกค้ามาที่ <code>bookease.co/&lt;slug&gt;</code> = เข้าบ้านร้าน · variant สีของร้าน · ฟอนต์ของร้าน · บรรยากาศของร้าน · ลูกค้ารู้สึกว่ากำลังคุยกับ "Moya" ไม่ใช่ "BookEase"</p>
+    </div>
+    <div class="phones-row">
+      <div class="phone-col">
+        <div class="col-label">/&lt;slug&gt;</div>
+        <div class="col-state state-good">variant 100%</div>
+        <div class="phone-mini">
+          <div class="phone-screen z1-screen">
+            <div class="z1-status">12:44</div>
+            <div class="z1-hero">
+              <div class="z1-hero-title">Moya</div>
+            </div>
+            <div class="z1-body">
+              <div class="z1-shop-name">Moya · ร้านทำสีผม</div>
+              <div class="z1-tagline">"สีของคุณ · มาใช้เวลากับเรา"</div>
+              <div class="z1-svc">
+                <span class="name">ทำสี</span>
+                <span class="price">฿1,590</span>
+              </div>
+              <div class="z1-svc">
+                <span class="name">ทำสี + ทรีตเมนต์</span>
+                <span class="price">฿2,290</span>
+              </div>
+            </div>
+            <div class="z1-cta">เลือกเวลา</div>
+            <div class="z1-url">bookease.co/moya</div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="good">Cream/peach background = variant "luxury"</li>
+          <li class="good">Cormorant italic header = editorial · ของร้าน</li>
+          <li class="good">Accent peach (#b45309) ทุก price + CTA</li>
+          <li class="good">ไม่มี BookEase brand เลยในหน้านี้</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════ ZONE 2 · 3-COLUMN COMPARE ════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag tag-2">Zone 2 · Payment</span>
+      <h2>BookEase chrome + variant accent · trust handoff</h2>
+      <p class="lead">ตอนกดจ่ายเงิน · ลูกค้าต้องเชื่อใครคนนึง = นั่นคือเรา (rail) · platform brand kicks in · variant เก็บไว้แค่ accent (price · shop name) เพื่อ continuity · ไม่ใช่ jarring "ออกจาก domain ใหม่"</p>
+    </div>
+    <div class="phones-row">
+
+      <!-- COL 1 · OLD (live now) -->
+      <div class="phone-col">
+        <div class="col-label">OLD · live ตอนนี้</div>
+        <div class="col-state state-bad">7-chunk friction · BookEase blue ผิด</div>
+        <div class="phone-mini">
+          <div class="phone-screen z2-old-screen">
+            <div class="z2-old-header">‹  สรุปคำสั่งซื้อ</div>
+            <div class="z2-old-summary">
+              <span class="z2-old-pill">🎁 ซื้อดีลเก็บไว้</span>
+              <div class="z2-old-svc">📅 ทำสี</div>
+              <div class="z2-old-svc">📄 Moya</div>
+              <div class="z2-old-divider"></div>
+              <div class="z2-old-total-row"><span class="k">ยอดที่ต้องชำระ</span><span class="v">฿1,590</span></div>
+            </div>
+            <div class="z2-old-discount">
+              <input placeholder="กรอกรหัสส่วนลด" />
+              <button>ใช้</button>
+            </div>
+            <div class="z2-old-section">ข้อมูลติดต่อ</div>
+            <div class="z2-old-input">ชื่อ-นามสกุล *</div>
+            <div class="z2-old-input">เบอร์โทรศัพท์ *</div>
+            <div class="z2-old-input">อีเมล</div>
+            <div class="z2-old-tos"><span class="check"></span>ยอมรับ เงื่อนไขและนโยบาย</div>
+            <div class="z2-old-cta">ซื้อดีล</div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="bad">BookEase blue/purple ทุกที่</li>
+          <li class="bad">"ซื้อดีล" wrong word</li>
+          <li class="bad">3 fields + ToS checkbox</li>
+          <li class="bad">"ค่าธรรมเนียม 4.9%" reverse marketing</li>
+          <li class="bad">CTA ไม่มีราคา</li>
+        </ul>
+      </div>
+
+      <!-- COL 2 · LIFF preview (reference) -->
+      <div class="phone-col">
+        <div class="col-label">LIFF preview · reference</div>
+        <div class="col-state state-neutral">design ที่ทีม merchant เห็น (ดีกว่า prod)</div>
+        <div class="phone-mini">
+          <div class="phone-screen liff-screen">
+            <div class="z2-status">9:41</div>
+            <div class="liff-header">
+              <div class="liff-h1">ยืนยันการจอง</div>
+            </div>
+            <div class="liff-card">
+              <div class="liff-row"><span class="k">ร้าน</span><span class="v">Moya</span></div>
+              <div class="liff-row"><span class="k">บริการ</span><span class="v">ทำสี</span></div>
+              <div class="liff-row"><span class="k">วันเวลา</span><span class="v">—</span></div>
+              <div class="liff-divider"></div>
+              <div class="liff-deposit"><span class="k">มัดจำล็อกคิว</span><span class="v">฿200</span></div>
+            </div>
+            <div class="liff-fields">
+              <div class="label">ชื่อ-สกุล</div>
+              <div class="liff-input">กรอกชื่อ</div>
+              <div class="label">เบอร์โทร</div>
+              <div class="liff-input">0XX-XXX-XXXX</div>
+            </div>
+            <div class="liff-test">
+              <b>โหมดทดสอบ:</b> นี่คือการลองจองให้ดู flow · ยังไม่หักเงินจริง
+            </div>
+            <div class="liff-cta-row">
+              <div class="liff-cta-back">ย้อน</div>
+              <div class="liff-cta-pay">จ่าย ฿200 (ทดสอบ)</div>
+            </div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="good">Cream + editorial italic</li>
+          <li class="good">Compact card · 2 fields</li>
+          <li class="good">มัดจำชัด · ราคาในปุ่ม</li>
+          <li class="bad">มาจาก variant 100% · ไม่มี BookEase trust signal</li>
+          <li class="bad">CTA สีรัสต์ = variant · ไม่ใช่ neutral handoff</li>
+        </ul>
+      </div>
+
+      <!-- COL 3 · NEW (suggested · 3-zone applied) -->
+      <div class="phone-col">
+        <div class="col-label">NEW · 3-zone applied</div>
+        <div class="col-state state-good">cream + variant accent + neutral CTA</div>
+        <div class="phone-mini">
+          <div class="phone-screen z2-screen">
+            <div class="z2-status">12:44</div>
+            <div class="z2-trust-bar">
+              <div class="z2-back">‹</div>
+              <div class="z2-trust-text">
+                🔒 ชำระเงินกับ BookEase · ปลอดภัย<br>
+                <span style="font-size:8.5px;color:#78716c;">สำหรับการจองที่ <span class="crumb">Moya</span></span>
+              </div>
+            </div>
+            <div class="z2-card">
+              <div class="z2-row"><span class="k">ร้าน</span><span class="v">Moya</span></div>
+              <div class="z2-row"><span class="k">บริการ</span><span class="v">ทำสี</span></div>
+              <div class="z2-divider"></div>
+              <div class="z2-total"><span class="k">มัดจำ</span><span class="v">฿200</span></div>
+              <div class="z2-row" style="margin-top:2px"><span class="k" style="font-size:9.5px">เหลือชำระที่ร้าน</span><span class="v" style="font-size:11px;color:#78716c">฿1,390</span></div>
+            </div>
+            <div class="z2-fields">
+              <div class="z2-input">ชื่อ</div>
+              <div class="z2-input" style="border-color:#b45309;box-shadow:0 0 0 2px rgba(180,83,9,0.1)">เบอร์โทร · 081-234-5678</div>
+            </div>
+            <div class="z2-microcopy">ร้าน Moya ยืนยันใน LINE 30 นาที · ตกลงเวลาไม่ได้ คืนเงิน 100%</div>
+            <div class="z2-cta-zone">
+              <div class="z2-cta">
+                <span style="font-size: 13px; font-weight: 700;">จ่ายมัดจำ</span>
+                <span style="font-weight:800">฿200</span>
+              </div>
+              <div class="z2-footer">ปลอดภัยกับ Xendit · PCI DSS · นโยบายคืนเงิน · LINE @bookease</div>
+            </div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="good">Cream chrome = neutral handoff</li>
+          <li class="good">"🔒 BookEase" trust bar = trust handoff</li>
+          <li class="good">Variant peach = accent only (price · shop name)</li>
+          <li class="good">CTA สีดำ Apple-grade · single-line · ราคาในปุ่ม</li>
+          <li class="good">2 fields · ไม่มี email · ไม่มี ToS checkbox</li>
+          <li class="good">ไม่ pre-state payment method · ลูกค้าเลือก QR/card/TrueMoney ที่ Xendit page</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="principle-grid">
+      <div class="principle-item">
+        <h4>Why cream not blue</h4>
+        <p>BookEase blue (#4E6EDE) = legacy chrome จาก Pass 16 · ไม่เข้ากับ Pass 25 warm visual language · ใช้ neutral cream แทน · ลูกค้ารู้สึกว่ากำลัง "เข้าโซน trust" ไม่ใช่ "โดน rebrand"</p>
+      </div>
+      <div class="principle-item">
+        <h4>Why variant accent (not 100%)</h4>
+        <p>Pure variant = ลูกค้าไม่รู้ว่าใครเชื่อ (Moya หรือ BookEase?) · pure BookEase = jarring · variant accent = continuity จากหน้าก่อนหน้า + ชัดว่าเรา rail</p>
+      </div>
+      <div class="principle-item">
+        <h4>Why CTA neutral black</h4>
+        <p>Apple Pay sheet pattern · CTA สีดำเป็นสีของ rail (Stripe / Apple Pay / Square ใช้กัน) · ไม่ใช่ variant (ทำให้คิดว่าจ่ายให้ Moya โดยตรง) · ไม่ใช่ blue (legacy)</p>
+      </div>
+      <div class="principle-item">
+        <h4>Why no method-specific microcopy</h4>
+        <p>Apple Pay button = single line · Stripe Checkout = single line · ลูกค้ายังไม่ได้เลือก payment method · Xendit support QR/card/TrueMoney/etc · pre-state "QR PromptPay" = presumptuous + ผิด · trust footer ข้างล่างมี "Xendit · PCI DSS" อยู่แล้ว · cleaner</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════ ZONE 3 ════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag tag-3">Zone 3 · Confirmation</span>
+      <h2>variant returns · BookEase confirmed mark · hybrid celebration</h2>
+      <p class="lead">หลังจ่ายสำเร็จ · BookEase ส่งลูกค้ากลับมาที่บ้านร้าน · variant ครองอีกครั้ง · BookEase mark เล็กๆ บอกว่า "เรา confirm เรียบร้อยแล้ว · ขอบคุณที่ใช้ rail" · shop wins moment</p>
+    </div>
+    <div class="phones-row">
+      <div class="phone-col">
+        <div class="col-label">/&lt;slug&gt;/booking-success</div>
+        <div class="col-state state-good">variant + BookEase confirmed mark</div>
+        <div class="phone-mini">
+          <div class="phone-screen z3-screen">
+            <div class="z1-status">12:45</div>
+            <div class="z3-confetti">
+              <div class="z3-check">✓</div>
+            </div>
+            <div class="z3-title">จองสำเร็จ!</div>
+            <div class="z3-shop-line">ร้าน <span class="shop">Moya</span> จะยืนยันเวลาใน LINE 30 นาที</div>
+            <div class="z3-qr-box">
+              <div class="z3-qr">QR</div>
+              <div class="z3-code">BK-A1B2-C3D4</div>
+            </div>
+            <div class="z3-confirmed-badge"><b>✓ BookEase confirmed</b> · ปลอดภัยตามมาตรฐาน PCI DSS</div>
+            <div class="z3-actions">
+              <div class="btn primary">บันทึกรูป</div>
+              <div class="btn ghost">แชร์</div>
+            </div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="good">Variant cream + peach กลับมา · shop wins celebration</li>
+          <li class="good">"✓ BookEase confirmed" small badge = trust signal · ไม่ครอบงำ</li>
+          <li class="good">Green check (#14532d) = success · universal · ไม่ใช่ variant</li>
+          <li class="good">Primary CTA = variant peach · กลับสู่ shop world</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════ ZONE 4 ════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-tag tag-4">Zone 4 · Marketplace</span>
+      <h2>BookEase blue 100% · platform earns this surface</h2>
+      <p class="lead">ลูกค้ามาที่ <code>bookease.co/&lt;slug&gt;/mkt</code> = BookEase พา customer มาเอง (search · category browse · "ร้านนวดใกล้ฉัน") · platform brand earn this surface · OG BookEase blue · marketplace commission tier เพิ่มจาก 3-tier rail</p>
+    </div>
+    <div class="phones-row">
+      <div class="phone-col">
+        <div class="col-label">/&lt;slug&gt;/mkt</div>
+        <div class="col-state state-good">BookEase blue 100%</div>
+        <div class="phone-mini">
+          <div class="phone-screen z4-screen">
+            <div class="z1-status">12:44</div>
+            <div class="z4-header">
+              <div class="brand">BookEase</div>
+              <div class="tag">ค้นหาร้านสปา · นวด · เสริมสวย</div>
+            </div>
+            <div class="z4-search">🔍 ค้นหาร้าน · บริการ</div>
+            <div class="z4-tabs">
+              <span class="z4-tab active">ทั้งหมด</span>
+              <span class="z4-tab">สปา</span>
+              <span class="z4-tab">นวด</span>
+              <span class="z4-tab">เล็บ</span>
+            </div>
+            <div class="z4-grid">
+              <div class="z4-shop-card">
+                <div class="z4-shop-img"></div>
+                <div class="z4-shop-info">
+                  <div class="z4-shop-name">Moya</div>
+                  <div class="z4-shop-meta">⭐ 4.8 · 2.1km</div>
+                </div>
+              </div>
+              <div class="z4-shop-card">
+                <div class="z4-shop-img" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
+                <div class="z4-shop-info">
+                  <div class="z4-shop-name">Bare Nail Spa</div>
+                  <div class="z4-shop-meta">⭐ 4.9 · 0.8km</div>
+                </div>
+              </div>
+              <div class="z4-shop-card">
+                <div class="z4-shop-img" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)"></div>
+                <div class="z4-shop-info">
+                  <div class="z4-shop-name">Sabai Day</div>
+                  <div class="z4-shop-meta">⭐ 4.7 · 1.5km</div>
+                </div>
+              </div>
+              <div class="z4-shop-card">
+                <div class="z4-shop-img" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)"></div>
+                <div class="z4-shop-info">
+                  <div class="z4-shop-name">Petch Massage</div>
+                  <div class="z4-shop-meta">⭐ 4.6 · 3.2km</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ul class="annotations">
+          <li class="good">BookEase blue header = platform brand owns search</li>
+          <li class="good">Shop variants ปรากฏเป็น cards · ไม่ครองหน้าเดี่ยว</li>
+          <li class="good">OTA bundled commission ~10-25% (รวม transaction fee แล้ว) · Booking.com/Agoda/Klook style</li>
+          <li class="good">Customer's loyalty บริบทนี้ = BookEase · OK เพราะมา search เอง</li>
+          <li class="bad" style="color:#92400e"><b>FUTURE PHASE</b> · ยังไม่ใช่ v0 · เก็บ surface ไว้สำหรับ Phase 1+ scale</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════ FOOTNOTE ════════════════════ -->
+  <div class="footnote">
+    <h4>How team should use this · 3 rules</h4>
+    <ul>
+      <li><b>เมื่อออกแบบหน้าใหม่:</b> ถามตัวเองว่า "นี่คือ Zone 1, 2, 3 หรือ 4?" → apply chrome ที่ตรงกัน</li>
+      <li><b>เมื่อ port React component:</b> Zone 1 และ 3 = inherit shop variant token · Zone 2 = neutral cream + accent · Zone 4 = blue tokens</li>
+      <li><b>เมื่อ designer + dev เถียง:</b> chrome ของแต่ละ zone = locked · variant accent ratio (5-20%) เปิด iterate ได้</li>
+    </ul>
+    <br>
+    <b>Files for reference:</b>
+    <ul>
+      <li>Memory lock: <a href="#">~/.claude/memory/feedback_payment_page_chope_middleground.md</a></li>
+      <li>Zone 2 detailed mockup: <a href="_redesign-payment-page-preview.html">_redesign-payment-page-preview.html</a></li>
+      <li>LIFF preview source: <a href="https://atiz-official.github.io/bookease-tools/liff-preview.html">atiz-official.github.io/bookease-tools/liff-preview.html</a></li>
+    </ul>
+    <br>
+    <b>Open questions:</b>
+    <ul>
+      <li>Zone 2 variant accent ratio — 5%, 10%, 20% of chrome? · iterate via mockup</li>
+      <li>Zone 3 BookEase confirmed badge size · placement · iterate</li>
+      <li>Mobile vs desktop differences · defer to mobile-first</li>
+      <li>Variant tokens per shop (currently demo'd as 'luxury' peach #b45309) · ผูกกับ shop's chosen variant</li>
+    </ul>
+    <br>
+    <b>Estimate to ship Zone 2 (production):</b> 2-3 days · port `frontend/src/pages/PaymentPage.tsx` + `OrderSummarySection.tsx` + `TrustFooter.tsx` · variant inheritance from `useShopDetail` · auto-handoff to Xendit
+  </div>
+
+</div>
+
+</body>
+</html>

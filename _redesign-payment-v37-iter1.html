@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BookEase /payment · Pass 25 v37 · Iteration 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #18181b;
+    color: #e5e5e5;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* Header */
+  .doc-head {
+    margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #f59e0b;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .doc-head h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 48px);
+    color: #fafafa;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+  .doc-head p {
+    font-size: 15px;
+    color: #a3a3a3;
+    max-width: 720px;
+    line-height: 1.7;
+  }
+  .doc-head .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 999px;
+    color: #f59e0b;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* Phone showcase */
+  .showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+    align-items: start;
+  }
+  @media (max-width: 920px) { .showcase { grid-template-columns: 1fr; } }
+
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    background: #292524;
+    border-radius: 36px;
+    padding: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 0 0 1px #44403c;
+    width: 380px;
+    max-width: 100%;
+  }
+  .screen {
+    background: #faf7f2;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 760px;
+    display: flex;
+    flex-direction: column;
+    color: #1c1917;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 36px;
+    background: #faf7f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #44403c;
+  }
+
+  /* Trust strip header */
+  .trust-strip {
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .back-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: white;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 3px rgba(28,25,23,0.08);
+    font-size: 17px;
+    color: #1c1917;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .trust-brand {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .brand-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .brand-wordmark .book { color: #1E40AF; }
+  .brand-wordmark .ease { color: #38BDF8; }
+  .trust-meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #57534e;
+    letter-spacing: 0.02em;
+    padding-top: 2px;
+  }
+  .trust-meta .lock { display: inline-block; margin-right: 3px; }
+
+  /* Hero · big editorial */
+  .hero {
+    padding: 24px 24px 12px;
+  }
+  .hero-meta {
+    font-size: 12px;
+    color: #78716c;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.1;
+    color: #1c1917;
+    margin-bottom: 4px;
+  }
+  .hero-title .shop {
+    color: #b45309;
+  }
+  .hero-when {
+    font-size: 13px;
+    color: #57534e;
+    margin-top: 2px;
+  }
+
+  /* Price block · big */
+  .price-block {
+    padding: 16px 24px 24px;
+  }
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .price-row .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: #44403c;
+  }
+  .price-row .amount {
+    font-size: 38px;
+    font-weight: 700;
+    color: #b45309;
+    line-height: 1;
+  }
+  .remaining {
+    font-size: 12px;
+    color: #78716c;
+    margin-top: 2px;
+  }
+  .remaining .num { color: #44403c; font-weight: 600; }
+
+  /* Fields */
+  .fields {
+    padding: 8px 20px 0;
+    flex: 1;
+  }
+  .input {
+    width: 100%;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid #f5f5f4;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #1c1917;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(28,25,23,0.03);
+  }
+  .input::placeholder { color: #a8a29e; }
+  .input.focus {
+    border-color: #b45309;
+    box-shadow: 0 0 0 3px rgba(180,83,9,0.1);
+    outline: 0;
+  }
+
+  /* Trust microcopy */
+  .micro-trust {
+    padding: 14px 20px 0;
+    font-size: 12px;
+    color: #57534e;
+    line-height: 1.55;
+  }
+  .micro-trust .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+    margin-right: 4px;
+  }
+
+  /* CTA zone */
+  .cta-zone {
+    padding: 16px 20px 12px;
+  }
+  .cta {
+    width: 100%;
+    background: #0a0a0a;
+    color: white;
+    border: 0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(10,10,10,0.22);
+    transition: transform 0.1s;
+  }
+  .cta:active { transform: scale(0.99); }
+  .cta .label-amount {
+    font-size: 18px;
+    font-weight: 800;
+    font-feature-settings: 'tnum' 1;
+  }
+  .cta-implicit {
+    text-align: center;
+    font-size: 11px;
+    color: #78716c;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .cta-implicit a { color: #44403c; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-trust {
+    text-align: center;
+    font-size: 10.5px;
+    color: #a8a29e;
+    padding: 4px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .footer-trust a { color: #78716c; text-decoration: none; }
+  .footer-trust .powered {
+    font-size: 9.5px;
+    color: #a8a29e;
+    font-weight: 500;
+  }
+  .footer-trust .mini-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 10.5px;
+    letter-spacing: -0.01em;
+  }
+  .footer-trust .mini-wordmark .book { color: #1E40AF; }
+  .footer-trust .mini-wordmark .ease { color: #38BDF8; }
+  .footer-trust .sep { color: #d6d3d1; }
+
+
+  /* Annotations panel */
+  .panel {
+    background: #1c1917;
+    border-radius: 20px;
+    padding: 28px 32px;
+    border: 1px solid #292524;
+  }
+  .panel h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #fafafa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel h3 .num {
+    width: 28px; height: 28px;
+    background: #f59e0b;
+    color: #1c1917;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .breakage-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1.5fr;
+    gap: 16px;
+    align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px solid #292524;
+  }
+  .breakage-row:last-child { border-bottom: 0; }
+  .breakage-num {
+    width: 28px; height: 28px;
+    background: #292524;
+    color: #f59e0b;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .breakage-old {
+    font-size: 13px;
+    color: #a3a3a3;
+    line-height: 1.55;
+  }
+  .breakage-old::before { content: "OLD: "; color: #f87171; font-weight: 700; }
+  .breakage-fix {
+    font-size: 13px;
+    color: #d4d4d8;
+    line-height: 1.55;
+  }
+  .breakage-fix::before { content: "FIX: "; color: #4ade80; font-weight: 700; }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #1c1917;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid #292524;
+  }
+  .stat .label {
+    font-size: 11px;
+    color: #78716c;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .stat .compare {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .stat .old {
+    font-size: 18px;
+    color: #71717a;
+    font-weight: 600;
+    text-decoration: line-through;
+  }
+  .stat .new {
+    font-size: 28px;
+    color: #4ade80;
+    font-weight: 800;
+  }
+
+  /* Variants */
+  .variants {
+    margin-top: 56px;
+  }
+  .variants h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: #fafafa;
+    margin-bottom: 8px;
+  }
+  .variants .sub {
+    font-size: 14px;
+    color: #a3a3a3;
+    margin-bottom: 24px;
+  }
+  .variant-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 920px) { .variant-grid { grid-template-columns: 1fr; } }
+  .variant-card {
+    background: #1c1917;
+    border-radius: 16px;
+    padding: 20px;
+    border-top: 3px solid #b45309;
+  }
+  .variant-card .vlabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #f59e0b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+  }
+  .variant-hero {
+    background: #faf7f2;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    color: #1c1917;
+  }
+  .variant-hero .vmeta { font-size: 11px; color: #78716c; margin-bottom: 2px; }
+  .variant-hero .vtitle { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; font-weight: 600; }
+  .variant-hero .vtitle .shop { color: #b45309; }
+  .variant-hero .vprice {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 14px;
+  }
+  .variant-hero .vprice .vlbl { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: #44403c; }
+  .variant-hero .vprice .vamt { font-size: 28px; font-weight: 700; color: #b45309; }
+  .variant-hero .vrem { font-size: 11px; color: #78716c; margin-top: 2px; }
+  .variant-cta {
+    background: #0a0a0a;
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .variant-cta .vamt { font-size: 16px; font-weight: 800; }
+  .variant-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #a3a3a3;
+    line-height: 1.55;
+  }
+
+  /* Decisions to make · open questions */
+  .decisions {
+    margin-top: 56px;
+    padding: 24px 28px;
+    background: #1c1917;
+    border-radius: 16px;
+    border: 1px solid #292524;
+  }
+  .decisions h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fafafa;
+    margin-bottom: 14px;
+  }
+  .decisions ul { list-style: none; padding: 0; }
+  .decisions li {
+    padding: 10px 0;
+    font-size: 13.5px;
+    color: #d4d4d8;
+    border-bottom: 1px solid #292524;
+    line-height: 1.6;
+  }
+  .decisions li:last-child { border-bottom: 0; }
+  .decisions li b { color: #f59e0b; display: block; margin-bottom: 2px; }
+
+  .signoff {
+    margin-top: 32px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(180,83,9,0.04));
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 14px;
+    font-size: 13.5px;
+    color: #d4d4d8;
+    line-height: 1.7;
+  }
+  .signoff b { color: #fafafa; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Doc header -->
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Iteration 1 · 2026-05-07</div>
+    <span class="badge">DRAFT · review → iterate → lock → ship</span>
+    <h1>/payment redesign · iteration 1</h1>
+    <p>คำสั่ง Art (locked): "ไม่ ship current page · มันแย่ · ลูกค้าไม่ซื้อ" · ใช้ 7 breakage fixes + Apple Pay sheet pattern + Square invisible-rail first-principle · single screen · ทุก decision ตอบคำถาม "ลูกค้าต้องเห็นอะไรเพื่อกดปุ่มอย่าง confident"</p>
+    <p style="margin-top: 14px; padding: 12px 16px; background: rgba(30, 64, 175, 0.1); border-left: 3px solid #1E40AF; border-radius: 8px; color: #fafafa; font-size: 13px;">
+      <b style="color: #38BDF8;">Updated 2026-05-07 PM:</b> BookEase logo restored at trust strip + footer (in dual-blue brand colors) — preserving ฿25K ad-spend equity · Apple Pay sheet pattern (logomark visible at trust handoff · chrome stays neutral cream)
+    </p>
+  </div>
+
+  <!-- Phone + breakage map -->
+  <div class="showcase">
+
+    <!-- The phone -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">12:44</div>
+
+          <!-- Trust handoff strip · BookEase logomark in dual-blue -->
+          <div class="trust-strip">
+            <div class="back-btn">‹</div>
+            <div class="trust-brand">
+              <span class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              <span class="trust-meta"><span class="lock">🔒</span>ปลอดภัย</span>
+            </div>
+          </div>
+
+          <!-- HERO -->
+          <div class="hero">
+            <div class="hero-meta">บริการที่จอง</div>
+            <div class="hero-title">
+              ทำสี · <span class="shop">Moya</span>
+            </div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 16:00 น.</div>
+          </div>
+
+          <!-- Price -->
+          <div class="price-block">
+            <div class="price-row">
+              <div class="label">มัดจำ</div>
+              <div class="amount">฿200</div>
+            </div>
+            <div class="remaining">เหลือ <span class="num">฿1,390</span> จ่ายที่ร้าน · เงินสด/QR</div>
+          </div>
+
+          <!-- Fields -->
+          <div class="fields">
+            <input class="input" placeholder="ชื่อ-นามสกุล">
+            <input class="input focus" placeholder="เบอร์โทร · 081-234-5678">
+          </div>
+
+          <!-- Trust microcopy -->
+          <div class="micro-trust">
+            <span class="pill">⏱ 30 นาที</span> ร้านยืนยันใน LINE chat · ตกลงเวลาไม่ได้ คืนเงิน 100%
+          </div>
+
+          <!-- CTA -->
+          <div class="cta-zone">
+            <button class="cta">
+              <span>จ่ายมัดจำ</span>
+              <span class="label-amount">฿200</span>
+            </button>
+            <div class="cta-implicit">
+              กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a>
+            </div>
+          </div>
+
+          <!-- Footer trust · BookEase wordmark + payment partner mark -->
+          <div class="footer-trust">
+            <span class="powered">Powered by</span>
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="sep">·</span>
+            <span>Xendit · PCI DSS</span>
+            <span class="sep">·</span>
+            <a>LINE @bookease</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakage map -->
+    <div>
+      <div class="panel">
+        <h3><span class="num">7</span> Breakages → fixes + brand integrity preserved</h3>
+        <div class="breakage-row" style="background: rgba(30, 64, 175, 0.1); border-left: 3px solid #1E40AF; padding-left: 12px; margin-bottom: 8px;">
+          <div class="breakage-num" style="background: #1E40AF; color: white;">⭐</div>
+          <div class="breakage-old" style="color: #d4d4d8;">Logo · ผมเขียนผิดในรอบก่อน · ทำเหมือนจะลบทิ้ง</div>
+          <div class="breakage-fix">BookEase wordmark dual-blue ใช้ที่ trust strip + footer · Apple Pay/Stripe pattern · ฿25K ad equity preserved · Art correction lock 2026-05-07 PM</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">1</div>
+          <div class="breakage-old">3 horizontal breaks (gray bars + dashed)</div>
+          <div class="breakage-fix">0 dividers · ใช้ whitespace + typography hierarchy แทน · เห็น hero / fields / CTA แบ่งเองโดย scale</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">2</div>
+          <div class="breakage-old">6 ไอคอนคนละสไตล์ (🎁📅📄👤💬📧)</div>
+          <div class="breakage-fix">0 emoji icons in fields · 1 lock emoji ที่ trust strip · 1 ⏱ ที่ pill · ระบบเดียว · subtle</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">3</div>
+          <div class="breakage-old">"ทำสี" + "Moya" 2 row คนละ icon</div>
+          <div class="breakage-fix">1 line hero: <i>ทำสี · Moya</i> · 1 cognitive unit · "ฉันกำลังจองอะไรที่ไหน" 1 ครั้ง · single editorial italic</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">4</div>
+          <div class="breakage-old">"ซื้อดีลเก็บไว้" pill ม่วง</div>
+          <div class="breakage-fix">ลบทิ้ง · "ดีล" คำผิด · pill metadata-as-badge ผิด ลำดับชั้น · คำพูดใหม่: "บริการที่จอง · ทำสี · Moya"</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">5</div>
+          <div class="breakage-old">"ซื้อดีล" button พาสเทล (disabled-look)</div>
+          <div class="breakage-fix">true black · always-tappable · tap → scroll-to-error ถ้า field ขาด · 1 tap = feedback (Apple/Stripe pattern)</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">6</div>
+          <div class="breakage-old">3 fields + ToS checkbox + "ใช้" button = 5 micro-decisions</div>
+          <div class="breakage-fix">2 fields เท่านั้น (name + phone) · email ตัด · ToS implicit ในปุ่ม "กดยืนยันถือว่ายอมรับ..." · discount code ย้ายไป /service · 5 → 2 decisions</div>
+        </div>
+        <div class="breakage-row">
+          <div class="breakage-num">7</div>
+          <div class="breakage-old">ราคา ฿1,590 อยู่กลาง · ปุ่มไม่มีราคา</div>
+          <div class="breakage-fix">ราคามัดจำ ฿200 BIG ที่ hero (38px Cormorant) · ปุ่ม "จ่ายมัดจำ ฿200" · 2 ที่ตอกย้ำกัน · zero mental link required</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stats Apple-Pay-style comparison -->
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Sections</div>
+      <div class="compare"><span class="old">5</span><span class="new">3</span></div>
+    </div>
+    <div class="stat">
+      <div class="label">Dividers</div>
+      <div class="compare"><span class="old">3</span><span class="new">0</span></div>
+    </div>
+    <div class="stat">
+      <div class="label">Required fields</div>
+      <div class="compare"><span class="old">4</span><span class="new">2</span></div>
+    </div>
+    <div class="stat">
+      <div class="label">Cognitive items</div>
+      <div class="compare"><span class="old">8+</span><span class="new">3</span></div>
+    </div>
+  </div>
+
+
+  <!-- 3 deposit variants in iter1 style -->
+  <div class="variants">
+    <h2>3 deposit variants · same visual language</h2>
+    <p class="sub">Merchant เลือก deposit_type ตอน signup (Pass 22 lock) · UI ปรับ auto · button + hero adapt · visual chrome เหมือนเดิม</p>
+
+    <div class="variant-grid">
+
+      <!-- Variant 1 · fixed_200 -->
+      <div class="variant-card">
+        <div class="vlabel">1 · fixed_200 (default · ฿200 ตายตัว)</div>
+        <div class="variant-hero">
+          <div class="vmeta">บริการที่จอง</div>
+          <div class="vtitle">ทำสี · <span class="shop">Moya</span></div>
+          <div class="vprice">
+            <span class="vlbl">มัดจำ</span>
+            <span class="vamt">฿200</span>
+          </div>
+          <div class="vrem">เหลือ ฿1,390 จ่ายที่ร้าน</div>
+        </div>
+        <div class="variant-cta">
+          <span>จ่ายมัดจำ</span>
+          <span class="vamt">฿200</span>
+        </div>
+        <p class="variant-note">commitment shock ต่ำ · ฿200 lock คิว · เหลือจ่ายที่ร้าน · เหมาะกับ spa/นวด/เล็บ ราคา ฿500-2K</p>
+      </div>
+
+      <!-- Variant 2 · percent -->
+      <div class="variant-card" style="border-color: #2563eb;">
+        <div class="vlabel">2 · percent (e.g. 50%)</div>
+        <div class="variant-hero">
+          <div class="vmeta">บริการที่จอง</div>
+          <div class="vtitle">ทำสี · <span class="shop">Moya</span></div>
+          <div class="vprice">
+            <span class="vlbl">มัดจำ <span style="font-size:12px;color:#b45309">50%</span></span>
+            <span class="vamt">฿795</span>
+          </div>
+          <div class="vrem">เหลือ ฿795 จ่ายที่ร้าน</div>
+        </div>
+        <div class="variant-cta">
+          <span>จ่ายมัดจำ 50%</span>
+          <span class="vamt">฿795</span>
+        </div>
+        <p class="variant-note">% บนชื่อปุ่มบอก rate มาจากไหน · merchant ตั้ง default ตอน signup · ลูกค้าไม่งงตัวเลข</p>
+      </div>
+
+      <!-- Variant 3 · full -->
+      <div class="variant-card" style="border-color: #14532d;">
+        <div class="vlabel">3 · full (จ่ายเต็ม pay-now)</div>
+        <div class="variant-hero">
+          <div class="vmeta">บริการที่จอง</div>
+          <div class="vtitle">ทำสี · <span class="shop">Moya</span></div>
+          <div class="vprice">
+            <span class="vlbl">จ่ายเต็มวันนี้</span>
+            <span class="vamt">฿1,590</span>
+          </div>
+          <div class="vrem">ไม่มีค่าเพิ่มที่ร้าน</div>
+        </div>
+        <div class="variant-cta">
+          <span>จ่ายเต็ม</span>
+          <span class="vamt">฿1,590</span>
+        </div>
+        <p class="variant-note">"ไม่มีค่าเพิ่มที่ร้าน" reframe full price → reassuring · no surprise charges · เหมาะกับคลินิก/บริการ pay-once</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Decisions to make -->
+  <div class="decisions">
+    <h3>📋 Open decisions · iter1 → iter2</h3>
+    <ul>
+      <li><b>1 · Hero copy</b>"ทำสี · Moya" vs "Moya · ทำสี" (shop ก่อน vs service ก่อน) · ตอนนี้ใช้ service ก่อน · iter2 อาจสลับให้ shop ก่อนถ้า branding สำคัญกว่า</li>
+      <li><b>2 · Variant accent ratio</b>ตอนนี้ peach (#b45309) ใช้ที่: shop name ใน hero · price (38px) · 1 input focus · เหมาะไหม? ลด/เพิ่ม?</li>
+      <li><b>3 · Trust strip wording</b>"🔒 ชำระเงินกับ BookEase · ปลอดภัย" — มี "ปลอดภัย" 2 ครั้ง (เพราะ footer ก็มี) · ตัดที่ใดที่หนึ่ง?</li>
+      <li><b>4 · "เหลือ ฿1,390 จ่ายที่ร้าน · เงินสด/QR"</b>add "/QR" หรือไม่? · ลูกค้าบางร้านไม่มี QR · เอาออกอาจ safer</li>
+      <li><b>5 · ToS implicit copy</b>"กดยืนยันถือว่ายอมรับเงื่อนไขการบริการ" — ขนาดเล็กพอไหม? เด่นเกินไหม?</li>
+      <li><b>6 · Refund SLA pill</b>"⏱ 30 นาที" ใน yellow pill — เห็นชัดไหม? หรือควรใหญ่กว่านี้?</li>
+      <li><b>7 · เวลาในนัด</b>"15 พ.ค. · 14:00 — 16:00 น." — บอก range หรือบอกแค่ start time? · range = ลูกค้ารู้ duration · start-only = clean</li>
+    </ul>
+  </div>
+
+
+  <div class="signoff">
+    <b>Iter1 status:</b> ทุก breakage 1-7 fixed · 3 deposit variants demonstrated · stats Apple-grade · ส่วนที่ยัง open = wording/ratio iteration · ไม่กระทบ structure
+    <br><br>
+    <b>Next:</b> Art review iter1 → ระบุ open decisions ที่ commit/change → ผมทำ iter2 (focused tweaks) → ถ้า lock visual → port to React production code (~2-3 days for `PaymentPage.tsx` + `OrderSummarySection.tsx` + `TrustFooter.tsx`)
+    <br><br>
+    <b>Files:</b> static mockup · ยังไม่กระทบ React code · safe to iterate
+    <br>· memory locks: <code style="background:#0a0a0a;padding:2px 6px;border-radius:4px;color:#f59e0b">feedback_payment_page_chope_middleground.md</code> + <code style="background:#0a0a0a;padding:2px 6px;border-radius:4px;color:#f59e0b">feedback_disabled_state_apple_stripe_pattern.md</code>
+  </div>
+
+</div>
+
+</body>
+</html>

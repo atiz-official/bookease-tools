@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BookEase /payment · iter2 · Theme variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #18181b;
+    color: #e5e5e5;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .doc-head { margin-bottom: 32px; }
+  .doc-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .doc-head h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px); color: #fafafa; margin-bottom: 12px; line-height: 1.1;
+  }
+  .doc-head p {
+    font-size: 14px; color: #a3a3a3; max-width: 720px; line-height: 1.7;
+  }
+  .doc-head .lock-line {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(74, 222, 128, 0.1);
+    border-left: 3px solid #4ade80;
+    border-radius: 8px;
+    color: #fafafa;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; } }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+  }
+  .col-head {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .col-letter {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 8px;
+  }
+  .col-letter.a { background: #6b7280; }
+  .col-letter.b { background: #2563eb; }
+  .col-letter.c { background: #44403c; }
+  .col-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #fafafa;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .col-bg-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #a3a3a3;
+    background: #292524;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .col-tagline {
+    font-size: 12.5px;
+    color: #a3a3a3;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* Phone */
+  .phone {
+    background: #292524;
+    border-radius: 32px;
+    padding: 12px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 0 0 1px #44403c;
+  }
+  .screen {
+    border-radius: 22px;
+    overflow: hidden;
+    height: 720px;
+    display: flex;
+    flex-direction: column;
+    color: #1c1917;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* Theme A · Snow White */
+  .theme-a { background: #ffffff; }
+  .theme-a .input { background: #ffffff; border: 1.5px solid #e5e7eb; }
+  .theme-a .input.focus { border-color: #b45309; box-shadow: 0 0 0 3px rgba(180,83,9,0.1); }
+  .theme-a .pill { background: #fef3c7; color: #92400e; }
+
+  /* Theme B · Cool Mist (BookEase-adjacent pale blue) */
+  .theme-b { background: #f5f8fc; }
+  .theme-b .input { background: #ffffff; border: 1.5px solid #e2e8f0; }
+  .theme-b .input.focus { border-color: #1E40AF; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+  .theme-b .pill { background: #dbeafe; color: #1e40af; }
+  .theme-b .price-amount { color: #1E40AF !important; }
+  .theme-b .shop-accent { color: #1E40AF !important; }
+
+  /* Theme C · Slate Calm (premium minimal · Stripe-like) */
+  .theme-c { background: #f7f7f5; }
+  .theme-c .input { background: #ffffff; border: 1.5px solid #e7e5e4; }
+  .theme-c .input.focus { border-color: #1c1917; box-shadow: 0 0 0 3px rgba(28,25,23,0.08); }
+  .theme-c .pill { background: #fef3c7; color: #92400e; }
+
+  /* Status bar · matches each theme */
+  .status-bar {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #44403c;
+  }
+
+  /* Trust strip */
+  .trust-strip {
+    padding: 12px 18px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .back-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: white;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-size: 16px;
+    color: #1c1917;
+    flex-shrink: 0;
+  }
+  .trust-brand {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .brand-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .brand-wordmark .book { color: #1E40AF; }
+  .brand-wordmark .ease { color: #38BDF8; }
+  .trust-meta {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #57534e;
+    letter-spacing: 0.02em;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 18px 20px 8px;
+  }
+  .hero-meta {
+    font-size: 11px;
+    color: #78716c;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.1;
+    color: #1c1917;
+  }
+  .hero-title .shop-accent { color: #b45309; }
+  .hero-when {
+    font-size: 12px;
+    color: #57534e;
+    margin-top: 4px;
+  }
+
+  /* Price */
+  .price-block {
+    padding: 14px 20px 16px;
+  }
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .price-row .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #44403c;
+  }
+  .price-amount {
+    font-size: 32px;
+    font-weight: 700;
+    color: #b45309;
+    line-height: 1;
+  }
+  .remaining {
+    font-size: 11.5px;
+    color: #78716c;
+  }
+
+  /* Fields */
+  .fields {
+    padding: 4px 18px 0;
+    flex: 1;
+  }
+  .input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #1c1917;
+    margin-bottom: 6px;
+  }
+  .input::placeholder { color: #a8a29e; }
+
+  /* Trust microcopy */
+  .micro-trust {
+    padding: 12px 18px 0;
+    font-size: 11.5px;
+    color: #57534e;
+    line-height: 1.5;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 10.5px;
+    margin-right: 4px;
+  }
+
+  /* CTA */
+  .cta-zone { padding: 14px 18px 8px; }
+  .cta {
+    width: 100%;
+    background: #0a0a0a;
+    color: white;
+    border: 0;
+    border-radius: 14px;
+    padding: 15px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(10,10,10,0.2);
+  }
+  .cta-amount { font-size: 16px; font-weight: 800; }
+  .cta-implicit {
+    text-align: center;
+    font-size: 10.5px;
+    color: #78716c;
+    margin-top: 8px;
+  }
+  .cta-implicit a { color: #44403c; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-trust {
+    padding: 4px 18px 8px;
+    text-align: center;
+    font-size: 10px;
+    color: #a8a29e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .footer-trust a { color: #78716c; text-decoration: none; }
+  .footer-trust .powered { font-size: 9.5px; }
+  .footer-trust .mini-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: -0.01em;
+  }
+  .footer-trust .mini-wordmark .book { color: #1E40AF; }
+  .footer-trust .mini-wordmark .ease { color: #38BDF8; }
+  .footer-trust .sep { color: #d6d3d1; }
+
+
+  /* Pros/cons box */
+  .pros-cons {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: #1c1917;
+    border-radius: 12px;
+    border: 1px solid #292524;
+    font-size: 12.5px;
+  }
+  .pros-cons .row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    line-height: 1.55;
+  }
+  .pros-cons .icon { width: 16px; flex-shrink: 0; }
+  .pros-cons .pro .icon { color: #4ade80; }
+  .pros-cons .con .icon { color: #f87171; }
+  .pros-cons .pro span:last-child { color: #d4d4d8; }
+  .pros-cons .con span:last-child { color: #a3a3a3; }
+
+
+  /* Decision section */
+  .decision {
+    margin-top: 56px;
+    padding: 28px 32px;
+    background: #1c1917;
+    border-radius: 16px;
+    border: 1px solid #292524;
+  }
+  .decision h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 26px;
+    color: #fafafa;
+    margin-bottom: 12px;
+  }
+  .decision p {
+    font-size: 14px;
+    color: #d4d4d8;
+    line-height: 1.7;
+    max-width: 800px;
+  }
+  .decision .recommend {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(245, 158, 11, 0.08);
+    border-left: 3px solid #f59e0b;
+    border-radius: 8px;
+    color: #fafafa;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .decision .recommend b { color: #f59e0b; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Iteration 2 · Theme exploration</div>
+    <h1>เลือก theme · 3 alternatives สำหรับ /payment</h1>
+    <p>Art (locked iter1): "love overall design · ลังเล cream/brown · เปรียบเทียบ 3 best choices" · ทุก concept อื่น lock แล้ว · เปลี่ยนแค่ background chrome + minor accent · BookEase logo dual-blue เก็บทุกตัว · variant accent (Moya peach) เก็บทุกตัวเพื่อเปรียบเทียบความรู้สึก</p>
+    <div class="lock-line">
+      <b style="color: #4ade80;">✓ Locked (ไม่เปลี่ยน):</b>
+      Hero italic Cormorant · 2 fields · BookEase wordmark dual-blue · black CTA · 30-min refund pill · price BIG · 0 dividers · ToS implicit · "Powered by BookEase" footer
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ════════════════════ THEME A ════════════════════ -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-letter a">A</div>
+        <div class="col-name">Snow White</div>
+        <div class="col-bg-tag">#ffffff</div>
+        <div class="col-tagline">universal trust · Apple Pay sheet · ที่ทุก payment surface ของโลก default</div>
+      </div>
+
+      <div class="phone">
+        <div class="screen theme-a">
+          <div class="status-bar">12:44</div>
+          <div class="trust-strip">
+            <div class="back-btn">‹</div>
+            <div class="trust-brand">
+              <span class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              <span class="trust-meta">🔒 ปลอดภัย</span>
+            </div>
+          </div>
+
+          <div class="hero">
+            <div class="hero-meta">บริการที่จอง</div>
+            <div class="hero-title">ทำสี · <span class="shop-accent">Moya</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 16:00 น.</div>
+          </div>
+
+          <div class="price-block">
+            <div class="price-row">
+              <div class="label">มัดจำ</div>
+              <div class="price-amount">฿200</div>
+            </div>
+            <div class="remaining">เหลือ ฿1,390 จ่ายที่ร้าน · เงินสด/QR</div>
+          </div>
+
+          <div class="fields">
+            <input class="input" placeholder="ชื่อ-นามสกุล">
+            <input class="input focus" placeholder="เบอร์โทร · 081-234-5678">
+          </div>
+
+          <div class="micro-trust">
+            <span class="pill">⏱ 30 นาที</span>ร้านยืนยันใน LINE chat · ตกลงเวลาไม่ได้ คืนเงิน 100%
+          </div>
+
+          <div class="cta-zone">
+            <button class="cta">
+              <span>จ่ายมัดจำ</span>
+              <span class="cta-amount">฿200</span>
+            </button>
+            <div class="cta-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+          </div>
+
+          <div class="footer-trust">
+            <span class="powered">Powered by</span>
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="sep">·</span>
+            <span>Xendit · PCI DSS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="row pro"><span class="icon">+</span><span>universal trust pattern · Apple Pay/Stripe/Square ทุกตัวใช้ default</span></div>
+        <div class="row pro"><span class="icon">+</span><span>peach accent (Moya variant) pop ชัด · contrast สูง · price ฿200 เด่น</span></div>
+        <div class="row pro"><span class="icon">+</span><span>BookEase logo blue ดูสด · ไม่ blend กับ background</span></div>
+        <div class="row con"><span class="icon">−</span><span>"เหมือน app payment ทั่วไป" · ไม่มี personality เด่น</span></div>
+        <div class="row con"><span class="icon">−</span><span>variant continuity ต่ำ — กระโดดจาก variant 100% pre-money เข้า white อาจรู้สึก jarring</span></div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════ THEME B ════════════════════ -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-letter b">B</div>
+        <div class="col-name">Cool Mist</div>
+        <div class="col-bg-tag">#f5f8fc</div>
+        <div class="col-tagline">pale blue tint · BookEase-adjacent · subtle brand association · modern fintech</div>
+      </div>
+
+      <div class="phone">
+        <div class="screen theme-b">
+          <div class="status-bar">12:44</div>
+          <div class="trust-strip">
+            <div class="back-btn">‹</div>
+            <div class="trust-brand">
+              <span class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              <span class="trust-meta">🔒 ปลอดภัย</span>
+            </div>
+          </div>
+
+          <div class="hero">
+            <div class="hero-meta">บริการที่จอง</div>
+            <div class="hero-title">ทำสี · <span class="shop-accent">Moya</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 16:00 น.</div>
+          </div>
+
+          <div class="price-block">
+            <div class="price-row">
+              <div class="label">มัดจำ</div>
+              <div class="price-amount">฿200</div>
+            </div>
+            <div class="remaining">เหลือ ฿1,390 จ่ายที่ร้าน · เงินสด/QR</div>
+          </div>
+
+          <div class="fields">
+            <input class="input" placeholder="ชื่อ-นามสกุล">
+            <input class="input focus" placeholder="เบอร์โทร · 081-234-5678">
+          </div>
+
+          <div class="micro-trust">
+            <span class="pill">⏱ 30 นาที</span>ร้านยืนยันใน LINE chat · ตกลงเวลาไม่ได้ คืนเงิน 100%
+          </div>
+
+          <div class="cta-zone">
+            <button class="cta">
+              <span>จ่ายมัดจำ</span>
+              <span class="cta-amount">฿200</span>
+            </button>
+            <div class="cta-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+          </div>
+
+          <div class="footer-trust">
+            <span class="powered">Powered by</span>
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="sep">·</span>
+            <span>Xendit · PCI DSS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="row pro"><span class="icon">+</span><span>BookEase brand association · pale blue + dual-blue logo = trust through alignment</span></div>
+        <div class="row pro"><span class="icon">+</span><span>price + accent ใช้ <b>BookEase navy (#1E40AF)</b> แทน peach ในเวอร์ชันนี้ · brand-coherent</span></div>
+        <div class="row pro"><span class="icon">+</span><span>"this is BookEase" signal subtle · ไม่ยึดทั้งหน้า · Apple Pay sheet pattern</span></div>
+        <div class="row con"><span class="icon">−</span><span>variant accent (peach) ไม่เห็น · เพราะ Theme B ใช้ BookEase navy แทน · ลด shop continuity</span></div>
+        <div class="row con"><span class="icon">−</span><span>ถ้า shop variant ไม่ใช่ blue → conflict กับ BookEase navy ใน accent</span></div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════ THEME C ════════════════════ -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-letter c">C</div>
+        <div class="col-name">Slate Calm</div>
+        <div class="col-bg-tag">#f7f7f5</div>
+        <div class="col-tagline">soft warm gray · premium minimal · Stripe Checkout จริงๆ ใช้แบบนี้ · ไม่หนาว ไม่อบอุ่น</div>
+      </div>
+
+      <div class="phone">
+        <div class="screen theme-c">
+          <div class="status-bar">12:44</div>
+          <div class="trust-strip">
+            <div class="back-btn">‹</div>
+            <div class="trust-brand">
+              <span class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              <span class="trust-meta">🔒 ปลอดภัย</span>
+            </div>
+          </div>
+
+          <div class="hero">
+            <div class="hero-meta">บริการที่จอง</div>
+            <div class="hero-title">ทำสี · <span class="shop-accent">Moya</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 16:00 น.</div>
+          </div>
+
+          <div class="price-block">
+            <div class="price-row">
+              <div class="label">มัดจำ</div>
+              <div class="price-amount">฿200</div>
+            </div>
+            <div class="remaining">เหลือ ฿1,390 จ่ายที่ร้าน · เงินสด/QR</div>
+          </div>
+
+          <div class="fields">
+            <input class="input" placeholder="ชื่อ-นามสกุล">
+            <input class="input focus" placeholder="เบอร์โทร · 081-234-5678">
+          </div>
+
+          <div class="micro-trust">
+            <span class="pill">⏱ 30 นาที</span>ร้านยืนยันใน LINE chat · ตกลงเวลาไม่ได้ คืนเงิน 100%
+          </div>
+
+          <div class="cta-zone">
+            <button class="cta">
+              <span>จ่ายมัดจำ</span>
+              <span class="cta-amount">฿200</span>
+            </button>
+            <div class="cta-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+          </div>
+
+          <div class="footer-trust">
+            <span class="powered">Powered by</span>
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="sep">·</span>
+            <span>Xendit · PCI DSS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="row pro"><span class="icon">+</span><span>premium minimal · Stripe Checkout actual aesthetic · timeless</span></div>
+        <div class="row pro"><span class="icon">+</span><span>peach accent (Moya variant) ดู sophisticated · ไม่ pop เกินไป · ไม่ blend</span></div>
+        <div class="row pro"><span class="icon">+</span><span>variant continuity OK · กระโดดจาก variant pre-money → gray neutral ไม่ jarring</span></div>
+        <div class="row con"><span class="icon">−</span><span>มี personality น้อยกว่า Snow · feels "ปลอดภัย แต่ไม่ memorable"</span></div>
+        <div class="row con"><span class="icon">−</span><span>"is it really BookEase?" — ไม่มี brand color เด่น (อาศัย logo อย่างเดียว)</span></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Decision section -->
+  <div class="decision">
+    <h2>Recommendation · ถ้าให้เลือก 1</h2>
+    <p>ทั้ง 3 ตัว ship ได้ · แต่ถ้าต้องเลือกตามคำถาม "ลูกค้ารู้สึกอะไรตอนกด pay?":</p>
+
+    <div class="recommend">
+      <b>Theme A · Snow White</b> ผมเลือกถ้าให้ pick · เหตุผล:
+      <br>· universal trust pattern · ลูกค้าเคยเห็นที่ Apple Pay/Shopee/Line Pay/Lazada → recognize ทันที
+      <br>· peach accent (Moya variant) pop ชัด · ลด confusion ใน hierarchy
+      <br>· BookEase logo dual-blue เด่น · brand recognition ไม่ blend
+      <br>· ที่ Theme A ขาด ("personality") · จริงๆ /payment ไม่ควรมี personality หลัก · เป็น trust handoff zone (Square first-principle)
+      <br><br>
+      <b>Theme B · Cool Mist</b> เลือกถ้าต้องการ "BookEase brand reinforcement" สูงกว่า · แต่ปัญหา: variant accent ต้องเปลี่ยนเป็น BookEase navy · ทำให้ shop identity (peach Moya) หาย
+      <br><br>
+      <b>Theme C · Slate Calm</b> เลือกถ้าต้องการ Stripe-aesthetic · premium minimal · สำหรับ shops ระดับ luxury (high-end clinic, spa luxury) · แต่อาจ feels too neutral สำหรับ casual nail/massage ร้าน
+    </div>
+
+    <p style="margin-top: 16px;">
+      <b style="color: #fafafa;">หรือทาง 4:</b> ตั้ง Theme A (Snow White) เป็น default · เปลี่ยนเป็น Theme C (Slate Calm) เฉพาะ shop ที่ variant 'luxury' · ตามชั้น auto · ลูกค้าไม่ต้อง configure
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

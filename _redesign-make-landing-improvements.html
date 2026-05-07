@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>make.bookease.co · current vs proposed · 5 subtle tweaks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #0a0a0a; color: #e5e5e5;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .doc-head { margin-bottom: 32px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(28px,4vw,40px); color: #fafafa; margin-bottom: 12px; line-height: 1.1; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 760px; line-height: 1.7; }
+  .doc-head .verdict { margin-top: 16px; padding: 14px 18px; background: rgba(74,222,128,0.1); border-left: 3px solid #4ade80; border-radius: 8px; color: #fafafa; font-size: 13px; line-height: 1.7; }
+  .doc-head .verdict b { color: #4ade80; }
+
+  .tweak {
+    margin-bottom: 40px;
+    padding: 24px;
+    background: #1c1917;
+    border-radius: 16px;
+    border: 1px solid #292524;
+  }
+  .tweak-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .tweak-num {
+    width: 32px; height: 32px;
+    background: #1E40AF;
+    border-radius: 50%;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    display: grid; place-items: center;
+  }
+  .tweak-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #fafafa;
+    font-weight: 600;
+  }
+  .tweak-impact {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    margin-left: auto;
+  }
+  .tweak-rationale {
+    font-size: 13.5px;
+    color: #a3a3a3;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    max-width: 760px;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+
+  .demo-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    color: #0a0a0a;
+    min-height: 80px;
+  }
+  .demo-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .demo-tag.bad { color: #b91c1c; }
+  .demo-tag.good { color: #15803d; }
+
+  /* Mini renders */
+
+  /* Tweak 1: nav wordmark */
+  .nav-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-brand-text-old { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: #0a0a0a; }
+  .nav-brand-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .nav-brand-wordmark .book { color: #1E40AF; }
+  .nav-brand-wordmark .ease { color: #38BDF8; }
+  .nav-login {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(0,0,0,0.12);
+  }
+
+  /* Tweak 2: eyebrow */
+  .eyebrow-old, .eyebrow-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0a0a0a;
+    padding: 8px 14px;
+    border-radius: 100px;
+  }
+  .eyebrow-old { background: #f4f4f4; }
+  .eyebrow-new { background: #f5f8fc; border: 1px solid rgba(30,64,175,0.08); }
+  .eyebrow-old .dot, .eyebrow-new .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22,163,74,0.15);
+  }
+
+  /* Tweak 3: form focus */
+  .form-row-mini {
+    display: flex;
+    gap: 8px;
+    border-radius: 100px;
+    padding: 4px;
+    max-width: 380px;
+  }
+  .form-row-old { border: 1px solid rgba(0,0,0,0.10); background: white; }
+  .form-row-old.focus { border-color: rgba(0,0,0,0.16); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .form-row-new { border: 1px solid rgba(0,0,0,0.10); background: white; }
+  .form-row-new.focus { border-color: #1E40AF; box-shadow: 0 0 0 3px rgba(30,64,175,0.12); }
+  .form-row-mini input {
+    flex: 1; border: none; background: transparent;
+    padding: 11px 16px; font-family: inherit; font-size: 15px;
+    color: #0a0a0a; outline: none;
+  }
+  .form-row-mini input::placeholder { color: #a1a1a1; }
+  .form-row-mini .cta {
+    background: #0a0a0a; color: white; border: none;
+    border-radius: 100px; padding: 11px 18px;
+    font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  }
+
+  /* Tweak 4: phone CTA */
+  .phone-cta-mini {
+    background: #ffffff;
+    color: #0a0a0a;
+    border-radius: 100px;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .phone-bg {
+    background: linear-gradient(135deg, #2a1810 0%, #5a3825 50%, #b87750 100%);
+    padding: 24px;
+    border-radius: 24px;
+    display: flex;
+    align-items: flex-end;
+    min-height: 160px;
+  }
+
+  /* Tweak 5: footer */
+  .footer-mini {
+    font-size: 13px;
+    color: #a1a1a1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-old-brand { font-weight: 500; }
+  .footer-new-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-new-wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+  .footer-new-wordmark .book { color: #1E40AF; }
+  .footer-new-wordmark .ease { color: #38BDF8; }
+  .footer-new-meta { color: #525252; font-size: 11px; font-weight: 500; }
+
+  /* Verdict */
+  .verdict-final {
+    margin-top: 56px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, rgba(30,64,175,0.12), rgba(56,189,248,0.06));
+    border: 1px solid rgba(30,64,175,0.2);
+    border-radius: 16px;
+  }
+  .verdict-final h3 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; color: #fafafa; margin-bottom: 12px; }
+  .verdict-final p { font-size: 14px; color: #d4d4d8; line-height: 1.7; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+  @media (max-width: 720px) { .stats-row { grid-template-columns: 1fr; } }
+  .stat-box {
+    padding: 14px 16px;
+    background: #0a0a0a;
+    border-radius: 10px;
+    border-left: 3px solid #4ade80;
+  }
+  .stat-box .label { font-size: 11px; font-weight: 700; color: #78716c; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .stat-box .body { font-size: 13px; color: #d4d4d8; line-height: 1.55; }
+
+  .hero-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 18px;
+    background: #1E40AF;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .hero-link:hover { background: #1d3a9a; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Iteration 4 · make.bookease.co audit</div>
+    <h1>make.bookease.co · current vs proposed · 5 subtle tweaks</h1>
+    <p>ตรวจ landing page จริง (live HTML จาก https://make.bookease.co/) · Pass 25 v22-v25 polished แล้ว · ไม่ rebuild · เปลี่ยนแค่ <b style="color:#4ade80">5 spots ที่ make brand consistent + ไม่ break conversion</b></p>
+    <div class="verdict">
+      <b>Better, not worse.</b> ทุก tweak เป็น additive · ไม่กระทบ Pass 25 OCR-first ladder · ไม่กระทบ DREAM-first hero · ไม่กระทบ photo mockup · เพิ่มแค่ brand integrity (BookEase wordmark dual-blue) + Cool Mist subtle accent ที่ปลอดภัย
+      <br><br>
+      <a href="https://make.bookease.co/" class="hero-link" target="_blank">เปิด live make.bookease.co · ดูเทียบ</a>
+    </div>
+  </div>
+
+
+  <!-- ════════════ TWEAK 1: NAV WORDMARK ════════════ -->
+  <div class="tweak">
+    <div class="tweak-head">
+      <div class="tweak-num">1</div>
+      <div class="tweak-name">Nav · BookEase wordmark dual-blue</div>
+      <div class="tweak-impact">HIGH · low risk</div>
+    </div>
+    <p class="tweak-rationale">
+      ปัจจุบัน "BookEase" ที่ nav = plain black text · ไม่ได้ใช้ logo dual-blue ที่ ad spend ฿25K สร้างมา · brand inconsistency จากมิลลิวินาทีแรก · เปลี่ยนเป็น dual-blue wordmark = recognition ดีขึ้น · เป็น single change ที่ไม่กระทบ layout หรือ conversion
+    </p>
+    <div class="compare">
+      <div class="demo-card">
+        <div class="demo-tag bad">CURRENT · plain black</div>
+        <div class="nav-mini">
+          <div class="nav-brand-text-old">BookEase</div>
+          <div class="nav-login">เข้าสู่ระบบ</div>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-tag good">PROPOSED · dual-blue wordmark</div>
+        <div class="nav-mini">
+          <div class="nav-brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+          <div class="nav-login">เข้าสู่ระบบ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════ TWEAK 2: EYEBROW ════════════ -->
+  <div class="tweak">
+    <div class="tweak-head">
+      <div class="tweak-num">2</div>
+      <div class="tweak-name">Hero eyebrow · Cool Mist tint แทน gray</div>
+      <div class="tweak-impact">SUBTLE · brand-coherent</div>
+    </div>
+    <p class="tweak-rationale">
+      ปัจจุบัน eyebrow pill bg = `#f4f4f4` (plain gray) · เปลี่ยนเป็น Cool Mist `#f5f8fc` (BookEase trust theme · ที่ payment page lock) · subtle brand association · green dot (live signal) ยังเก็บ
+    </p>
+    <div class="compare">
+      <div class="demo-card">
+        <div class="demo-tag bad">CURRENT · gray</div>
+        <div class="eyebrow-old">
+          <span class="dot"></span>
+          ออกแบบให้ฟรี · ใช้กับร้านที่อยู่ใน LINE OA
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-tag good">PROPOSED · Cool Mist</div>
+        <div class="eyebrow-new">
+          <span class="dot"></span>
+          ออกแบบให้ฟรี · ใช้กับร้านที่อยู่ใน LINE OA
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════ TWEAK 3: FORM FOCUS ════════════ -->
+  <div class="tweak">
+    <div class="tweak-head">
+      <div class="tweak-num">3</div>
+      <div class="tweak-name">Form input focus · BookEase navy ring</div>
+      <div class="tweak-impact">SUBTLE · brand-coherent</div>
+    </div>
+    <p class="tweak-rationale">
+      ปัจจุบัน form focus state = neutral box-shadow `rgba(0,0,0,0.08)` · เปลี่ยนเป็น BookEase navy ring `rgba(30,64,175,0.12)` · ตอนกรอกชื่อร้าน · brand เด่นที่ moment of intent · matches /payment focus pattern
+    </p>
+    <div class="compare">
+      <div class="demo-card">
+        <div class="demo-tag bad">CURRENT · neutral focus</div>
+        <div class="form-row-mini form-row-old focus">
+          <input type="text" value="Bare Nail Spa" />
+          <button class="cta">เปิดดู</button>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-tag good">PROPOSED · navy focus ring</div>
+        <div class="form-row-mini form-row-new focus">
+          <input type="text" value="Bare Nail Spa" />
+          <button class="cta">เปิดดู</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════ TWEAK 4: PHONE CTA ════════════ -->
+  <div class="tweak">
+    <div class="tweak-head">
+      <div class="tweak-num">4</div>
+      <div class="tweak-name">Phone mockup CTA wording · "จ่ายมัดจำ" matches /payment</div>
+      <div class="tweak-impact">CONSISTENCY · vocab lock</div>
+    </div>
+    <p class="tweak-rationale">
+      ปัจจุบัน phone mockup CTA = "จองคิว · จ่ายมัดจำ" (2 actions · slightly cluttered) · เปลี่ยนเป็น "จ่ายมัดจำ ฿200" (single line · matches /payment lock) · vocab consistent กับ Pass 25 v22 · ไม่กระทบ visual chrome
+    </p>
+    <div class="compare">
+      <div class="demo-card">
+        <div class="demo-tag bad">CURRENT · 2-action CTA</div>
+        <div class="phone-bg">
+          <div style="width:100%">
+            <div class="phone-cta-mini">จองคิว · จ่ายมัดจำ</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-tag good">PROPOSED · single-line + price</div>
+        <div class="phone-bg">
+          <div style="width:100%">
+            <div class="phone-cta-mini">จ่ายมัดจำ ฿200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════ TWEAK 5: FOOTER ════════════ -->
+  <div class="tweak">
+    <div class="tweak-head">
+      <div class="tweak-num">5</div>
+      <div class="tweak-name">Footer · BookEase wordmark + "by Atiz" hierarchy</div>
+      <div class="tweak-impact">SUBTLE · brand reinforcement</div>
+    </div>
+    <p class="tweak-rationale">
+      ปัจจุบัน footer = "BookEase · a product of Atiz Co., Ltd. · © 2026" (plain text · uniform) · เปลี่ยนเป็น dual-blue wordmark + "by Atiz · © 2026" small · brand identity เด่นที่ปลายหน้า · echoes nav · book-ends design
+    </p>
+    <div class="compare">
+      <div class="demo-card">
+        <div class="demo-tag bad">CURRENT · plain text</div>
+        <div class="footer-mini">
+          <div class="footer-old-brand">BookEase · a product of Atiz Co., Ltd. · © 2026</div>
+          <div>เข้าสู่ระบบ &nbsp;·&nbsp; เครื่องมือถ่ายเมนู</div>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-tag good">PROPOSED · wordmark + hierarchy</div>
+        <div class="footer-mini">
+          <div class="footer-new-brand">
+            <span class="footer-new-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="footer-new-meta">by Atiz · © 2026</span>
+          </div>
+          <div>เข้าสู่ระบบ &nbsp;·&nbsp; เครื่องมือถ่ายเมนู</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════ ที่ไม่แตะ · keep ════════════ -->
+  <div class="tweak" style="border-color: #4ade80;">
+    <div class="tweak-head">
+      <div class="tweak-num" style="background:#4ade80;color:#0a0a0a">✓</div>
+      <div class="tweak-name">ที่ไม่แตะ · Pass 25 v22-v25 lock เก็บไว้</div>
+      <div class="tweak-impact" style="background:rgba(74,222,128,0.15);color:#4ade80">DON'T TOUCH</div>
+    </div>
+    <p class="tweak-rationale">
+      ของพวกนี้ Art lock มาแล้ว · เป็น good design · don't fix what isn't broken
+    </p>
+    <ul style="font-size:13px; color:#d4d4d8; line-height:1.85; padding-left:20px; margin-top:10px;">
+      <li><b style="color:#4ade80">H1 hero "ทำเว็บร้าน · ลูกค้าจองใน LINE"</b> · LINE italic Cormorant green · LINE-respect (LINE owns chat brand · we're rail) · keep</li>
+      <li><b style="color:#4ade80">OCR-first ladder</b> (Pass 25 v25 lock · green-tinted card primary · typing fallback) · don't touch · this is the dopamine moment</li>
+      <li><b style="color:#4ade80">Phone mockup with Unsplash photo</b> (Pass 25 v18 · luxury nail aesthetic) · DREAM-first · keep</li>
+      <li><b style="color:#4ade80">Floating chips</b> (deposit + saved) · social proof + value prop · keep</li>
+      <li><b style="color:#4ade80">No proof strip / no pricing dump</b> (Pass 25 v10 lock · DREAM-first) · pricing revealed at signup commit · keep</li>
+      <li><b style="color:#4ade80">Sub copy</b> "ออกแบบให้ใน 60 วินาที · ลูกค้าจ่ายมัดจำผ่าน LINE chat · ล็อกคิวทันที · ไม่ต้องสมัคร" · 4 punch · concrete · keep</li>
+      <li><b style="color:#4ade80">Black CTA pill on form</b> · Apple-grade · always-tappable when input filled · keep</li>
+    </ul>
+  </div>
+
+
+  <!-- ════════════ VERDICT ════════════ -->
+  <div class="verdict-final">
+    <h3>Verdict · is it better?</h3>
+    <p>
+      ทั้ง 5 tweaks เป็น <b style="color:#fafafa">additive · brand-coherent · low-risk</b> · ไม่กระทบ Pass 25 OCR-first · ไม่กระทบ DREAM-first hero · ไม่กระทบ conversion path · เพิ่มแค่ <b style="color:#fafafa">brand integrity ที่หายไป</b>
+    </p>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="label">Brand recognition</div>
+        <div class="body">+ ฿25K ad equity preserved · BookEase wordmark visible · nav + footer book-ends</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Conversion risk</div>
+        <div class="body">~ 0 · ไม่เปลี่ยน flow · ไม่เปลี่ยน CTA · ไม่เปลี่ยน OCR ladder · subtle visual only</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">CI consistency</div>
+        <div class="body">+ Cool Mist eyebrow + navy focus = matches /payment lock · system-wide coherence</div>
+      </div>
+    </div>
+    <p style="margin-top:20px; padding-top:20px; border-top: 1px solid rgba(255,255,255,0.1); font-style: italic;">
+      <b style="color:#38BDF8;">Elon test:</b> ถ้าให้ Jony Ive review · จะ approve ไหม? ผมว่า approve · เพราะทุก change <i>tighten brand</i> โดยไม่กระทบ DREAM ที่ ladder ทำงานอยู่
+      <br><br>
+      <b style="color:#38BDF8;">ที่จะ skip ถ้า Art อยากให้เร็ว:</b> ทำแค่ #1 (nav wordmark) + #5 (footer) · 2 lines of code change · 5 นาที · 80% impact
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
