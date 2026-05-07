@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiffBookingPage /liff/&lt;shop&gt; · 2 variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', system-ui, sans-serif; background: #18181b; color: #e5e5e5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+  .doc-head { margin-bottom: 28px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(28px,4vw,38px); color: #fafafa; margin-bottom: 12px; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 800px; line-height: 1.7; }
+  .doc-head .principle { margin-top: 14px; padding: 12px 16px; background: rgba(34,197,94,0.08); border-left: 3px solid #06c755; border-radius: 8px; color: #fafafa; font-size: 13px; line-height: 1.7; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+  @media (max-width: 920px) { .compare { grid-template-columns: 1fr; } }
+  .col-head { text-align: center; margin-bottom: 16px; }
+  .col-tag { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .tag-bad { background: #7f1d1d; color: #fecaca; }
+  .tag-good { background: #14532d; color: #bbf7d0; }
+  .col-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; }
+  .col-sub { font-size: 12.5px; color: #a3a3a3; margin-top: 4px; line-height: 1.5; }
+
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone { background: #292524; border-radius: 36px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); width: 380px; max-width: 100%; }
+  .screen { border-radius: 24px; overflow: hidden; height: 760px; display: flex; flex-direction: column; color: #1c1917; background: white; position: relative; }
+  /* LIFF browser chrome (LINE in-app) */
+  .liff-bar { height: 36px; background: #f3f4f6; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-size: 11px; color: #525252; }
+  .liff-bar .x { font-size: 14px; }
+  .wordmark { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+  .wordmark .book { color: #1E40AF; } .wordmark .ease { color: #38BDF8; }
+
+
+  /* OLD · current LIFF */
+  .old-screen { background: white; }
+  .old-hero {
+    height: 140px; background: linear-gradient(135deg, #fef3e2, #fbbf24); position: relative; padding: 16px;
+    display: flex; align-items: flex-end; color: white;
+  }
+  .old-shop-name { font-family: 'Sarabun', sans-serif; font-size: 22px; font-weight: 800; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+  .old-step-bar { padding: 12px 18px; display: flex; gap: 6px; font-size: 11px; color: #6b7280; align-items: center; border-bottom: 1px solid #f3f4f6; }
+  .old-step { padding: 4px 8px; background: #f3f4f6; border-radius: 999px; }
+  .old-step.active { background: #4E6EDE; color: white; font-weight: 600; }
+  .old-body { padding: 16px; flex: 1; }
+  .old-svc-card { background: #f9fafb; border-radius: 10px; padding: 14px; border: 1px solid #e5e7eb; margin-bottom: 12px; }
+  .old-svc-name { font-size: 14px; font-weight: 700; color: #1f2937; }
+  .old-svc-meta { font-size: 11.5px; color: #6b7280; margin-top: 4px; }
+  .old-deposit-card { background: white; border: 1.5px solid #4E6EDE; border-radius: 10px; padding: 14px; }
+  .old-deposit-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
+  .old-deposit-row .v { font-weight: 700; color: #4E6EDE; }
+  .old-cta { margin: 14px 16px; padding: 14px; background: #4E6EDE; color: white; border-radius: 10px; text-align: center; font-size: 14px; font-weight: 700; }
+  .old-tos { padding: 0 16px 12px; font-size: 11px; color: #9ca3af; text-align: center; }
+  .old-tos a { color: #4E6EDE; }
+
+
+  /* VARIANT A · Variant 100% · zone 1 lock · per-shop accent */
+  .a-screen { background: #fef7f0; }
+  .a-hero {
+    padding: 18px 18px 12px;
+  }
+  .a-shop-row { display: flex; align-items: center; justify-content: space-between; }
+  .a-shop-name {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; font-weight: 600; color: #1c1917; line-height: 1;
+  }
+  .a-shop-tag {
+    font-size: 11px; padding: 4px 10px; background: white; color: #b45309; border-radius: 999px; font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .a-shop-meta { font-size: 11.5px; color: #78716c; margin-top: 4px; }
+  .a-stepper {
+    display: flex; gap: 4px; padding: 12px 18px 4px;
+  }
+  .a-step-dot {
+    height: 4px; flex: 1; border-radius: 2px; background: #fed7aa;
+  }
+  .a-step-dot.active { background: #b45309; }
+  .a-step-label { padding: 6px 18px 14px; font-size: 11.5px; color: #b45309; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .a-body { padding: 0 18px; flex: 1; }
+  .a-section-tag { font-size: 11px; font-weight: 700; color: #44403c; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+
+  .a-svc-card {
+    background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(28,25,23,0.06); margin-bottom: 12px;
+    border-left: 3px solid #b45309;
+  }
+  .a-svc-row1 { display: flex; justify-content: space-between; align-items: baseline; }
+  .a-svc-name { font-size: 14px; font-weight: 700; color: #1c1917; }
+  .a-svc-price { font-size: 16px; font-weight: 800; color: #b45309; }
+  .a-svc-meta { font-size: 11px; color: #78716c; margin-top: 3px; }
+
+  .a-deposit-card {
+    background: white; border-radius: 14px; padding: 14px; margin-top: 8px;
+  }
+  .a-deposit-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
+  .a-deposit-row.total { padding-top: 8px; border-top: 1px dashed #fed7aa; margin-top: 4px; font-weight: 700; font-size: 15px; }
+  .a-deposit-row.total .v { color: #b45309; }
+  .a-deposit-row .k { color: #78716c; }
+
+  .a-cta-zone {
+    margin-top: auto; padding: 12px 16px;
+    background: linear-gradient(180deg, transparent, #fef7f0 30%);
+  }
+  .a-cta {
+    background: #0a0a0a; color: white; border-radius: 14px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; font-size: 14.5px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+  .a-cta .price { font-size: 16px; font-weight: 800; }
+  .a-tos-implicit { text-align: center; font-size: 10.5px; color: #78716c; margin-top: 8px; }
+  .a-tos-implicit a { color: #b45309; text-decoration: underline; }
+  .a-foot { text-align: center; font-size: 9.5px; color: #a8a29e; padding: 4px 16px 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+
+  /* VARIANT B · with photo hero (luxury · full-bleed) */
+  .b-screen { background: #fef7f0; }
+  .b-photo-hero {
+    height: 180px; background: linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fbbf24 100%); position: relative;
+    display: flex; align-items: flex-end; padding: 16px 18px;
+  }
+  .b-photo-hero::after {
+    content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
+  }
+  .b-shop-block { position: relative; z-index: 2; color: white; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
+  .b-shop-name {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 32px; font-weight: 600; line-height: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .b-shop-rating { font-size: 12px; opacity: 0.95; margin-top: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .b-shop-rating .star { color: #fbbf24; }
+
+  .b-step-strip {
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    margin: -10px 18px 0; border-radius: 12px; padding: 10px 14px; position: relative; z-index: 5;
+    display: flex; gap: 6px; align-items: center;
+  }
+  .b-step-circle {
+    width: 22px; height: 22px; border-radius: 50%; background: #b45309; color: white; font-size: 11px; font-weight: 800;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .b-step-circle.future { background: #fed7aa; color: #b45309; }
+  .b-step-line { flex: 1; height: 2px; background: #fed7aa; }
+  .b-step-line.done { background: #b45309; }
+
+  .b-body { padding: 14px 18px 0; flex: 1; }
+  .b-section-h {
+    font-size: 11px; font-weight: 700; color: #44403c; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+
+  .b-svc-card {
+    background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 8px;
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center;
+  }
+  .b-svc-thumb { width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #fef3e2, #fbbf24); }
+  .b-svc-info { min-width: 0; }
+  .b-svc-name { font-size: 14px; font-weight: 700; color: #1c1917; }
+  .b-svc-meta { font-size: 11px; color: #78716c; margin-top: 3px; }
+  .b-svc-price { font-size: 16px; font-weight: 800; color: #b45309; }
+
+  .b-deposit-summary {
+    background: white; border-radius: 12px; padding: 12px 14px; margin: 14px 0 0; font-size: 12.5px;
+  }
+  .b-deposit-summary .row { display: flex; justify-content: space-between; padding: 2px 0; }
+  .b-deposit-summary .row .k { color: #78716c; }
+  .b-deposit-summary .row .v { color: #1c1917; font-weight: 600; }
+  .b-deposit-summary .total { padding-top: 6px; border-top: 1px dashed #fed7aa; margin-top: 4px; font-size: 15px; font-weight: 700; }
+  .b-deposit-summary .total .v { color: #b45309; }
+
+  .b-cta-zone {
+    margin-top: auto; padding: 14px 18px 8px; background: white; border-top: 1px solid #fef3c7;
+  }
+  .b-trust-strip {
+    text-align: center; font-size: 10.5px; color: #57534e; margin-bottom: 10px;
+  }
+  .b-trust-strip .pill { display: inline-block; padding: 2px 7px; background: #fef3c7; color: #92400e; border-radius: 999px; font-size: 10px; font-weight: 700; margin-right: 4px; }
+  .b-cta {
+    background: #0a0a0a; color: white; border-radius: 14px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; font-size: 14.5px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+  .b-cta .price { font-size: 16px; font-weight: 800; }
+  .b-tos { text-align: center; font-size: 10px; color: #78716c; margin-top: 8px; }
+  .b-tos a { color: #b45309; }
+  .b-foot { text-align: center; font-size: 9.5px; color: #a8a29e; padding: 4px 18px 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+
+  /* Annotations */
+  .annotations { margin-top: 16px; padding: 16px 18px; background: #1c1917; border-radius: 12px; border: 1px solid #292524; font-size: 12.5px; }
+  .annotations h4 { font-size: 13px; color: #fafafa; margin-bottom: 10px; font-weight: 700; }
+  .annotations .row { display: flex; gap: 8px; padding: 4px 0; line-height: 1.6; color: #d4d4d8; }
+  .annotations .row .icon { flex-shrink: 0; width: 16px; font-weight: 700; }
+  .annotations .row.pro .icon { color: #4ade80; }
+  .annotations .row.con .icon { color: #f87171; }
+  .annotations .row.bad .icon { color: #f87171; }
+  .annotations .row.good .icon { color: #4ade80; }
+
+  .verdict { margin-top: 56px; padding: 24px 28px; background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(180,83,9,0.04)); border: 1px solid rgba(245,158,11,0.2); border-radius: 16px; }
+  .verdict h3 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; margin-bottom: 10px; }
+  .verdict p { font-size: 13.5px; color: #d4d4d8; line-height: 1.7; }
+  .verdict b { color: #fafafa; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Surface 6/6 · LiffBookingPage redesign</div>
+    <h1>LINE LIFF entry · /liff/&lt;shop&gt; · variant 100% (zone 1)</h1>
+    <p>
+      Customer scans LINE OA Rich Menu → opens LIFF (LINE in-app browser) → BookEase booking page · 4 screens (shop intro · date+time · contact · payment).
+      Per Pass 25 v37 zone 1 lock: variant 100% chrome (shop owns surface · "in shop's house" feel) + tiny "Powered by BookEase" footer · NOT BookEase blue chrome.
+    </p>
+    <div class="principle">
+      Mockup shows screen 1 (shop intro · service select · review deposit) · the most-trafficked LIFF view. Both variants follow Apple Pay sheet + variant accent + Apple-grade silence + dense info per Art's brief.
+    </div>
+  </div>
+
+
+  <div class="compare">
+
+    <!-- ───────── OLD ───────── -->
+    <div>
+      <div class="col-head">
+        <span class="col-tag tag-bad">OLD · current</span>
+        <div class="col-name">BookEase blue legacy</div>
+        <div class="col-sub">step bar with 4 numbered tabs · plain SaaS · BookEase blue CTA</div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen old-screen">
+            <div class="liff-bar"><span>×</span><span>bookease.co/liff/moya</span></div>
+            <div class="old-hero">
+              <div class="old-shop-name">Moya</div>
+            </div>
+            <div class="old-step-bar">
+              <span class="old-step active">1. ร้าน</span>
+              <span class="old-step">2. เวลา</span>
+              <span class="old-step">3. ติดต่อ</span>
+              <span class="old-step">4. จ่าย</span>
+            </div>
+            <div class="old-body">
+              <div class="old-svc-card">
+                <div class="old-svc-name">ทำสี Premium</div>
+                <div class="old-svc-meta">2 ชม. · 14:00 · ฿1,590</div>
+              </div>
+              <div class="old-deposit-card">
+                <div class="old-deposit-row"><span>มัดจำ</span><span class="v">฿200</span></div>
+                <div class="old-deposit-row"><span>เหลือชำระที่ร้าน</span><span style="color:#6b7280">฿1,390</span></div>
+              </div>
+            </div>
+            <div class="old-cta">ต่อ → เลือกเวลา</div>
+            <div class="old-tos">กดถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="annotations">
+        <h4>OLD · ปัญหา</h4>
+        <div class="row bad"><span class="icon">×</span><span>BookEase blue (#4E6EDE) chrome · ขัด zone 1 lock (ต้อง variant 100%)</span></div>
+        <div class="row bad"><span class="icon">×</span><span>4-step bar tab-style · เก็บ space แต่ density ไม่ดี</span></div>
+        <div class="row bad"><span class="icon">×</span><span>Hero text-only · ไม่มี shop identity เด่น (Cormorant italic)</span></div>
+        <div class="row bad"><span class="icon">×</span><span>"ต่อ → เลือกเวลา" CTA · ไม่ commit · soft</span></div>
+        <div class="row bad"><span class="icon">×</span><span>ไม่มี BookEase trust mark · LINE customer ต้อง trust ใคร?</span></div>
+        <div class="row bad"><span class="icon">×</span><span>Service card grey + plain · ไม่มี Pass 25 visual language</span></div>
+      </div>
+    </div>
+
+
+    <!-- ───────── A · Variant 100% · pure shop home ───────── -->
+    <div>
+      <div class="col-head">
+        <span class="col-tag tag-good">A · Variant 100%</span>
+        <div class="col-name">Pure shop home</div>
+        <div class="col-sub">no photo hero · italic Cormorant + dot stepper + service card with peach border</div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen a-screen">
+            <div class="liff-bar"><span>×</span><span>bookease.co/liff/moya</span></div>
+
+            <div class="a-hero">
+              <div class="a-shop-row">
+                <div class="a-shop-name">Moya</div>
+                <div class="a-shop-tag">⭐ 4.9</div>
+              </div>
+              <div class="a-shop-meta">"สีของคุณ · มาใช้เวลากับเรา"</div>
+            </div>
+
+            <div class="a-stepper">
+              <div class="a-step-dot active"></div>
+              <div class="a-step-dot"></div>
+              <div class="a-step-dot"></div>
+              <div class="a-step-dot"></div>
+            </div>
+            <div class="a-step-label">1 / 4 · เลือกบริการ</div>
+
+            <div class="a-body">
+              <div class="a-section-tag">บริการที่จอง</div>
+              <div class="a-svc-card">
+                <div class="a-svc-row1">
+                  <div class="a-svc-name">ทำสี Premium</div>
+                  <div class="a-svc-price">฿1,590</div>
+                </div>
+                <div class="a-svc-meta">⏱ 2 ชม. · 🟢 ว่าง 14:00</div>
+              </div>
+
+              <div class="a-section-tag" style="margin-top:14px">มัดจำ</div>
+              <div class="a-deposit-card">
+                <div class="a-deposit-row"><span class="k">มัดจำ</span><span class="v" style="font-weight:700;color:#b45309">฿200</span></div>
+                <div class="a-deposit-row"><span class="k">เหลือจ่ายที่ร้าน</span><span class="v" style="color:#78716c">฿1,390</span></div>
+                <div class="a-deposit-row total"><span class="k">ลูกค้าจ่ายตอนนี้</span><span class="v">฿200</span></div>
+              </div>
+            </div>
+
+            <div class="a-cta-zone">
+              <div class="a-cta">
+                <span>ต่อ · เลือกเวลา</span>
+                <span class="price">฿200</span>
+              </div>
+              <div class="a-tos-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+              <div class="a-foot">
+                <span style="font-size:9px">Powered by</span>
+                <span class="wordmark" style="font-size:10px"><span class="book">Book</span><span class="ease">Ease</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotations">
+        <h4>A · Variant 100% · pros + cons</h4>
+        <div class="row pro"><span class="icon">+</span><span>Pure shop home feel · zone 1 lock perfect · "in Moya's house"</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Italic Cormorant 30px shop name · DREAM-grade identity moment</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Dot stepper (4 dots) · subtle · ไม่กิน space แบบ 4-tab bar</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Black CTA + ราคาในปุ่ม + ToS implicit · Apple Pay grade</span></div>
+        <div class="row pro"><span class="icon">+</span><span>"Powered by BookEase" footer tiny · zone 1 rule</span></div>
+        <div class="row con"><span class="icon">−</span><span>No photo hero · ไม่มี visual luxury · text-only feel</span></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ───────── B · with photo hero · luxury LIFF ───────── -->
+  <div style="margin-top: 32px; max-width: 480px; margin-left: auto; margin-right: auto;">
+    <div class="col-head">
+      <span class="col-tag tag-good">B · Photo hero</span>
+      <div class="col-name">Luxury LIFF</div>
+      <div class="col-sub">⭐ ผมแนะนำ · gradient photo hero + floating step strip · service rows with thumbs · trust strip</div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen b-screen">
+          <div class="liff-bar"><span>×</span><span>bookease.co/liff/moya</span></div>
+
+          <div class="b-photo-hero">
+            <div class="b-shop-block">
+              <div>
+                <div class="b-shop-name">Moya</div>
+                <div class="b-shop-rating"><span class="star">⭐</span> 4.9 (123) · ทองหล่อ</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="b-step-strip">
+            <div class="b-step-circle">1</div>
+            <div class="b-step-line"></div>
+            <div class="b-step-circle future">2</div>
+            <div class="b-step-line"></div>
+            <div class="b-step-circle future">3</div>
+            <div class="b-step-line"></div>
+            <div class="b-step-circle future">4</div>
+          </div>
+
+          <div class="b-body">
+            <div class="b-section-h" style="margin-top:14px">เลือกบริการ</div>
+            <div class="b-svc-card">
+              <div class="b-svc-thumb"></div>
+              <div class="b-svc-info">
+                <div class="b-svc-name">ทำสี Premium</div>
+                <div class="b-svc-meta">⏱ 2 ชม. · 🟢 ว่าง 14:00</div>
+              </div>
+              <div class="b-svc-price">฿1,590</div>
+            </div>
+            <div class="b-deposit-summary">
+              <div class="row"><span class="k">มัดจำ</span><span class="v" style="color:#b45309;font-weight:700">฿200</span></div>
+              <div class="row"><span class="k">เหลือที่ร้าน</span><span class="v" style="color:#78716c">฿1,390</span></div>
+              <div class="row total"><span class="k">จ่ายตอนนี้</span><span class="v">฿200</span></div>
+            </div>
+          </div>
+
+          <div class="b-cta-zone">
+            <div class="b-trust-strip">
+              <span class="pill">⏱ 30 นาที</span>
+              <span>ร้านยืนยันใน LINE chat · ตกลงไม่ได้ คืนเงิน 100%</span>
+            </div>
+            <div class="b-cta">
+              <span>ต่อ · เลือกเวลา</span>
+              <span class="price">฿200</span>
+            </div>
+            <div class="b-tos">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขการบริการ</a></div>
+            <div class="b-foot">
+              <span style="font-size:9px">Powered by</span>
+              <span class="wordmark" style="font-size:10px"><span class="book">Book</span><span class="ease">Ease</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <h4>B · Photo hero · pros + cons</h4>
+      <div class="row pro"><span class="icon">+</span><span>Photo gradient hero · luxury · Klook/Booking-grade visual</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Floating step strip (glass) · numbered circles · clear progress</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Service card with thumb (56x56) · visual cue · density</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Refund SLA pill "⏱ 30 นาที · คืนเงิน 100%" prominent above CTA</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Black CTA + ราคาในปุ่ม + Apple Pay pattern</span></div>
+      <div class="row pro"><span class="icon">+</span><span>"Powered by BookEase" tiny footer · zone 1 rule</span></div>
+      <div class="row con"><span class="icon">−</span><span>Photo hero needs real photo asset (gradient placeholder for v0)</span></div>
+    </div>
+  </div>
+
+
+  <div class="verdict">
+    <h3>Verdict · LINE LIFF</h3>
+    <p>
+      Both variants follow zone 1 lock (variant 100% · "in shop's house" · tiny BookEase footer).
+      <br><br>
+      <b>A · Variant 100%</b>: pure text-driven · เร็ว · safe · ไม่ต้อง real photo · ship ได้ทันที
+      <br><br>
+      <b>B · Photo hero</b> ⭐: luxury · matches Pass 25 high-touch imagery system · ต้องใส่ photo asset · ดีกว่าแต่ต้องเตรียม
+      <br><br>
+      <b style="color:#fafafa">ผมแนะนำ B</b> · เพราะ LIFF = LINE customer's first BookEase touch · DREAM moment · luxury feel = trust · matches /booking-success B variant (also DREAM-heavy).
+      <br><br>
+      <b>Implementation:</b> ~2 hr port (LiffBookingPage.tsx 946 lines · refactor screen 1 · keep existing 4-screen state machine + Xendit hand-off). Real shop photo from `shop.bannerUrl` (existing field) · fallback gradient.
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
