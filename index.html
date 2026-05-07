@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>BookEase · ทำเว็บร้าน + รับจองใน LINE · ฟรี</title>
-<meta name="description" content="ออกแบบเว็บร้านให้ใน 60 วินาที · ลูกค้าจ่ายมัดจำผ่าน LINE chat ของร้าน · ฟรี · ไม่ต้องสมัคร" />
+<meta name="description" content="ออกแบบเว็บร้านให้ใน 60 วินาที · ฟรี · ลูกค้าจอง+จ่ายล่วงหน้าใน LINE · ล็อกคิวทันที · ไม่ต้องสมัคร" />
 <meta property="og:title" content="ทำเว็บร้าน + รับจองใน LINE · ฟรี" />
-<meta property="og:description" content="ออกแบบเว็บร้าน + รับจอง + รับมัดจำผ่าน LINE chat · ฟรี · ไม่ต้องสมัคร" />
+<meta property="og:description" content="ออกแบบเว็บร้านให้ใน 60 วินาที · ฟรี · ลูกค้าจอง+จ่ายล่วงหน้าใน LINE · ล็อกคิวทันที · ไม่ต้องสมัคร" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -95,12 +95,17 @@
     letter-spacing: -0.02em;
   }
 
+  /* Pass 25 v37 PM (Art's lock 2026-05-07): hero copy split · 2 sub-lines
+     · sub-1 = tool benefit (tighter spacing) · sub-2 = customer flow */
   .hero-sub {
-    margin: 0 0 36px;
+    margin: 0 0 8px;
     font-size: 18px;
     line-height: 1.55;
     color: #525252;
     max-width: 520px;
+  }
+  .hero-sub--customer {
+    margin: 0 0 36px;
   }
   .hero-sub strong {
     color: #0a0a0a;
@@ -512,11 +517,12 @@
 <section class="hero">
 
   <div class="hero-text">
-    <!-- Pass 25 v37 (Art's lock 2026-05-07): eyebrow pill DROPPED.
-         Apple/Tesla/Stripe pattern: H1 hero hits first · DREAM not
-         qualification. "ฟรี" merged into sub-line. "ใช้กับร้าน LINE OA"
-         dropped (already implied by landing context · merchant who reaches
-         make.bookease.co already knows BookEase = for LINE shops). -->
+    <!-- Pass 25 v37 (Art's lock 2026-05-07 PM): hero copy split into 2 chunks
+         per Apple/Tesla/Stripe pattern · 5 punches → 2+3 grouped:
+         Sub 1 = tool benefits (เราให้อะไร · 2 punches)
+         Sub 2 = customer flow + commitment (ลูกค้าได้อะไร · 3 punches)
+         "จ่ายมัดจำ" → "จ่ายล่วงหน้า" (covers all 3 deposit modes:
+         fixed_200/percent/full · doesn't lose wedge framing). -->
 
     <h1>
       ทำเว็บร้าน<br>
@@ -524,9 +530,10 @@
     </h1>
 
     <p class="hero-sub">
-      <strong>ออกแบบให้ใน 60 วินาที</strong> ·
-      <strong>ฟรี</strong> ·
-      ลูกค้า<strong>จ่ายมัดจำ</strong>ผ่าน LINE chat ·
+      <strong>ออกแบบให้ใน 60 วินาที</strong> · <strong>ฟรี</strong>
+    </p>
+    <p class="hero-sub hero-sub--customer">
+      ลูกค้า<strong>จอง · จ่ายล่วงหน้า</strong>ใน LINE ·
       ล็อกคิวทันที · <strong>ไม่ต้องสมัคร</strong>
     </p>
 
