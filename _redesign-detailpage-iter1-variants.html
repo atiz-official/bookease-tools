@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DetailPage /<slug> · 2 variants · A · B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, sans-serif;
+    background: #18181b; color: #e5e5e5;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .doc-head { margin-bottom: 28px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(28px,4vw,38px); color: #fafafa; margin-bottom: 12px; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 800px; line-height: 1.7; }
+  .doc-head .principle {
+    margin-top: 14px; padding: 12px 16px;
+    background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; border-radius: 8px;
+    color: #fafafa; font-size: 13px; line-height: 1.7;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+  @media (max-width: 920px) { .compare { grid-template-columns: 1fr; } }
+
+  .col-head { text-align: center; margin-bottom: 16px; }
+  .col-tag-letter {
+    display: inline-block;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 800;
+    font-size: 18px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 8px;
+  }
+  .tag-a { background: #b45309; }
+  .tag-b { background: #1c1917; }
+  .col-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; }
+  .col-sub { font-size: 12.5px; color: #a3a3a3; margin-top: 4px; line-height: 1.5; }
+
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone {
+    background: #292524;
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 0 0 1px #44403c;
+    width: 380px;
+    max-width: 100%;
+  }
+  .screen {
+    border-radius: 24px;
+    overflow: hidden;
+    height: 760px;
+    display: flex;
+    flex-direction: column;
+    color: #1c1917;
+    background: white;
+    position: relative;
+  }
+  .status-bar {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #44403c;
+  }
+
+  .wordmark {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .wordmark .book { color: #1E40AF; }
+  .wordmark .ease { color: #38BDF8; }
+
+
+  /* ─────── COMMON · variant body for shop "Moya" (luxury · peach) ─────── */
+  .v-back-row {
+    position: absolute; top: 36px; left: 14px; z-index: 10;
+    display: flex; gap: 8px;
+  }
+  .v-back, .v-share {
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-size: 16px;
+    color: #1c1917;
+  }
+  .v-share { position: absolute; top: 36px; right: 14px; left: auto; }
+
+
+  /* VARIANT A · Compact info-dense */
+  .a-screen { background: #fef7f0; }
+  .a-hero {
+    height: 180px;
+    background: linear-gradient(135deg, #fef3e2 0%, #fdebd0 50%, #f5e6d3 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px 20px;
+  }
+  .a-hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 38px;
+    font-weight: 600;
+    color: #1c1917;
+    line-height: 1;
+  }
+  .a-info-strip {
+    background: white;
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: auto 1px 1fr 1px auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .a-info-cell { display: flex; flex-direction: column; gap: 2px; }
+  .a-info-label { font-size: 9.5px; color: #78716c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .a-info-value { font-size: 13px; font-weight: 700; color: #1c1917; }
+  .a-info-value .star { color: #f59e0b; }
+  .a-info-divider { width: 1px; height: 28px; background: #f5f5f4; }
+
+  .a-tagline-strip {
+    padding: 10px 20px;
+    background: #fef7f0;
+    border-bottom: 1px solid #fde6c8;
+    font-size: 12px;
+    color: #78716c;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .a-section-tag {
+    padding: 12px 20px 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #44403c;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .a-svc-list { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .a-svc-row {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+    border-left: 3px solid #b45309;
+  }
+  .a-svc-name { font-size: 13.5px; font-weight: 700; color: #1c1917; line-height: 1.2; }
+  .a-svc-meta { font-size: 11px; color: #78716c; margin-top: 2px; display: flex; gap: 6px; }
+  .a-svc-meta .duration { color: #44403c; font-weight: 500; }
+  .a-svc-meta .available { color: #15803d; font-weight: 700; }
+  .a-svc-price-col { text-align: right; }
+  .a-svc-price { font-size: 14px; font-weight: 700; color: #b45309; }
+  .a-svc-price-from { font-size: 9.5px; color: #78716c; }
+
+  .a-cta-bar {
+    margin-top: auto;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #f5f5f4;
+  }
+  .a-cta {
+    background: #0a0a0a;
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 700;
+  }
+  .a-foot {
+    text-align: center;
+    font-size: 9.5px;
+    color: #a8a29e;
+    padding: 6px 16px 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .a-foot .powered { font-size: 9px; }
+  .a-foot .mini { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 10px; }
+
+
+  /* VARIANT B · Even denser · merchant-pitch grade · with badges */
+  .b-screen { background: #fef7f0; }
+  .b-hero {
+    height: 110px;
+    background: linear-gradient(135deg, #fef3e2 0%, #fdebd0 100%);
+    position: relative;
+  }
+  .b-shop-block {
+    margin: -42px 16px 0;
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 4px 16px rgba(28,25,23,0.08);
+    position: relative;
+    z-index: 5;
+  }
+  .b-shop-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .b-shop-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1c1917;
+    line-height: 1;
+  }
+  .b-shop-rating {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1c1917;
+  }
+  .b-shop-rating .star { color: #f59e0b; }
+  .b-shop-rating .count { color: #78716c; font-weight: 500; }
+  .b-shop-row2 { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .b-shop-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .b-shop-tag.peach { background: #fef3e2; color: #b45309; }
+  .b-shop-tag.green { background: #d1fae5; color: #065f46; }
+  .b-shop-tag.gray { background: #f5f5f4; color: #57534e; }
+  .b-shop-tag.blue { background: #dbeafe; color: #1e40af; }
+
+  .b-section-tag {
+    padding: 18px 20px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #44403c;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .b-svc-list { padding: 0 16px 8px; display: flex; flex-direction: column; gap: 6px; }
+  .b-svc-row {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid #f5f5f4;
+  }
+  .b-svc-thumb {
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #fef3e2, #fbbf24);
+    flex-shrink: 0;
+  }
+  .b-svc-thumb.violet { background: linear-gradient(135deg, #a78bfa, #6d28d9); }
+  .b-svc-thumb.green { background: linear-gradient(135deg, #4ade80, #14532d); }
+  .b-svc-info {}
+  .b-svc-name { font-size: 13px; font-weight: 700; color: #1c1917; line-height: 1.2; margin-bottom: 2px; }
+  .b-svc-meta { font-size: 10.5px; color: #78716c; display: flex; gap: 6px; }
+  .b-svc-meta .duration { font-weight: 500; }
+  .b-svc-meta .today { color: #15803d; font-weight: 700; }
+  .b-svc-price-col { text-align: right; }
+  .b-svc-price { font-size: 14px; font-weight: 700; color: #b45309; line-height: 1; }
+  .b-svc-price-sub { font-size: 9.5px; color: #78716c; margin-top: 1px; }
+
+  .b-cta-bar {
+    margin-top: auto;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #f5f5f4;
+  }
+  .b-cta {
+    background: #0a0a0a;
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .b-cta .price { font-size: 16px; font-weight: 800; }
+  .b-foot {
+    text-align: center;
+    font-size: 9.5px;
+    color: #a8a29e;
+    padding: 6px 16px 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .b-foot .mini { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 10px; }
+
+
+  /* Annotations */
+  .annotations {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: #1c1917;
+    border-radius: 12px;
+    border: 1px solid #292524;
+    font-size: 12.5px;
+  }
+  .annotations h4 { font-size: 13px; color: #fafafa; margin-bottom: 10px; font-weight: 700; }
+  .annotations .row { display: flex; gap: 8px; padding: 4px 0; line-height: 1.6; color: #d4d4d8; }
+  .annotations .row .icon { flex-shrink: 0; width: 16px; font-weight: 700; }
+  .annotations .row.pro .icon { color: #4ade80; }
+  .annotations .row.con .icon { color: #f87171; }
+
+
+  .verdict {
+    margin-top: 56px;
+    padding: 24px 28px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(180,83,9,0.04));
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 16px;
+  }
+  .verdict h3 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; margin-bottom: 10px; }
+  .verdict p { font-size: 13.5px; color: #d4d4d8; line-height: 1.7; }
+  .verdict b { color: #fafafa; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Surface 2/6 · DetailPage /&lt;slug&gt;</div>
+    <h1>Shop home · 2 variants · ทั้งคู่ dense · ทั้งคู่ ultra-efficient</h1>
+    <p>
+      Per Art's call: "make things dense · compact · ultra-efficient · very clear · very legible"
+      <br><br>
+      Both variants follow Pass 25 v37 zone 1 lock: <b style="color:#fafafa">variant 100% chrome</b> + <b style="color:#fafafa">tiny "Powered by BookEase" footer</b> · brand discreet · shop owns the surface.
+    </p>
+    <div class="principle">
+      <b style="color:#f59e0b">Difference:</b>
+      <br>· <b>A · Hero-led</b> · BIG italic shop name on photo hero · info strip below · service list with tags
+      <br>· <b>B · Card-stacked</b> · floating shop card on hero · service list with thumbnails (more density · merchant-pitch grade)
+    </div>
+  </div>
+
+
+  <div class="compare">
+
+    <!-- ───────── VARIANT A ───────── -->
+    <div>
+      <div class="col-head">
+        <div class="col-tag-letter tag-a">A</div>
+        <div class="col-name">Hero-led</div>
+        <div class="col-sub">BIG editorial shop name on hero · info strip · service rows with peach accent border</div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen a-screen">
+            <div class="status-bar">12:44</div>
+
+            <div class="v-back-row">
+              <div class="v-back">‹</div>
+            </div>
+            <div class="v-share">⤴</div>
+
+            <div class="a-hero">
+              <div class="a-hero-name">Moya</div>
+            </div>
+
+            <div class="a-info-strip">
+              <div class="a-info-cell">
+                <span class="a-info-label">⭐ Rating</span>
+                <span class="a-info-value"><span class="star">⭐</span> 4.9 <span style="font-weight:500;color:#78716c;font-size:11px">(123)</span></span>
+              </div>
+              <div class="a-info-divider"></div>
+              <div class="a-info-cell">
+                <span class="a-info-label">📍 Distance</span>
+                <span class="a-info-value">2.1 km · ทองหล่อ</span>
+              </div>
+              <div class="a-info-divider"></div>
+              <div class="a-info-cell">
+                <span class="a-info-label">⏰ Status</span>
+                <span class="a-info-value" style="color:#15803d">เปิดอยู่</span>
+              </div>
+            </div>
+
+            <div class="a-tagline-strip">"สีของคุณ · มาใช้เวลากับเรา"</div>
+
+            <div class="a-section-tag">บริการ · 4 รายการ</div>
+            <div class="a-svc-list">
+              <div class="a-svc-row">
+                <div>
+                  <div class="a-svc-name">ทำสี Premium</div>
+                  <div class="a-svc-meta">
+                    <span class="duration">⏱ 2 ชม.</span>
+                    <span class="available">🟢 ว่าง 14:00</span>
+                  </div>
+                </div>
+                <div class="a-svc-price-col">
+                  <div class="a-svc-price">฿1,590</div>
+                  <div class="a-svc-price-from">มัดจำ ฿200</div>
+                </div>
+              </div>
+              <div class="a-svc-row">
+                <div>
+                  <div class="a-svc-name">ทำสี + ทรีตเมนต์</div>
+                  <div class="a-svc-meta">
+                    <span class="duration">⏱ 3 ชม.</span>
+                    <span class="available">🟢 ว่าง 16:00</span>
+                  </div>
+                </div>
+                <div class="a-svc-price-col">
+                  <div class="a-svc-price">฿2,290</div>
+                  <div class="a-svc-price-from">มัดจำ ฿200</div>
+                </div>
+              </div>
+              <div class="a-svc-row">
+                <div>
+                  <div class="a-svc-name">ตัดผม + จัดทรง</div>
+                  <div class="a-svc-meta">
+                    <span class="duration">⏱ 1 ชม.</span>
+                    <span style="color:#78716c">ว่างพรุ่งนี้</span>
+                  </div>
+                </div>
+                <div class="a-svc-price-col">
+                  <div class="a-svc-price">฿590</div>
+                  <div class="a-svc-price-from">มัดจำ ฿200</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="a-cta-bar">
+              <div class="a-cta">เลือกบริการ</div>
+            </div>
+            <div class="a-foot">
+              <span class="powered">Powered by</span>
+              <span class="mini wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <h4>A · Hero-led · pros + cons</h4>
+        <div class="row pro"><span class="icon">+</span><span>BIG editorial shop name = strong identity moment ตอนเข้า</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Info strip 3 cols (rating · distance · open status) · scan ในวินาที</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Service rows with peach left-border = brand cohesion</span></div>
+        <div class="row pro"><span class="icon">+</span><span>"🟢 ว่าง 14:00" prominent · drives action</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Tiny "Powered by BookEase" footer · zone 1 rule</span></div>
+        <div class="row con"><span class="icon">−</span><span>Hero ใหญ่ใช้ vertical space · 3 services above fold (vs 4 in B)</span></div>
+      </div>
+    </div>
+
+
+    <!-- ───────── VARIANT B ───────── -->
+    <div>
+      <div class="col-head">
+        <div class="col-tag-letter tag-b">B</div>
+        <div class="col-name">Card-stacked</div>
+        <div class="col-sub">floating shop card on small hero · service list with photo thumbs · 4+ services above fold</div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen b-screen">
+            <div class="status-bar">12:44</div>
+
+            <div class="v-back-row">
+              <div class="v-back">‹</div>
+            </div>
+            <div class="v-share">⤴</div>
+
+            <div class="b-hero"></div>
+
+            <div class="b-shop-block">
+              <div class="b-shop-row1">
+                <div class="b-shop-name">Moya</div>
+                <div class="b-shop-rating">
+                  <span class="star">⭐</span>
+                  <span>4.9</span>
+                  <span class="count">(123)</span>
+                </div>
+              </div>
+              <div style="font-size: 11.5px; color: #78716c; font-style: italic;">"สีของคุณ · มาใช้เวลากับเรา"</div>
+              <div class="b-shop-row2">
+                <span class="b-shop-tag peach">💇‍♀️ ทำสีผม</span>
+                <span class="b-shop-tag green">🟢 เปิดอยู่</span>
+                <span class="b-shop-tag gray">📍 2.1km · ทองหล่อ</span>
+                <span class="b-shop-tag blue">มัดจำ ฿200</span>
+              </div>
+            </div>
+
+            <div class="b-section-tag">บริการ · 4 รายการ</div>
+            <div class="b-svc-list">
+              <div class="b-svc-row">
+                <div class="b-svc-thumb peach"></div>
+                <div class="b-svc-info">
+                  <div class="b-svc-name">ทำสี Premium</div>
+                  <div class="b-svc-meta">
+                    <span class="duration">2 ชม.</span> · <span class="today">🟢 14:00</span>
+                  </div>
+                </div>
+                <div class="b-svc-price-col">
+                  <div class="b-svc-price">฿1,590</div>
+                </div>
+              </div>
+              <div class="b-svc-row">
+                <div class="b-svc-thumb violet"></div>
+                <div class="b-svc-info">
+                  <div class="b-svc-name">ทำสี + ทรีตเมนต์</div>
+                  <div class="b-svc-meta">
+                    <span class="duration">3 ชม.</span> · <span class="today">🟢 16:00</span>
+                  </div>
+                </div>
+                <div class="b-svc-price-col">
+                  <div class="b-svc-price">฿2,290</div>
+                </div>
+              </div>
+              <div class="b-svc-row">
+                <div class="b-svc-thumb green"></div>
+                <div class="b-svc-info">
+                  <div class="b-svc-name">ตัดผม + จัดทรง</div>
+                  <div class="b-svc-meta">
+                    <span class="duration">1 ชม.</span> · <span style="color:#78716c">ว่างพรุ่งนี้</span>
+                  </div>
+                </div>
+                <div class="b-svc-price-col">
+                  <div class="b-svc-price">฿590</div>
+                </div>
+              </div>
+              <div class="b-svc-row">
+                <div class="b-svc-thumb"></div>
+                <div class="b-svc-info">
+                  <div class="b-svc-name">สระ + เป่า</div>
+                  <div class="b-svc-meta">
+                    <span class="duration">30 นาที</span> · <span class="today">🟢 13:30</span>
+                  </div>
+                </div>
+                <div class="b-svc-price-col">
+                  <div class="b-svc-price">฿290</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="b-cta-bar">
+              <div class="b-cta">
+                <span>เลือกบริการ</span>
+                <span class="price">→</span>
+              </div>
+            </div>
+            <div class="b-foot">
+              <span style="font-size:9px">Powered by</span>
+              <span class="mini wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <h4>B · Card-stacked · pros + cons</h4>
+        <div class="row pro"><span class="icon">+</span><span>4 services above fold · ultra-efficient · ลูกค้าเทียบได้ทันที</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Tag pills (สีน่าสนใจ) บอก context: bookmark · open · distance · มัดจำ</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Service thumbs (44x44) = visual cue · ไม่ขาดความหมาย</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Floating shop card lifts off hero · merchant-pitch luxury feel</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Tiny "Powered by BookEase" footer · zone 1 rule</span></div>
+        <div class="row con"><span class="icon">−</span><span>Shop name smaller (24px vs A's 38px) · less editorial impact</span></div>
+        <div class="row con"><span class="icon">−</span><span>Tag row อาจ feel busy · ต้องคุม visual weight</span></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="verdict">
+    <h3>Verdict · ใครชนะ?</h3>
+    <p>
+      <b>A · Hero-led</b>: เหมาะถ้า shop identity สำคัญสุด · luxury spa/clinic · ลูกค้าโดดเด่นเอกลักษณ์ร้าน
+      <br><br>
+      <b>B · Card-stacked</b>: เหมาะ Art's brief "dense · compact · ultra-efficient" · 4 services above fold · tag pills ทำให้ลูกค้าเทียบได้
+      <br><br>
+      <b style="color:#fafafa">ตามทิศทาง Art (dense + ultra-efficient + clear + legible) · B ชนะ</b>
+      <br><br>
+      <b>Implementation:</b> ~30-45 min port to <code>DetailPage.tsx</code> + <code>PaymentLink.tsx</code> + small CSS work. Reuses existing useShopDetail + ServiceItemCard hooks.
+      <br><br>
+      <b>Files affected:</b> <code>src/pages/DetailPage.tsx</code> · <code>src/components/detail/ServiceItemCard.tsx</code> (extend) · <code>src/assets/styles/detail/DetailPage.css</code>
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
