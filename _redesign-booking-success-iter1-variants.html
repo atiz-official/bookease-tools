@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BookingSuccess /booking-success · 2 variants · A · B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', system-ui, sans-serif; background: #18181b; color: #e5e5e5; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 20px 80px; }
+  .doc-head { margin-bottom: 28px; }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #f59e0b; text-transform: uppercase; margin-bottom: 12px; }
+  .doc-head h1 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(28px,4vw,38px); color: #fafafa; margin-bottom: 12px; }
+  .doc-head p { font-size: 14px; color: #a3a3a3; max-width: 800px; line-height: 1.7; }
+  .doc-head .principle { margin-top: 14px; padding: 12px 16px; background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; border-radius: 8px; color: #fafafa; font-size: 13px; line-height: 1.7; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+  @media (max-width: 920px) { .compare { grid-template-columns: 1fr; } }
+  .col-head { text-align: center; margin-bottom: 16px; }
+  .col-tag-letter { display: inline-block; width: 38px; height: 38px; border-radius: 50%; color: white; font-weight: 800; font-size: 18px; display: grid; place-items: center; margin-bottom: 8px; }
+  .tag-a { background: #b45309; }
+  .tag-b { background: #14532d; }
+  .col-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; }
+  .col-sub { font-size: 12.5px; color: #a3a3a3; margin-top: 4px; line-height: 1.5; }
+
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone { background: #292524; border-radius: 36px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); width: 380px; max-width: 100%; }
+  .screen { border-radius: 24px; overflow: hidden; height: 760px; display: flex; flex-direction: column; color: #1c1917; background: white; position: relative; }
+  .status-bar { height: 32px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #44403c; }
+  .wordmark { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+  .wordmark .book { color: #1E40AF; } .wordmark .ease { color: #38BDF8; }
+
+
+  /* ─────── OLD ─────── */
+  .old-screen { background: white; }
+  .old-bg-strip { height: 80px; background: linear-gradient(135deg, #4E6EDE, #6366f1); }
+  .old-headline { text-align: center; padding: 18px 24px 8px; font-family: 'Sarabun', sans-serif; font-size: 22px; font-weight: 800; color: #1f2937; }
+  .old-sub { text-align: center; font-size: 13px; color: #6b7280; padding: 0 24px 18px; }
+  .old-qr-card {
+    margin: 0 24px 14px; background: white; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 18px; text-align: center;
+  }
+  .old-qr {
+    width: 160px; height: 160px; background: #f3f4f6; margin: 0 auto 14px; border-radius: 8px; display: grid; place-items: center; font-size: 11px; color: #9ca3af; font-family: monospace;
+  }
+  .old-code-row { font-family: monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; }
+  .old-info-block { margin: 0 24px 12px; padding: 12px 14px; background: #f9fafb; border-radius: 10px; font-size: 12px; color: #4b5563; line-height: 1.6; }
+  .old-info-row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .old-actions { padding: 0 24px; display: flex; gap: 10px; }
+  .old-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; text-align: center; }
+  .old-btn-primary { background: #4E6EDE; color: white; }
+  .old-btn-secondary { background: white; color: #1f2937; border: 1.5px solid #e5e7eb; }
+
+
+  /* ─────── VARIANT A · Compact (variant + Cool Mist trust card) ─────── */
+  .a-screen { background: #fef7f0; }
+  .a-celebrate {
+    height: 90px; background: linear-gradient(135deg, #fef3e2, #fdebd0); display: grid; place-items: center;
+    position: relative;
+  }
+  .a-check {
+    width: 44px; height: 44px; background: #14532d; border-radius: 50%; display: grid; place-items: center; color: white; font-size: 22px; font-weight: 700;
+  }
+  .a-headline {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 28px; font-weight: 600; color: #1c1917; text-align: center; margin: 14px 24px 4px; line-height: 1.15;
+  }
+  .a-sub { text-align: center; font-size: 13px; color: #57534e; padding: 0 24px 16px; line-height: 1.5; }
+  .a-sub .shop { color: #b45309; font-weight: 700; }
+
+  .a-trust-card {
+    margin: 0 18px 14px; background: #f5f8fc; border: 1px solid #dbeafe; border-radius: 14px; padding: 14px 16px; text-align: center;
+  }
+  .a-trust-stamp { font-size: 10.5px; font-weight: 700; color: #1e40af; margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .a-trust-stamp .check-mini { color: #14532d; margin-right: 4px; }
+  .a-trust-stamp .wordmark { font-size: 11px; vertical-align: middle; }
+  .a-qr {
+    width: 110px; height: 110px; background: white; border: 1px solid #dbeafe; border-radius: 8px; margin: 0 auto 8px; display: grid; place-items: center; font-size: 10px; color: #94a3b8;
+  }
+  .a-code { font-family: monospace; font-size: 12px; font-weight: 700; color: #1e40af; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .a-amount { font-size: 11px; color: #57534e; }
+
+  .a-actions { padding: 0 18px 12px; display: flex; gap: 8px; }
+  .a-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; text-align: center; }
+  .a-btn-primary { background: #b45309; color: white; }
+  .a-btn-ghost { background: white; border: 1px solid #fed7aa; color: #b45309; }
+
+  .a-share-banner {
+    margin: 0 18px 12px; padding: 10px 14px; background: white; border: 1px dashed #b45309; border-radius: 10px; text-align: center; font-size: 12px; color: #b45309;
+  }
+  .a-share-banner b { color: #b45309; }
+
+  .a-foot { text-align: center; font-size: 9.5px; color: #a8a29e; padding: 6px 18px 10px; display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: auto; }
+  .a-foot .mini { font-size: 10px; }
+
+
+  /* ─────── VARIANT B · DREAM-heavy (full celebration · viral share) ─────── */
+  .b-screen { background: linear-gradient(180deg, #fef7f0 0%, #fef3e2 100%); }
+  .b-celebrate-burst {
+    position: relative; height: 220px; display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 50%, rgba(180,83,9,0.12) 0%, transparent 60%);
+  }
+  .b-check-big {
+    width: 80px; height: 80px; background: linear-gradient(135deg, #14532d, #166534); border-radius: 50%; display: grid; place-items: center; color: white; font-size: 40px; font-weight: 700;
+    box-shadow: 0 12px 32px rgba(20,83,45,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+    animation: b-pulse 2s ease-in-out infinite;
+  }
+  @keyframes b-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .b-burst-particles {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .b-particle { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; border-radius: 50%; }
+  .b-particle:nth-child(1) { background: #f59e0b; --tx: 90px; --ty: -60px; animation: b-particle 2s ease-out infinite; }
+  .b-particle:nth-child(2) { background: #38BDF8; --tx: -80px; --ty: -50px; animation: b-particle 2s ease-out infinite 0.2s; }
+  .b-particle:nth-child(3) { background: #4ade80; --tx: 70px; --ty: 60px; animation: b-particle 2s ease-out infinite 0.4s; }
+  .b-particle:nth-child(4) { background: #1E40AF; --tx: -75px; --ty: 55px; animation: b-particle 2s ease-out infinite 0.6s; }
+  @keyframes b-particle {
+    0% { transform: translate(0,0) scale(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(1.4); opacity: 0; }
+  }
+
+  .b-headline {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 36px; font-weight: 600; color: #1c1917; text-align: center; margin: 0 24px 6px; line-height: 1.1;
+  }
+  .b-sub { text-align: center; font-size: 14px; color: #44403c; padding: 0 24px 18px; line-height: 1.5; }
+  .b-sub .shop { color: #b45309; font-weight: 700; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 18px; }
+
+  .b-detail-card {
+    margin: 0 18px 12px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(180,83,9,0.15); border-radius: 14px; padding: 12px 16px; font-size: 12.5px; color: #44403c;
+  }
+  .b-detail-row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .b-detail-row .k { color: #78716c; }
+  .b-detail-row .v { color: #1c1917; font-weight: 600; }
+  .b-detail-row.code { padding-top: 8px; border-top: 1px dashed rgba(180,83,9,0.2); margin-top: 6px; }
+  .b-detail-row.code .v { font-family: monospace; color: #b45309; letter-spacing: 0.04em; }
+
+  .b-actions { padding: 0 18px 8px; display: flex; gap: 8px; }
+  .b-btn-primary { flex: 2; padding: 14px; background: #0a0a0a; color: white; border-radius: 14px; font-size: 14px; font-weight: 700; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
+  .b-btn-share { flex: 1; padding: 14px; background: white; border: 1.5px solid #fed7aa; color: #b45309; border-radius: 14px; font-size: 14px; font-weight: 700; text-align: center; }
+
+  .b-trust-tag {
+    text-align: center; padding: 10px 0; font-size: 10.5px;
+  }
+  .b-trust-tag .check { color: #14532d; margin-right: 3px; }
+  .b-trust-tag .wordmark { font-size: 11px; vertical-align: middle; margin-right: 4px; }
+  .b-trust-tag span { color: #57534e; }
+
+  .b-foot { text-align: center; font-size: 9.5px; color: #a8a29e; padding: 4px 18px 10px; }
+
+
+  /* Annotations */
+  .annotations { margin-top: 16px; padding: 16px 18px; background: #1c1917; border-radius: 12px; border: 1px solid #292524; font-size: 12.5px; }
+  .annotations h4 { font-size: 13px; color: #fafafa; margin-bottom: 10px; font-weight: 700; }
+  .annotations .row { display: flex; gap: 8px; padding: 4px 0; line-height: 1.6; color: #d4d4d8; }
+  .annotations .row .icon { flex-shrink: 0; width: 16px; font-weight: 700; }
+  .annotations .row.pro .icon { color: #4ade80; }
+  .annotations .row.con .icon { color: #f87171; }
+  .annotations .row.bad .icon { color: #f87171; }
+  .annotations .row.good .icon { color: #4ade80; }
+
+  .verdict { margin-top: 56px; padding: 24px 28px; background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(245,158,11,0.04)); border: 1px solid rgba(74,222,128,0.25); border-radius: 16px; }
+  .verdict h3 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #fafafa; margin-bottom: 10px; }
+  .verdict p { font-size: 13.5px; color: #d4d4d8; line-height: 1.7; }
+  .verdict b { color: #fafafa; }
+
+  /* OLD comparison (from current production) */
+  .old-status-bar { height: 32px; background: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #44403c; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-eyebrow">Pass 25 v37 · Surface 5/6 · BookingSuccessPage redesign</div>
+    <h1>DREAM moment · /booking-success · viral loop opportunity</h1>
+    <p>
+      หน้านี้ = the dopamine moment ของ BookEase · ลูกค้าจ่ายสำเร็จ · เห็น QR confirmation · share to friends · viral loop · Per Pass 25 v37 zone 3 lock: variant celebration + Cool Mist trust card + "BookEase confirmed" stamp
+    </p>
+    <div class="principle">
+      Both variants follow zone 3 hybrid: <b>variant 70% (shop celebrates)</b> + <b>Cool Mist 30% (BookEase confirms)</b> · DREAM-feel · viral share temptation · Apple Pay sheet "successful payment" pattern
+    </div>
+  </div>
+
+
+  <div class="compare">
+
+    <!-- ───────── OLD ───────── -->
+    <div>
+      <div class="col-head">
+        <span style="display:inline-block;padding:5px 12px;background:#7f1d1d;color:#fecaca;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">OLD · current</span>
+        <div class="col-name">Generic SaaS</div>
+        <div class="col-sub">BookEase blue strip · plain white · QR card · 2 buttons · no DREAM</div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen old-screen">
+            <div class="old-status-bar">12:44</div>
+            <div class="old-bg-strip"></div>
+            <div class="old-headline">การจองสำเร็จ ✓</div>
+            <div class="old-sub">บันทึกหรือถ่ายภาพหน้าจอเก็บไว้</div>
+            <div class="old-qr-card">
+              <div class="old-qr">QR code</div>
+              <div class="old-code-row">BK-A1B2-C3D4</div>
+              <div style="margin-top:8px;font-size:11px;color:#6b7280">นำ QR แสดงต่อพนักงานเมื่อเข้ารับบริการ</div>
+            </div>
+            <div class="old-info-block">
+              <div class="old-info-row"><span>ร้าน</span><span style="font-weight:600;color:#1f2937">Moya</span></div>
+              <div class="old-info-row"><span>บริการ</span><span>ทำสี</span></div>
+              <div class="old-info-row"><span>วันเวลา</span><span>15 พ.ค. · 14:00</span></div>
+              <div class="old-info-row"><span>มัดจำที่จ่าย</span><span style="font-weight:600">฿200</span></div>
+            </div>
+            <div class="old-actions">
+              <div class="old-btn old-btn-primary">บันทึกรูป</div>
+              <div class="old-btn old-btn-secondary">เสร็จแล้ว</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotations">
+        <h4>OLD · ปัญหา</h4>
+        <div class="row bad"><span class="icon">×</span><span>BookEase blue strip ที่ top · legacy chrome · ไม่ Pass 25 v37</span></div>
+        <div class="row bad"><span class="icon">×</span><span>"การจองสำเร็จ ✓" · plain · ไม่มี DREAM</span></div>
+        <div class="row bad"><span class="icon">×</span><span>ไม่มี share button · ไม่มี viral loop</span></div>
+        <div class="row bad"><span class="icon">×</span><span>QR ใหญ่กลางหน้า · แต่ context (ร้าน/วันเวลา) เล็กกว่า · hierarchy ผิด</span></div>
+        <div class="row bad"><span class="icon">×</span><span>"เสร็จแล้ว" button ghost · disconnects flow · ไม่ encourage share</span></div>
+        <div class="row bad"><span class="icon">×</span><span>ไม่มี shop identity · variant ไม่ inherit · จบที่ generic SaaS feel</span></div>
+        <div class="row bad"><span class="icon">×</span><span>ไม่มี BookEase trust mark · สูญ "BookEase confirmed" stamp</span></div>
+      </div>
+    </div>
+
+
+    <!-- ───────── VARIANT A · Compact ───────── -->
+    <div>
+      <div class="col-head">
+        <div class="col-tag-letter tag-a">A</div>
+        <div class="col-name">Compact celebration</div>
+        <div class="col-sub">variant cream + small trust card · share banner · 2 actions</div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen a-screen">
+            <div class="status-bar">12:44</div>
+            <div class="a-celebrate">
+              <div class="a-check">✓</div>
+            </div>
+            <div class="a-headline">จองสำเร็จ!</div>
+            <div class="a-sub">ร้าน <span class="shop">Moya</span> ยืนยันใน LINE chat ภายใน 30 นาที</div>
+
+            <div class="a-trust-card">
+              <div class="a-trust-stamp">
+                <span class="check-mini">✓</span>
+                <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span> CONFIRMED
+              </div>
+              <div class="a-qr">QR · 110px</div>
+              <div class="a-code">BK-A1B2-C3D4</div>
+              <div class="a-amount">มัดจำที่จ่าย ฿200 · เหลือ ฿1,390 จ่ายที่ร้าน</div>
+            </div>
+
+            <div class="a-share-banner">
+              💬 <b>ส่งให้เพื่อน?</b> · LINE share · กดปุ่ม share ด้านล่าง
+            </div>
+
+            <div class="a-actions">
+              <div class="a-btn a-btn-primary">บันทึกรูป QR</div>
+              <div class="a-btn a-btn-ghost">↗ Share</div>
+            </div>
+
+            <div class="a-foot">
+              <span style="font-size:9px">Powered by</span>
+              <span class="wordmark mini"><span class="book">Book</span><span class="ease">Ease</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotations">
+        <h4>A · Compact · pros + cons</h4>
+        <div class="row pro"><span class="icon">+</span><span>variant cream celebrates shop · zone 3 lock</span></div>
+        <div class="row pro"><span class="icon">+</span><span>"BookEase CONFIRMED" stamp ใน trust card · brand visible</span></div>
+        <div class="row pro"><span class="icon">+</span><span>Share banner explicit · drives viral loop</span></div>
+        <div class="row pro"><span class="icon">+</span><span>QR + code + amount ครบ · scan-able + sharable</span></div>
+        <div class="row con"><span class="icon">−</span><span>QR เล็ก (110px) · อาจ scan ยากในบาง POS · trade-off กับ density</span></div>
+        <div class="row con"><span class="icon">−</span><span>celebrate moment เล็ก · check 44px · ไม่ใหญ่ enough เป็น "wow"</span></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ───────── VARIANT B · DREAM-heavy ───────── -->
+  <div style="margin-top: 32px; max-width: 480px; margin-left: auto; margin-right: auto;">
+    <div class="col-head">
+      <div class="col-tag-letter tag-b">B</div>
+      <div class="col-name">DREAM-heavy</div>
+      <div class="col-sub">⭐ ผมแนะนำ · BIG celebration burst · italic Cormorant headline · viral share button</div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen b-screen">
+          <div class="status-bar">12:44</div>
+          <div class="b-celebrate-burst">
+            <div class="b-burst-particles">
+              <div class="b-particle"></div>
+              <div class="b-particle"></div>
+              <div class="b-particle"></div>
+              <div class="b-particle"></div>
+            </div>
+            <div class="b-check-big">✓</div>
+          </div>
+          <div class="b-headline">จองสำเร็จ</div>
+          <div class="b-sub">ร้าน <span class="shop">Moya</span><br>ยืนยันเวลานัดใน LINE chat 30 นาที</div>
+
+          <div class="b-detail-card">
+            <div class="b-detail-row"><span class="k">บริการ</span><span class="v">ทำสี · 15 พ.ค. 14:00</span></div>
+            <div class="b-detail-row"><span class="k">มัดจำที่จ่าย</span><span class="v" style="color:#b45309">฿200</span></div>
+            <div class="b-detail-row"><span class="k">เหลือจ่ายที่ร้าน</span><span class="v">฿1,390</span></div>
+            <div class="b-detail-row code"><span class="k">รหัส</span><span class="v">BK-A1B2-C3D4</span></div>
+          </div>
+
+          <div class="b-actions">
+            <div class="b-btn-primary">บันทึกรูป QR</div>
+            <div class="b-btn-share">↗ Share</div>
+          </div>
+
+          <div class="b-trust-tag">
+            <span class="check">✓</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span>confirmed · ปลอดภัยกับ Xendit · PCI DSS</span>
+          </div>
+
+          <div class="b-foot">ขอบคุณที่ใช้บริการ</div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <h4>B · DREAM-heavy · pros + cons</h4>
+      <div class="row pro"><span class="icon">+</span><span>BIG celebration · 80px check + animated burst · "wow" moment</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Italic Cormorant "จองสำเร็จ" 36px · editorial · DREAM-grade</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Black CTA "บันทึกรูป QR" · prominent action · share secondary</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Glassmorphism detail card · luxury · variant cream gradient bg</span></div>
+      <div class="row pro"><span class="icon">+</span><span>BookEase wordmark + green check + "PCI DSS" = trust signal at end</span></div>
+      <div class="row pro"><span class="icon">+</span><span>Share button prominent · viral loop opportunity</span></div>
+      <div class="row con"><span class="icon">−</span><span>QR ไม่อยู่ในหน้า · ลูกค้าต้อง tap "บันทึกรูป QR" → modal show QR (extra step)</span></div>
+    </div>
+  </div>
+
+
+  <div class="verdict">
+    <h3>Verdict · DREAM moment matters</h3>
+    <p>
+      <b>Pass 25 v37 zone 3 lock</b>: variant celebration + Cool Mist trust card + "BookEase confirmed" stamp.
+      <br><br>
+      <b>A · Compact</b>: ดี ถ้า conversion เป็นเป้าหมาย (QR scan-able ในหน้า · easier). · วิธีเดิม-ish.
+      <br><br>
+      <b>B · DREAM-heavy</b> ⭐: ดี ถ้า viral loop + brand awareness เป็นเป้าหมาย. · BIG celebration · italic Cormorant · share-first · luxury feel · matches Pass 25 visual language.
+      <br><br>
+      <b style="color:#fafafa">ผมแนะนำ B</b> · เพราะ /booking-success คือ moment ที่ลูกค้าจะ:
+      <br>1. Screenshot + share to friends (viral · BIG check + headline ทำให้ screenshot น่ามอง)
+      <br>2. Save QR · tap-to-show modal · cleaner than QR cluttering hero
+      <br>3. Remember the brand · DREAM moment > utility moment
+      <br><br>
+      <b>Implementation:</b> ~1.5 hr port · BookingSuccessPage.tsx (existing 889 lines · refactor) · keep existing data hooks (useBookingDetails · useBookingShare) · replace visual chrome only.
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
