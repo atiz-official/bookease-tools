@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Icon system · current vs proposed (Lucide / SF Symbols-aligned) · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1280px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.before .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.after .badge  { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* phone shell */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.16);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #ffffff;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* ===== Hero (BookEase blue header) ===== */
+  .hero {
+    background: linear-gradient(135deg, #4f7cff 0%, #5061f2 100%);
+    color: #fff;
+    padding: 16px 20px 18px;
+    flex-shrink: 0;
+  }
+  .hero-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .hero .wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .hero .wordmark .book { color: #fff; }
+  .hero .wordmark .ease { color: #BFDBFE; }
+  .hero .lang {
+    font-size: 10.5px; font-weight: 600;
+    background: rgba(255,255,255,0.2); padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .hero h1 {
+    font-family: 'Sarabun'; font-weight: 700; font-size: 19px;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .hero h1 .small { font-size: 16px; }
+  .hero .nearby {
+    font-size: 12px; opacity: 0.85;
+    margin-bottom: 10px;
+  }
+  .search {
+    background: rgba(255,255,255,0.95);
+    color: #94a3b8;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .search-icon { color: #94a3b8; }
+
+  /* chips */
+  .chips-row {
+    display: flex; gap: 10px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    flex-shrink: 0;
+  }
+  .chip {
+    flex: 1; padding: 9px 14px; border-radius: 999px;
+    background: #fff; border: 1px solid #e2e8f0;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600; color: #475569;
+  }
+  .chip-highlight {
+    box-shadow: 0 0 0 2px #ef4444 inset;
+  }
+
+  /* category tabs */
+  .cat-row {
+    display: flex; gap: 14px;
+    padding: 10px 14px; border-bottom: 1px solid #f1f5f9;
+    font-size: 12.5px; color: #64748b; font-weight: 500;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .cat-row .cat.active { color: #1E40AF; font-weight: 700; border-bottom: 2px solid #1E40AF; padding-bottom: 6px; }
+
+  /* shop cards (just placeholder) */
+  .cards { padding: 12px 14px; flex: 1; }
+  .card {
+    background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    margin-bottom: 8px; overflow: hidden;
+  }
+  .card .pic { height: 80px; background: linear-gradient(135deg, #c8b6a6 0%, #a78b7a 100%); }
+  .card .body { padding: 8px 12px; }
+  .card .name { font-size: 13px; font-weight: 700; }
+  .card .km { font-size: 10.5px; color: #94a3b8; }
+
+  /* tab bar */
+  .tab-bar {
+    flex-shrink: 0; display: flex;
+    background: #fff; padding: 8px 0 12px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .tab {
+    flex: 1; text-align: center;
+    font-size: 10.5px; color: #94a3b8;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .tab.active { color: #1E40AF; font-weight: 700; }
+  .tab-icon-emoji { font-size: 22px; }
+  .tab-icon-svg { width: 24px; height: 24px; }
+  .tab-highlight {
+    box-shadow: 0 0 0 2px #ef4444 inset;
+    border-radius: 8px; padding: 4px;
+  }
+
+  /* ===== icon spec table ===== */
+  .icon-spec {
+    max-width: 1100px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .icon-spec h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
+  .icon-spec-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr 1fr 1fr;
+    gap: 0;
+    font-size: 12px;
+  }
+  .icon-spec-grid .cell {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .icon-spec-grid .head {
+    background: #f8fafc; font-weight: 700; font-size: 11px;
+    color: #0f172a;
+  }
+  .icon-spec-grid .label-col { font-weight: 600; color: #0f172a; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .icon-spec-grid .label-col .sub { font-size: 10px; color: #94a3b8; font-weight: 500; }
+  .icon-emoji-large { font-size: 26px; }
+  .icon-svg-large { width: 28px; height: 28px; color: #475569; }
+  .icon-fill { color: #1E40AF; }
+  .icon-info { font-size: 10.5px; color: #94a3b8; line-height: 1.4; flex: 1; }
+
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.55; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+
+  .verdict {
+    max-width: 1100px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Icon system · current vs <span class="book">Lucide</span>/<span class="ease">SF</span>-aligned</h1>
+  <p>2 phone mockups · current emoji + SVG mix vs proposed unified Lucide-style monoline · plus per-icon spec sheet</p>
+  <span class="lock">⚠️ Preview · vote ก่อน implement · Lucide = MIT-licensed · ~50KB tree-shaken · matches Apple SF Symbols visual language</span>
+</div>
+
+<div class="stage">
+
+  <!-- ============ BEFORE ============ -->
+  <div>
+    <div class="col-label before">
+      <span class="badge">CURRENT · LIVE</span>
+      <h2>emoji + SVG mixed</h2>
+      <p class="subline">📍 + 📅 emoji at chips · custom SVG at tab bar · platform-dependent rendering</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:40</span><span>📶 100%</span></div>
+        <div class="hero">
+          <div class="hero-row">
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="lang">TH ไทย</span>
+          </div>
+          <h1>หาร้านสปา · นวด · เสริมสวย<br><span class="small">จองได้ใน <i>60</i> วินาที</span></h1>
+          <p class="nearby">📍 ใกล้คุณ 11 ร้าน</p>
+          <div class="search"><span class="search-icon">🔍</span>ค้นหา เช่น สปา, นวดแผนไทย, ทำเล็บ</div>
+        </div>
+        <div class="chips-row chip-highlight" style="box-shadow: none; border-radius: 0; padding: 10px 14px; background: #fff;">
+          <div class="chip chip-highlight">
+            <span style="font-size: 16px;">📍</span> ใกล้ฉัน
+          </div>
+          <div class="chip chip-highlight">
+            <span style="font-size: 16px;">📅</span> วันนี้
+          </div>
+        </div>
+        <div class="cat-row">
+          <span class="cat active">ทั้งหมด</span>
+          <span class="cat">ร้านเสริมสวย</span>
+          <span class="cat">สปา</span>
+          <span class="cat">เล็บ</span>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="pic"></div><div class="body"><div class="name">Rakkana spa</div><div class="km">1.4 km</div></div></div>
+          <div class="card"><div class="pic"></div><div class="body"><div class="name">Tll Salon</div><div class="km">4.0 km</div></div></div>
+        </div>
+        <div class="tab-bar tab-highlight" style="box-shadow: none; padding: 8px 0 12px;">
+          <div class="tab active">
+            <span class="tab-icon-emoji" style="color: #1E40AF;">🏠</span>
+            <span>หน้าแรก</span>
+          </div>
+          <div class="tab">
+            <span class="tab-icon-emoji">♡</span>
+            <span>บันทึก</span>
+          </div>
+          <div class="tab">
+            <span class="tab-icon-emoji">📅</span>
+            <span>การจอง</span>
+          </div>
+          <div class="tab">
+            <span class="tab-icon-emoji">👤</span>
+            <span>บัญชี</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issues</h3>
+      <ul>
+        <li class="miss">📍 + 📅 emoji = system-rendered · iOS vs Android render ต่างกัน</li>
+        <li class="miss">🔍 magnifier emoji ใน search bar · ไม่ unified</li>
+        <li class="miss">tab bar emoji-style: 🏠 ♡ 📅 👤 · multi-color · ไม่ stroke-consistent</li>
+        <li class="miss">"การจอง" 📅 = same icon as chip "วันนี้" 📅 · 2 contexts · 1 icon = confusion</li>
+        <li class="miss">ไม่มี active state difference · ทุก tab ดูเหมือนกัน</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ AFTER · LUCIDE ============ -->
+  <div>
+    <div class="col-label after">
+      <span class="badge">PROPOSED · Lucide / SF-aligned</span>
+      <h2>unified monoline · 24px stroke 2px</h2>
+      <p class="subline">all icons custom SVG · single weight · platform-independent · active = filled / inactive = outlined</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:40</span><span>📶 100%</span></div>
+        <div class="hero">
+          <div class="hero-row">
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="lang">TH ไทย</span>
+          </div>
+          <h1>หาร้านสปา · นวด · เสริมสวย<br><span class="small">จองได้ใน <i>60</i> วินาที</span></h1>
+          <p class="nearby">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            ใกล้คุณ 11 ร้าน
+          </p>
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            ค้นหา เช่น สปา, นวดแผนไทย, ทำเล็บ
+          </div>
+        </div>
+        <div class="chips-row" style="background: #fff;">
+          <div class="chip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            ใกล้ฉัน
+          </div>
+          <div class="chip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            วันนี้
+          </div>
+        </div>
+        <div class="cat-row">
+          <span class="cat active">ทั้งหมด</span>
+          <span class="cat">ร้านเสริมสวย</span>
+          <span class="cat">สปา</span>
+          <span class="cat">เล็บ</span>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="pic"></div><div class="body"><div class="name">Rakkana spa</div><div class="km">1.4 km</div></div></div>
+          <div class="card"><div class="pic"></div><div class="body"><div class="name">Tll Salon</div><div class="km">4.0 km</div></div></div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active">
+            <!-- House FILLED -->
+            <svg class="tab-icon-svg" viewBox="0 0 24 24" fill="#1E40AF" stroke="#1E40AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>หน้าแรก</span>
+          </div>
+          <div class="tab">
+            <!-- Heart OUTLINE -->
+            <svg class="tab-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+            <span>บันทึก</span>
+          </div>
+          <div class="tab">
+            <!-- Calendar-check OUTLINE (no busy clock add-on) -->
+            <svg class="tab-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+            <span>การจอง</span>
+          </div>
+          <div class="tab">
+            <!-- User OUTLINE clean -->
+            <svg class="tab-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>บัญชี</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins · Lucide / SF-aligned</h3>
+      <ul>
+        <li class="win">all SVG · platform-independent · same on iOS / Android / Windows</li>
+        <li class="win">single stroke 2px · uniform visual weight</li>
+        <li class="win">active home = FILLED · others OUTLINED · clear state difference</li>
+        <li class="win">"การจอง" = `calendar-check` (book + checkmark) · 1 concept · ไม่ใช่ calendar+clock</li>
+        <li class="win">user = clean head + body · ไม่มี extra detail</li>
+        <li class="win">📍 + 📅 chips ใช้ same Lucide icon family · matches tab bar</li>
+        <li class="win">Lucide = MIT license · 1,400+ icons · ~50KB tree-shaken</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ ICON-BY-ICON SPEC ============ -->
+<div class="icon-spec">
+  <h3>📐 Icon-by-icon spec · current vs Lucide</h3>
+  <div class="icon-spec-grid">
+    <div class="cell head">Element</div>
+    <div class="cell head">Current</div>
+    <div class="cell head">Proposed (Lucide)</div>
+    <div class="cell head">Why change</div>
+
+    <!-- Map pin -->
+    <div class="cell label-col">ใกล้ฉัน chip<span class="sub">+ "ใกล้คุณ 11 ร้าน" inline</span></div>
+    <div class="cell"><span class="icon-emoji-large">📍</span><span class="icon-info">system emoji · multi-color · iOS vs Android render diff</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span class="icon-info"><code>map-pin</code> · stroke 2px · single color</span>
+    </div>
+    <div class="cell"><span class="icon-info">platform-consistent · unified weight</span></div>
+
+    <!-- Calendar -->
+    <div class="cell label-col">วันนี้ chip<span class="sub">date filter</span></div>
+    <div class="cell"><span class="icon-emoji-large">📅</span><span class="icon-info">emoji · red+blue colors · busy</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+      <span class="icon-info"><code>calendar</code> · clean grid · clear meaning</span>
+    </div>
+    <div class="cell"><span class="icon-info">monochrome · matches Lucide system</span></div>
+
+    <!-- Search -->
+    <div class="cell label-col">Search bar<span class="sub">in hero</span></div>
+    <div class="cell"><span class="icon-emoji-large">🔍</span><span class="icon-info">emoji magnifier</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <span class="icon-info"><code>search</code> · clean magnifier</span>
+    </div>
+    <div class="cell"><span class="icon-info">consistent with chips</span></div>
+
+    <!-- Home tab -->
+    <div class="cell label-col">หน้าแรก tab<span class="sub">active state</span></div>
+    <div class="cell"><span class="icon-emoji-large" style="color:#1E40AF;">🏠</span><span class="icon-info">emoji house · multi-color</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large icon-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span class="icon-info"><code>home</code> · FILLED for active</span>
+    </div>
+    <div class="cell"><span class="icon-info">SF Symbol pattern · active = filled</span></div>
+
+    <!-- Heart tab -->
+    <div class="cell label-col">บันทึก tab<span class="sub">inactive state</span></div>
+    <div class="cell"><span class="icon-emoji-large">♡</span><span class="icon-info">unicode outline heart · OK but inconsistent w/ rest</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+      <span class="icon-info"><code>heart</code> · stroke 2px clean</span>
+    </div>
+    <div class="cell"><span class="icon-info">consistent stroke + family</span></div>
+
+    <!-- Booking tab -->
+    <div class="cell label-col">การจอง tab<span class="sub">inactive · MIXED concept</span></div>
+    <div class="cell"><span class="icon-emoji-large">📅</span><span class="icon-info">SAME as "วันนี้" chip · 2 meanings 1 icon</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+      <span class="icon-info"><code>calendar-check</code> · 1 concept "scheduled+confirmed"</span>
+    </div>
+    <div class="cell"><span class="icon-info">disambiguates booking from "today filter"</span></div>
+
+    <!-- User tab -->
+    <div class="cell label-col">บัญชี tab<span class="sub">inactive state</span></div>
+    <div class="cell"><span class="icon-emoji-large">👤</span><span class="icon-info">emoji bust · with extra detail · platform diff</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="icon-info"><code>user</code> · clean · no detail</span>
+    </div>
+    <div class="cell"><span class="icon-info">SF Symbol equivalent · clean</span></div>
+  </div>
+</div>
+
+<!-- ============ ADDITIONAL ICONS (across app) ============ -->
+<div class="icon-spec">
+  <h3>📐 Other icons used across app · audit</h3>
+  <div class="icon-spec-grid">
+    <div class="cell head">Where</div>
+    <div class="cell head">Current</div>
+    <div class="cell head">Proposed (Lucide)</div>
+    <div class="cell head">Notes</div>
+
+    <div class="cell label-col">Star rating<span class="sub">"⭐ 4.5"</span></div>
+    <div class="cell"><span class="icon-emoji-large">⭐</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="#fbbf24" stroke="#f59e0b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="icon-info"><code>star</code> filled amber #fbbf24</span>
+    </div>
+    <div class="cell"><span class="icon-info">consistent with rest</span></div>
+
+    <div class="cell label-col">Camera<span class="sub">menu-ocr · upload</span></div>
+    <div class="cell"><span class="icon-emoji-large">📷</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+      <span class="icon-info"><code>camera</code></span>
+    </div>
+    <div class="cell"><span class="icon-info">menu-ocr surfaces</span></div>
+
+    <div class="cell label-col">Share<span class="sub">DetailPage / BookingSuccess</span></div>
+    <div class="cell"><span class="icon-emoji-large">↗</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+      <span class="icon-info"><code>share</code> iOS-style</span>
+    </div>
+    <div class="cell"><span class="icon-info">already shipped on DetailPage</span></div>
+
+    <div class="cell label-col">Phone<span class="sub">DetailPage CTA · 📞 พี่ proposal</span></div>
+    <div class="cell"><span class="icon-emoji-large">📞</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span class="icon-info"><code>phone</code></span>
+    </div>
+    <div class="cell"><span class="icon-info">DetailPage proposed CTA</span></div>
+
+    <div class="cell label-col">Clock / Time<span class="sub">"30 นาที"</span></div>
+    <div class="cell"><span class="icon-emoji-large">⏱</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="icon-info"><code>clock</code></span>
+    </div>
+    <div class="cell"><span class="icon-info">/payment 30-min refund · service duration</span></div>
+
+    <div class="cell label-col">Verified ✓<span class="sub">trust badge</span></div>
+    <div class="cell"><span class="icon-emoji-large">✓</span></div>
+    <div class="cell">
+      <svg class="icon-svg-large" viewBox="0 0 24 24" fill="#1E40AF" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10" fill="#1E40AF"/><polyline points="9 12 11 14 15 10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <span class="icon-info"><code>badge-check</code> · navy filled</span>
+    </div>
+    <div class="cell"><span class="icon-info">Atiz-confirmed merchant trust</span></div>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict">
+  <h3>🎯 Implementation plan</h3>
+  <p>
+    <b>Library:</b> <code>lucide-react</code> · 1,400+ icons · MIT license · ~50KB tree-shaken (only icons used) · matches Apple SF Symbols visual language<br>
+    <b>Install:</b> <code>npm install lucide-react</code> (no peer deps · React 19 compatible)<br>
+    <b>Pattern:</b><br>
+    <code>import { MapPin, Calendar, Search, Home, Heart, CalendarCheck, User, Star } from 'lucide-react'</code><br>
+    <code>&lt;MapPin size={20} strokeWidth={2} /&gt;</code>
+  </p>
+
+  <h3 style="margin-top: 14px">📋 Files affected</h3>
+  <p>
+    • <code>HomePage.tsx</code> — replace 📍 + 📅 emoji at chips · search bar magnifier<br>
+    • <code>NavTabBar / TabBar component</code> (need to find) — replace 🏠 ♡ 📅 👤<br>
+    • <code>DetailPage.tsx</code> — verified ✓ + ⭐ rating · share button (already SVG) · phone/LINE CTAs<br>
+    • <code>BookingSuccessPage.tsx</code> — share / save-image / done<br>
+    • <code>ServiceDetailPage.tsx</code> — calendar / clock / users<br>
+    • <code>menu-ocr.html</code> — camera icon at upload zone<br>
+    • <code>StickyPayFooter.tsx</code> — clock for 30-นาที pill (currently ⏱)<br>
+    <br>
+    <b>Estimated:</b> ~30 files · ~80 emoji uses found in codebase (per grep · need verify)
+  </p>
+
+  <h3 style="margin-top: 14px">🚦 Ship sequence</h3>
+  <p>
+    <b>P0 (~30 min):</b> chips MapPin + Calendar + Search · 1 file (HomePage.tsx) · highest-visibility fix<br>
+    <b>P1 (~45 min):</b> tab bar 4 icons · 1 component file · drop emoji-style across nav<br>
+    <b>P2 (~1.5 hr):</b> rest of app emoji → Lucide · audit + replace<br>
+    <b>P3 (locks):</b> add Lucide style guide ใน <code>memory/</code> · ห้าม commit emoji UI ทับ Lucide
+  </p>
+
+  <h3 style="margin-top: 14px">🤔 vote</h3>
+  <p>
+    <b>A · ลุย P0 (~30 min)</b> chips + search · ship today<br>
+    <b>B · ลุย P0 + P1 (~75 min)</b> chips + tab bar · ship today before caravan<br>
+    <b>C · ลุย full P0+P1+P2 (~3 hr)</b> whole-app icon migration · weekend project<br>
+    <b>D · keep current (warmth/Thai-feel)</b> emoji friendly แม้ไม่ Apple-grade
+  </p>
+</div>
+
+</body>
+</html>
