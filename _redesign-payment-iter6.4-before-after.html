@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iter6.4 · /payment before vs after · 12 fixes · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 24px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1320px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.before .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.after .badge  { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* phone shell */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #f5f8fc;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* highlight ring for changed elements */
+  .ring-bug { box-shadow: 0 0 0 2px #ef4444 inset; border-radius: 8px; padding: 2px; }
+  .ring-fix { box-shadow: 0 0 0 2px #16a34a inset; border-radius: 8px; padding: 2px; }
+  .fix-num {
+    display: inline-block;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #ef4444; color: #fff;
+    font-size: 11px; font-weight: 700;
+    text-align: center; line-height: 18px;
+    margin-right: 4px;
+  }
+  .ring-fix .fix-num { background: #16a34a; }
+
+  /* common payment page mock */
+  .pay { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .pay-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px 6px; flex-shrink: 0;
+  }
+  .pay-header .wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .pay-header .wordmark .book { color: #1E40AF; }
+  .pay-header .wordmark .ease { color: #38BDF8; }
+  .pay-header .spacer { width: 36px; }
+
+  /* BEFORE back button: white pill */
+  .pay-header .back-before {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: grid; place-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    font-size: 18px; color: #475569;
+  }
+  /* AFTER back button: transparent icon */
+  .pay-header .back-after {
+    width: 36px; height: 36px;
+    background: transparent;
+    display: grid; place-items: center;
+    font-size: 22px; color: #64748b;
+    font-weight: 300;
+  }
+
+  .pay-body {
+    flex: 1; min-height: 0;
+    padding: 8px 22px 0;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+
+  /* BEFORE typography */
+  .b-eyebrow { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .b-title {
+    font-family: 'Sarabun'; font-weight: 700; font-size: 22px;
+    color: #0f172a; line-height: 1.18; margin-bottom: 6px;
+  }
+  .b-title .shop { color: #1E40AF; }
+  .b-when { font-size: 12.5px; color: #475569; margin: 0 0 12px; }
+
+  .b-price-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin: 4px 0 6px;
+  }
+  .b-price-label { font-size: 12px; color: #64748b; font-weight: 500; }
+  .b-price-amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 28px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+
+  /* AFTER typography */
+  .a-eyebrow {
+    font-size: 13px; color: #64748b;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+  .a-title {
+    font-family: 'Sarabun'; font-weight: 700; font-size: 22px;
+    color: #0f172a; line-height: 1.18; margin-bottom: 6px;
+  }
+  .a-title .shop { color: #1E40AF; }
+  .a-when {
+    font-size: 14px; color: #475569; font-weight: 500;
+    margin: 0 0 14px;
+  }
+
+  .a-price-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin: 4px 0 6px;
+  }
+  .a-price-label { font-size: 14.5px; color: #475569; font-weight: 500; }
+  .a-price-amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 28px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+
+  .field {
+    margin-top: 16px; width: 100%; padding: 13px 16px;
+    border: 1px solid #cbd5e1; border-radius: 14px;
+    font-size: 13.5px; background: #fff;
+    color: #0f172a;
+  }
+  .field::placeholder { color: #94a3b8; }
+  .field.darker::placeholder { color: #64748b; }
+
+  /* collapse rows */
+  .collapse {
+    border: none; background: transparent;
+    padding: 11px 4px; font-size: 12.5px; color: #475569;
+    text-align: left; display: flex; align-items: center; gap: 8px;
+    width: 100%; border-bottom: 1px solid #e2e8f0;
+  }
+  .collapse .plus {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #e2e8f0; color: #475569;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; line-height: 1;
+  }
+  .collapse .label-main { flex: 1; font-weight: 600; }
+  .collapse .label-hint { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+  /* trust footer */
+  .b-trust-footer {
+    margin-top: 14px; text-align: center;
+    font-size: 10px; color: #94a3b8;
+    padding: 4px 0 0;
+  }
+  .a-trust-footer {
+    margin-top: 14px; text-align: center;
+    font-size: 12px; color: #64748b;
+    padding: 4px 0 0;
+  }
+  .b-trust-footer .book, .a-trust-footer .book { color: #1E40AF; font-weight: 800; font-family: 'Inter'; }
+  .b-trust-footer .ease, .a-trust-footer .ease { color: #38BDF8; font-weight: 800; font-family: 'Inter'; }
+
+  /* sticky footer */
+  .b-micro-pill {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 11px; color: #64748b;
+  }
+  .a-micro-pill {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 12px; color: #475569;
+  }
+  .b-micro-pill .pill, .a-micro-pill .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+  .b-micro-pill .pill { font-size: 10px; }
+  .a-micro-pill .pill { font-size: 11px; }
+
+  .cta-zone { padding: 12px 22px 14px; flex-shrink: 0; }
+  .cta {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 15px; border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+  }
+  .b-cta-implicit {
+    font-size: 9.5px; color: #94a3b8;
+    text-align: center; margin-top: 7px;
+  }
+  .b-cta-implicit a { color: #475569; text-decoration: underline; }
+  .a-cta-implicit {
+    font-size: 11px; color: #64748b;
+    text-align: center; margin-top: 8px;
+    line-height: 1.5;
+  }
+  .a-cta-implicit a { color: #1E40AF; text-decoration: underline; text-underline-offset: 2px; }
+
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.55; }
+  .anno li.bug::before { content: "🔴 "; }
+  .anno li.fix::before { content: "✅ "; }
+
+  .verdict {
+    max-width: 1320px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;
+  }
+  .scoreboard .card {
+    border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;
+    text-align: center;
+  }
+  .scoreboard .card .grade {
+    font-size: 24px; font-weight: 800; line-height: 1;
+    font-family: 'Inter'; letter-spacing: -0.02em;
+  }
+  .scoreboard .card.before .grade { color: #92400e; }
+  .scoreboard .card.after .grade  { color: #166534; }
+  .scoreboard .card .label { font-size: 10.5px; color: #64748b; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>iter6.4 · /payment before vs after · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>12 fixes · Apple Pay sheet + Stripe Checkout + WCAG accessibility · ขนาด font · copywriting · contrast</p>
+  <span class="lock">⚠️ Preview · ยังไม่ ship · 🔴 = changed element · ดูตัวเลขกำกับเทียบกับ table ด้านล่าง</span>
+</div>
+
+<div class="stage">
+
+  <!-- ============================ BEFORE ============================ -->
+  <div>
+    <div class="col-label before">
+      <span class="badge">BEFORE · LIVE iter6.3</span>
+      <h2>ปัจจุบัน · 12 issues</h2>
+      <p class="subline">font เล็กเกิน · "*" ซ้ำซ้อน · "เพิ่ม" generic · back-pill heavy · sub-WCAG</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>19:02</span><span>📶 100%</span></div>
+        <div class="pay">
+          <div class="pay-header">
+            <span class="back-before ring-bug" title="F1">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+          <div class="pay-body">
+            <div class="b-eyebrow ring-bug" title="F2">จองบริการ</div>
+            <div class="b-title">นวดหัว · <span class="shop">Rakkana spa</span></div>
+            <div class="b-when ring-bug" title="F3">8 พ.ค. · 19:05 - 20:05</div>
+
+            <div class="b-price-row">
+              <div class="b-price-label ring-bug" title="F4">ยอดที่ต้องชำระ</div>
+              <div class="b-price-amount">฿1,200</div>
+            </div>
+
+            <input class="field" placeholder="เบอร์โทรศัพท์ *" data-fix="F5+F6">
+            <div style="font-size: 9px; color: #ef4444; margin-top: 2px;">🔴 F5 "*" + F6 placeholder gray</div>
+
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-bug" title="F7">เพิ่มชื่อ + อีเมล</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-bug" title="F8">เพิ่มคำขอพิเศษถึงร้าน</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-bug" title="F9">เพิ่มโค้ดส่วนลด / ของขวัญ</span>
+              <span class="label-hint">ถ้ามี</span>
+            </button>
+
+            <div class="b-trust-footer ring-bug" title="F10">
+              Powered by <span class="book">Book</span><span class="ease">Ease</span> · LINE @bookease
+            </div>
+          </div>
+          <div style="padding: 0 22px;">
+            <p class="b-micro-pill ring-bug" title="F11"><span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%</p>
+          </div>
+          <div class="cta-zone">
+            <button class="cta">จ่าย ฿1,200</button>
+            <div class="b-cta-implicit ring-bug" title="F12">
+              กดปุ่ม "จ่าย" ถือว่ายอมรับ <a>เงื่อนไขและนโยบายการบริการ</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🔴 12 issues (font sizes ที่ไม่ผ่าน Apple HIG min 11pt)</h3>
+      <ul>
+        <li class="bug"><b>F1</b> back btn = white pill 36px + shadow · heavy chrome</li>
+        <li class="bug"><b>F2</b> "จองบริการ" eyebrow = 11px slate-400</li>
+        <li class="bug"><b>F3</b> date = 12.5px slate-500</li>
+        <li class="bug"><b>F4</b> "ยอดที่ต้องชำระ" = 12px (vs ฿1,200 28px = imbalanced 2.6x)</li>
+        <li class="bug"><b>F5</b> "*" asterisk · mixed signal กับ "(ไม่บังคับ)"</li>
+        <li class="bug"><b>F6</b> placeholder #94a3b8 · WCAG fail (low contrast)</li>
+        <li class="bug"><b>F7</b> "เพิ่มชื่อ + อีเมล" · "+" ซ้ำกับ plus-circle</li>
+        <li class="bug"><b>F8</b> "เพิ่มคำขอพิเศษถึงร้าน" · verbose · "ถึงร้าน" implied</li>
+        <li class="bug"><b>F9</b> "เพิ่มโค้ดส่วนลด / ของขวัญ" · "เพิ่ม" generic · ไม่ action-verb</li>
+        <li class="bug"><b>F10</b> Powered by · 10px · sub-WCAG</li>
+        <li class="bug"><b>F11</b> 30-นาที pill · 11px · borderline</li>
+        <li class="bug"><b>F12</b> consent caption · 9.5px · <b>legal text invisible</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================ AFTER ============================ -->
+  <div>
+    <div class="col-label after">
+      <span class="badge">AFTER · iter6.4 proposed</span>
+      <h2>Apple Pay sheet + Stripe grade</h2>
+      <p class="subline">ทุก font ≥11px · drop "*" · action-verb collapsibles · transparent back · balanced ratio</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>19:02</span><span>📶 100%</span></div>
+        <div class="pay">
+          <div class="pay-header">
+            <span class="back-after ring-fix" title="F1"><span class="fix-num">1</span>‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+          <div class="pay-body">
+            <div class="a-eyebrow ring-fix" title="F2"><span class="fix-num">2</span>จองบริการ</div>
+            <div class="a-title">นวดหัว · <span class="shop">Rakkana spa</span></div>
+            <div class="a-when ring-fix" title="F3"><span class="fix-num">3</span>8 พ.ค. · 19:05 - 20:05</div>
+
+            <div class="a-price-row">
+              <div class="a-price-label ring-fix" title="F4"><span class="fix-num">4</span>ยอดที่ต้องชำระ</div>
+              <div class="a-price-amount">฿1,200</div>
+            </div>
+
+            <input class="field darker ring-fix" placeholder="เบอร์โทรศัพท์" data-fix="F5+F6">
+            <div style="font-size: 9px; color: #16a34a; margin-top: 2px;">✅ F5 drop "*" · F6 placeholder slate-500</div>
+
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-fix" title="F7"><span class="fix-num">7</span>เพิ่มชื่อและอีเมล</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-fix" title="F8"><span class="fix-num">8</span>เพิ่มคำขอพิเศษ</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main ring-fix" title="F9"><span class="fix-num">9</span>ใช้โค้ดส่วนลด</span>
+              <span class="label-hint">ถ้ามี</span>
+            </button>
+
+            <div class="a-trust-footer ring-fix" title="F10">
+              <span class="fix-num">10</span>Powered by <span class="book">Book</span><span class="ease">Ease</span> · LINE @bookease
+            </div>
+          </div>
+          <div style="padding: 0 22px;">
+            <p class="a-micro-pill ring-fix" title="F11"><span class="fix-num">11</span><span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%</p>
+          </div>
+          <div class="cta-zone">
+            <button class="cta">จ่าย ฿1,200</button>
+            <div class="a-cta-implicit ring-fix" title="F12">
+              <span class="fix-num">12</span>กดปุ่ม "จ่าย" ถือว่ายอมรับ <a>เงื่อนไขและนโยบาย</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ 12 fixes (Apple Pay + Stripe + WCAG)</h3>
+      <ul>
+        <li class="fix"><b>F1</b> back = transparent · 22px gray · drop white pill</li>
+        <li class="fix"><b>F2</b> eyebrow = 13px slate-500</li>
+        <li class="fix"><b>F3</b> date = 14px slate-600 medium</li>
+        <li class="fix"><b>F4</b> price label = 14.5px slate-600 (ratio 14.5 vs 28 = 1.93x)</li>
+        <li class="fix"><b>F5</b> drop "*" · ฟีลด์เดียวที่จำเป็น</li>
+        <li class="fix"><b>F6</b> placeholder slate-500 · WCAG 3:1 pass</li>
+        <li class="fix"><b>F7</b> "เพิ่มชื่อและอีเมล" · natural Thai</li>
+        <li class="fix"><b>F8</b> "เพิ่มคำขอพิเศษ" · drop "ถึงร้าน"</li>
+        <li class="fix"><b>F9</b> "ใช้โค้ดส่วนลด" · action-verb · drop "ของขวัญ"</li>
+        <li class="fix"><b>F10</b> Powered by = 12px slate-500</li>
+        <li class="fix"><b>F11</b> 30-นาที pill = 12px label · 11px pill</li>
+        <li class="fix"><b>F12</b> consent caption = 11px slate-500 · <b>readable legal</b></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- VERDICT -->
+<div class="verdict">
+  <h3>📊 Apple/Stripe/WCAG comparison</h3>
+  <div class="scoreboard">
+    <div class="card before">
+      <div class="grade">B+</div>
+      <div class="label">iter6.3 LIVE · functional แต่หลายข้อ sub-min</div>
+    </div>
+    <div class="card before">
+      <div class="grade">F</div>
+      <div class="label">WCAG AA · 9.5px legal text · contrast fail</div>
+    </div>
+    <div class="card after">
+      <div class="grade">A</div>
+      <div class="label">iter6.4 · Apple Pay equivalent</div>
+    </div>
+    <div class="card after">
+      <div class="grade">AA</div>
+      <div class="label">WCAG · ทุก text ≥11px · contrast 3:1+</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14px">🎯 Implementation</h3>
+  <p>
+    <b>Files affected (~30 นาที):</b><br>
+    • <code>frontend/src/assets/styles/payment/PaymentPage.css</code> — back btn transparent · collapse-row 13px<br>
+    • <code>frontend/src/assets/styles/payment/sections/OrderSummarySection.css</code> — eyebrow 13px · when 14px · price-label 14.5px<br>
+    • <code>frontend/src/components/payment/BookerInfoSection.tsx</code> — drop "*" from placeholder<br>
+    • <code>frontend/src/components/payment/StickyPayFooter.tsx</code> — micro-pill 12px · consent 11px<br>
+    • <code>frontend/src/components/payment/TrustFooter.tsx</code> — Powered-by 12px<br>
+    • <code>frontend/src/locales/{th,en,zh}.json</code> — เพิ่มชื่อและอีเมล / เพิ่มคำขอพิเศษ / ใช้โค้ดส่วนลด<br>
+    • <code>frontend/src/components/payment/BookerInfoSection.tsx</code> — placeholder text update<br>
+    • <code>frontend/src/pages/PaymentPage.tsx</code> — collapse label "ใช้โค้ดส่วนลด"
+  </p>
+
+  <h3 style="margin-top:14px">💯 Apple/Stripe pattern matrix</h3>
+  <p>
+    <b>Apple Pay sheet:</b> swipe-to-dismiss (ไม่มี back btn) · subtotal 17pt = amount 17pt · biometric replaces card form<br>
+    <b>Stripe Checkout:</b> "← Back" text link · subtotal 14px label = 14px amount · "Have a discount code?" expandable<br>
+    <b>BookEase iter6.4:</b> ไอคอน "‹" 22px transparent · price-label 14.5px = amount 28px (ratio ~2x) · "ใช้โค้ดส่วนลด" expandable
+  </p>
+
+  <h3 style="margin-top:14px">🚦 Ship · vote ก่อนลุย</h3>
+  <p>
+    1. Approve all 12 fixes? · หรืออยาก tweak F-X อันไหน<br>
+    2. ลุยทันทีหลังพี่ approve? · ETA ~30 นาที · 7 files · zero risk (ทั้งหมดเป็น CSS + copy)<br>
+    3. Bundle กับ menu-ocr Layout 2 ทำพร้อมกัน?
+  </p>
+</div>
+
+</body>
+</html>

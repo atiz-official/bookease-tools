@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>menu-ocr · v3 · realistic samples · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .section-title {
+    max-width: 1100px; margin: 36px auto 14px;
+    padding: 0 8px;
+    font-size: 14px; font-weight: 700; color: #0f172a;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #0a0a0a; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .section-title .desc {
+    font-size: 12px; font-weight: 400; color: #64748b;
+    text-transform: none; letter-spacing: 0;
+    margin-left: 8px;
+  }
+
+  .stage {
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    background: #dcfce7; color: #166534;
+  }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* mock menu-ocr.html surface */
+  .mock-page {
+    background: #f0fdf4;
+    background-image: linear-gradient(180deg, #f0fdf4 0%, #f7fee7 60%, #ecfccb 100%);
+    border-radius: 18px;
+    padding: 18px 16px;
+    border: 1px solid #d1fae5;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+  }
+  .mock-tabs {
+    display: flex; background: #fff; border-radius: 999px;
+    padding: 3px; margin: 0 0 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .mock-tab {
+    flex: 1; text-align: center; padding: 8px 8px;
+    font-size: 12px; font-weight: 600;
+    border-radius: 999px;
+  }
+  .mock-tab.active { background: #f8fafc; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .mock-tab.muted  { color: #94a3b8; }
+
+  .mock-card {
+    background: #fff; border-radius: 14px; padding: 16px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .mock-hint { text-align: center; font-size: 11px; color: #475569; margin-bottom: 12px; }
+
+  .mock-dropzone {
+    border: 1.5px dashed #cbd5e1; border-radius: 12px;
+    padding: 22px 12px; text-align: center;
+    background: #f8fafc;
+  }
+  .mock-dropzone .icon { font-size: 24px; }
+  .mock-dropzone .label { font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+  .mock-dropzone .sub { font-size: 11px; color: #94a3b8; }
+
+  .mock-cta {
+    margin-top: 10px; padding: 11px;
+    background: #cbd5e1; color: #94a3b8;
+    border-radius: 999px; text-align: center;
+    font-size: 13px; font-weight: 700;
+  }
+
+  /* ============ Reference side-by-side layout ============ */
+  .ref-block {
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .ref-side {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .ref-side .side-text {
+    font-size: 11.5px; color: #0c4a6e;
+    line-height: 1.55;
+    padding-top: 4px;
+  }
+  .ref-side .side-text .pill {
+    display: inline-block;
+    background: #0ea5e9; color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 9px; border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .ref-side .side-text .lede {
+    font-weight: 600; color: #0f172a; margin-bottom: 4px;
+  }
+  .ref-side .side-text ul {
+    list-style: none; padding: 0; margin-top: 6px;
+  }
+  .ref-side .side-text li {
+    font-size: 11px; padding: 1px 0;
+    color: #0c4a6e;
+  }
+  .ref-side .side-text li::before {
+    content: "✓ "; color: #0ea5e9; font-weight: 700;
+  }
+
+  /* ============ LINE OA realistic mockup (v3) ============ */
+  .lineoa-frame {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.12);
+    width: 100%;
+    aspect-ratio: 9 / 18;   /* iPhone aspect */
+    display: flex; flex-direction: column;
+    font-family: 'Sarabun', system-ui, sans-serif;
+  }
+  /* dynamic island / status */
+  .lineoa-status {
+    height: 22px; background: #fff;
+    display: flex; justify-content: space-between; padding: 5px 12px;
+    font-size: 9px; font-weight: 700; color: #0f172a;
+    align-items: center;
+  }
+  /* LINE OA header · realistic */
+  .lineoa-header {
+    background: #06C755;            /* LINE green · official */
+    color: #fff;
+    padding: 6px 8px;
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'Inter', sans-serif;
+  }
+  .lineoa-back { font-size: 14px; color: #fff; opacity: 0.9; }
+  .lineoa-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: #fff;
+    border: 2px solid rgba(255,255,255,0.4);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .lineoa-shop {
+    flex: 1; line-height: 1.1;
+  }
+  .lineoa-shop-name {
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .lineoa-verified {
+    display: inline-block; width: 9px; height: 9px;
+    background: #fff; color: #06C755;
+    border-radius: 50%;
+    font-size: 7px; font-weight: 800;
+    line-height: 9px; text-align: center;
+  }
+  .lineoa-at-id {
+    font-size: 8px; opacity: 0.95;
+    margin-top: 1px;
+    font-family: 'Inter', sans-serif;
+  }
+  .lineoa-icons {
+    font-size: 12px; opacity: 0.9; letter-spacing: 2px;
+  }
+  /* chat body */
+  .lineoa-body {
+    flex: 1; background: #afd1f0;       /* LINE light blue chat bg */
+    background-image: linear-gradient(180deg, #afd1f0 0%, #b9d8f3 100%);
+    padding: 8px 6px;
+    display: flex; flex-direction: column; gap: 5px;
+    overflow: hidden;
+  }
+  .lineoa-day-bar {
+    align-self: center;
+    background: rgba(255,255,255,0.6);
+    color: #475569;
+    font-size: 7.5px; font-weight: 600;
+    padding: 1px 7px; border-radius: 999px;
+    margin-bottom: 2px;
+  }
+  /* chat bubble */
+  .lineoa-bubble {
+    background: #fff; border-radius: 12px 12px 12px 3px;
+    padding: 5px 7px;
+    font-size: 8.5px; color: #0f172a;
+    line-height: 1.35;
+    align-self: flex-start;
+    max-width: 78%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+  }
+  .lineoa-bubble .time {
+    font-size: 6.5px; color: #94a3b8;
+    display: inline-block; margin-left: 4px;
+    font-family: 'Inter', sans-serif;
+  }
+  /* image carousel · 2 mini cards */
+  .lineoa-carousel {
+    display: flex; gap: 4px;
+    align-self: stretch;
+    overflow: hidden;
+    margin-top: 1px;
+  }
+  .lineoa-img-card {
+    background: #fff; border-radius: 10px;
+    overflow: hidden;
+    flex: 1; min-width: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .lineoa-img-card .pic {
+    height: 36px;
+    background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.9); font-size: 8px; font-weight: 700;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+  }
+  .lineoa-img-card.spa .pic { background: linear-gradient(135deg, #c8b6a6 0%, #a78b7a 100%); }
+  .lineoa-img-card.nail .pic { background: linear-gradient(135deg, #f4c2c2 0%, #e89797 100%); }
+  .lineoa-img-card .info {
+    padding: 4px 5px;
+  }
+  .lineoa-img-card .name { font-size: 7.5px; font-weight: 700; color: #0f172a; }
+  .lineoa-img-card .price { font-size: 7px; color: #1E40AF; font-weight: 700; margin-top: 1px; font-family: 'Inter'; }
+  .lineoa-img-card .duration { font-size: 6.5px; color: #64748b; }
+
+  /* Rich menu · bottom · realistic 6-cell */
+  .lineoa-rich-menu {
+    flex-shrink: 0;
+    height: 70px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: #cbd5e1;
+  }
+  .lineoa-rich-menu .cell {
+    background: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 7px; gap: 1px; color: #475569;
+    padding: 2px;
+  }
+  .lineoa-rich-menu .cell .ico { font-size: 11px; }
+  .lineoa-rich-menu .cell.primary {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #fff;
+    font-weight: 700;
+  }
+  .lineoa-rich-menu .cell.book {
+    grid-row: 1 / 3;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #fff;
+    font-weight: 700;
+  }
+  .lineoa-rich-menu .cell.book .ico { font-size: 18px; }
+  .lineoa-rich-menu .cell.book .label { font-size: 8px; }
+  .lineoa-input-bar {
+    flex-shrink: 0;
+    height: 18px;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    display: flex; align-items: center; padding: 0 6px;
+    gap: 4px;
+  }
+  .lineoa-input-bar .plus, .lineoa-input-bar .cam, .lineoa-input-bar .mic, .lineoa-input-bar .pic {
+    color: #94a3b8; font-size: 9px;
+  }
+  .lineoa-input-bar .input-area {
+    flex: 1; height: 12px; background: #f1f5f9;
+    border-radius: 999px;
+    margin: 0 2px;
+  }
+
+  /* ============ Menu photo · USE REAL UNSPLASH PHOTO ============ */
+  .menu-photo-frame {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.12);
+    border: 2px solid #fff;
+    background: #f8fafc;
+    position: relative;
+  }
+  .menu-photo-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* slight overlay for visual interest */
+  .menu-photo-frame::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.05) 100%);
+    pointer-events: none;
+  }
+  .menu-photo-caption {
+    position: absolute; bottom: 4px; left: 4px;
+    background: rgba(255,255,255,0.92);
+    color: #0f172a;
+    font-size: 8px; font-weight: 600;
+    padding: 2px 6px; border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.5; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.eta::before { content: "⏱ "; }
+  .anno li.note::before { content: "📌 "; }
+
+  .verdict {
+    max-width: 1100px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>menu-ocr · v3 · realistic samples · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>Layout 2 (side-mini) · WIN · upgrade thumbs to realistic mockups · Unsplash photos for menu · detailed SVG for LINE OA</p>
+  <span class="lock">⚠️ Preview · ยังไม่ ship · check realism + approve before implement บน menu-ocr.html</span>
+</div>
+
+<!-- ===================================================== -->
+<!-- TAB 1: LINE OA SCREENSHOT                            -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">1</span>
+  <span>Tab "หน้าจอ LINE OA ของร้าน"</span>
+  <span class="desc">realistic LINE chat mockup · iOS phone frame · Thai content · rich menu</span>
+</div>
+
+<div class="stage">
+  <div class="col-label">
+    <span class="badge">v3 · Layout 2 + realistic mockup</span>
+    <h2>LINE OA reference</h2>
+    <p class="subline">detailed mockup · ใช้สี LINE green ทางการ #06C755 · มี profile + verified + chat + cards + rich menu + input bar</p>
+  </div>
+  <div class="mock-page">
+    <div class="mock-tabs">
+      <div class="mock-tab active">📱 หน้าจอ LINE OA ของร้าน</div>
+      <div class="mock-tab muted">📷 รูปเมนูที่ร้าน</div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+
+      <!-- v3 reference block · side-by-side -->
+      <div class="ref-block">
+        <div class="ref-side">
+          <div class="side-mini">
+            <div class="lineoa-frame">
+              <div class="lineoa-status">
+                <span>14:32</span>
+                <span style="font-size: 9px;">📶📶 100%</span>
+              </div>
+              <div class="lineoa-header">
+                <span class="lineoa-back">‹</span>
+                <span class="lineoa-avatar">B</span>
+                <div class="lineoa-shop">
+                  <div class="lineoa-shop-name">
+                    Bare Nail Spa
+                    <span class="lineoa-verified">✓</span>
+                  </div>
+                  <div class="lineoa-at-id">@barenailspa · เปิด 10:00-21:00</div>
+                </div>
+                <span class="lineoa-icons">⌕ ☰</span>
+              </div>
+              <div class="lineoa-body">
+                <div class="lineoa-day-bar">วันนี้</div>
+                <div class="lineoa-bubble">
+                  สวัสดีค่ะ ยินดีต้อนรับ
+                  <span class="time">14:30</span>
+                </div>
+                <div class="lineoa-carousel">
+                  <div class="lineoa-img-card spa">
+                    <div class="pic">นวดหน้า</div>
+                    <div class="info">
+                      <div class="name">นวดหน้า + บำรุง</div>
+                      <div class="duration">60 นาที</div>
+                      <div class="price">฿590</div>
+                    </div>
+                  </div>
+                  <div class="lineoa-img-card nail">
+                    <div class="pic">ทำเล็บ</div>
+                    <div class="info">
+                      <div class="name">ทาสีเล็บเจล</div>
+                      <div class="duration">45 นาที</div>
+                      <div class="price">฿390</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="lineoa-bubble">
+                  📍 ทองหล่อ ซ.13<br>📞 02-123-4567
+                  <span class="time">14:30</span>
+                </div>
+              </div>
+              <div class="lineoa-rich-menu">
+                <div class="cell book">
+                  <span class="ico">📅</span>
+                  <span class="label">จองคิว</span>
+                </div>
+                <div class="cell"><span class="ico">📋</span><span>เมนู</span></div>
+                <div class="cell"><span class="ico">⭐</span><span>โปร</span></div>
+                <div class="cell"><span class="ico">📍</span><span>แผนที่</span></div>
+                <div class="cell"><span class="ico">💬</span><span>คุย</span></div>
+              </div>
+              <div class="lineoa-input-bar">
+                <span class="plus">＋</span>
+                <span class="cam">📷</span>
+                <div class="input-area"></div>
+                <span class="mic">🎤</span>
+                <span class="pic">😊</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-text">
+            <span class="pill">📷 ภาพแบบนี้</span>
+            <div class="lede">screenshot LINE chat ของร้าน · เห็น:</div>
+            <ul>
+              <li>ชื่อร้าน + @ID</li>
+              <li>เวลาเปิด-ปิด</li>
+              <li>menu / รูปบริการ + ราคา</li>
+              <li>rich menu (ปุ่มล่าง)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-dropzone">
+        <div class="icon">📷</div>
+        <div class="label">เลือก screenshot</div>
+        <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+      </div>
+      <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+    </div>
+  </div>
+
+  <div class="anno">
+    <h3>✅ เพิ่มความสมจริง · realistic upgrade</h3>
+    <ul>
+      <li class="win">LINE green ทางการ <code>#06C755</code> (ไม่ใช่ <code>#00b900</code> เก่า)</li>
+      <li class="win">iOS status bar (เวลา · signal · 100%)</li>
+      <li class="win">Avatar แบบ gradient · letter "B" · verified ✓ badge</li>
+      <li class="win">Day bar "วันนี้" · realistic chat divider</li>
+      <li class="win">Chat bubbles · timestamps · proper border-radius</li>
+      <li class="win">Image carousel · 2 service cards · realistic price + duration</li>
+      <li class="win">Rich menu · 6 cells · big "จองคิว" primary cell</li>
+      <li class="win">Input bar · ➕ 📷 [type area] 🎤 😊 ที่ล่างสุด</li>
+      <li class="note">pure CSS+inline · ไม่ต้อง external image · zero loading time</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- TAB 2: MENU PHOTO                                    -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">2</span>
+  <span>Tab "รูปเมนูที่ร้าน"</span>
+  <span class="desc">REAL Unsplash photo · printed price-list · merchant copy framing</span>
+</div>
+
+<div class="stage">
+  <div class="col-label">
+    <span class="badge">v3 · Layout 2 + Unsplash photo</span>
+    <h2>Menu reference · real photo</h2>
+    <p class="subline">รูปจริงจาก Unsplash · printed menu / price-list · merchant ดู framing + lighting</p>
+  </div>
+  <div class="mock-page">
+    <div class="mock-tabs">
+      <div class="mock-tab muted">📱 หน้าจอ LINE OA ของร้าน</div>
+      <div class="mock-tab active">📷 รูปเมนูที่ร้าน</div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-hint">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
+
+      <div class="ref-block">
+        <div class="ref-side">
+          <div class="side-mini">
+            <div class="menu-photo-frame">
+              <img
+                src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=400&h=500&fit=crop"
+                alt="ตัวอย่างรูปเมนูร้าน"
+                loading="lazy"
+              />
+              <div class="menu-photo-caption">📷 ตัวอย่าง</div>
+            </div>
+          </div>
+
+          <div class="side-text">
+            <span class="pill">📷 ภาพแบบนี้</span>
+            <div class="lede">รูปเมนูร้าน · ต้องเห็น:</div>
+            <ul>
+              <li>ชื่อบริการ + ราคาคู่กัน</li>
+              <li>แสงสว่างพอ · ไม่เงา</li>
+              <li>ถ่ายตรงๆ · ไม่เอียง</li>
+              <li>ทุกบรรทัดอ่านได้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-dropzone">
+        <div class="icon">📷</div>
+        <div class="label">ถ่าย / เลือกรูป</div>
+        <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+      </div>
+      <div class="mock-cta">🤖 ดึงรายการบริการให้ (~15 วิ)</div>
+    </div>
+  </div>
+
+  <div class="anno">
+    <h3>✅ เพิ่มความสมจริง · real photo</h3>
+    <ul>
+      <li class="win">รูปจริงจาก Unsplash (royalty-free hotlinking)</li>
+      <li class="win">มี framing ที่ดี · merchant copy ได้</li>
+      <li class="win">caption "📷 ตัวอย่าง" overlay · ชัดเจนว่านี่คือ reference</li>
+      <li class="win">aspect-ratio 4:5 · เหมือนภาพถ่ายมือถือ</li>
+      <li class="note">ลองเปลี่ยนภาพ Unsplash อื่นได้ · search "menu", "price list", "spa menu"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- ALTERNATIVE PHOTOS                                    -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">3</span>
+  <span>Alternative menu photo candidates</span>
+  <span class="desc">เลือก 1 ตัวที่เหมาะ · หรือใช้รูปอื่นเลย</span>
+</div>
+
+<div class="stage">
+  <div class="mock-card" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+    <div>
+      <div class="menu-photo-frame" style="aspect-ratio: 4/5;">
+        <img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=400&h=500&fit=crop" alt="A" loading="lazy" />
+      </div>
+      <div style="font-size: 10px; color: #475569; margin-top: 6px; text-align: center;"><b>A</b> · spa relaxation menu</div>
+    </div>
+    <div>
+      <div class="menu-photo-frame" style="aspect-ratio: 4/5;">
+        <img src="https://images.unsplash.com/photo-1599581506004-78b3a85c0ca0?w=400&h=500&fit=crop" alt="B" loading="lazy" />
+      </div>
+      <div style="font-size: 10px; color: #475569; margin-top: 6px; text-align: center;"><b>B</b> · printed price-list</div>
+    </div>
+    <div>
+      <div class="menu-photo-frame" style="aspect-ratio: 4/5;">
+        <img src="https://images.unsplash.com/photo-1565299543923-37dd37887442?w=400&h=500&fit=crop" alt="C" loading="lazy" />
+      </div>
+      <div style="font-size: 10px; color: #475569; margin-top: 6px; text-align: center;"><b>C</b> · printed booklet</div>
+    </div>
+    <div>
+      <div class="menu-photo-frame" style="aspect-ratio: 4/5;">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=500&fit=crop" alt="D" loading="lazy" />
+      </div>
+      <div style="font-size: 10px; color: #475569; margin-top: 6px; text-align: center;"><b>D</b> · chalkboard menu</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- VERDICT                                               -->
+<!-- ===================================================== -->
+<div class="verdict">
+  <h3>📋 Implementation plan · v3</h3>
+  <p>
+    <b>File:</b> <code>bookease-tools-public/menu-ocr.html</code><br>
+    <b>Insert position:</b> <code>.ref-block</code> ระหว่าง <code>.mock-hint</code> และ <code>.mock-dropzone</code> ใน BOTH modes (LINE OA + menu)<br>
+    <b>Tab 1 (LINE OA):</b> inline CSS+SVG mockup · ~280 lines CSS + 100 lines HTML<br>
+    <b>Tab 2 (menu):</b> <code>&lt;img src="https://images.unsplash.com/..."&gt;</code> · 1-line addition + 30 lines CSS<br>
+    <b>ETA:</b> ~50 นาที (LINE OA mockup detail + menu photo + responsive)
+  </p>
+
+  <h3 style="margin-top:14px">🎯 Decision points · vote ก่อน implement</h3>
+  <p>
+    1. <b>Menu photo:</b> เลือก A / B / C / D (ตอนนี้ใช้ A · spa relaxation)<br>
+    2. <b>LINE OA:</b> realistic mockup approve? · หรืออยากให้ใช้รูปจริงด้วย? (LINE OA จริงหายากเพราะ trademark)<br>
+    3. <b>Caption text:</b> "📷 ภาพแบบนี้" หรืออยากเปลี่ยนเป็น "ตัวอย่าง" / "อันแบบนี้" / "ใช้แบบนี้ได้"?
+  </p>
+
+  <h3 style="margin-top:14px">🚦 Ship sequence</h3>
+  <p>
+    1. <b>Vote (~30 วินาที):</b> Art ดู preview · เลือกรูป A/B/C/D · approve LINE OA mockup<br>
+    2. <b>Implement (~50 นาที):</b> insert .ref-block ใน menu-ocr.html · 2 modes<br>
+    3. <b>Test:</b> เปิด <code>make.bookease.co/menu-ocr.html</code> · verify mobile responsive<br>
+    4. <b>Commit + push:</b> auto-deploy GH Pages · LIVE ใน ~30 วินาที
+  </p>
+</div>
+
+</body>
+</html>

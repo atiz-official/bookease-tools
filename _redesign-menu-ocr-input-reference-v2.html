@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>menu-ocr · input reference visuals · v2 · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .section-title {
+    max-width: 1480px; margin: 36px auto 14px;
+    padding: 0 8px;
+    font-size: 14px; font-weight: 700; color: #0f172a;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #0a0a0a; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .section-title .desc {
+    font-size: 12px; font-weight: 400; color: #64748b;
+    text-transform: none; letter-spacing: 0;
+    margin-left: 8px;
+  }
+
+  .stage {
+    max-width: 1480px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start;
+  }
+  @media (max-width: 1100px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.current .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.option1 .badge { background: #dbeafe; color: #1e3a8a; }
+  .col-label.option2 .badge { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 13px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.5; }
+
+  /* mock menu-ocr.html surface */
+  .mock-page {
+    background: #f0fdf4;
+    background-image: linear-gradient(180deg, #f0fdf4 0%, #f7fee7 60%, #ecfccb 100%);
+    border-radius: 18px;
+    padding: 16px 14px;
+    border: 1px solid #d1fae5;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+  }
+  .mock-tabs {
+    display: flex; background: #fff; border-radius: 999px;
+    padding: 3px; margin: 0 0 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .mock-tab {
+    flex: 1; text-align: center; padding: 7px 8px;
+    font-size: 11px; font-weight: 600;
+    border-radius: 999px;
+  }
+  .mock-tab.active { background: #f8fafc; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .mock-tab.muted  { color: #94a3b8; }
+
+  .mock-card {
+    background: #fff; border-radius: 14px; padding: 14px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .mock-hint { text-align: center; font-size: 10.5px; color: #475569; margin-bottom: 12px; }
+
+  .mock-dropzone {
+    border: 1.5px dashed #cbd5e1; border-radius: 12px;
+    padding: 20px 12px; text-align: center;
+    background: #f8fafc;
+  }
+  .mock-dropzone .icon { font-size: 22px; }
+  .mock-dropzone .label { font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+  .mock-dropzone .sub { font-size: 10px; color: #94a3b8; }
+
+  .mock-cta {
+    margin-top: 8px; padding: 10px;
+    background: #cbd5e1; color: #94a3b8;
+    border-radius: 999px; text-align: center;
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* ============ LINE OA mock screenshot ============ */
+  .lineoa-frame {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.08);
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    max-width: 220px;
+    margin: 0 auto;
+    display: flex; flex-direction: column;
+  }
+  .lineoa-status {
+    height: 22px; background: #fff;
+    display: flex; justify-content: space-between; padding: 5px 10px;
+    font-size: 9px; font-weight: 600; color: #0f172a;
+    align-items: center;
+  }
+  .lineoa-header {
+    background: #00b900;
+    color: #fff;
+    padding: 8px 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lineoa-back { font-size: 14px; color: #fff; }
+  .lineoa-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: #00b900;
+  }
+  .lineoa-shop {
+    flex: 1; line-height: 1.1;
+  }
+  .lineoa-shop-name {
+    font-size: 11px; font-weight: 700;
+  }
+  .lineoa-at-id {
+    font-size: 8px; opacity: 0.85;
+  }
+  .lineoa-body {
+    flex: 1; background: #b3d9f5;
+    padding: 8px 6px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .lineoa-card-msg {
+    background: #fff; border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 8px; color: #0f172a;
+    line-height: 1.3;
+    align-self: flex-start;
+    max-width: 80%;
+  }
+  .lineoa-card-msg.menu-card {
+    width: 100%; max-width: 100%;
+    align-self: stretch;
+    padding: 0;
+    overflow: hidden;
+  }
+  .lineoa-card-msg.menu-card .card-img {
+    height: 50px;
+    background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 9px; font-weight: 700;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+  }
+  .lineoa-card-msg.menu-card .card-info {
+    padding: 5px 7px;
+  }
+  .lineoa-card-msg.menu-card .card-info .name { font-size: 8.5px; font-weight: 700; }
+  .lineoa-card-msg.menu-card .card-info .meta { font-size: 7.5px; color: #64748b; margin-top: 2px; }
+
+  .lineoa-rich-menu {
+    background: #fff;
+    height: 60px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background-color: #e5e7eb;
+  }
+  .lineoa-rich-menu .cell {
+    background: #fff; padding: 4px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 8px; gap: 2px;
+  }
+  .lineoa-rich-menu .cell .ico { font-size: 14px; }
+  .lineoa-rich-menu .cell.primary {
+    background: #ffd84d;
+    color: #0f172a;
+  }
+
+  /* annotation arrows for option 1 */
+  .lineoa-annotated-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .anno-arrow {
+    position: absolute;
+    background: #1E40AF; color: #fff;
+    font-size: 8.5px; font-weight: 600;
+    padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap;
+    z-index: 5;
+  }
+  .anno-arrow::before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+  }
+  .anno-arrow.left::before {
+    border-width: 4px 0 4px 8px;
+    border-color: transparent transparent transparent #1E40AF;
+    right: -7px; top: 50%; transform: translateY(-50%);
+  }
+  .anno-arrow.right::before {
+    border-width: 4px 8px 4px 0;
+    border-color: transparent #1E40AF transparent transparent;
+    left: -7px; top: 50%; transform: translateY(-50%);
+  }
+
+  /* ============ Menu photo mock ============ */
+  .menu-photo-frame {
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto;
+    aspect-ratio: 4 / 5;
+    background: #fef3c7;
+    background-image: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(15,23,42,0.12);
+    border: 1px solid #f59e0b;
+    position: relative;
+    padding: 12px 10px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .menu-photo-frame .menu-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px; font-weight: 600;
+    color: #78350f;
+    text-align: center;
+    border-bottom: 1px solid #b45309;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+  }
+  .menu-photo-frame .menu-row {
+    display: flex; justify-content: space-between;
+    font-size: 9px; color: #78350f;
+    line-height: 1.3;
+    padding: 2px 0;
+  }
+  .menu-photo-frame .menu-row .item {
+    font-weight: 600;
+  }
+  .menu-photo-frame .menu-row .price {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+  .menu-photo-frame .menu-row.sub {
+    font-size: 8px; opacity: 0.7;
+    padding-left: 8px;
+  }
+
+  /* annotated wrap for menu */
+  .menu-photo-wrap {
+    position: relative; width: 100%;
+  }
+
+  /* ============ Reference block (option 1 above dropzone, option 2 beside) ============ */
+  .ref-block {
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .ref-block .ref-label {
+    font-size: 11px; font-weight: 700; color: #075985;
+    text-align: center; margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .ref-block .ref-label .ico {
+    color: #0284c7;
+  }
+  .ref-block .ref-help {
+    font-size: 10px; color: #0c4a6e;
+    text-align: center; margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* option 2 side-by-side layout */
+  .ref-side-layout {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  .ref-side-layout .side-mini {
+    /* shrunk version */
+  }
+  .ref-side-layout .side-mini .lineoa-frame,
+  .ref-side-layout .side-mini .menu-photo-frame {
+    max-width: 100%;
+  }
+  .ref-side-layout .side-text {
+    font-size: 10.5px; color: #0c4a6e;
+    line-height: 1.55;
+    padding-top: 2px;
+  }
+  .ref-side-layout .side-text .pill {
+    display: inline-block;
+    background: #0ea5e9; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    margin-bottom: 6px;
+  }
+  .ref-side-layout .side-text ul {
+    list-style: none; padding: 0; margin-top: 4px;
+  }
+  .ref-side-layout .side-text li {
+    font-size: 10px; padding: 1px 0;
+  }
+  .ref-side-layout .side-text li::before {
+    content: "✓ "; color: #0ea5e9; font-weight: 700;
+  }
+
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 11px 13px; margin-top: 10px;
+  }
+  .anno h3 { font-size: 11px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 10.5px; color: #475569; padding: 1px 0; line-height: 1.5; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+  .anno li.eta::before { content: "⏱ "; }
+
+  .verdict {
+    max-width: 1480px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>menu-ocr.html · input reference · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>"แสดงให้ merchant เห็นว่าเราขออะไร" · เป็น <b>visual reference</b> ใน 2 tabs · ไม่ใช่ demo mode</p>
+  <span class="lock">⚠️ Preview · ยังไม่ ship · vote layout 1 / 2 ก่อนลุย</span>
+</div>
+
+<!-- ===================================================== -->
+<!-- TAB 1: LINE OA SCREENSHOT                            -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">1</span>
+  <span>Tab "หน้าจอ LINE OA ของร้าน"</span>
+  <span class="desc">เราขอ screenshot ของ LINE chat header ที่ร้านส่งให้ลูกค้า</span>
+</div>
+
+<div class="stage">
+
+  <!-- Current -->
+  <div>
+    <div class="col-label current">
+      <span class="badge">current · LIVE</span>
+      <h2>เปล่า · ไม่มี reference</h2>
+      <p class="subline">merchant งง "screenshot อะไร · จาก LINE app ตรงไหน"</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab muted">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issue</h3>
+      <ul>
+        <li class="miss">"screenshot จาก LINE app" · ไม่ระบุชัดว่าหน้าไหน</li>
+        <li class="miss">merchant ส่ง screenshot จากรายการ chat list · OCR fail</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Layout 1: above dropzone, big -->
+  <div>
+    <div class="col-label option1">
+      <span class="badge">layout 1 · big above</span>
+      <h2>Reference ใหญ่เหนือ dropzone</h2>
+      <p class="subline">เห็นเด่น · เข้าใจทันทีก่อนหา upload · merchant follow visual ทันที</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab muted">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+
+        <!-- Reference block · big above -->
+        <div class="ref-block">
+          <div class="ref-label">📷 ภาพแบบนี้ที่ต้องการ</div>
+          <div class="lineoa-annotated-wrap">
+            <div class="lineoa-frame">
+              <div class="lineoa-status">
+                <span>14:32</span><span>📶 100%</span>
+              </div>
+              <div class="lineoa-header">
+                <span class="lineoa-back">‹</span>
+                <span class="lineoa-avatar">B</span>
+                <div class="lineoa-shop">
+                  <div class="lineoa-shop-name">Bare Nail Spa</div>
+                  <div class="lineoa-at-id">@barenailspa · เปิด 10:00-21:00</div>
+                </div>
+              </div>
+              <div class="lineoa-body">
+                <div class="lineoa-card-msg">สวัสดีค่ะ · ยินดีต้อนรับสู่ Bare Nail Spa 💅</div>
+                <div class="lineoa-card-msg menu-card">
+                  <div class="card-img">นวดหน้า</div>
+                  <div class="card-info">
+                    <div class="name">นวดหน้า + บำรุง</div>
+                    <div class="meta">60 นาที · ฿590</div>
+                  </div>
+                </div>
+                <div class="lineoa-card-msg">เปิดบริการ 10:00 - 21:00 · จันทร์-อาทิตย์</div>
+              </div>
+              <div class="lineoa-rich-menu">
+                <div class="cell primary"><span class="ico">📅</span><span>จองคิว</span></div>
+                <div class="cell"><span class="ico">📋</span><span>เมนู</span></div>
+                <div class="cell"><span class="ico">💬</span><span>คุยกับเรา</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ref-help">
+            ↑ เปิด LINE app · กดเข้าห้อง chat ของร้าน · capture screenshot
+          </div>
+        </div>
+
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">เด่น · ลูกค้าเห็นทันทีก่อนกด upload</li>
+        <li class="win">มี help text ใต้ภาพ · บอกว่าเปิดยังไง</li>
+        <li class="win">aspect-ratio 9:16 · เหมือน iPhone screenshot</li>
+        <li class="miss">กิน vertical space · ต้อง scroll มากขึ้น</li>
+        <li class="eta">~25 นาที · 1 inline SVG mockup ต่อ tab</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Layout 2: side-by-side, compact -->
+  <div>
+    <div class="col-label option2">
+      <span class="badge">layout 2 · side-mini ⭐</span>
+      <h2>Reference ข้าง dropzone</h2>
+      <p class="subline">เล็กแต่อ่านได้ · ประหยัด vertical space · checklist ขวา</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab muted">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+
+        <!-- Reference: side-by-side compact -->
+        <div class="ref-side-layout">
+          <div class="side-mini">
+            <div class="lineoa-frame">
+              <div class="lineoa-status">
+                <span>14:32</span><span>📶</span>
+              </div>
+              <div class="lineoa-header">
+                <span class="lineoa-back">‹</span>
+                <span class="lineoa-avatar">B</span>
+                <div class="lineoa-shop">
+                  <div class="lineoa-shop-name">Bare Nail Spa</div>
+                  <div class="lineoa-at-id">@barenailspa</div>
+                </div>
+              </div>
+              <div class="lineoa-body">
+                <div class="lineoa-card-msg">สวัสดีค่ะ 💅</div>
+                <div class="lineoa-card-msg">เปิด 10:00-21:00</div>
+              </div>
+              <div class="lineoa-rich-menu">
+                <div class="cell primary"><span class="ico">📅</span></div>
+                <div class="cell"><span class="ico">📋</span></div>
+                <div class="cell"><span class="ico">💬</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="side-text">
+            <span class="pill">📷 ภาพแบบนี้</span>
+            <div>screenshot LINE chat ของร้าน · มี:</div>
+            <ul>
+              <li>ชื่อร้าน + @ID</li>
+              <li>เวลาเปิด-ปิด</li>
+              <li>menu / รายการบริการ</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">ประหยัด space · ภาพเล็กข้าง · checklist ชัด</li>
+        <li class="win">checklist บอกข้อมูลที่จะถูก extract · ลด surprise</li>
+        <li class="win">caravan-friendly · merchant scan visual + checklist พร้อมกัน</li>
+        <li class="miss">ภาพเล็ก · รายละเอียดเห็นยากกว่า layout 1</li>
+        <li class="eta">~30 นาที · same SVG + flex 2-col layout</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- TAB 2: MENU PHOTO                                    -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">2</span>
+  <span>Tab "รูปเมนูที่ร้าน"</span>
+  <span class="desc">เราขอรูปถ่าย menu / price-list ของร้าน · OCR ดึงรายการบริการ</span>
+</div>
+
+<div class="stage">
+
+  <!-- Current -->
+  <div>
+    <div class="col-label current">
+      <span class="badge">current · LIVE</span>
+      <h2>เปล่า · ไม่มี reference</h2>
+      <p class="subline">merchant งง "ถ่ายเมนูยังไง · มุมไหน"</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab muted">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab active">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">ถ่าย / เลือกรูป</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงรายการบริการให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issue</h3>
+      <ul>
+        <li class="miss">"แสงสว่างพอ" · text only · ไม่มี visual cue</li>
+        <li class="miss">merchant ถ่ายมุมเอียง · OCR fail</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Layout 1: above dropzone, big -->
+  <div>
+    <div class="col-label option1">
+      <span class="badge">layout 1 · big above</span>
+      <h2>Reference ใหญ่เหนือ dropzone</h2>
+      <p class="subline">menu mockup ใหญ่ · merchant copy mood + framing</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab muted">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab active">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
+
+        <div class="ref-block">
+          <div class="ref-label">📷 ภาพแบบนี้ที่ต้องการ</div>
+          <div class="menu-photo-wrap">
+            <div class="menu-photo-frame">
+              <div class="menu-title">เมนูบริการ</div>
+              <div class="menu-row">
+                <span class="item">นวดหน้า + บำรุง</span>
+                <span class="price">฿590</span>
+              </div>
+              <div class="menu-row sub"><span>60 นาที</span><span></span></div>
+              <div class="menu-row">
+                <span class="item">ทาสีเล็บเจล</span>
+                <span class="price">฿390</span>
+              </div>
+              <div class="menu-row sub"><span>45 นาที</span><span></span></div>
+              <div class="menu-row">
+                <span class="item">ต่อเล็บอะคริลิก</span>
+                <span class="price">฿890</span>
+              </div>
+              <div class="menu-row sub"><span>90 นาที</span><span></span></div>
+              <div class="menu-row">
+                <span class="item">นวดเท้า + แช่</span>
+                <span class="price">฿450</span>
+              </div>
+              <div class="menu-row sub"><span>50 นาที</span><span></span></div>
+              <div class="menu-row">
+                <span class="item">ขัดผิวกาย</span>
+                <span class="price">฿690</span>
+              </div>
+            </div>
+          </div>
+          <div class="ref-help">
+            ↑ ถ่ายตรงๆ · แสงพอ · เห็นทุกบรรทัด · ไม่เอียง
+          </div>
+        </div>
+
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">ถ่าย / เลือกรูป</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงรายการบริการให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">visual blueprint · merchant ถ่ายมุมเดียวกัน</li>
+        <li class="win">แสดง pattern · "ชื่อ - ราคา" คู่ต่อบรรทัด</li>
+        <li class="win">ระบุ "ถ่ายตรงๆ · แสงพอ" คู่ visual</li>
+        <li class="miss">กิน vertical space</li>
+        <li class="eta">~25 นาที · 1 SVG/CSS mockup</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Layout 2: side-by-side -->
+  <div>
+    <div class="col-label option2">
+      <span class="badge">layout 2 · side-mini ⭐</span>
+      <h2>Reference ข้าง dropzone</h2>
+      <p class="subline">menu thumb ซ้าย · 3-bullet checklist ขวา</p>
+    </div>
+    <div class="mock-page">
+      <div class="mock-tabs">
+        <div class="mock-tab muted">📱 หน้าจอ LINE OA</div>
+        <div class="mock-tab active">📷 รูปเมนู</div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-hint">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
+
+        <div class="ref-side-layout">
+          <div class="side-mini">
+            <div class="menu-photo-frame">
+              <div class="menu-title">เมนู</div>
+              <div class="menu-row"><span class="item">นวดหน้า</span><span class="price">฿590</span></div>
+              <div class="menu-row"><span class="item">ทาสีเจล</span><span class="price">฿390</span></div>
+              <div class="menu-row"><span class="item">ต่อเล็บ</span><span class="price">฿890</span></div>
+              <div class="menu-row"><span class="item">นวดเท้า</span><span class="price">฿450</span></div>
+            </div>
+          </div>
+          <div class="side-text">
+            <span class="pill">📷 ภาพแบบนี้</span>
+            <div>ถ่ายเมนูร้าน · มี:</div>
+            <ul>
+              <li>ชื่อบริการ + ราคาคู่กัน</li>
+              <li>แสงสว่างพอ · ไม่เงา</li>
+              <li>ถ่ายตรงๆ · ไม่เอียง</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">ถ่าย / เลือกรูป</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงรายการบริการให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">checklist ขวา · 3-bullet criteria ชัด</li>
+        <li class="win">ภาพ thumb แต่ pattern ชัด · ราคาคู่ชื่อ</li>
+        <li class="win">ประหยัด space · ทุกอย่างใน 1 viewport</li>
+        <li class="miss">ภาพเล็กกว่า layout 1</li>
+        <li class="eta">~30 นาที</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- VERDICT                                               -->
+<!-- ===================================================== -->
+<div class="verdict">
+  <h3>📊 Layout 1 vs Layout 2 · which to ship?</h3>
+  <p>
+    <b>Layout 1 (big above):</b> visual prominence ดีสุด · merchant เห็นภาพชัด · เข้าใจทันที.
+    Trade-off: กิน vertical space · ต้อง scroll หา dropzone.
+  </p>
+  <p>
+    <b>Layout 2 (side-mini + checklist):</b> ⭐ <b>ผมแนะนำ</b> · ภาพ + criteria pair กันใน 1 row.
+    Side-by-side compact · ทุกอย่างใน 1 viewport · merchant ดูภาพ + อ่าน checklist พร้อมกัน · ประหยัด space.
+  </p>
+  <p style="margin-top: 12px"><b>Caravan reasoning:</b></p>
+  <p>
+    1. Art ชี้ภาพ → "ถ่ายแบบนี้นะคะ" · merchant เห็น blueprint ทันที<br>
+    2. Art อ่าน checklist 3 ข้อ → "มีชื่อ + ราคา · แสงพอ · ตรงๆ" · merchant zero-confusion<br>
+    3. Merchant กดถ่าย → upload → OCR success rate สูงขึ้น (เพราะ blueprint guide framing)
+  </p>
+
+  <h3 style="margin-top:14px">📋 Ship plan · Layout 2</h3>
+  <p>
+    Apply ทั้ง 2 tabs (LINE OA + Menu) · same pattern · ~45 นาทีรวม.<br>
+    Implementation: pure CSS + inline SVG mockups (no real photos · zero asset deps).<br>
+    File: <code>menu-ocr.html</code> · insert .ref-side-layout block ก่อน .mock-dropzone ของแต่ละ mode.
+  </p>
+</div>
+
+</body>
+</html>
