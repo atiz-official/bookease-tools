@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DetailPage · trust strip + carousel + CTAs · P0+P1 · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1280px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.before .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.after .badge  { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* phone shell */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #ffffff;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* ===== Common DetailPage ===== */
+  .dp-hero {
+    height: 240px;
+    background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=480&fit=crop');
+    background-size: cover; background-position: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .dp-back {
+    position: absolute; top: 14px; left: 14px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(15, 23, 42, 0.5);
+    display: grid; place-items: center;
+    color: #fff; font-size: 18px; font-weight: 300;
+    backdrop-filter: blur(8px);
+  }
+  .dp-fav {
+    position: absolute; top: 14px; right: 14px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(15, 23, 42, 0.5);
+    display: grid; place-items: center;
+    color: #fff; font-size: 17px;
+    backdrop-filter: blur(8px);
+  }
+
+  /* AFTER · carousel dots */
+  .dp-dots {
+    position: absolute; bottom: 12px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 5px;
+  }
+  .dp-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+  }
+  .dp-dot.active {
+    background: #fff; width: 16px; border-radius: 999px;
+  }
+  .dp-photo-count {
+    position: absolute; top: 14px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.5);
+    color: #fff; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    backdrop-filter: blur(8px);
+  }
+
+  .dp-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 18px;
+  }
+
+  .dp-profile {
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .dp-logo {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #fff; border: 2px solid #f1f5f9;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; font-weight: 700; color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .dp-shop-info { flex: 1; min-width: 0; }
+  .dp-shop-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 22px; font-weight: 600;
+    color: #0f172a;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  /* ============ BEFORE typography ============ */
+  .b-rating {
+    font-size: 11px; color: #fbbf24;
+    margin-top: 6px;
+  }
+  .b-rating .text { color: #94a3b8; }
+  .b-status-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .b-status-dot {
+    color: #16a34a; font-size: 13px; font-weight: 600;
+  }
+  .b-share {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: grid; place-items: center;
+    font-size: 14px;
+  }
+
+  /* ============ AFTER typography ============ */
+  .a-name-meta {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; margin-top: 2px;
+  }
+  .a-verified-badge {
+    background: #1E40AF; color: #fff;
+    font-size: 9.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .a-rating-mini {
+    color: #92400e; font-weight: 600; font-size: 11.5px;
+  }
+  .a-rating-mini .star { color: #fbbf24; }
+
+  /* P0 · trust strip horizontal */
+  .a-trust-strip {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin: 12px 0 4px;
+  }
+  .a-pill {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    padding: 5px 10px; border-radius: 999px;
+    font-size: 11px; color: #475569;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .a-pill .ico { font-size: 11.5px; }
+  .a-pill.cat {
+    background: #eff6ff; border-color: #bfdbfe; color: #1e40af; font-weight: 600;
+  }
+  .a-pill.price {
+    background: #fefce8; border-color: #fde68a; color: #92400e; font-weight: 600;
+  }
+  .a-pill.open {
+    background: #f0fdf4; border-color: #bbf7d0; color: #166534; font-weight: 600;
+  }
+  .a-pill.closed {
+    background: #fef2f2; border-color: #fecaca; color: #991b1b; font-weight: 600;
+  }
+
+  /* P1 · address / map */
+  .a-address-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  .a-address-text {
+    color: #475569; line-height: 1.4;
+  }
+  .a-map-link {
+    color: #1E40AF; font-weight: 600; font-size: 11px;
+    flex-shrink: 0; margin-left: 8px;
+  }
+
+  /* P1 · contact CTAs */
+  .a-cta-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 8px 0 14px;
+  }
+  .a-cta {
+    background: #fff; border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12.5px; font-weight: 600; color: #0f172a;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .a-cta .ico { font-size: 13px; }
+  .a-cta.line {
+    background: #06C755; color: #fff; border-color: #06C755;
+  }
+
+  .dp-section-title {
+    font-size: 16px; font-weight: 700; color: #0f172a;
+    margin: 14px 0 10px;
+  }
+  .dp-service-card {
+    background: #fff; border: 1px solid #f1f5f9;
+    border-radius: 12px; padding: 10px;
+    display: flex; gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .dp-service-pic {
+    width: 70px; height: 70px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .dp-service-body { flex: 1; min-width: 0; }
+  .dp-service-name {
+    font-size: 13px; font-weight: 700; color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .dp-service-meta {
+    font-size: 11px; color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  .dp-service-price {
+    font-family: 'Inter'; font-size: 14px; font-weight: 800;
+    color: #1E40AF;
+  }
+
+  /* annotations */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.55; }
+  .anno li.miss::before { content: "❌ "; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.p0::before { content: "🅿️0 "; color: #f59e0b; }
+  .anno li.p1::before { content: "🅿️1 "; color: #2563eb; }
+
+  .verdict {
+    max-width: 1100px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;
+  }
+  .scoreboard .card {
+    border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;
+    text-align: center;
+  }
+  .scoreboard .card .grade {
+    font-size: 24px; font-weight: 800; line-height: 1;
+    font-family: 'Inter';
+  }
+  .scoreboard .card.bad .grade { color: #92400e; }
+  .scoreboard .card.good .grade { color: #166534; }
+  .scoreboard .card .label { font-size: 10.5px; color: #64748b; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>DetailPage · trust strip + carousel + CTAs · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>P0 (trust signals) + P1 (carousel · map · phone CTA) · เทียบ Wongnai/Grab/Lineman/Apple Maps grade</p>
+  <span class="lock">⚠️ Preview · ยังไม่ ship · vote ก่อน implement</span>
+</div>
+
+<div class="stage">
+
+  <!-- ======================== BEFORE ======================== -->
+  <div>
+    <div class="col-label before">
+      <span class="badge">CURRENT · LIVE iter6.4.1</span>
+      <h2>3/10 trust signals</h2>
+      <p class="subline">single hero · ไม่มี category/price/distance/address/map/phone · "มาเป็นคนแรก" patronizing</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="dp-hero">
+          <div class="dp-back">‹</div>
+          <div class="dp-fav">♡</div>
+        </div>
+        <div class="dp-body">
+          <div class="dp-profile">
+            <div class="dp-logo">FC</div>
+            <div class="dp-shop-info">
+              <div class="dp-shop-name">First Dental Clinic Central RAMA 2 Branch</div>
+              <div class="b-rating">⭐ <span class="text">ร้านใหม่ — มาเป็นคนแรก</span></div>
+              <div class="b-status-row">
+                <span class="b-status-dot">● เปิดอยู่</span>
+                <span class="b-share">⌐</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dp-section-title">รายการแนะนำ</div>
+          <div class="dp-service-card">
+            <div class="dp-service-pic"></div>
+            <div class="dp-service-body">
+              <div class="dp-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="dp-service-meta">30 นาที</div>
+              <div class="dp-service-price">฿1,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 missing trust signals</h3>
+      <ul>
+        <li class="miss">no category · "ทันตกรรม" · ไม่ระบุ</li>
+        <li class="miss">no verified badge · ไม่รู้ว่า Atiz-confirmed</li>
+        <li class="miss">no price tier hint · ไม่รู้ราคาช่วง</li>
+        <li class="miss">no distance · ไม่รู้ห่างเท่าไหร่</li>
+        <li class="miss">no address preview</li>
+        <li class="miss">no map link</li>
+        <li class="miss">no phone CTA / LINE CTA</li>
+        <li class="miss">no image carousel · single hero</li>
+        <li class="miss">"มาเป็นคนแรก" · awkward สำหรับคลินิกฟัน</li>
+        <li class="miss">no open hours visible · แค่ "เปิดอยู่" dot</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ======================== AFTER · P0 + P1 ======================== -->
+  <div>
+    <div class="col-label after">
+      <span class="badge">PROPOSED · P0 + P1</span>
+      <h2>10/10 trust signals · Wongnai/Grab grade</h2>
+      <p class="subline">carousel + verified + category + price + distance + open hours + address + map + phone + LINE</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="dp-hero">
+          <div class="dp-back">‹</div>
+          <div class="dp-photo-count">📷 1/5</div>
+          <div class="dp-fav">♡</div>
+          <div class="dp-dots">
+            <div class="dp-dot active"></div>
+            <div class="dp-dot"></div>
+            <div class="dp-dot"></div>
+            <div class="dp-dot"></div>
+            <div class="dp-dot"></div>
+          </div>
+        </div>
+        <div class="dp-body">
+          <div class="dp-profile">
+            <div class="dp-logo">FC</div>
+            <div class="dp-shop-info">
+              <div class="dp-shop-name">First Dental Clinic Central RAMA 2 Branch</div>
+              <div class="a-name-meta">
+                <span class="a-verified-badge">✓ verified</span>
+                <span class="a-rating-mini"><span class="star">★</span> ใหม่ <span style="color:#94a3b8">(0 รีวิว)</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- P0 trust strip -->
+          <div class="a-trust-strip">
+            <span class="a-pill cat"><span class="ico">🦷</span>ทันตกรรม</span>
+            <span class="a-pill price"><span class="ico">💰</span>฿1,000-3,000</span>
+            <span class="a-pill"><span class="ico">📍</span>12.5 km</span>
+            <span class="a-pill open"><span class="ico">●</span>เปิด · 9:00-20:00</span>
+          </div>
+
+          <!-- P1 address row + map link -->
+          <div class="a-address-row">
+            <div class="a-address-text">📍 Central RAMA 2 ชั้น 3 · กรุงเทพ 10160</div>
+            <div class="a-map-link">ดูแผนที่ ›</div>
+          </div>
+
+          <!-- P1 contact CTAs -->
+          <div class="a-cta-row">
+            <button class="a-cta"><span class="ico">📞</span>โทรร้าน</button>
+            <button class="a-cta line"><span class="ico">💬</span>LINE @firstdental</button>
+          </div>
+
+          <div class="dp-section-title">รายการแนะนำ</div>
+          <div class="dp-service-card">
+            <div class="dp-service-pic"></div>
+            <div class="dp-service-body">
+              <div class="dp-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="dp-service-meta">30 นาที</div>
+              <div class="dp-service-price">฿1,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins · 10/10 signals</h3>
+      <ul>
+        <li class="p0">trust strip · 4 pills (category · price · distance · open hours)</li>
+        <li class="p0">verified ✓ badge · Atiz-confirmed</li>
+        <li class="p0">"ใหม่ (0 รีวิว)" honest framing · drop "มาเป็นคนแรก" patronizing</li>
+        <li class="p0">open hours visible · "9:00-20:00" not just dot</li>
+        <li class="p1">image carousel · 5 photos · dots indicator + count "1/5"</li>
+        <li class="p1">address preview row · with map link</li>
+        <li class="p1">contact CTAs · 2-up · "โทรร้าน" + "LINE @firstdental"</li>
+        <li class="win">scannable in &lt;3 seconds · Apple Maps POI grade</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- VERDICT -->
+<div class="verdict">
+  <h3>📊 trust signals matrix</h3>
+  <div class="scoreboard">
+    <div class="card bad">
+      <div class="grade">3</div>
+      <div class="label">CURRENT · 3/10 signals</div>
+    </div>
+    <div class="card good">
+      <div class="grade">10</div>
+      <div class="label">P0+P1 · 10/10 signals</div>
+    </div>
+    <div class="card good">
+      <div class="grade">A</div>
+      <div class="label">Apple Maps POI grade</div>
+    </div>
+    <div class="card good">
+      <div class="grade">A</div>
+      <div class="label">Wongnai detail grade</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 14px">⚙️ Implementation breakdown</h3>
+  <p>
+    <b>P0 (~30-45 นาที):</b> trust strip + verified badge + open hours format + drop "มาเป็นคนแรก"<br>
+    • <code>frontend/src/pages/DetailPage.tsx</code> — render trust pills + drop legacy rating string<br>
+    • <code>frontend/src/components/detail/TrustStrip.tsx</code> NEW — 4-pill row component<br>
+    • <code>frontend/src/assets/styles/detail/DetailPage.css</code> — pill styling<br>
+    • <code>frontend/src/api/shop.mapper.ts</code> — extract category + priceFloor/Ceil + open-hours<br>
+    <br>
+    <b>P1 (~60-90 นาที):</b> image carousel + address row + phone/LINE CTAs<br>
+    • <code>frontend/src/components/detail/ImageCarousel.tsx</code> NEW — swipe + dots + count<br>
+    • <code>frontend/src/components/detail/AddressMapRow.tsx</code> NEW — address + map link<br>
+    • <code>frontend/src/components/detail/ContactCTAs.tsx</code> NEW — phone + LINE buttons<br>
+    • <code>tel:</code> link for phone · LINE app deep-link for LINE<br>
+    <br>
+    <b>Backend dependency:</b> need shop schema fields:<br>
+    • <code>category</code> (already exists as <code>mainCategory</code>) ✓<br>
+    • <code>priceFloor</code> + <code>priceCeil</code> (calculate from services) — derive client-side ✓<br>
+    • <code>address</code> (exists) ✓<br>
+    • <code>openHours</code> (exists as <code>opentime</code> + <code>closetime</code>) ✓<br>
+    • <code>phone</code> (need to verify field exists) ⚠️<br>
+    • <code>lineOaId</code> (need to verify field exists) ⚠️<br>
+    • <code>imageUrls[]</code> (multiple photos) ⚠️ might need backend support
+  </p>
+
+  <h3 style="margin-top: 14px">🚦 Ship sequence</h3>
+  <p>
+    <b>Step 1 (now · ~30 min):</b> P0 trust strip · zero backend deps · ship today before caravan<br>
+    <b>Step 2 (after caravan):</b> P1 carousel · need backend imageUrls schema confirm<br>
+    <b>Step 3 (after caravan):</b> P1 phone + LINE CTAs · need backend phone/lineOaId fields confirm<br>
+    <b>Step 4 (after caravan):</b> P1 map link · use Google Maps deep-link with shop name + address (zero backend dep)
+  </p>
+
+  <h3 style="margin-top: 14px">🤔 vote</h3>
+  <p>
+    A · ลุย P0 ทันที (~30 min · 0 backend deps · ship today)<br>
+    B · ลุย P0 + P1 partial (P0 + map link only · ~45 min · 0 backend deps)<br>
+    C · ลุย P0 + full P1 (~90 min · need backend confirm phone/lineOaId/imageUrls)<br>
+    D · พี่อยาก tweak design ก่อน (เช่น เปลี่ยน pill style · แทรก tab "เกี่ยวกับ" · etc)
+  </p>
+</div>
+
+</body>
+</html>
