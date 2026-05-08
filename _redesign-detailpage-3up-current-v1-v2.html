@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DetailPage · 3-up · current vs v1 vs v2 · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 12px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 28px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 800px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1480px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start;
+  }
+  @media (max-width: 1100px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.current .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.v1 .badge      { background: #fef3c7; color: #92400e; }
+  .col-label.v2 .badge      { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 13px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.5; }
+
+  /* phone shell */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 36px;
+    padding: 7px;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+    margin: 0 auto;
+    width: 360px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 720px;
+    background: #ffffff;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .notch-row { height: 26px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 84px; height: 20px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 11px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  .fold-line {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    border-top: 1.5px dashed #ef4444;
+    pointer-events: none;
+  }
+  .fold-line .label {
+    position: absolute; right: 8px; top: -16px;
+    background: #ef4444; color: #fff;
+    font-size: 8px; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* ===================== CURRENT (LIVE) ===================== */
+  .c-hero { height: 240px; background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=480&fit=crop'); background-size: cover; background-position: center; flex-shrink: 0; position: relative; }
+  .c-back, .c-fav {
+    position: absolute; top: 12px; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(15,23,42,0.45); display: grid; place-items: center;
+    color: #fff; font-size: 16px; backdrop-filter: blur(8px);
+  }
+  .c-back { left: 14px; font-size: 18px; font-weight: 300; }
+  .c-fav  { right: 14px; }
+  .c-body { flex: 1; padding: 14px 16px; overflow: hidden; }
+  .c-profile { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+  .c-logo {
+    width: 56px; height: 56px; border-radius: 50%; background: #fff;
+    border: 2px solid #f1f5f9; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 13px; font-weight: 700; color: #1e293b;
+  }
+  .c-shop-info { flex: 1; min-width: 0; }
+  .c-shop-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 22px; font-weight: 600;
+    color: #0f172a; line-height: 1.18; letter-spacing: -0.015em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+  .c-rating { font-size: 11px; color: #fbbf24; }
+  .c-rating .text { color: #94a3b8; }
+  .c-status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .c-status-dot { color: #16a34a; font-size: 12px; font-weight: 600; }
+  .c-share { width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: grid; place-items: center; font-size: 12px; }
+  .c-section-title { font-size: 14px; font-weight: 700; color: #0f172a; margin: 8px 0 6px; }
+
+  /* ===================== V1 (pill-heavy) ===================== */
+  .v1-hero { height: 220px; background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=440&fit=crop'); background-size: cover; background-position: center; flex-shrink: 0; position: relative; }
+  .v1-back, .v1-fav {
+    position: absolute; top: 12px; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(15,23,42,0.45); display: grid; place-items: center;
+    color: #fff; font-size: 16px; backdrop-filter: blur(8px);
+  }
+  .v1-back { left: 14px; font-size: 18px; font-weight: 300; }
+  .v1-fav  { right: 14px; }
+  .v1-body { flex: 1; padding: 12px 14px; overflow: hidden; }
+  .v1-profile { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+  .v1-logo {
+    width: 48px; height: 48px; border-radius: 50%; background: #fff;
+    border: 2px solid #f1f5f9; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 11px; font-weight: 700; color: #1e293b;
+  }
+  .v1-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 19px; font-weight: 600;
+    color: #0f172a; line-height: 1.18; letter-spacing: -0.015em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+  .v1-name-meta { display: flex; align-items: center; gap: 5px; font-size: 10.5px; }
+  .v1-verified-badge { background: #1E40AF; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
+  .v1-rating-mini { color: #92400e; font-weight: 600; font-size: 10.5px; }
+  .v1-rating-mini .star { color: #fbbf24; }
+  .v1-trust-strip { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0; }
+  .v1-pill { background: #f8fafc; border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 999px; font-size: 10px; color: #475569; display: inline-flex; align-items: center; gap: 3px; }
+  .v1-pill.cat { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; font-weight: 600; }
+  .v1-pill.price { background: #fefce8; border-color: #fde68a; color: #92400e; font-weight: 600; }
+  .v1-pill.open { background: #f0fdf4; border-color: #bbf7d0; color: #166534; font-weight: 600; }
+  .v1-address-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #f8fafc; border-radius: 10px; margin: 6px 0; font-size: 10.5px; }
+  .v1-address-text { color: #475569; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+  .v1-map-link { color: #1E40AF; font-weight: 600; font-size: 10.5px; flex-shrink: 0; margin-left: 6px; }
+  .v1-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0 10px; }
+  .v1-cta { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .v1-cta.line { background: #06C755; color: #fff; border-color: #06C755; }
+  .v1-section-title { font-size: 13px; font-weight: 700; color: #0f172a; margin: 6px 0 4px; }
+  .v1-service-card { background: #fff; border: 1px solid #f1f5f9; border-radius: 10px; padding: 8px; display: flex; gap: 8px; margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); align-items: center; }
+  .v1-service-pic { width: 56px; height: 56px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; flex-shrink: 0; }
+  .v1-service-pic.b { background: linear-gradient(135deg, #c8b6a6 0%, #a78b7a 100%); }
+  .v1-service-name { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+  .v1-service-meta { font-size: 10px; color: #94a3b8; margin-bottom: 4px; }
+  .v1-service-price { font-family: 'Inter'; font-size: 13px; font-weight: 800; color: #1E40AF; }
+
+  /* ===================== V2 (ULTRA-COMPACT) ===================== */
+  .v2-hero { height: 160px; background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=320&fit=crop'); background-size: cover; background-position: center; flex-shrink: 0; position: relative; }
+  .v2-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.25) 100%); pointer-events: none; }
+  .v2-back { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(15,23,42,0.45); backdrop-filter: blur(10px); display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 300; z-index: 3; }
+  .v2-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; z-index: 3; }
+  .v2-action-btn { width: 30px; height: 30px; border-radius: 50%; background: rgba(15,23,42,0.45); backdrop-filter: blur(10px); display: grid; place-items: center; color: #fff; font-size: 13px; }
+  .v2-photo-count { position: absolute; bottom: 8px; right: 10px; background: rgba(15,23,42,0.5); color: #fff; font-size: 9.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px; z-index: 3; }
+  .v2-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; z-index: 3; }
+  .v2-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .v2-dot.active { background: #fff; width: 12px; border-radius: 999px; }
+  .v2-body { flex: 1; padding: 8px 12px 0; overflow: hidden; display: flex; flex-direction: column; gap: 5px; }
+  .v2-profile { display: flex; gap: 9px; align-items: center; }
+  .v2-logo {
+    width: 40px; height: 40px; border-radius: 50%; background: #fff;
+    border: 2px solid #f1f5f9; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 11px; font-weight: 700; color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-top: -20px;
+  }
+  .v2-name-block { flex: 1; min-width: 0; }
+  .v2-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 17px; font-weight: 600;
+    color: #0f172a; line-height: 1.18; letter-spacing: -0.015em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .v2-name .verified { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #1E40AF; color: #fff; font-size: 7px; font-weight: 800; line-height: 10px; text-align: center; vertical-align: middle; margin-left: 3px; }
+  .v2-meta-line { font-size: 10.5px; color: #475569; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.3; }
+  .v2-meta-line .star { color: #fbbf24; font-size: 11px; }
+  .v2-meta-line .strong { color: #0f172a; font-weight: 600; }
+  .v2-meta-line .navy { color: #1E40AF; font-weight: 700; font-family: 'Inter'; }
+  .v2-meta-line .open { color: #16a34a; font-weight: 600; }
+  .v2-meta-line .dot { color: #cbd5e1; }
+  .v2-meta-line .cat { background: #eff6ff; color: #1e40af; padding: 1px 6px; border-radius: 999px; font-size: 9.5px; font-weight: 600; }
+  .v2-rail { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 6px 8px; border-radius: 8px; font-size: 10.5px; margin-top: 2px; }
+  .v2-rail .left { display: flex; align-items: center; gap: 5px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+  .v2-rail .ico { font-size: 11px; flex-shrink: 0; }
+  .v2-rail .actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .v2-rail .action-icon { color: #1E40AF; font-weight: 700; font-size: 11px; cursor: pointer; }
+  .v2-rail .action-icon.line { color: #06C755; }
+  .v2-section-title { font-size: 12.5px; font-weight: 700; color: #0f172a; margin: 4px 0 2px; display: flex; align-items: center; justify-content: space-between; }
+  .v2-section-title .more { font-size: 10px; color: #94a3b8; font-weight: 500; }
+  .v2-service-card { background: #fff; border: 1px solid #f1f5f9; border-radius: 10px; padding: 6px 8px; display: flex; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); align-items: center; }
+  .v2-service-pic { width: 50px; height: 50px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; flex-shrink: 0; }
+  .v2-service-pic.b { background: linear-gradient(135deg, #c8b6a6 0%, #a78b7a 100%); }
+  .v2-service-pic.c { background: linear-gradient(135deg, #f4c2c2 0%, #e89797 100%); }
+  .v2-service-body { flex: 1; min-width: 0; }
+  .v2-service-name { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 1px; }
+  .v2-service-meta { font-size: 10px; color: #94a3b8; }
+  .v2-service-price-col { text-align: right; flex-shrink: 0; }
+  .v2-service-price { font-family: 'Inter'; font-size: 13px; font-weight: 800; color: #1E40AF; line-height: 1; }
+  .v2-service-cta { margin-top: 3px; background: #0a0a0a; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 999px; display: inline-block; }
+
+  /* annotations */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 10px 12px; margin-top: 10px;
+  }
+  .anno h3 { font-size: 11px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 10.5px; color: #475569; padding: 1px 0; line-height: 1.5; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+  .anno li.measure::before { content: "📏 "; }
+
+  /* verdict scoreboard */
+  .scoreboard {
+    max-width: 1480px; margin: 28px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .scoreboard h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
+  .sb-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 0;
+    font-size: 11.5px;
+  }
+  .sb-grid .row { display: contents; }
+  .sb-grid .cell {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .sb-grid .head { background: #f8fafc; font-weight: 700; font-size: 10.5px; color: #0f172a; }
+  .sb-grid .label { font-weight: 600; color: #0f172a; }
+  .sb-grid .v-current { background: rgba(254, 226, 226, 0.3); }
+  .sb-grid .v-v1 { background: rgba(254, 243, 199, 0.3); }
+  .sb-grid .v-v2 { background: rgba(220, 252, 231, 0.4); font-weight: 700; }
+  .sb-grid .winner { color: #166534; font-weight: 700; }
+  .sb-grid .loser { color: #991b1b; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>DetailPage · 3-up · current vs v1 vs v2 · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>3 phones side-by-side · CURRENT (LIVE) · v1 (pill-heavy P0+P1) · v2 (ULTRA-COMPACT Grab/Apple grade)</p>
+  <span class="lock">⚠️ Preview · vote ก่อน implement · red dashed line = visible-fold (720px viewport · iPhone)</span>
+</div>
+
+<div class="stage">
+
+  <!-- ============ CURRENT (LIVE iter6.4.1) ============ -->
+  <div>
+    <div class="col-label current">
+      <span class="badge">CURRENT · LIVE iter6.4.1</span>
+      <h2>3/10 trust signals · grade C</h2>
+      <p class="subline">single hero · "มาเป็นคนแรก" patronizing · 0 services above fold · ขาด trust</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="c-hero">
+          <div class="c-back">‹</div>
+          <div class="c-fav">♡</div>
+        </div>
+        <div class="c-body">
+          <div class="c-profile">
+            <div class="c-logo">FC</div>
+            <div class="c-shop-info">
+              <div class="c-shop-name">First Dental Clinic Central RAMA 2 Branch</div>
+              <div class="c-rating">⭐ <span class="text">ร้านใหม่ — มาเป็นคนแรก</span></div>
+              <div class="c-status-row">
+                <span class="c-status-dot">● เปิดอยู่</span>
+                <span class="c-share">⌐</span>
+              </div>
+            </div>
+          </div>
+          <div class="c-section-title">รายการแนะนำ</div>
+          <!-- only partial 1 service may peek -->
+        </div>
+        <div class="fold-line"><span class="label">FOLD · 720px</span></div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issues</h3>
+      <ul>
+        <li class="miss">no category / price / distance / address / map / phone / LINE</li>
+        <li class="miss">"มาเป็นคนแรก" awkward สำหรับคลินิก</li>
+        <li class="miss">single hero · no carousel</li>
+        <li class="measure">cumulative chrome ~430px · 0 services visible above fold</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ V1 PILL-HEAVY (P0+P1 first attempt) ============ -->
+  <div>
+    <div class="col-label v1">
+      <span class="badge">v1 · pill-heavy</span>
+      <h2>10/10 trust signals · grade A · BUT too tall</h2>
+      <p class="subline">trust pills + address rail + cta-row · noisy · 1.5 services visible</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="v1-hero">
+          <div class="v1-back">‹</div>
+          <div class="v1-fav">♡</div>
+        </div>
+        <div class="v1-body">
+          <div class="v1-profile">
+            <div class="v1-logo">FC</div>
+            <div style="flex:1;min-width:0;">
+              <div class="v1-name">First Dental Clinic Central RAMA 2 Branch</div>
+              <div class="v1-name-meta">
+                <span class="v1-verified-badge">✓ verified</span>
+                <span class="v1-rating-mini"><span class="star">★</span> ใหม่ (0)</span>
+              </div>
+            </div>
+          </div>
+          <div class="v1-trust-strip">
+            <span class="v1-pill cat">🦷 ทันตกรรม</span>
+            <span class="v1-pill price">💰 ฿1,000-3,000</span>
+            <span class="v1-pill">📍 12.5 km</span>
+            <span class="v1-pill open">● เปิด 9-20</span>
+          </div>
+          <div class="v1-address-row">
+            <span class="v1-address-text">📍 Central RAMA 2 ชั้น 3 · กรุงเทพ 10160</span>
+            <span class="v1-map-link">แผนที่ ›</span>
+          </div>
+          <div class="v1-cta-row">
+            <button class="v1-cta">📞 โทร</button>
+            <button class="v1-cta line">💬 LINE</button>
+          </div>
+          <div class="v1-section-title">รายการแนะนำ</div>
+          <div class="v1-service-card">
+            <div class="v1-service-pic"></div>
+            <div style="flex:1;min-width:0;">
+              <div class="v1-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="v1-service-meta">30 นาที</div>
+              <div class="v1-service-price">฿1,000</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold-line"><span class="label">FOLD · 720px</span></div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🟡 mixed</h3>
+      <ul>
+        <li class="win">all 10 trust signals present</li>
+        <li class="miss">4 pills row + address rail + cta-row = 3 separate sections (noisy)</li>
+        <li class="miss">~1 service visible · scroll required</li>
+        <li class="measure">cumulative chrome ~580px · only 1 service fits</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ V2 ULTRA-COMPACT ============ -->
+  <div>
+    <div class="col-label v2">
+      <span class="badge">v2 · ultra-compact ⭐</span>
+      <h2>10/10 signals · grade A · 3 services above fold</h2>
+      <p class="subline">inline meta + 1 rail with icons · drop pills · service cards 64px</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="v2-hero">
+          <div class="v2-back">‹</div>
+          <div class="v2-actions">
+            <div class="v2-action-btn">↗</div>
+            <div class="v2-action-btn">♡</div>
+          </div>
+          <div class="v2-photo-count">📷 1/5</div>
+          <div class="v2-dots">
+            <div class="v2-dot active"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+          </div>
+        </div>
+        <div class="v2-body">
+          <div class="v2-profile">
+            <div class="v2-logo">FC</div>
+            <div class="v2-name-block">
+              <div class="v2-name">First Dental Clinic Central RAMA 2<span class="verified">✓</span></div>
+            </div>
+          </div>
+          <div class="v2-meta-line">
+            <span class="star">★</span><span class="strong">ใหม่</span>
+            <span class="dot">·</span>
+            <span class="cat">🦷 ทันตกรรม</span>
+            <span class="dot">·</span>
+            <span class="navy">฿1,000+</span>
+            <span class="dot">·</span>
+            <span>📍 12.5 km</span>
+          </div>
+          <div class="v2-rail">
+            <div class="left">
+              <span class="ico">📍</span>
+              <span>Central RAMA 2 · เปิด 9-20</span>
+            </div>
+            <div class="actions">
+              <span class="action-icon">📞</span>
+              <span class="action-icon line">💬</span>
+              <span class="action-icon">🗺</span>
+            </div>
+          </div>
+          <div class="v2-section-title">
+            <span>รายการแนะนำ</span>
+            <span class="more">12 รายการ ›</span>
+          </div>
+          <div class="v2-service-card">
+            <div class="v2-service-pic"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="v2-service-meta">30 นาที · นพ.วิชัย</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿1,000</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+          <div class="v2-service-card">
+            <div class="v2-service-pic b"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">ขูดหินปูน + ขัดฟัน</div>
+              <div class="v2-service-meta">45 นาที · ทพญ.สุดา</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿1,500</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+          <div class="v2-service-card">
+            <div class="v2-service-pic c"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">ฟอกสีฟันเลเซอร์</div>
+              <div class="v2-service-meta">60 นาที · นพ.ชัยพร</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿3,500</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold-line"><span class="label">FOLD · 720px</span></div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins · Grab/Apple grade</h3>
+      <ul>
+        <li class="win">all 10 trust signals · ใน 1 inline line + 1 rail</li>
+        <li class="win">drop pill row (-36px) · drop separate cta-row (-48px)</li>
+        <li class="win">contact icons (📞 💬 🗺) absorbed into address rail</li>
+        <li class="win">3 services visible above fold ✓</li>
+        <li class="measure">cumulative chrome ~330px · 3 cards fit + 200px headroom</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- SCOREBOARD -->
+<div class="scoreboard">
+  <h3>📊 head-to-head matrix</h3>
+  <div class="sb-grid">
+    <div class="cell head">Metric</div>
+    <div class="cell head">CURRENT</div>
+    <div class="cell head">v1</div>
+    <div class="cell head">v2 ⭐</div>
+
+    <div class="cell label">Trust signals (10 total)</div>
+    <div class="cell v-current loser">3/10</div>
+    <div class="cell v-v1 winner">10/10</div>
+    <div class="cell v-v2 winner">10/10</div>
+
+    <div class="cell label">Hero height</div>
+    <div class="cell v-current">240 px</div>
+    <div class="cell v-v1">220 px</div>
+    <div class="cell v-v2 winner">160 px</div>
+
+    <div class="cell label">Header chrome (before services)</div>
+    <div class="cell v-current">~430 px</div>
+    <div class="cell v-v1 loser">~580 px</div>
+    <div class="cell v-v2 winner">~330 px</div>
+
+    <div class="cell label">Services above fold</div>
+    <div class="cell v-current loser">0</div>
+    <div class="cell v-v1">1</div>
+    <div class="cell v-v2 winner">3 ✓</div>
+
+    <div class="cell label">Pills used (visual noise)</div>
+    <div class="cell v-current">0</div>
+    <div class="cell v-v1 loser">4 pills</div>
+    <div class="cell v-v2 winner">1 small cat pill</div>
+
+    <div class="cell label">Contact CTAs (📞 💬 🗺)</div>
+    <div class="cell v-current loser">none</div>
+    <div class="cell v-v1">2 full-width btns</div>
+    <div class="cell v-v2 winner">3 inline icons in rail</div>
+
+    <div class="cell label">Image carousel</div>
+    <div class="cell v-current loser">none (1 image)</div>
+    <div class="cell v-v1">5 photos · dots</div>
+    <div class="cell v-v2 winner">5 photos · dots + count</div>
+
+    <div class="cell label">Honest rating framing</div>
+    <div class="cell v-current loser">"มาเป็นคนแรก"</div>
+    <div class="cell v-v1 winner">"ใหม่ (0)"</div>
+    <div class="cell v-v2 winner">"★ ใหม่"</div>
+
+    <div class="cell label">Apple/Grab grade</div>
+    <div class="cell v-current loser">C</div>
+    <div class="cell v-v1">B+</div>
+    <div class="cell v-v2 winner">A ⭐</div>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="scoreboard" style="margin-top: 18px;">
+  <h3>🎯 ผมแนะนำ v2 · ทุก dimension ดีกว่า v1 และ current</h3>
+  <p style="font-size: 12.5px; color: #475569; line-height: 1.65;">
+    <b>v2 wins:</b> 5/8 metrics · ties on 3 (trust signals · honest rating · cat pill) · loses on none<br>
+    <b>vs v1:</b> v2 ผ่าน 5/8 · v1 ผ่าน 0/8 (v1 too pill-heavy · header bloat)<br>
+    <b>vs current:</b> v2 ผ่าน 8/8 · current ผ่าน 0/8 (3 trust signals only · 0 services above fold)<br>
+    <b>Grab/Apple match:</b> v2 follows 3-pattern (compact hero · inline meta · integrated rail) · current and v1 ไม่ตรง
+  </p>
+  <p style="margin-top: 10px; font-size: 12.5px; color: #475569;">
+    <b>🚦 vote · ลุย v2 หรือ tweak อะไรก่อน?</b>
+  </p>
+</div>
+
+</body>
+</html>
