@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DetailPage v2 · ultra-compact · Grab/Apple grade · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1280px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 760px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.before .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.after .badge  { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* ============ phone shell ============ */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #ffffff;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* visible-without-scroll fold line */
+  .fold-line {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    border-top: 1.5px dashed #ef4444;
+    text-align: right;
+    pointer-events: none;
+  }
+  .fold-line .label {
+    position: absolute; right: 8px; top: -16px;
+    background: #ef4444; color: #fff;
+    font-size: 8.5px; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* ============ V1 (P0+P1 first attempt) — too tall ============ */
+  .v1-hero { height: 220px; background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=440&fit=crop'); background-size: cover; background-position: center; flex-shrink: 0; position: relative; }
+  .v1-back, .v1-fav {
+    position: absolute; top: 12px; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(15,23,42,0.5); display: grid; place-items: center;
+    color: #fff; font-size: 17px; backdrop-filter: blur(8px);
+  }
+  .v1-back { left: 14px; font-size: 18px; font-weight: 300; }
+  .v1-fav  { right: 14px; }
+  .v1-body { flex: 1; padding: 14px 16px; overflow: hidden; }
+
+  .v1-profile { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+  .v1-logo {
+    width: 52px; height: 52px; border-radius: 50%; background: #fff;
+    border: 2px solid #f1f5f9; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; font-weight: 700; color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .v1-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 20px; font-weight: 600;
+    color: #0f172a; line-height: 1.18;
+    letter-spacing: -0.015em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+  .v1-name-meta {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px;
+  }
+  .v1-verified-badge {
+    background: #1E40AF; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 999px;
+  }
+  .v1-rating-mini { color: #92400e; font-weight: 600; font-size: 11px; }
+  .v1-rating-mini .star { color: #fbbf24; }
+
+  .v1-trust-strip {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    margin: 8px 0;
+  }
+  .v1-pill {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    padding: 4px 9px; border-radius: 999px;
+    font-size: 10.5px; color: #475569;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .v1-pill.cat { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; font-weight: 600; }
+  .v1-pill.price { background: #fefce8; border-color: #fde68a; color: #92400e; font-weight: 600; }
+  .v1-pill.open { background: #f0fdf4; border-color: #bbf7d0; color: #166534; font-weight: 600; }
+
+  .v1-address-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 11px; background: #f8fafc;
+    border-radius: 10px; margin: 8px 0;
+    font-size: 11.5px;
+  }
+  .v1-address-text { color: #475569; line-height: 1.4; }
+  .v1-map-link { color: #1E40AF; font-weight: 600; font-size: 11px; }
+
+  .v1-cta-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 6px 0 12px;
+  }
+  .v1-cta {
+    background: #fff; border: 1px solid #cbd5e1;
+    border-radius: 10px; padding: 9px;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .v1-cta.line { background: #06C755; color: #fff; border-color: #06C755; }
+
+  .v1-section-title { font-size: 14px; font-weight: 700; color: #0f172a; margin: 8px 0 6px; }
+  .v1-service-card {
+    background: #fff; border: 1px solid #f1f5f9;
+    border-radius: 10px; padding: 9px;
+    display: flex; gap: 9px; margin-bottom: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .v1-service-pic { width: 64px; height: 64px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 6px; flex-shrink: 0; }
+  .v1-service-name { font-size: 12.5px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+  .v1-service-meta { font-size: 10.5px; color: #94a3b8; margin-bottom: 4px; }
+  .v1-service-price { font-family: 'Inter'; font-size: 13px; font-weight: 800; color: #1E40AF; }
+
+  /* ============ V2 ULTRA-COMPACT · Grab/Apple grade ============ */
+  .v2-hero {
+    height: 160px;          /* SHRUNK from 220 */
+    background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=320&fit=crop');
+    background-size: cover; background-position: center;
+    flex-shrink: 0; position: relative;
+  }
+  .v2-hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.25) 100%);
+    pointer-events: none;
+  }
+  .v2-back {
+    position: absolute; top: 12px; left: 12px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(15,23,42,0.45); backdrop-filter: blur(10px);
+    display: grid; place-items: center;
+    color: #fff; font-size: 17px; font-weight: 300;
+    z-index: 3;
+  }
+  .v2-actions {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; gap: 6px;
+    z-index: 3;
+  }
+  .v2-action-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(15,23,42,0.45); backdrop-filter: blur(10px);
+    display: grid; place-items: center;
+    color: #fff; font-size: 14px;
+  }
+  .v2-photo-count {
+    position: absolute; bottom: 10px; right: 12px;
+    background: rgba(15,23,42,0.5); backdrop-filter: blur(8px);
+    color: #fff; font-size: 10.5px; font-weight: 600;
+    padding: 3px 8px; border-radius: 999px;
+    z-index: 3;
+  }
+  .v2-dots {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 4px; z-index: 3;
+  }
+  .v2-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .v2-dot.active { background: #fff; width: 14px; border-radius: 999px; }
+
+  .v2-body {
+    flex: 1; padding: 10px 14px 0; overflow: hidden;
+    display: flex; flex-direction: column;
+    gap: 6px;
+  }
+
+  /* PROFILE · 1 row, 48px */
+  .v2-profile { display: flex; gap: 10px; align-items: center; }
+  .v2-logo {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #fff; border: 2px solid #f1f5f9; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; font-weight: 700; color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-top: -22px;
+    background-color: #fff;
+  }
+  .v2-name-block { flex: 1; min-width: 0; }
+  .v2-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 19px; font-weight: 600;
+    color: #0f172a; line-height: 1.18;
+    letter-spacing: -0.015em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .v2-name .verified {
+    display: inline-block;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #1E40AF; color: #fff;
+    font-size: 7.5px; font-weight: 800; line-height: 11px;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 3px;
+  }
+
+  /* META · 1 inline line · "★ ใหม่ · category · ฿1,000+ · 12.5 km" */
+  .v2-meta-line {
+    font-size: 11.5px; color: #475569;
+    display: flex; align-items: center; gap: 5px;
+    flex-wrap: wrap;
+    line-height: 1.4;
+  }
+  .v2-meta-line .star { color: #fbbf24; font-size: 12px; }
+  .v2-meta-line .strong { color: #0f172a; font-weight: 600; }
+  .v2-meta-line .navy { color: #1E40AF; font-weight: 700; font-family: 'Inter'; }
+  .v2-meta-line .open { color: #16a34a; font-weight: 600; }
+  .v2-meta-line .dot {
+    color: #cbd5e1; margin: 0 1px;
+    font-weight: 600;
+  }
+  .v2-meta-line .cat {
+    background: #eff6ff; color: #1e40af;
+    padding: 1px 7px; border-radius: 999px;
+    font-size: 10.5px; font-weight: 600;
+  }
+
+  /* ADDRESS RAIL · 1 line · subtle bg */
+  .v2-rail {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #f8fafc;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    margin-top: 2px;
+  }
+  .v2-rail .left {
+    display: flex; align-items: center; gap: 6px;
+    color: #475569;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+  }
+  .v2-rail .ico { font-size: 12px; flex-shrink: 0; }
+  .v2-rail .actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .v2-rail .action-icon {
+    color: #1E40AF; font-weight: 700; font-size: 11.5px;
+    cursor: pointer;
+  }
+  .v2-rail .action-icon.line { color: #06C755; }
+
+  /* SECTION TITLE */
+  .v2-section-title {
+    font-size: 13.5px; font-weight: 700; color: #0f172a;
+    margin: 6px 0 2px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .v2-section-title .more {
+    font-size: 10.5px; color: #94a3b8; font-weight: 500;
+  }
+
+  /* SERVICE CARDS · compact 70px */
+  .v2-service-card {
+    background: #fff; border: 1px solid #f1f5f9;
+    border-radius: 10px; padding: 8px;
+    display: flex; gap: 9px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    align-items: center;
+  }
+  .v2-service-pic {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 8px; flex-shrink: 0;
+  }
+  .v2-service-pic.b { background: linear-gradient(135deg, #c8b6a6 0%, #a78b7a 100%); }
+  .v2-service-pic.c { background: linear-gradient(135deg, #f4c2c2 0%, #e89797 100%); }
+  .v2-service-body { flex: 1; min-width: 0; }
+  .v2-service-name { font-size: 12.5px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+  .v2-service-meta { font-size: 10.5px; color: #94a3b8; }
+  .v2-service-price-col {
+    text-align: right; flex-shrink: 0;
+  }
+  .v2-service-price {
+    font-family: 'Inter'; font-size: 13.5px; font-weight: 800;
+    color: #1E40AF;
+    line-height: 1;
+  }
+  .v2-service-cta {
+    margin-top: 4px;
+    background: #0a0a0a; color: #fff;
+    font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px;
+  }
+
+  /* annotations */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.55; }
+  .anno li.measure::before { content: "📏 "; }
+  .anno li.fix::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+
+  /* font-size spec table */
+  .font-spec {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin: 24px auto;
+    max-width: 1100px;
+    font-size: 12px;
+  }
+  .font-spec h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .font-spec table { width: 100%; border-collapse: collapse; }
+  .font-spec th, .font-spec td {
+    text-align: left; padding: 6px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 11.5px;
+  }
+  .font-spec th { color: #64748b; font-weight: 600; font-size: 10.5px; }
+  .font-spec td code {
+    background: #f1f5f9; padding: 1px 4px;
+    border-radius: 3px; font-family: 'Inter', monospace;
+    font-size: 11px;
+  }
+
+  /* verdict */
+  .verdict {
+    max-width: 1100px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>DetailPage v2 · ultra-compact · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>v1 too pill-heavy · v2 = single inline meta + 1 rail · Grab/Apple grade · 3 services visible no-scroll · drop pill rows</p>
+  <span class="lock">⚠️ Preview · v1 vs v2 · vote ก่อน implement · red dashed line = visible-fold (760px viewport)</span>
+</div>
+
+<div class="stage">
+
+  <!-- ============ V1 PILL-HEAVY ============ -->
+  <div>
+    <div class="col-label before">
+      <span class="badge">v1 · pill-heavy</span>
+      <h2>4 pills + 2 separate rails · too tall</h2>
+      <p class="subline">trust strip pills + address rail + cta-row · 1.5 service visible · scroll required</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="v1-hero">
+          <div class="v1-back">‹</div>
+          <div class="v1-fav">♡</div>
+        </div>
+        <div class="v1-body">
+          <div class="v1-profile">
+            <div class="v1-logo">FC</div>
+            <div style="flex:1;min-width:0;">
+              <div class="v1-name">First Dental Clinic Central RAMA 2 Branch</div>
+              <div class="v1-name-meta">
+                <span class="v1-verified-badge">✓ verified</span>
+                <span class="v1-rating-mini"><span class="star">★</span> ใหม่ (0 รีวิว)</span>
+              </div>
+            </div>
+          </div>
+          <div class="v1-trust-strip">
+            <span class="v1-pill cat">🦷 ทันตกรรม</span>
+            <span class="v1-pill price">💰 ฿1,000-3,000</span>
+            <span class="v1-pill">📍 12.5 km</span>
+            <span class="v1-pill open">● เปิด 9:00-20:00</span>
+          </div>
+          <div class="v1-address-row">
+            <span class="v1-address-text">📍 Central RAMA 2 ชั้น 3 · กรุงเทพ 10160</span>
+            <span class="v1-map-link">ดูแผนที่ ›</span>
+          </div>
+          <div class="v1-cta-row">
+            <button class="v1-cta">📞 โทรร้าน</button>
+            <button class="v1-cta line">💬 LINE</button>
+          </div>
+          <div class="v1-section-title">รายการแนะนำ</div>
+          <div class="v1-service-card">
+            <div class="v1-service-pic"></div>
+            <div style="flex:1;min-width:0;">
+              <div class="v1-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="v1-service-meta">30 นาที</div>
+              <div class="v1-service-price">฿1,000</div>
+            </div>
+          </div>
+          <div class="v1-service-card">
+            <div class="v1-service-pic" style="background:linear-gradient(135deg,#c8b6a6 0%,#a78b7a 100%);"></div>
+            <div style="flex:1;min-width:0;">
+              <div class="v1-service-name">ขูดหินปูน + ขัดฟัน</div>
+              <div class="v1-service-meta">45 นาที</div>
+              <div class="v1-service-price">฿1,500</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold-line"><span class="label">FOLD · 760px</span></div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issues</h3>
+      <ul>
+        <li class="miss">4 pills row · 36px tall · noisy</li>
+        <li class="miss">address rail · 50px tall · separate from pills</li>
+        <li class="miss">CTA row · 48px tall · Phone + LINE full-width</li>
+        <li class="miss">total header = ~430px · only 1.5 service visible</li>
+        <li class="measure">cumulative chrome: 240+10+80+36+42+50+30 = 488px</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ V2 ULTRA-COMPACT · GRAB/APPLE GRADE ============ -->
+  <div>
+    <div class="col-label after">
+      <span class="badge">v2 · ULTRA-COMPACT ⭐</span>
+      <h2>Inline meta + 1 rail · 3 services no-scroll</h2>
+      <p class="subline">drop pills · single line meta · contact icons in rail · hero 160px · service cards 64px</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>23:12</span><span>📶 100%</span></div>
+        <div class="v2-hero">
+          <div class="v2-back">‹</div>
+          <div class="v2-actions">
+            <div class="v2-action-btn">↗</div>
+            <div class="v2-action-btn">♡</div>
+          </div>
+          <div class="v2-photo-count">📷 1/5</div>
+          <div class="v2-dots">
+            <div class="v2-dot active"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+            <div class="v2-dot"></div>
+          </div>
+        </div>
+        <div class="v2-body">
+          <div class="v2-profile">
+            <div class="v2-logo">FC</div>
+            <div class="v2-name-block">
+              <div class="v2-name">First Dental Clinic Central RAMA 2<span class="verified">✓</span></div>
+            </div>
+          </div>
+
+          <!-- meta line: rating · category · price · distance · open -->
+          <div class="v2-meta-line">
+            <span class="star">★</span><span class="strong">ใหม่</span>
+            <span class="dot">·</span>
+            <span class="cat">🦷 ทันตกรรม</span>
+            <span class="dot">·</span>
+            <span class="navy">฿1,000+</span>
+            <span class="dot">·</span>
+            <span>📍 12.5 km</span>
+          </div>
+
+          <!-- address rail · with inline icons -->
+          <div class="v2-rail">
+            <div class="left">
+              <span class="ico">📍</span>
+              <span>Central RAMA 2 ชั้น 3 · เปิด 9-20</span>
+            </div>
+            <div class="actions">
+              <span class="action-icon">📞</span>
+              <span class="action-icon line">💬</span>
+              <span class="action-icon">🗺</span>
+            </div>
+          </div>
+
+          <div class="v2-section-title">
+            <span>รายการแนะนำ</span>
+            <span class="more">12 รายการ ›</span>
+          </div>
+
+          <!-- 3 services visible -->
+          <div class="v2-service-card">
+            <div class="v2-service-pic"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">โบท็อกซ์เกาหลี A</div>
+              <div class="v2-service-meta">30 นาที · นพ.วิชัย</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿1,000</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+          <div class="v2-service-card">
+            <div class="v2-service-pic b"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">ขูดหินปูน + ขัดฟัน</div>
+              <div class="v2-service-meta">45 นาที · ทพญ.สุดา</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿1,500</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+          <div class="v2-service-card">
+            <div class="v2-service-pic c"></div>
+            <div class="v2-service-body">
+              <div class="v2-service-name">ฟอกสีฟันเลเซอร์</div>
+              <div class="v2-service-meta">60 นาที · นพ.ชัยพร</div>
+            </div>
+            <div class="v2-service-price-col">
+              <div class="v2-service-price">฿3,500</div>
+              <div class="v2-service-cta">จอง ›</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold-line"><span class="label">FOLD · 760px</span></div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins · Grab/Apple grade</h3>
+      <ul>
+        <li class="fix">drop pill row · single inline meta line (28px tall vs 36)</li>
+        <li class="fix">drop separate address+rail+cta · ALL combined into 1 rail (32px tall)</li>
+        <li class="fix">contact CTAs as icon-only inside rail (📞 💬 🗺) · saves 48px</li>
+        <li class="fix">hero 160px (was 220) · saves 60px vertical</li>
+        <li class="fix">logo overlap hero (-22px) · adds vertical depth without consuming space</li>
+        <li class="fix">service cards 64px (was 90) · 3 visible above fold ✓</li>
+        <li class="fix">"12 รายการ ›" · count + see-all in title row · scan affordance</li>
+        <li class="measure">total header: 32+160+10+48+24+32+24 = 330px · 430px for services · 3×64 = 192px ✓ fits</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ FONT + LAYOUT SPEC ============ -->
+<div class="font-spec">
+  <h3>📐 v2 layout + font spec · Grab/Apple grade</h3>
+  <table>
+    <tr>
+      <th>Element</th><th>Font</th><th>Size</th><th>Weight</th><th>Color</th><th>Margin</th>
+    </tr>
+    <tr>
+      <td><b>Shop name</b> (Latin)</td>
+      <td><code>Cormorant Garamond</code> italic</td>
+      <td><code>19px</code></td>
+      <td><code>600</code></td>
+      <td><code>#0f172a</code></td>
+      <td>0 (no extra · profile flexbox align)</td>
+    </tr>
+    <tr>
+      <td><b>Shop name</b> (Thai)</td>
+      <td><code>Sarabun</code></td>
+      <td><code>17px</code></td>
+      <td><code>700</code></td>
+      <td><code>#0f172a</code></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Verified badge dot</td>
+      <td>Inter 800</td>
+      <td><code>7.5px</code></td>
+      <td>800</td>
+      <td>#fff on #1E40AF circle</td>
+      <td>3px left of name end</td>
+    </tr>
+    <tr>
+      <td><b>Meta line</b> (rating · cat · price · km)</td>
+      <td><code>Sarabun</code></td>
+      <td><code>11.5px</code></td>
+      <td><code>500-700</code> (mixed)</td>
+      <td><code>#475569</code></td>
+      <td>top: 6px (gap from profile)</td>
+    </tr>
+    <tr>
+      <td>· "ใหม่" rating</td>
+      <td>Sarabun</td>
+      <td>11.5px</td>
+      <td>600</td>
+      <td>#0f172a + #fbbf24 star</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>· Category pill</td>
+      <td>Sarabun</td>
+      <td>10.5px</td>
+      <td>600</td>
+      <td>#1e40af on #eff6ff bg</td>
+      <td>1px 7px padding</td>
+    </tr>
+    <tr>
+      <td>· "฿1,000+" price</td>
+      <td>Inter</td>
+      <td>11.5px</td>
+      <td>700</td>
+      <td>#1E40AF</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><b>Address rail</b> (left text)</td>
+      <td>Sarabun</td>
+      <td>11.5px</td>
+      <td>500</td>
+      <td>#475569 + 📍 emoji 12px</td>
+      <td>padding 7px 10px · margin 2px</td>
+    </tr>
+    <tr>
+      <td>· Contact icons (📞 💬 🗺)</td>
+      <td>system emoji</td>
+      <td>11.5px</td>
+      <td>700</td>
+      <td>#1E40AF / #06C755 (LINE)</td>
+      <td>gap 8px between</td>
+    </tr>
+    <tr>
+      <td><b>Section title</b> "รายการแนะนำ"</td>
+      <td>Sarabun</td>
+      <td>13.5px</td>
+      <td>700</td>
+      <td>#0f172a</td>
+      <td>top: 6px / bottom: 2px</td>
+    </tr>
+    <tr>
+      <td>· "12 รายการ ›" right side</td>
+      <td>Sarabun</td>
+      <td>10.5px</td>
+      <td>500</td>
+      <td>#94a3b8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><b>Service name</b></td>
+      <td>Sarabun</td>
+      <td>12.5px</td>
+      <td>700</td>
+      <td>#0f172a</td>
+      <td>line-height 1.2</td>
+    </tr>
+    <tr>
+      <td>· Meta (duration · staff)</td>
+      <td>Sarabun</td>
+      <td>10.5px</td>
+      <td>500</td>
+      <td>#94a3b8</td>
+      <td>top: 2px</td>
+    </tr>
+    <tr>
+      <td>· Price (right column)</td>
+      <td>Inter</td>
+      <td>13.5px</td>
+      <td>800</td>
+      <td>#1E40AF</td>
+      <td>line-height 1</td>
+    </tr>
+    <tr>
+      <td>· "จอง ›" CTA pill</td>
+      <td>Sarabun</td>
+      <td>9.5px</td>
+      <td>700</td>
+      <td>#fff on #0a0a0a</td>
+      <td>top: 4px · padding 3px 8px</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ HEIGHT BUDGET ============ -->
+<div class="font-spec">
+  <h3>📏 v2 height budget · 760px viewport</h3>
+  <table>
+    <tr><th>Element</th><th>Height</th><th>Cumulative</th></tr>
+    <tr><td>iOS notch + status bar</td><td>32 px</td><td>32 px</td></tr>
+    <tr><td>Hero image (with overlay icons)</td><td>160 px</td><td>192 px</td></tr>
+    <tr><td>Body padding-top</td><td>10 px</td><td>202 px</td></tr>
+    <tr><td>Profile (logo overlap −22 + name 2-line)</td><td>40 px</td><td>242 px</td></tr>
+    <tr><td>Meta line</td><td>20 px</td><td>262 px</td></tr>
+    <tr><td>Address rail</td><td>32 px + 6 gap</td><td>300 px</td></tr>
+    <tr><td>Section title row</td><td>22 px + 4 gap</td><td>326 px</td></tr>
+    <tr><td><b>Service card 1</b></td><td>72 px + 6 gap</td><td><b>404 px</b></td></tr>
+    <tr><td><b>Service card 2</b></td><td>72 px + 6 gap</td><td><b>482 px</b></td></tr>
+    <tr><td><b>Service card 3</b></td><td>72 px + 6 gap</td><td><b>560 px</b></td></tr>
+    <tr><td><i>Headroom (760 − 560)</i></td><td>—</td><td><i>200 px ✓</i></td></tr>
+  </table>
+  <p style="margin-top: 10px; color: #166534; font-weight: 600; font-size: 12.5px;">
+    ✓ 3 services visible above fold · 200px headroom for service 4 partial peek (encourages scroll)
+  </p>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict">
+  <h3>📊 Comparison · v1 vs v2</h3>
+  <table style="width:100%; border-collapse: collapse; font-size: 11.5px;">
+    <tr style="border-bottom: 1px solid #e2e8f0;">
+      <th style="text-align:left; padding: 6px;"></th>
+      <th style="padding: 6px;">v1 (pill-heavy)</th>
+      <th style="padding: 6px;">v2 (ultra-compact)</th>
+    </tr>
+    <tr>
+      <td style="padding: 6px;">Hero height</td>
+      <td style="padding: 6px;">220 px</td>
+      <td style="padding: 6px; color: #166534; font-weight:600;">160 px (-27%)</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px;">Pills row</td>
+      <td style="padding: 6px;">4 pills · 36 px</td>
+      <td style="padding: 6px; color: #166534; font-weight:600;">drop · inline meta 20 px</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px;">Address + CTAs</td>
+      <td style="padding: 6px;">2 rails · 90 px</td>
+      <td style="padding: 6px; color: #166534; font-weight:600;">1 rail with icons · 32 px</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px;">Service card height</td>
+      <td style="padding: 6px;">88 px</td>
+      <td style="padding: 6px; color: #166534; font-weight:600;">72 px (-18%)</td>
+    </tr>
+    <tr style="background: #f0fdf4;">
+      <td style="padding: 6px; font-weight:700;">Services visible above fold</td>
+      <td style="padding: 6px;">1.5</td>
+      <td style="padding: 6px; color: #166534; font-weight:700;">3 ✓</td>
+    </tr>
+  </table>
+
+  <h3 style="margin-top: 14px">🍎 Grab/Apple pattern reference</h3>
+  <p>
+    <b>Grab merchant page:</b> compact hero + name + 1-line meta + immediate item list · contact icons floating top-right<br>
+    <b>Apple Maps POI:</b> hero + name + 1-line meta + integrated address-CTA rail + immediate sections<br>
+    <b>Wongnai detail:</b> hero + name + meta + address-line + items (icon-driven CTAs in rail)<br>
+    <b>v2 BookEase:</b> ✓ matches all 3 patterns · single inline meta + integrated rail + 3 items above fold
+  </p>
+
+  <h3 style="margin-top: 14px">🚦 vote</h3>
+  <p>
+    <b>A · ลุย v2 ทันที</b> (~30-40 min · drop pills · inline meta · 1 rail · service cards 72px)<br>
+    <b>B · พี่ tweak font/margin/spec ก่อน</b> (ดู font-spec table ด้านบน)<br>
+    <b>C · เพิ่มอะไรเข้า v2 ก่อน</b> (เช่น expandable description · gallery · staff list)
+  </p>
+</div>
+
+</body>
+</html>
