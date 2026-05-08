@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/payment · iter6 · Chope-style collapsible · iter1 minimal restored</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 32px 16px 60px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 24px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 32px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; }
+  .header .lock { display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px; }
+
+  .stage {
+    max-width: 1320px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    background: #dcfce7; color: #166534;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.expanded .badge { background: #fef3c7; color: #92400e; }
+  .col-label h2 { font-size: 16px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.55; }
+
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.20);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #f5f8fc;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* ===== iter6 · iter1 minimal · NO cards · whitespace = hierarchy ===== */
+  .pay { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .pay-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 22px 6px;
+    flex-shrink: 0;
+  }
+  .pay-header .back { font-size: 22px; color: #475569; line-height: 1; cursor: pointer; }
+  .pay-header .wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .pay-header .wordmark .book { color: #1E40AF; }
+  .pay-header .wordmark .ease { color: #38BDF8; }
+  .pay-header .spacer { width: 22px; }
+
+  /* iter1-style direct layout · NO summary card · pure typography */
+  .pay-body {
+    flex: 1; min-height: 0;
+    padding: 8px 22px 0;
+    display: flex; flex-direction: column;
+    overflow-y: auto;     /* allow scroll if user expands BOTH */
+  }
+
+  .hero-eyebrow { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .hero-title {
+    font-family: 'Sarabun'; font-weight: 700; font-size: 22px;
+    color: #0f172a; line-height: 1.15;
+  }
+  .hero-title .shop { color: #1E40AF; }
+  .hero-when { font-size: 12.5px; color: #475569; margin-top: 6px; }
+
+  .price-block { margin-top: 22px; }
+  .price-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .price-row .label { font-size: 12px; color: #64748b; }
+  .price-row .amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 32px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+  .remaining { font-size: 11px; color: #94a3b8; margin-top: 6px; }
+  .remaining .num { color: #475569; font-weight: 600; }
+
+  /* Phone field · iter1 style · NO card wrap */
+  .field {
+    margin-top: 22px;
+    width: 100%; padding: 13px 16px;
+    border: 1px solid #cbd5e1; border-radius: 14px;
+    font-size: 13.5px; font-family: inherit;
+    background: #fff;
+  }
+  .field::placeholder { color: #94a3b8; }
+  .field:focus {
+    outline: none; border-color: #1E40AF;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+  }
+
+  /* Collapsible row · "+ เพิ่ม..." link style */
+  .collapse {
+    border: none; background: transparent;
+    padding: 12px 0;
+    font-family: inherit; font-size: 12.5px; color: #475569;
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 8px;
+    width: 100%;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .collapse:first-of-type { margin-top: 14px; border-top: 1px solid #e2e8f0; }
+  .collapse:hover { color: #0f172a; }
+  .collapse .plus {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #e2e8f0; color: #475569;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; line-height: 1;
+    transition: transform 200ms ease, background 200ms ease;
+  }
+  .collapse[aria-expanded="true"] .plus {
+    background: #0a0a0a; color: #fff; transform: rotate(45deg);
+  }
+  .collapse .desc {
+    margin-left: auto; font-size: 11px; color: #94a3b8;
+  }
+  /* the panel revealed under each collapse */
+  .panel {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 240ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .panel.open { max-height: 200px; }
+  .panel-inner { padding: 4px 0 14px; }
+
+  .promo-row { display: flex; gap: 8px; }
+  .promo-row input {
+    flex: 1; padding: 11px 13px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 12.5px; font-family: inherit;
+    background: #fff;
+  }
+  .promo-row .apply {
+    background: #a8a29e; color: #fff; padding: 0 18px;
+    border: none; border-radius: 12px;
+    font-weight: 700; font-size: 12px;
+  }
+
+  .note-input {
+    width: 100%; padding: 11px 13px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 12.5px; font-family: inherit;
+    background: #fff; resize: none; height: 52px; line-height: 1.4;
+  }
+  .note-input::placeholder { color: #94a3b8; }
+
+  .micro-trust {
+    margin-top: 18px;
+    font-size: 11px; color: #64748b; line-height: 1.55;
+  }
+  .micro-trust .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+
+  .cta-zone { margin-top: 18px; padding-bottom: 14px; flex-shrink: 0; }
+  .cta {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 15px; border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+    letter-spacing: -0.005em;
+  }
+  .cta-implicit {
+    font-size: 9.5px; color: #94a3b8;
+    text-align: center; margin-top: 7px;
+  }
+  .cta-implicit a { color: #475569; text-decoration: underline; }
+
+  .footer-trust {
+    flex-shrink: 0;
+    padding: 8px 22px 14px;
+    font-size: 9.5px; color: #94a3b8;
+    display: flex; justify-content: center; gap: 5px; align-items: center;
+    border-top: 1px solid #e2e8f0;
+  }
+  .footer-trust .mini-wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 10px;
+  }
+  .footer-trust .mini-wordmark .book { color: #1E40AF; }
+  .footer-trust .mini-wordmark .ease { color: #38BDF8; }
+
+  /* ============= Annotations ============= */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 12px; color: #475569; padding: 3px 0; line-height: 1.6; }
+  .anno li.kept::before { content: "✅ "; }
+  .anno li.measure::before { content: "📏 "; }
+  .anno li.click::before { content: "👆 "; }
+
+  .verdict {
+    max-width: 1320px; margin: 28px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 13px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>/payment · iter6 · <span class="book">Book</span><span class="ease">Ease</span> · Chope-collapsible</h1>
+  <p>iter1 minimal feel restored · promo + note stashed · tap to reveal · Chope/Stripe/Klarna pattern</p>
+  <span class="lock">⚠️ Preview · 2 phones: default state vs both expanded</span>
+</div>
+
+<div class="stage">
+
+  <!-- ============= iter6 · DEFAULT (both collapsed) ============= -->
+  <div>
+    <div class="col-label">
+      <span class="badge">⭐ iter6 · default state</span>
+      <h2>First paint · pristine</h2>
+      <p class="subline">
+        Promo + note stashed behind "+" links · Chope/Stripe pattern · 80%+ users
+        see only essential. Power users tap reveal.
+      </p>
+    </div>
+
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="pay">
+          <div class="status-bar"><span>9:41</span><span>📶 100%</span></div>
+
+          <div class="pay-header">
+            <span class="back">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+
+          <div class="pay-body">
+            <div class="hero-eyebrow">บริการที่จอง</div>
+            <div class="hero-title">นวดอโรมา · <span class="shop">ร้าน Demo</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 15:00 น.</div>
+
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">มัดจำ</div>
+                <div class="amount">฿200</div>
+              </div>
+              <div class="remaining">เหลือ <span class="num">฿600</span> จ่ายที่ร้าน · เงินสด/QR</div>
+            </div>
+
+            <input class="field" placeholder="เบอร์โทร · 081-234-5678">
+
+            <button class="collapse" aria-expanded="false">
+              <span class="plus">+</span>
+              <span>เพิ่มโค้ดส่วนลด / ว้อยเชอร์</span>
+              <span class="desc">ถ้ามี</span>
+            </button>
+            <button class="collapse" aria-expanded="false">
+              <span class="plus">+</span>
+              <span>เพิ่มคำขอพิเศษถึงร้าน</span>
+              <span class="desc">ถ้ามี</span>
+            </button>
+
+            <div class="micro-trust">
+              <span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%
+            </div>
+
+            <div class="cta-zone">
+              <button class="cta">จ่าย ฿200</button>
+              <div class="cta-implicit">
+                กดยืนยันถือว่ายอมรับ <a>เงื่อนไขบริการ</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-trust">
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            · <span>LINE @bookease</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="anno">
+      <h3>📏 First paint vertical · 760px viewport</h3>
+      <ul>
+        <li class="measure">Notch + status bar: ~50 px</li>
+        <li class="measure">Header (back + wordmark): ~46 px</li>
+        <li class="measure">Hero title + when: ~80 px</li>
+        <li class="measure">Price block (margin + row): ~75 px</li>
+        <li class="measure">Phone input + margin: ~70 px</li>
+        <li class="measure">2 collapse rows × 44 px: ~88 px</li>
+        <li class="measure">Micro-trust + margin: ~38 px</li>
+        <li class="measure">CTA + implicit: ~80 px</li>
+        <li class="measure">Footer wordmark: ~30 px</li>
+        <li class="measure">Padding/safe area: ~80 px</li>
+        <li class="measure"><b>TOTAL ~637 px · 123 px headroom · NO scroll</b> ✓</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============= iter6 · BOTH EXPANDED (after user taps) ============= -->
+  <div>
+    <div class="col-label expanded">
+      <span class="badge">expanded state</span>
+      <h2>หลังพิมพ์ · ทั้ง 2 expanded</h2>
+      <p class="subline">
+        ลูกค้า ~10-20% ที่ใช้ promo+note · tap reveal · soft 240ms transition · scroll if needed.
+      </p>
+    </div>
+
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="pay">
+          <div class="status-bar"><span>9:41</span><span>📶 100%</span></div>
+
+          <div class="pay-header">
+            <span class="back">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+
+          <div class="pay-body">
+            <div class="hero-eyebrow">บริการที่จอง</div>
+            <div class="hero-title">นวดอโรมา · <span class="shop">ร้าน Demo</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 15:00 น.</div>
+
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">มัดจำ</div>
+                <div class="amount">฿200</div>
+              </div>
+              <div class="remaining">เหลือ <span class="num">฿600</span> จ่ายที่ร้าน · เงินสด/QR</div>
+            </div>
+
+            <input class="field" placeholder="เบอร์โทร · 081-234-5678">
+
+            <button class="collapse" aria-expanded="true">
+              <span class="plus">+</span>
+              <span>เพิ่มโค้ดส่วนลด / ว้อยเชอร์</span>
+              <span class="desc">ถ้ามี</span>
+            </button>
+            <div class="panel open">
+              <div class="panel-inner">
+                <div class="promo-row">
+                  <input placeholder="กรอกโค้ดของคุณ">
+                  <button class="apply">ใช้</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="collapse" aria-expanded="true">
+              <span class="plus">+</span>
+              <span>เพิ่มคำขอพิเศษถึงร้าน</span>
+              <span class="desc">ถ้ามี</span>
+            </button>
+            <div class="panel open">
+              <div class="panel-inner">
+                <textarea class="note-input" placeholder="เช่น ห้องเงียบ · แพ้น้ำมันหอม · มาก่อนเวลา 5 นาที"></textarea>
+              </div>
+            </div>
+
+            <div class="micro-trust">
+              <span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%
+            </div>
+
+            <div class="cta-zone">
+              <button class="cta">จ่าย ฿200</button>
+              <div class="cta-implicit">
+                กดยืนยันถือว่ายอมรับ <a>เงื่อนไขบริการ</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-trust">
+            <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            · <span>LINE @bookease</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="anno">
+      <h3>👆 หลัง user tap ทั้ง 2 collapse</h3>
+      <ul>
+        <li class="kept">+ promo input row reveal · UnifiedPromoInput logic preserved</li>
+        <li class="kept">+ note textarea reveal · Chope-style 2 lines</li>
+        <li class="kept">soft 240ms cubic-bezier transition</li>
+        <li class="kept">"+" rotates 45° → "×" black state · clear toggle affordance</li>
+        <li class="measure">Total ~780 px · scroll allowed สำหรับ 10-20% power users</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="verdict">
+  <h3>Steve Jobs + Elon · combined verdict</h3>
+  <p><b>Steve Jobs:</b> "1000 features · we said no to 999 on the first paint." Default state = sparse · sacred whitespace · power user แค่ tap reveal.</p>
+  <p><b>Elon:</b> "Best UI is no UI." Visible chrome ต้อง earn place · 5-15% case → behind one tap.</p>
+  <p><b>Pattern อ้างอิง:</b> Chope · Stripe Checkout · Klarna · Apple Pay sheet · ทุกตัว default-hide promo + note ไว้หลัง "+ Add" link.</p>
+  <p><b>Tradeoffs explicit:</b></p>
+  <p>• <code>2 collapse rows = 88 px</code> ต้นทุน vs <code>full-revealed = 200 px</code> · ประหยัด 112px first paint · 80% users ไม่ tap.</p>
+  <p>• <code>"+ เพิ่มโค้ด" link</code> มี <code>"ถ้ามี"</code> hint ขวาสุด · clue คนที่ไม่มีก็ไม่ต้องคิด.</p>
+  <p>• <code>"+" rotates 45° → "×" black</code> · เห็น state ชัด · ไม่ต้องเดา.</p>
+  <p style="margin-top:10px"><b>Recommendation:</b> ship iter6 as Pass 25 v37 React port target. UnifiedPromoInput wrapped in <code>&lt;details&gt;</code> + new note collapsible · CSS-only styling + small JSX wrap · ~75 min React port.</p>
+</div>
+
+<script>
+  // Local interactivity for the demo (real React port uses useState toggle)
+  document.querySelectorAll('.collapse').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      const panel = btn.nextElementSibling;
+      if (panel?.classList.contains('panel')) panel.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
