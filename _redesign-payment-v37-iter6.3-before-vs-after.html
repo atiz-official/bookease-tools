@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iter6.3 · before vs proposed · 7 fixes · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 60px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 24px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 28px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 720px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .section-title {
+    max-width: 1480px; margin: 40px auto 14px;
+    padding: 0 8px;
+    font-size: 14px; font-weight: 700; color: #0f172a;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #0a0a0a; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .section-title .desc {
+    font-size: 12px; font-weight: 400; color: #64748b;
+    text-transform: none; letter-spacing: 0;
+    margin-left: 8px;
+  }
+
+  .stage {
+    max-width: 1320px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;
+  }
+  @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    background: #fee2e2; color: #991b1b;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.proposed .badge { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 14px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.55; }
+
+  /* phone */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+    margin: 0 auto;
+    width: 360px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 720px;
+    background: #f5f8fc;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 26px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 84px; height: 20px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 11px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* ============ Common ServiceDetailPage components ============ */
+  .sd-page { background: #fff; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .sd-img {
+    height: 130px; background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+    flex-shrink: 0; position: relative;
+  }
+  .sd-img::after {
+    content: 'TLL Salon'; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); color: rgba(255,255,255,0.7);
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; font-weight: 600;
+  }
+  .sd-body { flex: 1; padding: 14px 18px; overflow-y: auto; }
+  .sd-title { font-family: 'Sarabun'; font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .sd-shop { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+  .sd-price-row {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 14px; padding: 10px 14px; background: #fefdfb;
+    border-radius: 12px; border: 1px solid #fef3c7;
+  }
+  .sd-price { font-family: 'Inter'; font-size: 22px; font-weight: 800; color: #0f172a; }
+  .sd-duration { font-size: 11px; color: #64748b; }
+
+  .sd-time-section { margin-top: 14px; }
+  .sd-section-h {
+    font-size: 13px; font-weight: 700; color: #0f172a;
+    margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .sd-time-pill-active {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: #eff6ff; border: 1.5px solid #2563eb;
+    border-radius: 12px; font-size: 13px; font-weight: 600; color: #1E40AF;
+    margin-bottom: 10px;
+  }
+  .sd-time-pill-active .badge {
+    font-size: 9.5px; background: #2563eb; color: #fff;
+    padding: 2px 6px; border-radius: 999px; font-weight: 700;
+  }
+
+  /* === BEFORE: blue prominent change-time link === */
+  .sd-change-time-blue {
+    color: #2563eb; font-size: 13px; font-weight: 600;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+  }
+  /* === PROPOSED: muted gray text-button === */
+  .sd-change-time-gray {
+    color: #94a3b8; font-size: 11.5px; font-weight: 500;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 3px;
+  }
+
+  .sd-cta-zone { padding: 14px 18px 18px; flex-shrink: 0; background: #fff; border-top: 1px solid #f1f5f9; }
+  .sd-cta-primary {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 14px; border: none; border-radius: 999px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  /* === BEFORE secondary CTA: equal weight purple-blue === */
+  .sd-cta-secondary-equal {
+    width: 100%; margin-top: 10px;
+    background: transparent; color: #2D55EB;
+    padding: 12px; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; text-align: center;
+  }
+  /* === PROPOSED secondary: tiny secondary link === */
+  .sd-cta-secondary-link {
+    width: 100%; margin-top: 8px;
+    background: transparent; color: #94a3b8;
+    padding: 6px; border: none;
+    font-family: inherit; font-size: 11.5px; font-weight: 500;
+    cursor: pointer; text-align: center;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+
+  .sd-microcopy-noisy {
+    text-align: center; font-size: 11px; color: #94a3b8;
+    margin-top: 8px;
+  }
+
+  /* ============ ConfirmationBottomSheet components ============ */
+  .conf-overlay { background: rgba(15,23,42,0.4); flex: 1; display: flex; align-items: flex-end; }
+  .conf-sheet {
+    width: 100%; background: #fff; border-radius: 22px 22px 0 0;
+    padding: 18px 20px 24px; max-height: 70%; display: flex; flex-direction: column; gap: 14px;
+  }
+  .conf-header {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .conf-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+  .conf-close { width: 28px; height: 28px; border: none; background: #f1f5f9; border-radius: 50%; cursor: pointer; }
+
+  .conf-service-name { font-size: 18px; font-weight: 700; color: #0f172a; }
+  .conf-time-card {
+    background: #eff6ff; border: 1px solid #dbeafe;
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .conf-time-label { font-size: 11px; color: #64748b; }
+  .conf-time-value { font-size: 18px; font-weight: 700; color: #1E40AF; }
+
+  .conf-microcopy-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #475569; padding: 4px 0;
+  }
+  .conf-microcopy-row .icon { font-size: 14px; }
+
+  /* === BEFORE: blue CTA === */
+  .conf-cta-blue {
+    width: 100%; background: #2D55EB; color: #fff;
+    padding: 14px; border: none; border-radius: 999px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(45,85,235,0.25);
+  }
+  /* === PROPOSED: black CTA (consistent commit handoff) === */
+  .conf-cta-black {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 14px; border: none; border-radius: 999px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+  }
+
+  /* ============ /payment components ============ */
+  .pay { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .pay-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 22px 6px; flex-shrink: 0;
+  }
+  .pay-header .back { font-size: 22px; color: #475569; }
+  .pay-header .wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .pay-header .wordmark .book { color: #1E40AF; }
+  .pay-header .wordmark .ease { color: #38BDF8; }
+  .pay-header .spacer { width: 22px; }
+
+  .pay-body {
+    flex: 1; min-height: 0; padding: 8px 22px 0;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .hero-eyebrow { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .hero-title { font-family: 'Sarabun'; font-weight: 700; font-size: 22px; color: #0f172a; line-height: 1.15; }
+  .hero-title .shop { color: #1E40AF; }
+  .hero-when { font-size: 12.5px; color: #475569; margin-top: 6px; }
+  .price-block { margin-top: 20px; }
+  .price-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .price-row .label { font-size: 12px; color: #64748b; }
+  .price-row .amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 28px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+
+  .field {
+    margin-top: 18px; width: 100%; padding: 13px 16px;
+    border: 1px solid #cbd5e1; border-radius: 14px;
+    font-size: 13.5px; background: #fff;
+  }
+
+  .collapse {
+    border: none; background: transparent;
+    padding: 14px 4px; font-size: 12.5px; color: #475569;
+    text-align: left; display: flex; align-items: center; gap: 10px;
+    width: 100%; border-bottom: 1px solid #e2e8f0;
+  }
+  .collapse:first-of-type { margin-top: 12px; border-top: 1px solid #e2e8f0; }
+  .collapse .plus {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #e2e8f0; color: #475569;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; line-height: 1;
+  }
+  .collapse .label-main { flex: 1; font-weight: 600; }
+  .collapse .label-hint { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+  /* duplicate trust block (the BUG) */
+  .trust-footer-bug {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 11px; color: #64748b; line-height: 1.55;
+    padding: 4px 0 0;
+  }
+  .trust-footer-bug .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+  .trust-footer-bug .powered {
+    margin-top: 6px; font-size: 10px; color: #94a3b8; display: block;
+  }
+  .trust-footer-bug .powered .book { color: #1E40AF; font-weight: 800; }
+  .trust-footer-bug .powered .ease { color: #38BDF8; font-weight: 800; }
+
+  .trust-footer-clean {
+    margin-top: 14px; text-align: center; font-size: 10px; color: #94a3b8;
+    padding: 4px 0 0;
+  }
+  .trust-footer-clean .powered .book { color: #1E40AF; font-weight: 800; }
+  .trust-footer-clean .powered .ease { color: #38BDF8; font-weight: 800; }
+
+  .micro-trust-pill {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 11px; color: #64748b;
+  }
+  .micro-trust-pill .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+
+  .cta-zone { padding: 12px 22px 14px; flex-shrink: 0; }
+  .cta {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 15px; border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+  }
+  .cta-implicit { font-size: 9.5px; color: #94a3b8; text-align: center; margin-top: 7px; }
+  .cta-implicit a { color: #475569; text-decoration: underline; }
+
+  /* annotations */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11.5px; color: #475569; padding: 2px 0; line-height: 1.5; }
+  .anno li.bug::before { content: "🔴 "; }
+  .anno li.fix::before { content: "✅ "; }
+  .anno li.dropped::before { content: "❌ "; }
+  .anno li.measure::before { content: "📏 "; }
+
+  /* highlight ring for bug elements */
+  .bug-ring { box-shadow: 0 0 0 2px #ef4444 inset; border-radius: 12px; }
+
+  .verdict {
+    max-width: 1320px; margin: 36px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+  .scoreboard {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;
+  }
+  .scoreboard .card {
+    border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px;
+  }
+  .scoreboard .card .grade {
+    font-size: 32px; font-weight: 800; line-height: 1;
+    font-family: 'Inter'; letter-spacing: -0.02em;
+  }
+  .scoreboard .card.before .grade { color: #92400e; }
+  .scoreboard .card.after .grade { color: #166534; }
+  .scoreboard .card .label { font-size: 11px; color: #64748b; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>iter6.3 · before vs proposed · <span class="book">Book</span><span class="ease">Ease</span> /payment chain</h1>
+  <p>3 surfaces · 7 fixes · ลด tap 8→6 · drop duplicate microcopy · unify CTA color · Apple Pay-grade trust handoff</p>
+  <span class="lock">⚠️ Preview only · ยังไม่ ship · /payment iter6.2 already live</span>
+</div>
+
+<!-- ===================================================== -->
+<!-- SURFACE 1: ServiceDetailPage                          -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">1</span>
+  <span>ServiceDetailPage · /tll-salon/ทำสี-0001</span>
+  <span class="desc">B4 · B5 · B7 · 3 fixes</span>
+</div>
+
+<div class="stage">
+  <!-- BEFORE -->
+  <div>
+    <div class="col-label">
+      <span class="badge">Before · LIVE</span>
+      <h2>ServiceDetail วันนี้</h2>
+      <p class="subline">"เปลี่ยนเวลา >" เด่น · 2 CTAs equal weight · noise microcopy</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:48</span><span>📶 100%</span></div>
+        <div class="sd-page">
+          <div class="sd-img"></div>
+          <div class="sd-body">
+            <div class="sd-title">ทำสี</div>
+            <div class="sd-shop">ที่ TLL Salon</div>
+            <div class="sd-price-row">
+              <span class="sd-price">฿1,500</span>
+              <span class="sd-duration">2 ชม.</span>
+            </div>
+            <div class="sd-time-section">
+              <div class="sd-section-h">
+                <span>เวลาที่เลือก</span>
+                <a class="sd-change-time-blue">เปลี่ยนเวลา ›</a>
+              </div>
+              <div class="sd-time-pill-active">
+                <span>วันนี้ · 17:00 - 19:00</span>
+                <span class="badge">แนะนำ</span>
+              </div>
+            </div>
+          </div>
+          <div class="sd-cta-zone">
+            <button class="sd-cta-primary">📅 จองเลย</button>
+            <button class="sd-cta-secondary-equal bug-ring">🎁 ซื้อดีลเก็บไว้</button>
+            <p class="sd-microcopy-noisy bug-ring">ยังไม่จองเวลา · จนกว่าจะยืนยัน</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🔴 issues</h3>
+      <ul>
+        <li class="bug"><b>B7</b> "เปลี่ยนเวลา ›" สีน้ำเงิน · 13px bold · เด่นกว่า primary content</li>
+        <li class="bug"><b>B4</b> "🎁 ซื้อดีลเก็บไว้" full-width pill · juvenile emoji · weight equal กับ primary</li>
+        <li class="bug"><b>B5</b> "ยังไม่จองเวลา · จนกว่าจะยืนยัน" microcopy ที่ user รู้อยู่แล้ว</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROPOSED -->
+  <div>
+    <div class="col-label proposed">
+      <span class="badge">Proposed iter6.3</span>
+      <h2>ServiceDetail · cleaned</h2>
+      <p class="subline">เปลี่ยนเวลา = gray text · ซื้อดีล = tiny link · drop redundant microcopy</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:48</span><span>📶 100%</span></div>
+        <div class="sd-page">
+          <div class="sd-img"></div>
+          <div class="sd-body">
+            <div class="sd-title">ทำสี</div>
+            <div class="sd-shop">ที่ TLL Salon</div>
+            <div class="sd-price-row">
+              <span class="sd-price">฿1,500</span>
+              <span class="sd-duration">2 ชม.</span>
+            </div>
+            <div class="sd-time-section">
+              <div class="sd-section-h">
+                <span>เวลาที่เลือก</span>
+                <a class="sd-change-time-gray">เปลี่ยน ›</a>
+              </div>
+              <div class="sd-time-pill-active">
+                <span>วันนี้ · 17:00 - 19:00</span>
+                <span class="badge">แนะนำ</span>
+              </div>
+            </div>
+          </div>
+          <div class="sd-cta-zone">
+            <button class="sd-cta-primary">จองเลย</button>
+            <button class="sd-cta-secondary-link">หรือซื้อเก็บไว้ใช้ทีหลัง</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ fixes</h3>
+      <ul>
+        <li class="fix"><b>B7</b> "เปลี่ยน ›" 11.5px gray · secondary action รับรู้ได้ ไม่แย่งความสนใจ</li>
+        <li class="fix"><b>B4</b> "หรือซื้อเก็บไว้ใช้ทีหลัง" tiny secondary link · 5% case ไม่ steal weight</li>
+        <li class="dropped"><b>B5</b> drop "ยังไม่จองเวลา · จนกว่าจะยืนยัน" · earned-no-place microcopy</li>
+        <li class="dropped">drop emoji 📅🎁 · "best part is no part"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- SURFACE 2: ConfirmationBottomSheet                    -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">2</span>
+  <span>ConfirmationBottomSheet · modal หลัง tap "จองเลย"</span>
+  <span class="desc">B2 · B3 · B6 · 3 fixes (B6 = drop modal entirely)</span>
+</div>
+
+<div class="stage">
+  <!-- BEFORE -->
+  <div>
+    <div class="col-label">
+      <span class="badge">Before · LIVE</span>
+      <h2>Modal "ยืนยันนัดหมาย" · 1 step extra</h2>
+      <p class="subline">BLUE CTA · 2 microcopy บอกเรื่องเดียวกัน · friction step</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:48</span><span>📶 100%</span></div>
+        <div class="conf-overlay">
+          <div class="conf-sheet">
+            <div class="conf-header">
+              <span class="conf-title">ยืนยันนัดหมาย</span>
+              <button class="conf-close">×</button>
+            </div>
+            <div class="conf-service-name">ทำสี</div>
+            <div class="conf-time-card">
+              <div class="conf-time-label">เวลาที่เลือก</div>
+              <div class="conf-time-value">วันนี้ · 17:00 - 19:00</div>
+            </div>
+            <div class="bug-ring" style="padding: 6px; border-radius: 10px;">
+              <div class="conf-microcopy-row">
+                <span class="icon">📅</span>
+                <span>จองคิวเวลานี้ให้คุณ</span>
+              </div>
+              <div class="conf-microcopy-row">
+                <span class="icon">✨</span>
+                <span>ร้านจะเตรียมบริการรอ</span>
+              </div>
+            </div>
+            <button class="conf-cta-blue bug-ring">ชำระเงิน</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🔴 issues</h3>
+      <ul>
+        <li class="bug"><b>B2</b> CTA <code>#2D55EB</code> royal blue · ที่ /payment ใช้ <code>#0a0a0a</code> black · จุด commit เดียวกัน 2 สี</li>
+        <li class="bug"><b>B3</b> 2 microcopy "📅 จองคิว" + "✨ ร้านจะเตรียม" บอกเรื่องเดียวกัน</li>
+        <li class="bug"><b>B6</b> ทั้ง modal นี้ = redundant · ทุก field มีอยู่ที่ /payment แล้ว</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROPOSED: drop modal -->
+  <div>
+    <div class="col-label proposed">
+      <span class="badge">Proposed iter6.3</span>
+      <h2>ตัด modal · ServiceDetail → /payment ตรง</h2>
+      <p class="subline">Apple Pay sheet pattern · ลด 1 tap · /payment เป็นที่ confirm อยู่แล้ว</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:48</span><span>📶 100%</span></div>
+        <!-- Show /payment immediately as the destination -->
+        <div class="pay">
+          <div class="pay-header">
+            <span class="back">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+          <div class="pay-body">
+            <div class="hero-eyebrow">จองบริการ</div>
+            <div class="hero-title">ทำสี · <span class="shop">TLL Salon</span></div>
+            <div class="hero-when">8 พ.ค. · 17:00 - 19:00</div>
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">ยอดที่ต้องชำระ</div>
+                <div class="amount">฿1,500</div>
+              </div>
+            </div>
+            <input class="field" placeholder="เบอร์โทรศัพท์ *">
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มโค้ดส่วนลด / ของขวัญ</span>
+              <span class="label-hint">ถ้ามี</span>
+            </button>
+          </div>
+          <div style="padding: 0 22px;">
+            <p class="micro-trust-pill"><span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%</p>
+          </div>
+          <div class="cta-zone">
+            <button class="cta">จ่าย ฿1,500</button>
+            <div class="cta-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขบริการ</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ fixes</h3>
+      <ul>
+        <li class="dropped"><b>B6</b> drop ConfirmationBottomSheet ทั้งโมดอล · /payment คือ confirm step</li>
+        <li class="fix"><b>B2</b> CTA → black <code>#0a0a0a</code> consistent ทั้ง chain</li>
+        <li class="dropped"><b>B3</b> drop microcopy ซ้ำ · price + service + time พร้อมที่ /payment</li>
+        <li class="measure">ลด 1 tap · service-detail "จองเลย" → /payment ตรง</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- SURFACE 3: /payment                                   -->
+<!-- ===================================================== -->
+<div class="section-title">
+  <span class="num">3</span>
+  <span>/payment · iter6.2 ที่ ship · DUPLICATE 30-min pill</span>
+  <span class="desc">B1 · 1 fix · drop duplicate trust message</span>
+</div>
+
+<div class="stage">
+  <!-- BEFORE -->
+  <div>
+    <div class="col-label">
+      <span class="badge">Before · LIVE iter6.2</span>
+      <h2>/payment · 30 นาที pill ซ้ำ 2 ครั้ง</h2>
+      <p class="subline">TrustFooter (in body) + StickyPayFooter (above CTA) ซ้ำกัน</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>11:57</span><span>📶 100%</span></div>
+        <div class="pay">
+          <div class="pay-header">
+            <span class="back">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+          <div class="pay-body">
+            <div class="hero-eyebrow">จองบริการ</div>
+            <div class="hero-title">ทำสี · <span class="shop">TLL Salon</span></div>
+            <div class="hero-when">8 พ.ค. · 17:00 - 19:00</div>
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">ยอดที่ต้องชำระ</div>
+                <div class="amount">฿1,500</div>
+              </div>
+            </div>
+            <input class="field" placeholder="เบอร์โทรศัพท์ *">
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มโค้ดส่วนลด / ของขวัญ</span>
+              <span class="label-hint">ถ้ามี</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มชื่อ + อีเมล</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <!-- DUPLICATE #1: TrustFooter inside body -->
+            <div class="trust-footer-bug bug-ring">
+              <span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100% · LINE @bookease
+              <span class="powered">Powered by <span class="book">Book</span><span class="ease">Ease</span></span>
+            </div>
+          </div>
+          <div style="padding: 0 22px;">
+            <!-- DUPLICATE #2: micro-trust pill above CTA -->
+            <p class="micro-trust-pill bug-ring"><span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%</p>
+          </div>
+          <div class="cta-zone">
+            <button class="cta">จ่าย ฿1,500</button>
+            <div class="cta-implicit">กดปุ่ม "จ่าย" ถือว่ายอมรับ <a>เงื่อนไขและนโยบายการบริการ</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🔴 issue</h3>
+      <ul>
+        <li class="bug"><b>B1</b> "30 นาที · ตกลงเวลาไม่ได้ · คืนเงิน 100%" ปรากฏ <b>2 ครั้ง</b> ติดกัน</li>
+        <li class="bug">TrustFooter component (เก่า) + StickyPayFooter pill (iter6.2 ใหม่) ซ้ำ</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROPOSED -->
+  <div>
+    <div class="col-label proposed">
+      <span class="badge">Proposed iter6.3</span>
+      <h2>/payment · pill เดียว · trust ที่จุด commit</h2>
+      <p class="subline">เก็บ pill ที่ StickyPayFooter (Apple Pay pattern) · TrustFooter เหลือ Powered-by-BookEase</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>11:57</span><span>📶 100%</span></div>
+        <div class="pay">
+          <div class="pay-header">
+            <span class="back">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="spacer"></span>
+          </div>
+          <div class="pay-body">
+            <div class="hero-eyebrow">จองบริการ</div>
+            <div class="hero-title">ทำสี · <span class="shop">TLL Salon</span></div>
+            <div class="hero-when">8 พ.ค. · 17:00 - 19:00</div>
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">ยอดที่ต้องชำระ</div>
+                <div class="amount">฿1,500</div>
+              </div>
+            </div>
+            <input class="field" placeholder="เบอร์โทรศัพท์ *">
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มโค้ดส่วนลด / ของขวัญ</span>
+              <span class="label-hint">ถ้ามี</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มชื่อ + อีเมล</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <button class="collapse">
+              <span class="plus">+</span>
+              <span class="label-main">เพิ่มคำขอพิเศษถึงร้าน</span>
+              <span class="label-hint">ไม่บังคับ</span>
+            </button>
+            <!-- TrustFooter cleaned: just Powered-by-BookEase -->
+            <div class="trust-footer-clean">
+              <span class="powered">Powered by <span class="book">Book</span><span class="ease">Ease</span> · LINE @bookease</span>
+            </div>
+          </div>
+          <div style="padding: 0 22px;">
+            <p class="micro-trust-pill"><span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%</p>
+          </div>
+          <div class="cta-zone">
+            <button class="cta">จ่าย ฿1,500</button>
+            <div class="cta-implicit">กดยืนยันถือว่ายอมรับ <a>เงื่อนไขบริการ</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ fix</h3>
+      <ul>
+        <li class="fix"><b>B1</b> 30-นาที pill ปรากฏครั้งเดียว · เหนือ CTA (Apple Pay trust pattern)</li>
+        <li class="fix">TrustFooter เหลือ "Powered by BookEase · LINE @bookease" เท่านั้น (mini-wordmark + contact)</li>
+        <li class="dropped">drop "เงื่อนไขและนโยบายการบริการ" → ใช้ "เงื่อนไขบริการ" ที่สั้นกว่า</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- VERDICT                                               -->
+<!-- ===================================================== -->
+<div class="verdict">
+  <h3>📊 Score · Apple + Elon ratio</h3>
+  <div class="scoreboard">
+    <div class="card before">
+      <div class="grade">B+</div>
+      <div class="label">Before iter6.2 · /payment alone = A · แต่ chain มี 7 issues</div>
+    </div>
+    <div class="card after">
+      <div class="grade">A</div>
+      <div class="label">After iter6.3 · 8 taps → 6 taps · 0 duplicate · 1 CTA color</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14px">⚙️ Implementation</h3>
+  <p>
+    <b>Files affected (~45 นาที):</b><br>
+    • <code>frontend/src/components/payment/TrustFooter.tsx</code> — drop 30-นาที pill · เหลือ Powered-by-BookEase + LINE<br>
+    • <code>frontend/src/pages/ServiceDetailPage.tsx</code> — change "เปลี่ยนเวลา" style · cleanup 2-CTA layout · drop noise microcopy<br>
+    • <code>frontend/src/components/booking/ConfirmationBottomSheet.tsx</code> — choose: (a) drop entirely · (b) keep but change CTA black + 1 microcopy<br>
+    • <code>frontend/src/hook/useServiceBooking.ts</code> — if drop modal · skip the showConfirmation step · go direct to /payment with bookingData
+  </p>
+
+  <h3 style="margin-top:14px">🚦 Risk</h3>
+  <p>
+    Drop ConfirmationBottomSheet (B6) = highest reward · medium risk · need check Playwright E2E ที่ assert modal show/click flow.
+    Other 6 fixes = low risk (CSS + copy + drop element).
+  </p>
+
+  <h3 style="margin-top:14px">📋 Ship sequence</h3>
+  <p>
+    1. <b>P0 ก่อน caravan (~10 นาที):</b> B1 alone · drop duplicate 30-นาที pill จาก TrustFooter · 1 file edit · 0 risk<br>
+    2. <b>P0 หลัง caravan (~30 นาที):</b> B2 + B6 · ConfirmationBottomSheet drop หรือ black CTA<br>
+    3. <b>P1 หลัง caravan (~15 นาที):</b> B3 + B4 + B5 + B7 · ServiceDetail polish<br>
+  </p>
+</div>
+
+</body>
+</html>
