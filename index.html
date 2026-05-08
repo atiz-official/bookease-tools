@@ -448,20 +448,34 @@
   /* ─────────── Mobile ─────────── */
   @media (max-width: 880px) {
     .nav { padding: 18px 20px; }
+    /* Pass 25 v42 (Art's lock 2026-05-08 · Elon "show don't tell"):
+       Mobile reorder · phone mockup MUST be above-the-fold immediately
+       after H1 · was buried at bottom (order:2) where 80% mobile users
+       never scrolled to. Critical for caravan/share-to-friend GTM ·
+       visual conveys product capability without reading text. */
     .hero {
-      grid-template-columns: 1fr;
-      gap: 56px;
-      padding: 24px 20px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 16px 20px 56px;
     }
-    .mockup-wrap {
-      min-height: 540px;
+    .hero-text { display: contents; }   /* ungroup children to siblings */
+    .hero h1 { order: 1; margin-bottom: 4px; }
+    .mockup-wrap {                       /* was order:2 + 540px tall */
       order: 2;
+      min-height: 380px;                 /* compressed for mobile */
+      margin: 8px 0 12px;
     }
+    .hero-sub { order: 3; }
+    .hero-sub--customer { order: 4; }
+    .ocr-card { order: 5; }
+    .or-divider { order: 6; }
+    .form-row { order: 7; }
     .phone {
-      width: 280px;
-      height: 560px;
+      width: 240px;
+      height: 480px;                     /* was 560px · less dominant */
     }
-    .phone-shop-name { font-size: 30px; }
+    .phone-shop-name { font-size: 26px; }
     .chip-deposit { right: -8px; }
     .chip-saved { left: -8px; }
     .proof-inner {

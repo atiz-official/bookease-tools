@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/payment · OLD vs NEW · Pass 25 v37 (preserve UnifiedPromoInput)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    line-height: 1.5;
+    padding: 40px 20px 60px;
+  }
+  .page-header { max-width: 1280px; margin: 0 auto 32px; text-align: center; }
+  .page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #0f172a;
+  }
+  .page-header h1 span.book { color: #1E40AF; }
+  .page-header h1 span.ease { color: #38BDF8; }
+  .page-header p { color: #64748b; font-size: 14px; }
+  .page-header .lock-line {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #475569;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    display: inline-block;
+  }
+
+  .compare-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 920px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .col-label {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  .col-label .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-right: 8px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .col-label.old .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.new .badge { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 17px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; line-height: 1.55; }
+
+  .phone {
+    background: #1a1a1a;
+    border-radius: 36px;
+    padding: 8px;
+    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.18);
+    margin: 0 auto;
+    max-width: 380px;
+  }
+  .phone-screen {
+    border-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 9/19.5;
+    position: relative;
+  }
+  .notch-row {
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 4px;
+  }
+  .notch {
+    width: 90px;
+    height: 22px;
+    background: #1a1a1a;
+    border-radius: 12px;
+  }
+  .scroll-area {
+    overflow-y: auto;
+    height: calc(100% - 28px);
+  }
+
+  /* ===========================
+     OLD · Pass 17 styles
+     =========================== */
+  .old-screen { background: #ffffff; }
+  .old .header-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid #e2e8f0; background: #fff;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .old .back-arrow { width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; display: grid; place-items: center; cursor: pointer; }
+  .old .back-arrow svg { width: 16px; height: 16px; stroke: #0f172a; stroke-width: 2.4; fill: none; }
+  .old .page-title { flex: 1; text-align: center; font-weight: 700; font-size: 15px; }
+  .old .body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .old .summary-card {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;
+  }
+  .old .summary-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; }
+  .old .summary-icon { width: 18px; height: 18px; color: #94a3b8; }
+  .old .summary-text strong { font-size: 14px; color: #0f172a; font-weight: 700; }
+  .old .summary-text small { font-size: 11px; color: #64748b; }
+  .old .price-block { padding: 10px 0; border-top: 1px solid #f1f5f9; }
+  .old .price-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; color: #475569; }
+  .old .price-row.total { padding-top: 8px; border-top: 1px solid #e2e8f0; margin-top: 6px; font-weight: 700; font-size: 15px; color: #0f172a; }
+  .old .meta-text { font-size: 11px; color: #64748b; padding-top: 6px; border-top: 1px solid #f1f5f9; margin-top: 6px; }
+
+  .old .promo-section {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;
+  }
+  .old .promo-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #475569; }
+  .old .promo-input-wrap { display: flex; gap: 8px; }
+  .old .promo-input-wrap input {
+    flex: 1; padding: 10px 12px; border: 1px solid #e2e8f0;
+    border-radius: 8px; font-size: 13px; font-family: inherit;
+  }
+  .old .promo-apply-btn {
+    background: #4E6EDE; color: #fff; padding: 10px 16px; border: none;
+    border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;
+    opacity: 0.5; /* legacy disabled state — pastel · violates lock */
+  }
+  .old .promo-hint { font-size: 11px; color: #94a3b8; margin-top: 6px; }
+  .old .booker-section {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;
+  }
+  .old .booker-section input {
+    width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0;
+    border-radius: 8px; font-size: 13px; font-family: inherit; margin-bottom: 8px;
+  }
+  .old .submit-cta {
+    background: #4E6EDE; color: #fff; padding: 14px; border: none;
+    border-radius: 8px; font-size: 15px; font-weight: 700; width: 100%;
+    cursor: pointer;
+  }
+  .old .trust-strip {
+    background: #f8fafc; padding: 12px 14px; border-radius: 12px;
+    font-size: 11px; color: #64748b; line-height: 1.7;
+  }
+
+  /* ===========================
+     NEW · Pass 25 v37 Cool Mist styles
+     =========================== */
+  .new-screen { background: #f5f8fc; }
+  .new .header-row {
+    display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+    background: rgba(245, 248, 252, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 5;
+  }
+  .new .back-arrow {
+    width: 36px; height: 36px; border-radius: 50%; background: #fff;
+    display: grid; place-items: center; cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+  .new .back-arrow svg { width: 18px; height: 18px; stroke: #0f172a; stroke-width: 2.2; fill: none; }
+  .new .wordmark {
+    flex: 1; text-align: center; font-family: 'Inter', sans-serif;
+    font-weight: 800; letter-spacing: -0.01em; font-size: 18px;
+  }
+  .new .wordmark .book { color: #1E40AF; }
+  .new .wordmark .ease { color: #38BDF8; }
+  .new .lock-pill {
+    background: #fef3c7; color: #92400e;
+    font-size: 10px; padding: 4px 10px; border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .new .body { padding: 18px 18px 100px; display: flex; flex-direction: column; gap: 14px; }
+
+  .new .summary-card {
+    background: #fff; border-radius: 18px; padding: 18px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+  }
+  .new .service-name {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.18;
+    margin-bottom: 4px;
+  }
+  .new .service-name:lang(th) {
+    font-family: 'Sarabun', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .new .service-meta {
+    font-size: 13px; color: #475569; margin-bottom: 12px;
+  }
+  .new .price-block { padding-top: 12px; border-top: 1px solid #e2e8f0; }
+  .new .price-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; color: #475569; }
+  .new .price-row.total {
+    padding-top: 10px; border-top: 1px solid #e2e8f0; margin-top: 6px;
+    font-weight: 700; font-size: 17px; color: #0f172a;
+  }
+  .new .price-row.total .amount { color: #1E40AF; font-size: 22px; font-weight: 800; }
+
+  .new .refund-pill {
+    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fef3c7; color: #92400e;
+    font-size: 11px; padding: 5px 10px; border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .new .promo-card {
+    background: #fff; border-radius: 18px; padding: 16px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  }
+  .new .promo-card-title {
+    font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px;
+  }
+  .new .promo-card-title small {
+    font-weight: 400; color: #94a3b8; font-size: 11px; margin-left: 4px;
+  }
+  /* Pass 25 v37 lock: ALWAYS-TAPPABLE (was pastel disabled) */
+  .new .promo-input-wrap { display: flex; gap: 8px; }
+  .new .promo-input-wrap input {
+    flex: 1; padding: 12px 14px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 14px; font-family: inherit;
+    background: #f8fafc;
+  }
+  .new .promo-input-wrap input:focus {
+    outline: none; border-color: #1E40AF;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+  }
+  .new .promo-apply-btn {
+    background: #0a0a0a; color: #fff; padding: 12px 20px; border: none;
+    border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;
+    /* always tappable · NOT pastel-disabled */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+  .new .promo-apply-btn.invalid { background: #a8a29e; box-shadow: none; }
+  .new .promo-hint {
+    font-size: 11px; color: #64748b; margin-top: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .new .promo-hint code {
+    background: #e2e8f0; padding: 1px 5px; border-radius: 4px;
+    font-family: 'Inter', monospace; font-size: 10px; color: #1E40AF;
+  }
+
+  .new .booker-card {
+    background: #fff; border-radius: 18px; padding: 16px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .new .booker-card label {
+    font-size: 12px; color: #475569; font-weight: 600;
+  }
+  .new .booker-card input {
+    width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 14px; font-family: inherit;
+    background: #f8fafc;
+  }
+  .new .booker-card input:focus {
+    outline: none; border-color: #1E40AF;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+  }
+
+  .new .submit-cta {
+    background: #0a0a0a; color: #fff; padding: 16px;
+    border: none; border-radius: 999px;
+    font-size: 15px; font-weight: 700; width: 100%;
+    cursor: pointer; letter-spacing: -0.005em;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  }
+  .new .trust-strip {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 14px; padding: 12px 14px;
+    font-size: 11px; color: #475569; line-height: 1.75;
+  }
+  .new .trust-strip .row { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+
+  .new .accent-shop-name {
+    font-size: 11px; color: #1E40AF;
+    font-weight: 600; margin-top: 2px;
+    /* "variant accent" · in real shop this would inherit shop variant tint */
+  }
+
+  /* ============= Annotations ============= */
+  .anno {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .anno h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 12px; color: #475569; padding: 4px 0; line-height: 1.6; }
+  .anno li.preserved { color: #166534; }
+  .anno li.preserved::before { content: "✅ "; }
+  .anno li.changed::before { content: "🔄 "; }
+  .anno li.added::before { content: "➕ "; }
+  .anno li.removed::before { content: "❌ "; }
+
+  .verdict-card {
+    max-width: 1280px; margin: 32px auto 0;
+    background: #fff; border-radius: 18px; padding: 24px 28px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+  .verdict-card p { font-size: 14px; color: #475569; line-height: 1.65; margin-bottom: 8px; }
+  .verdict-card code {
+    background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+    font-family: 'Inter', monospace; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>/payment · <span class="book">Book</span><span class="ease">Ease</span> · OLD vs NEW</h1>
+  <p>Pass 25 v37 Cool Mist redesign proposal · UnifiedPromoInput PRESERVED</p>
+  <span class="lock-line">⚠️ Preview only · NOT shipped to React · awaiting Art's confirmation</span>
+</div>
+
+<div class="compare-grid">
+
+  <!-- ====================== OLD ====================== -->
+  <div class="col">
+    <div class="col-label old">
+      <span class="badge">OLD · LIVE NOW</span>
+      <h2>Pass 17 (April 2026)</h2>
+      <p class="subline">
+        Current bookease.co/payment · white bg · legacy blue CTA · pastel
+        disabled "ใช้" promo button · plain text title · no wordmark.
+      </p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen old-screen old">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="scroll-area">
+          <div class="header-row">
+            <div class="back-arrow"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+            <div class="page-title">สรุปคำสั่งซื้อ</div>
+            <div style="width:32px"></div>
+          </div>
+          <div class="body">
+            <div class="summary-card">
+              <div class="summary-row">
+                <div class="summary-text">
+                  <strong>นวดอโรมา</strong><br>
+                  <small>14:00 - 15:00 · ร้าน Demo</small>
+                </div>
+              </div>
+              <div class="price-block">
+                <div class="price-row"><span>ราคาบริการ</span><span>฿800</span></div>
+                <div class="price-row"><span>ค่าธรรมเนียม</span><span>รวมในยอดแล้ว</span></div>
+                <div class="price-row total"><span>ยอดที่ต้องชำระ</span><span>฿800</span></div>
+              </div>
+              <div class="meta-text">ชำระผ่าน Xendit · ส่วนที่เหลือชำระที่ร้าน · นโยบายคืนเงิน</div>
+            </div>
+            <div class="promo-section">
+              <h3>โค้ด / ว้อยเชอร์</h3>
+              <div class="promo-input-wrap">
+                <input placeholder="กรอกโค้ดส่วนลด หรือว้อยเชอร์">
+                <button class="promo-apply-btn">ใช้</button>
+              </div>
+              <p class="promo-hint">ใช้ได้ทั้ง SAVE10 และ VC-XXXX</p>
+            </div>
+            <div class="booker-section">
+              <input placeholder="ชื่อ-นามสกุล *">
+              <input placeholder="เบอร์โทรศัพท์ *">
+              <input placeholder="อีเมล (ไม่บังคับ)">
+              <input placeholder="คำขอพิเศษ (ไม่บังคับ)">
+            </div>
+            <button class="submit-cta">ชำระเงิน · ฿800</button>
+            <div class="trust-strip">
+              🔒 ชำระผ่าน Xendit · ปลอดภัยตามมาตรฐาน PCI DSS<br>
+              💳 ค่าธรรมเนียมรวมในยอดแล้ว · ไม่มีค่าบริการแอบแฝง<br>
+              ⏱ ยกเลิกฟรีก่อนเวลานัด 24 ชม<br>
+              💬 มีปัญหา? LINE @bookease · ตอบใน 15 นาที
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>ปัจจุบัน · ปัญหาที่เห็น</h3>
+      <ul>
+        <li class="changed">White bg · ไม่มี trust-zone framing</li>
+        <li class="changed">Header แค่ "สรุปคำสั่งซื้อ" plain text · ไม่มี BookEase wordmark</li>
+        <li class="changed">CTA สีฟ้า legacy `#4E6EDE` · ไม่ unified กับ /signup + /shopv3</li>
+        <li class="removed">"ใช้" promo button = pastel disabled (`opacity:0.5`) · ขัด Pass 25 v40 lock</li>
+        <li class="removed">ไม่มี 30-min refund pill ใน primary view</li>
+        <li class="removed">ไม่มี variant accent (price + shop name)</li>
+        <li class="preserved">UnifiedPromoInput logic OK · auto-detect SAVE10 vs VC-XXXX</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====================== NEW ====================== -->
+  <div class="col">
+    <div class="col-label new">
+      <span class="badge">NEW · PROPOSED</span>
+      <h2>Pass 25 v37 Cool Mist</h2>
+      <p class="subline">
+        Cool Mist `#f5f8fc` chrome + BookEase wordmark + black CTA +
+        always-tappable + 30-min refund pill + variant accent.
+        <strong>UnifiedPromoInput preserved 100%</strong>.
+      </p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen new-screen new">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="scroll-area">
+          <div class="header-row">
+            <div class="back-arrow"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+            <div class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+            <span class="lock-pill">🔒 SECURE</span>
+          </div>
+          <div class="body">
+
+            <div class="summary-card">
+              <div class="service-name">นวดอโรมา</div>
+              <div class="service-meta">
+                14:00 – 15:00 · 60 นาที
+                <div class="accent-shop-name">ที่ ร้าน Demo</div>
+              </div>
+              <div class="price-block">
+                <div class="price-row"><span>ราคาบริการ</span><span>฿800</span></div>
+                <div class="price-row"><span>ค่าธรรมเนียม</span><span>รวมในยอดแล้ว</span></div>
+                <div class="price-row total"><span>ยอดที่ต้องชำระ</span><span class="amount">฿800</span></div>
+              </div>
+              <span class="refund-pill">⏱ ตกลงเวลาไม่ได้ คืนเงิน 100%</span>
+            </div>
+
+            <div class="promo-card">
+              <div class="promo-card-title">
+                โค้ด / ว้อยเชอร์
+                <small>(เฉพาะถ้ามี)</small>
+              </div>
+              <div class="promo-input-wrap">
+                <input placeholder="กรอกโค้ดส่วนลด หรือว้อยเชอร์">
+                <button class="promo-apply-btn invalid">ใช้</button>
+              </div>
+              <p class="promo-hint">
+                ✓ ใช้ได้ทั้ง <code>SAVE10</code> และ <code>VC-XXXX</code> · ระบบ auto-detect
+              </p>
+            </div>
+
+            <div class="booker-card">
+              <label>เบอร์โทร · เพื่อยืนยันการจอง</label>
+              <input placeholder="081 234 5678" inputmode="tel">
+              <label>คำขอพิเศษ <span style="font-weight:400;color:#94a3b8">(ไม่บังคับ)</span></label>
+              <input placeholder="เช่น ห้องเงียบ, แพ้น้ำมันหอมระเหย">
+            </div>
+
+            <button class="submit-cta">ชำระ ฿800 ผ่าน Xendit</button>
+
+            <div class="trust-strip">
+              <div class="row">🔒 PCI DSS · เข้ารหัส AES-256</div>
+              <div class="row">💳 ค่าธรรมเนียมรวมในยอดแล้ว</div>
+              <div class="row">⏱ ยกเลิกฟรีก่อนเวลานัด 24 ชม</div>
+              <div class="row">💬 LINE @bookease · ตอบใน 15 นาที</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>ที่เปลี่ยน · เทียบ Pass 17</h3>
+      <ul>
+        <li class="changed">BG: white → Cool Mist `#f5f8fc` (trust zone)</li>
+        <li class="added">BookEase wordmark dual-blue ใน header (Book navy + Ease sky)</li>
+        <li class="changed">CTA: legacy blue `#4E6EDE` → black `#0a0a0a` (unified)</li>
+        <li class="changed">"ใช้" promo button: pastel disabled → true gray when invalid · always tappable</li>
+        <li class="added">30-min refund pill "ตกลงเวลาไม่ได้ คืนเงิน 100%"</li>
+        <li class="added">Variant accent · shop name `#1E40AF` + price `#1E40AF` 22px 800 weight</li>
+        <li class="changed">Service title: plain bold → italic Cormorant (Latin) · Sarabun bold (Thai)</li>
+        <li class="changed">Cards: 12px → 18px radius · soft shadow `0 8px 24px rgba(15,23,42,0.04)`</li>
+        <li class="changed">Booker form: 4 inputs → 2 (เบอร์ + คำขอพิเศษ · email + name removed since BOOK_NOW already has them from login)</li>
+        <li class="preserved"><strong>UnifiedPromoInput logic 100% preserved</strong> · same single-input · auto-detect SAVE10/VC-XXXX · QR upload · hint text</li>
+        <li class="preserved">Backend API contract unchanged · /api/discount-code/validate · /api/voucher/qr/verify</li>
+        <li class="preserved">Hold booking + Xendit redirect flow unchanged</li>
+        <li class="preserved">data-testid all preserved · Playwright tests pass</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="verdict-card">
+  <h3>Plan · 90-min React port (if Art approves)</h3>
+  <p>1. <strong>CSS only changes (~30 min):</strong> PaymentPage.css · Cool Mist bg + Cormorant title + black CTA + 18px radius + box-shadows. Zero JSX changes. UnifiedPromoInput inherits new card-shell only.</p>
+  <p>2. <strong>JSX additions (~30 min):</strong> Add wordmark to header · refund pill in summary card · `accent-shop-name` to service block · trust-strip CSS polish.</p>
+  <p>3. <strong>Always-tappable promo button (~10 min):</strong> Drop <code>disabled</code> attribute on <code>discount-apply-btn</code> · CSS conditional gray when no input.</p>
+  <p>4. <strong>Build · deploy · screenshot verify (~20 min)</strong></p>
+  <p style="margin-top:14px"><strong>Risk to team's UnifiedPromoInput:</strong> ZERO. We only restyle the wrapper card · JSX/logic/API/tests unchanged. UnifiedPromoInput.tsx untouched.</p>
+</div>
+
+</body>
+</html>
