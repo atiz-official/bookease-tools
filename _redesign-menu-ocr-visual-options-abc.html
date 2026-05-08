@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>menu-ocr.html · visual options A/B/C · 2026-05-08</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 720px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stage {
+    max-width: 1640px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: start;
+  }
+  @media (max-width: 1320px) { .stage { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.current .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.a .badge       { background: #dbeafe; color: #1e3a8a; }
+  .col-label.b .badge       { background: #fef3c7; color: #92400e; }
+  .col-label.c .badge       { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 13px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.5; }
+  .col-label .pros { margin-top: 6px; }
+  .col-label .pros li { font-size: 11px; color: #475569; margin-left: 14px; line-height: 1.55; }
+
+  /* mock menu-ocr.html surface */
+  .mock-page {
+    background: #f0fdf4;       /* sage cream tint */
+    background-image: linear-gradient(180deg, #f0fdf4 0%, #f7fee7 60%, #ecfccb 100%);
+    border-radius: 18px;
+    padding: 16px 14px;
+    border: 1px solid #d1fae5;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+    min-height: 720px;
+  }
+  .mock-wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 14px; letter-spacing: -0.01em;
+  }
+  .mock-wordmark .book { color: #1E40AF; }
+  .mock-wordmark .ease { color: #38BDF8; }
+  .mock-h1 {
+    font-family: 'Sarabun'; font-size: 18px; font-weight: 700;
+    color: #0f172a; line-height: 1.2; margin-top: 4px;
+  }
+  .mock-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  .mock-tabs {
+    display: flex; background: #fff; border-radius: 999px;
+    padding: 3px; margin: 12px 0 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .mock-tab {
+    flex: 1; text-align: center; padding: 7px 8px;
+    font-size: 11px; font-weight: 600;
+    border-radius: 999px;
+  }
+  .mock-tab.active { background: #f8fafc; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .mock-tab.muted  { color: #94a3b8; }
+
+  .mock-card {
+    background: #fff; border-radius: 14px; padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .mock-hint { text-align: center; font-size: 10.5px; color: #475569; margin-bottom: 10px; }
+
+  .mock-dropzone {
+    border: 1.5px dashed #cbd5e1; border-radius: 12px;
+    padding: 20px 12px; text-align: center;
+    background: #f8fafc;
+  }
+  .mock-dropzone .icon { font-size: 22px; }
+  .mock-dropzone .label { font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+  .mock-dropzone .sub { font-size: 10px; color: #94a3b8; }
+
+  .mock-cta {
+    margin-top: 8px; padding: 10px;
+    background: #cbd5e1; color: #fff;
+    border-radius: 999px; text-align: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .mock-cta.green {
+    background: #cbd5e1; color: #94a3b8;
+  }
+
+  /* ============ Option A · sample thumbnails ============ */
+  .a-samples-section {
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .a-samples-label {
+    font-size: 11px; color: #64748b;
+    text-align: center; margin-bottom: 8px;
+  }
+  .a-samples-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  }
+  .a-thumb {
+    background: #fff; border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    aspect-ratio: 9 / 16;
+    overflow: hidden; position: relative;
+  }
+  .a-thumb-line {
+    /* fake LINE OA chat header */
+    background: linear-gradient(180deg, #00b900 0%, #00b900 32%, #fff 32%);
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+  }
+  .a-thumb-line .chat-head {
+    padding: 6px 5px; color: #fff;
+    text-align: center;
+  }
+  .a-thumb-line .shop-name {
+    font-size: 8px; font-weight: 700; letter-spacing: 0;
+  }
+  .a-thumb-line .at-id {
+    font-size: 6px; opacity: 0.85; margin-top: 1px;
+  }
+  .a-thumb-line .info-rows {
+    flex: 1; padding: 6px;
+    background: #fff;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .a-thumb-line .row-bar {
+    height: 3px; background: #e2e8f0; border-radius: 2px;
+    width: 80%;
+  }
+  .a-thumb-line .row-bar.s2 { width: 60%; }
+  .a-thumb-line .row-bar.s3 { width: 70%; }
+  .a-thumb-line .row-bar.s4 { width: 50%; }
+
+  .a-thumb-caption {
+    position: absolute; bottom: 3px; left: 3px; right: 3px;
+    text-align: center;
+    font-size: 7px; color: #475569;
+    background: rgba(255,255,255,0.85);
+    padding: 1px 3px; border-radius: 4px;
+  }
+
+  /* ============ Option B · demo mode hero ============ */
+  .b-demo-hero {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 14px; padding: 14px;
+    margin-bottom: 14px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .b-demo-hero::before {
+    content: '✨'; position: absolute; top: 4px; right: 8px;
+    font-size: 20px; opacity: 0.3;
+  }
+  .b-demo-hero .b-tag {
+    display: inline-block;
+    background: #f59e0b; color: #fff;
+    font-size: 9px; font-weight: 700; padding: 2px 8px;
+    border-radius: 999px; margin-bottom: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .b-demo-hero .b-title {
+    font-family: 'Sarabun'; font-size: 14px; font-weight: 700;
+    color: #92400e; margin-bottom: 3px;
+  }
+  .b-demo-hero .b-sub {
+    font-size: 10.5px; color: #78350f; line-height: 1.5;
+  }
+  .b-demo-hero .b-cta {
+    margin-top: 10px;
+    background: #0a0a0a; color: #fff;
+    padding: 9px 16px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .b-demo-hero .b-divider {
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px dashed rgba(120, 53, 15, 0.25);
+    font-size: 10px; color: #78350f;
+  }
+
+  /* ============ annotations ============ */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 11px 13px; margin-top: 10px;
+  }
+  .anno h3 { font-size: 11px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 10.5px; color: #475569; padding: 1px 0; line-height: 1.5; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+  .anno li.eta::before { content: "⏱ "; }
+
+  /* verdict */
+  .verdict {
+    max-width: 1320px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11px;
+  }
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px;
+  }
+  .scoreboard .card {
+    border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;
+    text-align: center;
+  }
+  .scoreboard .card .grade {
+    font-size: 22px; font-weight: 800; line-height: 1;
+    font-family: 'Inter'; letter-spacing: -0.02em;
+  }
+  .scoreboard .card.current .grade { color: #991b1b; }
+  .scoreboard .card.a .grade  { color: #1e3a8a; }
+  .scoreboard .card.b .grade  { color: #92400e; }
+  .scoreboard .card.c .grade  { color: #166534; }
+  .scoreboard .card .label { font-size: 10px; color: #64748b; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>menu-ocr.html · visual options · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>4-up: current empty state vs A · sample thumbnails · vs B · demo mode hero · vs C · A + B combined</p>
+  <span class="lock">⚠️ Preview · ยังไม่ ship · vote A / B / C ก่อนลุย</span>
+</div>
+
+<div class="stage">
+
+  <!-- ===================================================== -->
+  <!-- CURRENT                                              -->
+  <!-- ===================================================== -->
+  <div>
+    <div class="col-label current">
+      <span class="badge">current · LIVE</span>
+      <h2>เปล่า · ไม่มี visual</h2>
+      <p class="subline">empty dropzone · merchant งง "ถ่ายยังไง" · ไม่มี WOW preview</p>
+    </div>
+    <div class="mock-page">
+      <div>
+        <div class="mock-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+        <div class="mock-h1">สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</div>
+        <div class="mock-sub">กรอกให้อัตโนมัติ — ฟรี</div>
+      </div>
+
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA ของร้าน</div>
+        <div class="mock-tab muted">📷 รูปเมนูที่ร้าน</div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 issues</h3>
+      <ul>
+        <li class="miss">ไม่มี example screenshot · merchant ไม่รู้ "ถ่ายยังไง"</li>
+        <li class="miss">ไม่มี WOW preview · merchant ต้อง upload ก่อนถึงเห็นผลลัพธ์</li>
+        <li class="miss">commitment สูง · "อัปโหลดก่อนจะเห็นผล"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- OPTION A                                             -->
+  <!-- ===================================================== -->
+  <div>
+    <div class="col-label a">
+      <span class="badge">option A · 30 นาที</span>
+      <h2>Sample thumbnails</h2>
+      <p class="subline">แสดง 3 ตัวอย่างใต้ dropzone · "ใช้แบบนี้ได้"</p>
+    </div>
+    <div class="mock-page">
+      <div>
+        <div class="mock-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+        <div class="mock-h1">สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</div>
+        <div class="mock-sub">กรอกให้อัตโนมัติ — ฟรี</div>
+      </div>
+
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA ของร้าน</div>
+        <div class="mock-tab muted">📷 รูปเมนูที่ร้าน</div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+
+        <!-- A · sample thumbnails -->
+        <div class="a-samples-section">
+          <div class="a-samples-label">↓ ตัวอย่างที่ใช้ได้ (กดเพื่อดูใหญ่)</div>
+          <div class="a-samples-row">
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head">
+                  <div class="shop-name">Bare Nail Spa</div>
+                  <div class="at-id">@barenailspa</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar"></div>
+                  <div class="row-bar s2"></div>
+                  <div class="row-bar s3"></div>
+                  <div class="row-bar s4"></div>
+                  <div class="row-bar s2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head" style="background: #5b88ff;">
+                  <div class="shop-name">TLL Salon</div>
+                  <div class="at-id">@tllsalon</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar s2"></div>
+                  <div class="row-bar"></div>
+                  <div class="row-bar s4"></div>
+                  <div class="row-bar s3"></div>
+                </div>
+              </div>
+            </div>
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head" style="background: #c084fc;">
+                  <div class="shop-name">Glow Studio</div>
+                  <div class="at-id">@glowstudio</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar s3"></div>
+                  <div class="row-bar"></div>
+                  <div class="row-bar s2"></div>
+                  <div class="row-bar s4"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">merchant เห็น "ใช้แบบนี้ได้" · ลด ambiguity</li>
+        <li class="win">เห็น 3 styles (โปร่ง · ผ่อนคลาย · หรูหรา)</li>
+        <li class="win">low-risk · pure visual addition · ไม่กระทบ logic</li>
+        <li class="miss">ยังต้อง upload จริงก่อนเห็น WOW</li>
+        <li class="eta">~30 นาที · 6 inline SVG (3 LINE OA + 3 menu)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- OPTION B                                             -->
+  <!-- ===================================================== -->
+  <div>
+    <div class="col-label b">
+      <span class="badge">option B · 45 นาที</span>
+      <h2>Demo Mode hero ⭐</h2>
+      <p class="subline">"ลองตัวอย่างเร็วๆ" ปุ่มใหญ่ · auto-fill demo + WOW ใน 10 วินาที</p>
+    </div>
+    <div class="mock-page">
+      <div>
+        <div class="mock-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+        <div class="mock-h1">สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</div>
+        <div class="mock-sub">กรอกให้อัตโนมัติ — ฟรี</div>
+      </div>
+
+      <!-- B · demo mode hero -->
+      <div class="b-demo-hero">
+        <div class="b-tag">⚡ ลองก่อนเริ่ม</div>
+        <div class="b-title">ดูตัวอย่างเว็บร้านสำเร็จ · ฟรี · 10 วินาที</div>
+        <div class="b-sub">ไม่ต้องอัปโหลดอะไร · แค่กดดู</div>
+        <div class="b-cta">✨ ลองตัวอย่างเร็วๆ</div>
+        <div class="b-divider">หรือเริ่มกรอกข้อมูลร้านจริงด้านล่าง ↓</div>
+      </div>
+
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA ของร้าน</div>
+        <div class="mock-tab muted">📷 รูปเมนูที่ร้าน</div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win"><b>caravan unblock</b> · Art demo ใน 10 วินาที · ไม่ต้องหา screenshot</li>
+        <li class="win">WOW factor สูงสุด · merchant เห็นผลลัพธ์ก่อนต้อง commit</li>
+        <li class="win">commitment ลดเหลือ 0 · "ดูก่อน · ค่อยตัดสินใจ"</li>
+        <li class="win">Tesla/Apple pattern · ทำให้ amazed ก่อนถามอะไร</li>
+        <li class="eta">~45 นาที · button + auto-fill function + demo data set</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- OPTION C                                             -->
+  <!-- ===================================================== -->
+  <div>
+    <div class="col-label c">
+      <span class="badge">option C · 60-75 นาที</span>
+      <h2>A + B combined</h2>
+      <p class="subline">Demo mode บน · sample thumbnails ล่าง · ทำงานคู่กัน</p>
+    </div>
+    <div class="mock-page">
+      <div>
+        <div class="mock-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
+        <div class="mock-h1">สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</div>
+        <div class="mock-sub">กรอกให้อัตโนมัติ — ฟรี</div>
+      </div>
+
+      <!-- B · demo mode hero -->
+      <div class="b-demo-hero">
+        <div class="b-tag">⚡ ลองก่อนเริ่ม</div>
+        <div class="b-title">ดูตัวอย่างเว็บร้านสำเร็จ · 10 วินาที</div>
+        <div class="b-sub">ไม่ต้องอัปโหลดอะไร · แค่กดดู</div>
+        <div class="b-cta">✨ ลองตัวอย่างเร็วๆ</div>
+      </div>
+
+      <div class="mock-tabs">
+        <div class="mock-tab active">📱 หน้าจอ LINE OA ของร้าน</div>
+        <div class="mock-tab muted">📷 รูปเมนูที่ร้าน</div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-hint">screenshot ของร้าน · จาก LINE app</div>
+        <div class="mock-dropzone">
+          <div class="icon">📷</div>
+          <div class="label">เลือก screenshot</div>
+          <div class="sub">JPG / PNG · ไม่เกิน 5 MB</div>
+        </div>
+
+        <!-- A · sample thumbnails -->
+        <div class="a-samples-section">
+          <div class="a-samples-label">↓ ตัวอย่างที่ใช้ได้</div>
+          <div class="a-samples-row">
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head">
+                  <div class="shop-name">Bare Nail Spa</div>
+                  <div class="at-id">@barenailspa</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar"></div>
+                  <div class="row-bar s2"></div>
+                  <div class="row-bar s3"></div>
+                  <div class="row-bar s4"></div>
+                </div>
+              </div>
+            </div>
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head" style="background: #5b88ff;">
+                  <div class="shop-name">TLL Salon</div>
+                  <div class="at-id">@tllsalon</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar s2"></div>
+                  <div class="row-bar"></div>
+                  <div class="row-bar s4"></div>
+                </div>
+              </div>
+            </div>
+            <div class="a-thumb">
+              <div class="a-thumb-line">
+                <div class="chat-head" style="background: #c084fc;">
+                  <div class="shop-name">Glow Studio</div>
+                  <div class="at-id">@glowstudio</div>
+                </div>
+                <div class="info-rows">
+                  <div class="row-bar s3"></div>
+                  <div class="row-bar"></div>
+                  <div class="row-bar s2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mock-cta">🤖 ดึงข้อมูลร้านให้</div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins (A + B together)</h3>
+      <ul>
+        <li class="win">B · WOW ทันที · caravan demo เร็วสุด</li>
+        <li class="win">A · merchant พร้อม upload จริง · มี example ให้ดู</li>
+        <li class="win">user journey 2-track: "ลองก่อน" + "ทำจริง"</li>
+        <li class="miss">ใช้เวลามากกว่าทำทีละ option</li>
+        <li class="eta">~60-75 นาที · all-in solution</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- VERDICT                                               -->
+<!-- ===================================================== -->
+<div class="verdict">
+  <h3>📊 Score · caravan readiness</h3>
+  <div class="scoreboard">
+    <div class="card current">
+      <div class="grade">D</div>
+      <div class="label">empty · merchant งง</div>
+    </div>
+    <div class="card a">
+      <div class="grade">B</div>
+      <div class="label">มี example · ลด ambiguity</div>
+    </div>
+    <div class="card b">
+      <div class="grade">A</div>
+      <div class="label">WOW + caravan unblock</div>
+    </div>
+    <div class="card c">
+      <div class="grade">A+</div>
+      <div class="label">ทุกอย่าง · ใช้เวลามากกว่า</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14px">🎯 Recommendation · B ก่อน · A ทีหลัง</h3>
+  <p>
+    <b>เหตุผล:</b> caravan วันนี้ · WOW factor สำคัญที่สุด · Demo Mode (B) ตอบโจทย์ตรง.
+    Sample thumbnails (A) เป็น nice-to-have · ทำหลัง caravan ก็ทัน · ไม่ block การใช้งาน.
+  </p>
+  <p>
+    Demo Mode pattern อ้างอิง:
+    <code>Tesla "Schedule a Drive"</code> ·
+    <code>Apple "Try it" sandbox</code> ·
+    <code>Stripe "View Demo"</code>.
+    ทุกแบรนด์ใช้ pattern "show before commit" · เพราะ commitment ก่อน WOW = drop-off สูง.
+  </p>
+
+  <h3 style="margin-top:14px">⚙️ Implementation B sketch</h3>
+  <p>
+    1. <b>Demo data set:</b> hardcode "Bare Nail Spa" with 5 services (เพิ่มเล็บเจล ฿590, ทาสีเล็บ ฿250, etc.) + variant "airy" + open hours 10:00-21:00<br>
+    2. <b>Button onClick:</b> populate all input values · enable "สร้างเว็บร้านตัวอย่าง" CTA · scroll to it<br>
+    3. <b>Subtle "demo" indicator</b> (pill/badge) บน input fields ที่ถูก auto-fill · บอกว่านี่คือ demo · merchant แก้ทีหลังได้<br>
+    4. <b>Click "สร้างเว็บร้านตัวอย่าง":</b> ปกติเลย · เปิด liff-preview tab ใหม่กับ demo data · WOW
+  </p>
+
+  <h3 style="margin-top:14px">📋 Ship sequence</h3>
+  <p>
+    • <b>P0 ก่อน caravan (~45 นาที):</b> B alone · demo mode hero · biggest impact<br>
+    • <b>P1 หลัง caravan (~30 นาที):</b> A · 6 sample SVG thumbnails (3 LINE OA + 3 menu)<br>
+    • <b>P2 future:</b> auto-cycle through 3 sample thumbnails as small carousel
+  </p>
+</div>
+
+</body>
+</html>
