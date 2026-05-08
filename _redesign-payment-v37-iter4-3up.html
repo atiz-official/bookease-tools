@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/payment · 3-up · LIVE vs iter1 (Art lock) vs iter4 (Elon-stripped)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    line-height: 1.5;
+    padding: 32px 16px 60px;
+  }
+  .page-header { max-width: 1480px; margin: 0 auto 24px; text-align: center; }
+  .page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .page-header h1 .book { color: #1E40AF; }
+  .page-header h1 .ease { color: #38BDF8; }
+  .page-header p { color: #64748b; font-size: 13px; }
+  .lock-pill {
+    margin-top: 8px;
+    font-size: 11px; color: #475569;
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 999px; padding: 5px 12px;
+    display: inline-block;
+  }
+
+  .grid-3 {
+    max-width: 1480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 1100px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 2.5px 7px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.live .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.iter1 .badge { background: #fef3c7; color: #92400e; }
+  .col-label.iter4 .badge { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 15px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.55; }
+
+  .phone {
+    background: #1a1a1a;
+    border-radius: 32px;
+    padding: 6px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.16);
+    margin: 0 auto;
+    max-width: 320px;
+  }
+  .phone-screen {
+    border-radius: 26px;
+    overflow: hidden;
+    aspect-ratio: 9/19.5;
+    position: relative;
+  }
+  .notch-row {
+    height: 22px;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .notch { width: 70px; height: 16px; background: #1a1a1a; border-radius: 9px; }
+  .scroll-area { overflow-y: auto; height: calc(100% - 22px); }
+
+  /* ===== LIVE · Pass 17 (legacy · gray + dividers) ===== */
+  .live-screen { background: #ffffff; }
+  .live .header-row {
+    display: flex; align-items: center; gap: 10px; padding: 11px 13px;
+    border-bottom: 1px solid #e2e8f0; background: #fff;
+  }
+  .live .back-arrow {
+    width: 26px; height: 26px; border-radius: 50%; background: #f1f5f9;
+    display: grid; place-items: center;
+  }
+  .live .back-arrow svg { width: 13px; height: 13px; stroke: #0f172a; stroke-width: 2.4; fill: none; }
+  .live .page-title { flex: 1; text-align: center; font-weight: 700; font-size: 13px; }
+  .live .body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .live .summary-card {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
+  }
+  .live .summary-row {
+    display: flex; gap: 8px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0;
+  }
+  .live .summary-row:last-of-type { border-bottom: none; }
+  .live .summary-icon { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
+  .live .summary-text strong { font-size: 12px; color: #0f172a; font-weight: 700; display: block; }
+  .live .summary-text small { font-size: 10px; color: #64748b; }
+  .live .price-block { padding: 8px 0; border-top: 1px solid #f1f5f9; margin-top: 6px; }
+  .live .price-row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; color: #475569; }
+  .live .price-row.total {
+    padding-top: 6px; border-top: 1px solid #e2e8f0; margin-top: 4px;
+    font-weight: 700; font-size: 13px; color: #0f172a;
+  }
+  .live .meta-text { font-size: 9.5px; color: #64748b; padding-top: 5px; border-top: 1px solid #f1f5f9; margin-top: 4px; }
+  .live .promo-section {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
+  }
+  .live .promo-section h3 { font-size: 11px; font-weight: 600; margin-bottom: 6px; color: #475569; }
+  .live .promo-input-wrap { display: flex; gap: 6px; }
+  .live .promo-input-wrap input {
+    flex: 1; padding: 8px 10px; border: 1px solid #e2e8f0;
+    border-radius: 6px; font-size: 11px; font-family: inherit;
+  }
+  .live .promo-apply-btn {
+    background: #4E6EDE; color: #fff; padding: 8px 12px; border: none;
+    border-radius: 6px; font-weight: 600; font-size: 11px;
+    opacity: 0.5;
+  }
+  .live .promo-hint { font-size: 9.5px; color: #94a3b8; margin-top: 4px; }
+  .live .booker-section {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
+  }
+  .live .booker-section input {
+    width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0;
+    border-radius: 6px; font-size: 11px; font-family: inherit; margin-bottom: 6px;
+  }
+  .live .submit-cta {
+    background: #4E6EDE; color: #fff; padding: 11px; border: none;
+    border-radius: 6px; font-size: 12px; font-weight: 700; width: 100%;
+  }
+  .live .trust-strip {
+    background: #f8fafc; padding: 8px 10px; border-radius: 8px;
+    font-size: 9.5px; color: #64748b; line-height: 1.7;
+  }
+  .live .divider {
+    border-top: 2px dashed #cbd5e1; margin: 8px 0; padding-top: 8px;
+    font-size: 9px; color: #94a3b8; text-align: center;
+  }
+
+  /* ===== ITER1 · Art's locked target · 0 dividers · whitespace ===== */
+  .iter1-screen { background: #f5f8fc; }
+  .iter1 .trust-strip-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .iter1 .back-btn { font-size: 22px; color: #475569; line-height: 1; cursor: pointer; }
+  .iter1 .brand-wordmark {
+    font-family: 'Inter', sans-serif; font-weight: 800;
+    font-size: 16px; letter-spacing: -0.01em;
+  }
+  .iter1 .brand-wordmark .book { color: #1E40AF; }
+  .iter1 .brand-wordmark .ease { color: #38BDF8; }
+  .iter1 .trust-meta {
+    font-size: 10px; color: #64748b; display: flex; align-items: center; gap: 3px;
+  }
+  .iter1 .body { padding: 4px 18px 16px; }
+  .iter1 .hero-meta { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .iter1 .hero-title {
+    font-family: 'Cormorant Garamond', 'Sarabun', serif;
+    font-style: italic; font-size: 24px; font-weight: 600;
+    color: #0f172a; line-height: 1.15;
+  }
+  .iter1 .hero-title:lang(th) {
+    font-family: 'Sarabun'; font-style: normal; font-weight: 700; font-size: 21px;
+  }
+  .iter1 .hero-title .shop { color: #1E40AF; font-style: italic; }
+  .iter1 .hero-when { font-size: 12px; color: #475569; margin-top: 4px; }
+
+  .iter1 .price-block { margin-top: 22px; }
+  .iter1 .price-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .iter1 .price-row .label { font-size: 11.5px; color: #64748b; }
+  .iter1 .price-row .amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 28px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+  .iter1 .remaining { font-size: 10.5px; color: #94a3b8; margin-top: 5px; }
+  .iter1 .remaining .num { color: #475569; font-weight: 600; }
+
+  .iter1 .fields { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .iter1 .input {
+    width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 13px; font-family: inherit;
+    background: #fff;
+  }
+
+  .iter1 .micro-trust {
+    margin-top: 16px;
+    font-size: 10px; color: #64748b; line-height: 1.6;
+  }
+  .iter1 .micro-trust .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 9px; padding: 2.5px 7px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+
+  .iter1 .cta-zone { margin-top: 20px; }
+  .iter1 .cta {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 14px; border: none; border-radius: 999px;
+    font-size: 13px; font-weight: 700;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-left: 22px; padding-right: 22px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+  }
+  .iter1 .cta .label-amount {
+    background: rgba(255,255,255,0.18); padding: 3px 10px;
+    border-radius: 999px; font-size: 13px;
+  }
+  .iter1 .cta-implicit { font-size: 9.5px; color: #94a3b8; text-align: center; margin-top: 8px; }
+
+  .iter1 .footer-trust {
+    margin-top: 22px; padding-top: 14px; border-top: 1px solid #e2e8f0;
+    font-size: 9px; color: #94a3b8;
+    display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; align-items: center;
+  }
+  .iter1 .footer-trust .mini-wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 10px; letter-spacing: -0.01em;
+  }
+  .iter1 .footer-trust .mini-wordmark .book { color: #1E40AF; }
+  .iter1 .footer-trust .mini-wordmark .ease { color: #38BDF8; }
+
+  /* ===== ITER4 · Elon-stripped (less text · no Xendit · no redundant pills) ===== */
+  .iter4-screen { background: #f5f8fc; }
+  .iter4 .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .iter4 .back-btn { font-size: 22px; color: #475569; line-height: 1; cursor: pointer; }
+  .iter4 .wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .iter4 .wordmark .book { color: #1E40AF; }
+  .iter4 .wordmark .ease { color: #38BDF8; }
+  .iter4 .header-spacer { width: 22px; }
+
+  .iter4 .body { padding: 6px 18px 80px; display: flex; flex-direction: column; gap: 16px; }
+
+  .iter4 .summary-card {
+    background: #fff; border-radius: 18px; padding: 16px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 8px 24px rgba(15,23,42,0.04);
+  }
+  .iter4 .hero-eyebrow { font-size: 10.5px; color: #94a3b8; margin-bottom: 4px; }
+  .iter4 .hero-title {
+    font-family: 'Sarabun'; font-weight: 700; font-size: 21px;
+    color: #0f172a; line-height: 1.15;
+  }
+  .iter4 .hero-title .shop { color: #1E40AF; }
+  .iter4 .hero-when { font-size: 12px; color: #475569; margin-top: 4px; }
+
+  .iter4 .price-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid #f1f5f9; }
+  .iter4 .price-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .iter4 .price-row .label { font-size: 11.5px; color: #64748b; }
+  .iter4 .price-row .amount {
+    font-family: 'Inter'; font-weight: 800; font-size: 26px;
+    color: #1E40AF; letter-spacing: -0.02em; line-height: 1;
+  }
+  .iter4 .remaining { font-size: 10.5px; color: #94a3b8; margin-top: 5px; }
+  .iter4 .remaining .num { color: #475569; font-weight: 600; }
+
+  /* Promo · single inline row · NO card title · NO subtitle hint */
+  .iter4 .promo-row {
+    display: flex; gap: 8px; align-items: stretch;
+  }
+  .iter4 .promo-row input {
+    flex: 1; padding: 11px 13px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 12.5px; font-family: inherit;
+    background: #fff;
+  }
+  .iter4 .promo-row input::placeholder { color: #94a3b8; }
+  .iter4 .promo-row .apply {
+    background: #a8a29e; color: #fff; padding: 0 18px;
+    border: none; border-radius: 12px;
+    font-weight: 700; font-size: 12px;
+  }
+
+  /* Single field · phone only (name comes from auth · email optional) */
+  .iter4 .field-input {
+    width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1;
+    border-radius: 12px; font-size: 13px; font-family: inherit;
+    background: #fff;
+  }
+
+  .iter4 .micro-trust {
+    font-size: 10.5px; color: #64748b; line-height: 1.55;
+  }
+  .iter4 .micro-trust .pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 9.5px; padding: 2.5px 7px; border-radius: 999px;
+    font-weight: 600; margin-right: 5px;
+  }
+
+  .iter4 .cta {
+    width: 100%; background: #0a0a0a; color: #fff;
+    padding: 15px; border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+    letter-spacing: -0.005em;
+  }
+  .iter4 .cta-implicit {
+    font-size: 9.5px; color: #94a3b8;
+    text-align: center; margin-top: 6px; line-height: 1.5;
+  }
+  .iter4 .cta-implicit a { color: #475569; text-decoration: underline; }
+
+  .iter4 .footer-trust {
+    margin-top: 8px; padding-top: 12px; border-top: 1px solid #e2e8f0;
+    font-size: 9px; color: #94a3b8;
+    display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; align-items: center;
+  }
+  .iter4 .footer-trust .mini-wordmark {
+    font-family: 'Inter'; font-weight: 800; font-size: 10px; letter-spacing: -0.01em;
+  }
+  .iter4 .footer-trust .mini-wordmark .book { color: #1E40AF; }
+  .iter4 .footer-trust .mini-wordmark .ease { color: #38BDF8; }
+
+  /* ============= Annotations ============= */
+  .anno {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .anno h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 11px; color: #475569; padding: 3px 0; line-height: 1.6; }
+  .anno li.crit::before { content: "❌ "; }
+  .anno li.kept::before { content: "✅ "; }
+  .anno li.cut::before { content: "✂️ "; }
+
+  .verdict-card {
+    max-width: 1480px; margin: 28px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict-card p { font-size: 13px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict-card code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+  .text-counter {
+    display: inline-block; padding: 1.5px 7px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+  }
+  .text-counter.high { background: #fee2e2; color: #991b1b; }
+  .text-counter.mid { background: #fef3c7; color: #92400e; }
+  .text-counter.low { background: #dcfce7; color: #166534; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>/payment · 3-up · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>LIVE legacy &nbsp;vs&nbsp; iter1 (Art lock) &nbsp;vs&nbsp; iter4 (Elon-stripped · no Xendit · less text)</p>
+  <div><span class="lock-pill">⚠️ Preview only · iter4 = recommended ship target</span></div>
+</div>
+
+<div class="grid-3">
+
+  <!-- ====================== LIVE · Pass 17 ====================== -->
+  <div class="col">
+    <div class="col-label live">
+      <span class="badge">LIVE NOW</span>
+      <h2>Pass 17 (legacy)</h2>
+      <p class="subline">
+        Current bookease.co/payment · gray dividers · dashed lines · pastel
+        disabled "ใช้" · long trust strip · 4-row footer.
+        <span class="text-counter high">~28 lines text</span>
+      </p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen live-screen live">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="scroll-area">
+          <div class="header-row">
+            <div class="back-arrow"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+            <div class="page-title">สรุปคำสั่งซื้อ</div>
+            <div style="width:26px"></div>
+          </div>
+          <div class="body">
+            <div class="summary-card">
+              <div class="summary-row">
+                <span class="summary-icon">📅</span>
+                <div class="summary-text"><strong>จองบริการ</strong></div>
+              </div>
+              <div class="summary-row">
+                <span class="summary-icon">💆</span>
+                <div class="summary-text">
+                  <strong>นวดอโรมา</strong>
+                  <small>14:00 - 15:00</small>
+                </div>
+              </div>
+              <div class="summary-row">
+                <span class="summary-icon">🏪</span>
+                <div class="summary-text"><strong>ร้าน Demo</strong></div>
+              </div>
+              <div class="price-block">
+                <div class="price-row"><span>ราคาบริการ</span><span>฿800</span></div>
+                <div class="price-row"><span>ค่าธรรมเนียม</span><span>รวมในยอดแล้ว</span></div>
+                <div class="price-row total"><span>ยอดที่ต้องชำระ</span><span>฿800</span></div>
+              </div>
+              <div class="meta-text">ชำระผ่าน Xendit เพื่อยืนยันการจอง · ส่วนที่เหลือ (ถ้ามี) ชำระที่ร้านโดยตรง · นโยบายคืนเงิน</div>
+            </div>
+            <div class="promo-section">
+              <h3>โค้ด / ว้อยเชอร์</h3>
+              <div class="promo-input-wrap">
+                <input placeholder="กรอกโค้ดส่วนลด หรือว้อยเชอร์">
+                <button class="promo-apply-btn">ใช้</button>
+              </div>
+              <p class="promo-hint">ใช้ได้ทั้งโค้ดส่วนลด (เช่น SAVE10) และว้อยเชอร์ (เช่น VC-XXXX)</p>
+            </div>
+            <div class="booker-section">
+              <input placeholder="ชื่อ-นามสกุล *">
+              <input placeholder="เบอร์โทรศัพท์ *">
+              <input placeholder="อีเมล (ไม่บังคับ)">
+              <input placeholder="คำขอพิเศษ (ไม่บังคับ)">
+            </div>
+            <button class="submit-cta">ชำระเงิน · ฿800</button>
+            <div class="trust-strip">
+              🔒 ชำระผ่าน Xendit · ปลอดภัยตามมาตรฐาน PCI DSS<br>
+              💳 ค่าธรรมเนียมรวมในยอดแล้ว · ไม่มีค่าบริการแอบแฝง<br>
+              ⏱ ยกเลิกฟรีก่อนเวลานัด 24 ชม<br>
+              💬 มีปัญหา? LINE @bookease · ตอบใน 15 นาที
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>ปัญหา</h3>
+      <ul>
+        <li class="crit">3 dashed dividers · 4 emoji icons คนละสไตล์</li>
+        <li class="crit">"ใช้" pastel-disabled (ขัด v40 lock)</li>
+        <li class="crit">Trust strip 4 บรรทัด · "PCI DSS" exposed</li>
+        <li class="crit">"ผ่าน Xendit" ปรากฏ 2 ที่ (meta + trust)</li>
+        <li class="crit">4 inputs · ชื่อ + เบอร์ + email + note (เยอะ)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====================== ITER1 · Art's locked target ====================== -->
+  <div class="col">
+    <div class="col-label iter1">
+      <span class="badge">Art locked target</span>
+      <h2>iter1 (May 7)</h2>
+      <p class="subline">
+        Cool Mist + 0 dividers · whitespace + typography · italic Cormorant
+        hero · big navy price · 2 fields · 1-line micro-trust · footer mini.
+        <span class="text-counter low">~10 lines text</span>
+      </p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen iter1-screen iter1">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="scroll-area">
+          <div class="trust-strip-top">
+            <span class="back-btn">‹</span>
+            <span class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="trust-meta">🔒 ปลอดภัย</span>
+          </div>
+          <div class="body">
+            <div class="hero-meta">บริการที่จอง</div>
+            <div class="hero-title">นวดอโรมา · <span class="shop">ร้าน Demo</span></div>
+            <div class="hero-when">15 พ.ค. · 14:00 — 15:00 น.</div>
+
+            <div class="price-block">
+              <div class="price-row">
+                <div class="label">มัดจำ</div>
+                <div class="amount">฿200</div>
+              </div>
+              <div class="remaining">เหลือ <span class="num">฿600</span> จ่ายที่ร้าน · เงินสด/QR</div>
+            </div>
+
+            <div class="fields">
+              <input class="input" placeholder="ชื่อ-นามสกุล">
+              <input class="input" placeholder="เบอร์โทร · 081-234-5678">
+            </div>
+
+            <div class="micro-trust">
+              <span class="pill">⏱ 30 นาที</span>ร้านยืนยันใน LINE chat · ตกลงเวลาไม่ได้ คืนเงิน 100%
+            </div>
+
+            <div class="cta-zone">
+              <button class="cta">
+                <span>จ่ายมัดจำ</span>
+                <span class="label-amount">฿200</span>
+              </button>
+              <div class="cta-implicit">กดยืนยันถือว่ายอมรับเงื่อนไขการบริการ</div>
+            </div>
+
+            <div class="footer-trust">
+              <span>Powered by</span>
+              <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              ·
+              <span>Xendit · PCI DSS</span>
+              ·
+              <span>LINE @bookease</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>Art's locked target</h3>
+      <ul>
+        <li class="kept">0 dividers · whitespace = hierarchy</li>
+        <li class="kept">italic Cormorant hero · navy ฿200 BIG</li>
+        <li class="kept">2 fields only · phone + name</li>
+        <li class="kept">1 line micro-trust · pill + clause</li>
+        <li class="kept">CTA "จ่ายมัดจำ ฿200" · NO Xendit</li>
+        <li class="cut">"Xendit · PCI DSS" ใน footer · institutional only</li>
+        <li class="kept"><b>NOTE:</b> iter1 ไม่มี promo input · ทีมเพิ่ม UnifiedPromoInput ทีหลัง</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====================== ITER4 · Elon-stripped recommended ship ====================== -->
+  <div class="col">
+    <div class="col-label iter4">
+      <span class="badge">⭐ recommended ship</span>
+      <h2>iter4 (Elon-stripped)</h2>
+      <p class="subline">
+        iter1 base + UnifiedPromoInput preserved · NO Xendit on CTA · NO 🔒 SECURE pill ·
+        promo single-row no card title · 1 input (phone) · 1 line trust ·
+        footer mini.
+        <span class="text-counter low">~9 lines text</span>
+      </p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen iter4-screen iter4">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="scroll-area">
+          <div class="header-row">
+            <span class="back-btn">‹</span>
+            <span class="wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+            <span class="header-spacer"></span>
+          </div>
+          <div class="body">
+
+            <div class="summary-card">
+              <div class="hero-eyebrow">บริการที่จอง</div>
+              <div class="hero-title">นวดอโรมา · <span class="shop">ร้าน Demo</span></div>
+              <div class="hero-when">15 พ.ค. · 14:00 — 15:00 น.</div>
+
+              <div class="price-block">
+                <div class="price-row">
+                  <div class="label">มัดจำ</div>
+                  <div class="amount">฿200</div>
+                </div>
+                <div class="remaining">เหลือ <span class="num">฿600</span> จ่ายที่ร้าน · เงินสด/QR</div>
+              </div>
+            </div>
+
+            <!-- UnifiedPromoInput (PRESERVED · just visual polish) -->
+            <div class="promo-row">
+              <input placeholder="โค้ดส่วนลด / ว้อยเชอร์ (ถ้ามี)">
+              <button class="apply">ใช้</button>
+            </div>
+
+            <input class="field-input" placeholder="เบอร์โทร · 081-234-5678">
+
+            <div class="micro-trust">
+              <span class="pill">⏱ 30 นาที</span>ตกลงเวลาไม่ได้ · คืนเงิน 100%
+            </div>
+
+            <button class="cta">จ่าย ฿200</button>
+            <div class="cta-implicit">
+              กดยืนยันถือว่ายอมรับ <a>เงื่อนไขบริการ</a>
+            </div>
+
+            <div class="footer-trust">
+              <span class="mini-wordmark"><span class="book">Book</span><span class="ease">Ease</span></span>
+              · <span>LINE @bookease</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>Elon strip · ตัดอะไรออก vs original v37 iter3</h3>
+      <ul>
+        <li class="cut">"ผ่าน Xendit" บน CTA · payment-gateway brand-leak · Apple Pay/Stripe ไม่เคยทำ</li>
+        <li class="cut">"🔒 SECURE" pill ที่ header · redundant กับ wordmark</li>
+        <li class="cut">Trust strip 4 rows → 1 line micro-trust</li>
+        <li class="cut">"PCI DSS" mention · institutional · ไม่ใช่ user concern</li>
+        <li class="cut">Promo card title "โค้ด / ว้อยเชอร์" + "(เฉพาะถ้ามี)" + hint code chips</li>
+        <li class="cut">Field labels "เบอร์โทร · เพื่อยืนยันการจอง" · placeholder ก็พอ</li>
+        <li class="cut">"คำขอพิเศษ" field · move to optional/edit-after</li>
+        <li class="cut">"ค่าธรรมเนียมรวมในยอดแล้ว" microcopy · "เหลือ ฿600 จ่ายที่ร้าน" already states it</li>
+        <li class="kept">UnifiedPromoInput preserved 100% (single-row · auto-detect SAVE10/VC-XXXX)</li>
+        <li class="kept">BookEase wordmark dual-blue · ฿25K equity</li>
+        <li class="kept">Cool Mist `#f5f8fc` chrome</li>
+        <li class="kept">Black `#0a0a0a` CTA · always-tappable invalid state</li>
+        <li class="kept">italic Cormorant title (Latin) · Sarabun bold (Thai)</li>
+        <li class="kept">30-min refund clause</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="verdict-card">
+  <h3>Elon's checklist · iter4 vs iter3</h3>
+  <p><b>1. "ชำระ ฿800 ผ่าน Xendit"</b> — Art ถูก. Apple Pay ไม่บอก "via Stripe". Just <code>"จ่าย ฿200"</code>. Xendit = invisible plumbing per Square first-principle.</p>
+  <p><b>2. Reduce text 28 → 9 lines</b> — every line on the screen must earn its place. Trust signals condense to 1 micro-trust line + footer wordmark.</p>
+  <p><b>3. Best part is no part</b> — promo card chrome (title + subtitle + hint) deleted; promo is single-row inline (input + button). Auto-detect logic same · just less wrapper.</p>
+  <p><b>4. UnifiedPromoInput preserved 100%</b> — JSX/logic/API/tests untouched. Visual restyle only · ทีม Mod/Man เดิมไม่ต้องแก้อะไร.</p>
+  <p style="margin-top:10px"><b>Estimated React port:</b> ~60-90 min (CSS-only changes + 1-2 small JSX tweaks · drop name/email field · drop Xendit text · condense trust strip).</p>
+</div>
+
+</body>
+</html>
