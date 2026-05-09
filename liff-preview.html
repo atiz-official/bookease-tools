@@ -624,9 +624,6 @@
   [data-variant="soft"] .service-meta { color: #be185d; }
   [data-variant="soft"] .service-divider { background: rgba(190, 24, 93, 0.2); }
   [data-variant="soft"] [data-script="latin"] .service-name { font-style: italic; }
-  [data-variant="soft"] .add-service-inline {
-    border-color: #be185d; color: #be185d;
-  }
   [data-variant="soft"] .phone-address {
     background: rgba(253, 242, 248, 0.85); color: #831843;
   }
@@ -656,9 +653,6 @@
   }
   [data-variant="fun"] .service-meta { color: #b45309; }
   [data-variant="fun"] .service-divider { background: rgba(180, 83, 9, 0.2); }
-  [data-variant="fun"] .add-service-inline {
-    border-color: #f59e0b; color: #78350f; background: #fef9c3;
-  }
   [data-variant="fun"] .phone-address {
     background: rgba(254, 243, 199, 0.85); color: #78350f;
   }
@@ -682,9 +676,6 @@
   [data-variant="refreshing"] .service-tag { color: #047857; letter-spacing: 2px; }
   [data-variant="refreshing"] .service-meta { color: #047857; }
   [data-variant="refreshing"] .service-divider { background: rgba(16, 185, 129, 0.25); }
-  [data-variant="refreshing"] .add-service-inline {
-    border-color: #10b981; color: #047857; background: rgba(236, 253, 245, 0.6);
-  }
   [data-variant="refreshing"] .phone-address {
     background: rgba(236, 253, 245, 0.85); color: #064e3b;
   }
@@ -711,9 +702,6 @@
   }
   [data-variant="bold"] .service-meta { color: #d6d3d1; }
   [data-variant="bold"] .service-divider { background: rgba(250, 204, 21, 0.3); }
-  [data-variant="bold"] .add-service-inline {
-    border-color: #facc15; color: #facc15; background: rgba(28, 25, 23, 0.4);
-  }
   [data-variant="bold"] .phone-address {
     background: #1c1917; color: #fafaf9; border-color: #292524;
   }
@@ -743,9 +731,6 @@
   }
   [data-variant="neon"] .service-meta { color: #c4b5fd; }
   [data-variant="neon"] .service-divider { background: rgba(168, 85, 247, 0.35); }
-  [data-variant="neon"] .add-service-inline {
-    border-color: #67e8f9; color: #67e8f9; background: rgba(0, 0, 0, 0.25);
-  }
   [data-variant="neon"] .phone-address {
     background: rgba(0, 0, 0, 0.4); color: #f0abfc;
     border-color: rgba(168, 85, 247, 0.25);
@@ -899,22 +884,9 @@
   .service-list {
     display: flex; flex-direction: column; gap: 10px;
   }
-  /* Pass 25 v3 · inline "+ เพิ่มบริการ" · staff-mode only */
-  .add-service-inline {
-    display: block; width: 100%;
-    background: transparent;
-    border: 1.5px dashed var(--pal-deep);
-    color: var(--pal-deep);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: background-color 0.15s ease, transform 0.12s ease;
-  }
-  .add-service-inline:hover { background: rgba(255, 255, 255, 0.4); }
-  .add-service-inline:active { transform: scale(0.98); }
-  body[data-mode="share"] .add-service-inline { display: none; }
+  /* 2026-05-09 · .add-service-inline rules removed · single-source-of-truth
+     audit · liff-preview is now read-only · capture lives at menu-ocr Mode 2
+     and (Phase 2) /signup/service + /shop-setting via MenuPhotoCTA */
   .service-card {
     background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
     border: 1px solid var(--pal-card-border);
@@ -1239,7 +1211,7 @@
        Anti-Potemkin warning still surfaces near top so staff knows BEFORE
        merchant picks variant if menu is missing. -->
   <div id="ctaWarn" style="display:none; margin-top: 10px; padding: 10px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 12px; color: #78350f; line-height: 1.5;">
-    💡 ยังไม่มีบริการ · กดปุ่ม "+ เพิ่มบริการ" ด้านล่าง หรือใช้ OCR tool ถ่ายรูปเมนู
+    💡 ยังไม่มีบริการ · กดปุ่ม "📷 ถ่ายรูปเมนู" ด้านล่างเพื่อเริ่ม
   </div>
 
   <!-- Hidden test URL for clipboard fallback (kept in DOM for share/copy logic) -->
@@ -1303,13 +1275,10 @@
         <div class="screen" data-screen="2">
           <h2 class="screen-title">เลือกบริการ</h2>
           <div class="service-list" id="serviceList"></div>
-          <!-- Pass 25 v3 (2026-05-05 PM · Art's lock 'ship A') · inline
-               service editor · closes self-serve loop · merchant types
-               name+price+duration in modal · row appears + save button
-               unblocks (anti-Potemkin guard auto-clears) -->
-          <button id="addServiceInlineBtn" class="add-service-inline" type="button">
-            + เพิ่มบริการ
-          </button>
+          <!-- 2026-05-09 (Art's lock): inline service editor REMOVED ·
+               liff-preview is now read-only WYSIWYG · single capture surface
+               for services = menu-ocr Mode 2 + /signup/service (with
+               MenuPhotoCTA · Phase 2). Anti-redundancy audit verdict. -->
           <div class="nav-row">
             <button class="cta-btn secondary" data-go="1" type="button">ย้อน</button>
             <button class="cta-btn" data-go="3" id="serviceNext" type="button" disabled>ถัดไป</button>
@@ -1493,41 +1462,9 @@
   </div>
 </div>
 
-<!-- Pass 25 v3 · inline service editor modal · merchant adds 1 service in
-     ~10 sec inside the preview · self-serve loop closes -->
-<div class="modal-backdrop" id="addServiceModal">
-  <div class="modal" style="max-width: 360px;">
-    <h3 style="margin: 0 0 4px;">เพิ่มบริการ</h3>
-    <p style="margin: 0 0 16px; font-size: 13px; color: var(--pal-text-muted);">
-      ตรงที่ลูกค้าจะเลือก · พิมพ์เร็วๆ · แก้ภายหลังก็ได้
-    </p>
-    <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ชื่อบริการ</label>
-    <input id="addSvcName" type="text" placeholder="เช่น Manicure คลาสสิก"
-           style="width:100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px; margin-bottom: 12px;" />
-    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-      <div style="flex: 1;">
-        <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ระยะเวลา</label>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <input id="addSvcDur" type="number" min="5" step="5" placeholder="60"
-                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px;" />
-          <span style="font-size: 13px; color: #64748b;">นาที</span>
-        </div>
-      </div>
-      <div style="flex: 1;">
-        <label style="display:block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ราคา</label>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 13px; color: #64748b;">฿</span>
-          <input id="addSvcPrice" type="number" min="0" step="50" placeholder="500"
-                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 15px;" />
-        </div>
-      </div>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <button class="cta-btn secondary" id="addSvcCancel" type="button" style="flex: 1;">ยกเลิก</button>
-      <button class="cta-btn" id="addSvcSave" type="button" style="flex: 1;">+ เพิ่ม</button>
-    </div>
-  </div>
-</div>
+<!-- 2026-05-09 · "+ เพิ่มบริการ" inline modal removed (single source of
+     truth audit) · capture lives at menu-ocr Mode 2 (or /signup/service
+     with Phase 2 MenuPhotoCTA) · liff-preview is pure read-only WYSIWYG -->
 
 <script>
   // ════════════════════════════════════════════════════════════════
@@ -1711,7 +1648,7 @@
         `).join('');
         serviceList.innerHTML = sampleHtml + `
           <div style="text-align:center; padding: 4px 8px 0; font-size: 12px; color: var(--pal-text-muted);">
-            ↑ ตัวอย่าง · กดปุ่ม "+ เพิ่มบริการ" ด้านล่างเพื่อแทนด้วยของคุณ
+            ↑ ตัวอย่าง · กดปุ่ม "📷 ถ่ายรูปเมนู" ด้านล่างเพื่อแทนด้วยของคุณ
           </div>
         `;
         return;
@@ -1749,11 +1686,12 @@
   }
 
   function refreshSaveCtaState() {
-    // Pass 25 v14 (Art's lock 2026-05-06) · "wall→door"
+    // 2026-05-09 (Art's lock · post-audit) · "wall→door" preserved:
     // Disabled gray pill ("เพิ่มบริการก่อนบันทึก") was a dead-end.
-    // Now: when no services → active green pill "+ เพิ่มบริการของคุณ"
-    //      → clicking opens the inline service modal (same as in-screen "+ เพิ่มบริการ" btn)
-    //      After adding ≥1 service → pill flips to "✓ บันทึกร้านนี้" (commit to signup)
+    // Now: when no services → active pill "📷 ถ่ายรูปเมนู" → routes back to
+    //      menu-ocr Mode 2 (the single capture surface).
+    //      After ≥1 service → pill flips to "✓ บันทึกร้านนี้" (commit to signup).
+    // Inline modal removed in 2026-05-09 audit · liff-preview is read-only.
     const cta = document.getElementById('openSignupCta');
     const warn = document.getElementById('ctaWarn');
     if (!cta) return;
@@ -1765,73 +1703,18 @@
       if (span) span.textContent = '✓ บันทึกร้านนี้';
       if (warn) warn.style.display = 'none';
     } else {
-      cta.dataset.state = 'add-service';
-      if (span) span.textContent = '+ เพิ่มบริการของคุณ';
+      cta.dataset.state = 'capture-services';
+      if (span) span.textContent = '📷 ถ่ายรูปเมนู';
       if (warn) warn.style.display = 'none'; // CTA itself communicates state · no redundant yellow box
     }
   }
 
   renderServices();
 
-  // ────────────────────────────────────────────────────────────────────
-  // 5b. INLINE SERVICE EDITOR · Pass 25 v3 · 2026-05-05 PM (Art's lock)
-  // Closes self-serve loop · merchant types name+price+duration in modal ·
-  // service appears · save CTA unblocks · no need to bounce back to OCR.
-  // ────────────────────────────────────────────────────────────────────
-  function openAddServiceModal() {
-    const m = document.getElementById('addServiceModal');
-    if (!m) return;
-    document.getElementById('addSvcName').value = '';
-    document.getElementById('addSvcDur').value = '';
-    document.getElementById('addSvcPrice').value = '';
-    m.classList.add('show');
-    setTimeout(() => document.getElementById('addSvcName')?.focus(), 50);
-  }
-  function closeAddServiceModal() {
-    document.getElementById('addServiceModal')?.classList.remove('show');
-  }
-
-  document.getElementById('addServiceInlineBtn')?.addEventListener('click', openAddServiceModal);
-  document.getElementById('addSvcCancel')?.addEventListener('click', closeAddServiceModal);
-  document.getElementById('addServiceModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'addServiceModal') closeAddServiceModal();
-  });
-
-  document.getElementById('addSvcSave')?.addEventListener('click', () => {
-    const name = (document.getElementById('addSvcName')?.value || '').trim();
-    const dur = parseInt(document.getElementById('addSvcDur')?.value || '0');
-    const price = parseInt(document.getElementById('addSvcPrice')?.value || '0');
-    if (!name) {
-      document.getElementById('addSvcName')?.focus();
-      return;
-    }
-    if (!dur || dur < 5) {
-      document.getElementById('addSvcDur')?.focus();
-      return;
-    }
-    if (!price || price < 0) {
-      document.getElementById('addSvcPrice')?.focus();
-      return;
-    }
-    shopData.services = shopData.services || [];
-    shopData.services.push({
-      serviceName: name,
-      durationMin: dur,
-      price: price,
-    });
-    closeAddServiceModal();
-    renderServices();
-  });
-
-  // Allow Enter-key to save in modal
-  ['addSvcName', 'addSvcDur', 'addSvcPrice'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('addSvcSave')?.click();
-      }
-    });
-  });
+  // 2026-05-09 (Art's lock): inline service editor (5b) REMOVED.
+  // Single source of truth for service capture is menu-ocr Mode 2 (and
+  // Phase 2 MenuPhotoCTA inside /signup/service + /shop-setting). This
+  // file is now pure read-only WYSIWYG. Anti-redundancy audit verdict.
 
   // ════════════════════════════════════════════════════════════════
   // 6. DATE + TIME PICKERS
@@ -2151,22 +2034,21 @@
   // the inline editor. Per memory feedback_no_potemkin_demos.md.
 
   document.getElementById('openSignupCta')?.addEventListener('click', () => {
-    // Pass 25 v14 · branch on state · "wall→door"
+    // 2026-05-09 (Art's lock · post-audit): branch on state · "wall→door".
     if (!shopData.shopName || !shopData.shortName) {
-      alert('ไม่มีข้อมูลร้าน · กลับไป OCR tool ก่อน');
+      alert('ไม่มีข้อมูลร้าน · กลับไป menu-ocr ก่อน');
       return;
     }
     const cta = document.getElementById('openSignupCta');
     const state = cta?.dataset.state;
-    if (state === 'add-service') {
-      // Wall→door · open the same inline service modal (no redirect · no friction)
-      // Auto-jump to screen 2 first so the new service is visible after add
-      const target = document.querySelector('[data-screen="2"]');
-      if (target) {
-        document.querySelectorAll('.liff-content .screen').forEach(s => s.classList.remove('active'));
-        target.classList.add('active');
-      }
-      openAddServiceModal();
+    if (state === 'capture-services') {
+      // Wall→door · route to menu-ocr Mode 2 (single capture surface).
+      // Re-encode current shopData so user keeps what they built when they
+      // arrive at menu-ocr. Open in new tab so they can come back.
+      const finalData = { ...shopData, variant: currentVariant };
+      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
+      const ocrUrl = window.location.origin + '/menu-ocr.html?prefill=' + encodeURIComponent(b64) + '#mode-menu';
+      window.open(ocrUrl, '_blank', 'noopener');
       return;
     }
     // state === 'save' · commit to signup
