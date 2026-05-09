@@ -417,14 +417,13 @@
 
           <div class="branding-grid">
             <div class="branding-field full">
-              <label>ชื่อร้าน</label>
-              <input id="prevShopName" type="text" placeholder="เช่น Bare Nail Spa" />
+              <label>ชื่อร้าน <span style="font-weight: 400; color: #525252;">(อังกฤษเท่านั้น)</span></label>
+              <input id="prevShopName" type="text" placeholder="เช่น Bare Nail Spa" autocapitalize="words" autocomplete="organization" spellcheck="false" maxlength="80" pattern="[a-zA-Z0-9 -]+" />
+              <div id="prevSlugHint" class="slug-hint" style="display: none; margin-top: 6px; font-size: 13px; color: #737373;">
+                ลิงก์ร้าน: <span id="prevSlugLive" style="color: #0a0a0a; font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;"></span>
+              </div>
             </div>
-            <div class="branding-field">
-              <label>ชื่อย่อ (ตัวเล็กภาษาอังกฤษ · สำหรับลิงก์)</label>
-              <input id="prevShortName" type="text" placeholder="เช่น barenailspa" autocapitalize="off" autocomplete="off" spellcheck="false" />
-            </div>
-            <div class="branding-field">
+            <div class="branding-field full">
               <label>ไอดี LINE OA</label>
               <input id="prevLineOaId" type="text" placeholder="เช่น @barenailspa" />
             </div>
@@ -923,9 +922,11 @@ For openTime: extract opening hours if visible (e.g. "เปิด 10:00-21:00",
 Output ONLY valid JSON. No prose. No code fences.`;
       const responseText = await callClaudeVision(prevImageData.base64, prevImageData.mediaType, prompt);
       const data = extractJsonFromText(responseText);
-      document.getElementById('prevShopName').value = data.shopName || '';
-      // ALWAYS lowercase + slugify · never trust AI to return clean slug
-      document.getElementById('prevShortName').value = slugify(data.shortName || data.shopName || '');
+      // Pass 25 v37 iter7 (2026-05-09): single-field shop name (English-only · slug auto-derived).
+      // Strip non-allowed chars from AI output before populating, then refresh live slug hint.
+      const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '');
+      document.getElementById('prevShopName').value = cleaned;
+      refreshSlugHint(cleaned);
       document.getElementById('prevLineOaId').value = data.lineOaId || '';
       document.getElementById('prevBrandColor').value = data.brandColor || '';
       // Pass 22 (Art's lock 2026-05-04): capture openTime · used by liff-preview smart slots
@@ -941,25 +942,30 @@ Output ONLY valid JSON. No prose. No code fences.`;
     }
   });
 
-  // Auto-slug from shop name when typing manually (only when shortName empty/auto-filled)
-  document.getElementById('prevShopName').addEventListener('input', (e) => {
-    const shortField = document.getElementById('prevShortName');
-    if (!shortField.value.trim() || shortField.dataset.autofilled === 'true') {
-      shortField.value = slugify(e.target.value);
-      shortField.dataset.autofilled = 'true';
+  // Pass 25 v37 iter7 (2026-05-09): single-field shop name · slug auto-derived live.
+  // Mirrors shop-frontend Name.tsx (Pass 25 v28 lock): English-only · strip Thai silently ·
+  // show derived slug as read-only "ลิงก์ร้าน: bookease.co/<slug>" hint below input.
+  function refreshSlugHint(shopName) {
+    const slug = slugify(shopName);
+    const hint = document.getElementById('prevSlugHint');
+    const live = document.getElementById('prevSlugLive');
+    if (slug) {
+      live.textContent = 'bookease.co/' + slug;
+      hint.style.display = 'block';
+    } else {
+      hint.style.display = 'none';
     }
-  });
-  // shortName field: enforce slug rules on every keystroke (lowercase a-z, 0-9, -)
-  // Also stop auto-fill from shopName once user manually edits.
-  document.getElementById('prevShortName').addEventListener('input', (e) => {
+  }
+  document.getElementById('prevShopName').addEventListener('input', (e) => {
+    // Strip non-allowed chars in real-time · block Thai / symbols silently
     const cursor = e.target.selectionStart;
-    const cleaned = slugify(e.target.value);
+    const cleaned = e.target.value.replace(/[^a-zA-Z0-9 -]/g, '');
     if (cleaned !== e.target.value) {
       e.target.value = cleaned;
       const newPos = Math.min(cursor, cleaned.length);
       try { e.target.setSelectionRange(newPos, newPos); } catch {}
     }
-    e.target.dataset.autofilled = '';
+    refreshSlugHint(cleaned);
   });
 
   // Pass 23 (Art's lock 2026-05-05 PM): variant picker moved to liff-preview
@@ -967,10 +973,11 @@ Output ONLY valid JSON. No prose. No code fences.`;
   // there + click signup button on LIFF preview. Less hop · cleaner.
 
   function collectShopData() {
+    const shopName = document.getElementById('prevShopName').value.trim();
     const data = {
-      shopName: document.getElementById('prevShopName').value.trim(),
-      // Defensive: ensure slug is always slugify-clean even if input handler missed something
-      shortName: slugify(document.getElementById('prevShortName').value),
+      shopName,
+      // Pass 25 v37 iter7: slug derived from shopName (single source of truth · English-only).
+      shortName: slugify(shopName),
       lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
       brandColor: document.getElementById('prevBrandColor').value.trim() || '#2563eb',
       // Pass 22 · openTime captured for liff-preview smart slots + cover badge
@@ -1025,7 +1032,8 @@ Output ONLY valid JSON. No prose. No code fences.`;
       return;
     }
     if (!data.shortName) {
-      showStatus('prevStatus', '⚠️ ใส่ชื่อย่ออังกฤษก่อน', 'error');
+      // shopName had no valid English chars · slug came out empty
+      showStatus('prevStatus', '⚠️ ชื่อร้านต้องเป็นภาษาอังกฤษ (เช่น Bare Nail Spa)', 'error');
       return;
     }
     const previewUrl = buildPreviewUrl(data);
@@ -1173,9 +1181,9 @@ Output ONLY a JSON array. No prose. No code fences.`;
     prevExtractBtn.disabled = !prevImageData;
     menuExtractBtn.disabled = !menuImageData;
     const shopName = document.getElementById('prevShopName').value.trim();
-    const shortName = document.getElementById('prevShortName').value.trim();
-    // Enable Create button when BOTH shop name + short name filled (manual or AI-extracted)
-    prevCreateBtn.disabled = !(shopName && shortName);
+    // Pass 25 v37 iter7: enable Create when shopName has a valid English-derived slug.
+    // (Single source of truth · slug auto-derives from shopName.)
+    prevCreateBtn.disabled = !(shopName && slugify(shopName));
   }
   document.querySelectorAll('#mode-previsit input').forEach(input => {
     input.addEventListener('input', updateButtonStates);
