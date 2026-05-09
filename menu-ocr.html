@@ -402,7 +402,7 @@
           <label for="prevFile" class="upload-zone" id="prevUploadZone">
             <div class="upload-icon">📷</div>
             <div class="upload-label">เลือก screenshot</div>
-            <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
+            <div class="upload-sub">JPG / PNG · ขนาดไหนก็ได้</div>
           </label>
           <input id="prevFile" type="file" accept="image/*" />
 
@@ -487,7 +487,7 @@
           <label for="menuFile" class="upload-zone" id="menuUploadZone">
             <div class="upload-icon">📷</div>
             <div class="upload-label">ถ่าย / เลือกรูป</div>
-            <div class="upload-sub">JPG / PNG · ไม่เกิน 5 MB</div>
+            <div class="upload-sub">JPG / PNG · ขนาดไหนก็ได้</div>
           </label>
           <input id="menuFile" type="file" accept="image/*" />
 
@@ -753,6 +753,68 @@
       reader.readAsDataURL(file);
     });
   }
+
+  // ─────────────────────────────────────────────────────────────────
+  // Pass 25 v37 iter6.4 (Art's lock 2026-05-09): client-side auto-compress
+  // for iPhone screenshots that frequently exceed 5MB.
+  //
+  // Why: iPhone Pro Max screenshots = 4-6MB · LINE chat stitched = 6-12MB ·
+  // BookEase OCR doesn't need that resolution. 1600px wide JPEG @ q=0.85 =
+  // ~500KB · text remains crisp · OCR success rate identical.
+  //
+  // Pattern: Apple Photos / Stripe Receipt / Notion Image embed all do this
+  // silently. Don't force users to learn about file-size limits.
+  // ─────────────────────────────────────────────────────────────────
+  function loadImageFromFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = ev.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function compressForOcr(file, opts = {}) {
+    const { maxWidth = 1600, targetBytes = 1_500_000, skipBelow = 1_500_000 } = opts;
+
+    // Skip compression if already small (saves CPU + preserves original quality)
+    if (file.size <= skipBelow) return file;
+
+    try {
+      const img = await loadImageFromFile(file);
+      const scale = Math.min(1, maxWidth / img.width);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; // background for transparent PNGs
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+
+      // Try q=0.85 first · drop until fits · floor at 0.4 (still readable)
+      let quality = 0.85;
+      let blob = null;
+      while (quality >= 0.4) {
+        blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
+        if (blob && blob.size <= targetBytes) break;
+        quality -= 0.1;
+      }
+
+      if (!blob) return file; // fallback if canvas.toBlob fails entirely
+      return new File([blob], file.name.replace(/\.\w+$/i, '.jpg'), { type: 'image/jpeg' });
+    } catch (err) {
+      console.warn('[menu-ocr] compress failed · using original', err);
+      return file;
+    }
+  }
   function slugify(name) {
     return name.toLowerCase()
       .replace(/[^a-z0-9\s-]/gi, '')
@@ -821,12 +883,17 @@
   let prevImageData = null;
 
   prevFile.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      showStatus('prevStatus', '⚠️ รูปใหญ่เกินไป (เกิน 5 MB) · ลองรูปอื่น', 'error');
-      return;
+
+    // iter6.4 (Art's lock 2026-05-09): silent auto-compress for iPhone
+    // screenshots · no 5MB error · just works. Show 1-line status only
+    // if compression actually happened.
+    if (file.size > 1_500_000) {
+      showStatus('prevStatus', '📸 กำลังย่อรูปให้คมพอดี OCR...', 'info');
+      file = await compressForOcr(file);
     }
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       prevUploadZone.innerHTML = `<img src="${ev.target.result}" alt="รูปร้าน" />`;
@@ -834,6 +901,7 @@
     };
     reader.readAsDataURL(file);
     prevImageData = { base64: await fileToBase64(file), mediaType: file.type };
+    showStatus('prevStatus', '', '');
     updateButtonStates();
   });
 
@@ -992,12 +1060,16 @@ Output ONLY valid JSON. No prose. No code fences.`;
   let menuImageData = null;
 
   menuFile.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      showStatus('menuStatus', '⚠️ รูปใหญ่เกินไป (เกิน 5 MB) · ลองรูปอื่น', 'error');
-      return;
+
+    // iter6.4 (Art's lock 2026-05-09): silent auto-compress for iPhone
+    // screenshots / camera-roll photos · no 5MB error · just works.
+    if (file.size > 1_500_000) {
+      showStatus('menuStatus', '📸 กำลังย่อรูปให้คมพอดี OCR...', 'info');
+      file = await compressForOcr(file);
     }
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       menuUploadZone.innerHTML = `<img src="${ev.target.result}" alt="เมนู" />`;
@@ -1005,6 +1077,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
     };
     reader.readAsDataURL(file);
     menuImageData = { base64: await fileToBase64(file), mediaType: file.type };
+    showStatus('menuStatus', '', '');
     updateButtonStates();
   });
 
