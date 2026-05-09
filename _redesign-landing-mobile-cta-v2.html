@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>make.bookease.co · mobile CTA · 2 variants · 2026-05-09</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+    background: #f5f5f4;
+    color: #0a0a0a;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────── Doc header ─────────── */
+  .doc-header {
+    text-align: center; padding: 32px 24px 8px;
+  }
+  .doc-header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 500; margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .doc-header h1 .book { color: #1E40AF; }
+  .doc-header h1 .ease { color: #38BDF8; }
+  .doc-header .sub {
+    font-size: 14px; color: #6b7280; max-width: 720px; margin: 0 auto;
+  }
+  .doc-header .pill {
+    display: inline-block; margin-top: 12px;
+    background: #fef3c7; border-radius: 100px;
+    padding: 6px 14px; font-size: 12px; color: #78350f;
+  }
+
+  /* ─────────── 2-up phone preview row ─────────── */
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 32px; max-width: 980px;
+    margin: 32px auto; padding: 0 24px;
+  }
+  @media (max-width: 800px) { .compare-row { grid-template-columns: 1fr; } }
+
+  .col-label {
+    text-align: center; margin: 0 0 16px;
+  }
+  .col-label .badge {
+    display: inline-block; padding: 6px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .col-A .badge { background: #dbeafe; color: #1e40af; }
+  .col-B .badge { background: #fee2e2; color: #be123c; }
+  .col-label .name {
+    display: block; margin-top: 8px; font-size: 14px; color: #44403c;
+  }
+  .col-label .name b { color: #0a0a0a; }
+
+  /* Phone frame · realistic iPhone */
+  .phone-frame {
+    width: 390px; max-width: 100%; margin: 0 auto;
+    background: #1c1917; border-radius: 56px; padding: 14px;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.10),
+      0 30px 80px -20px rgba(0,0,0,0.30),
+      0 12px 32px -8px rgba(0,0,0,0.18);
+  }
+  .phone-frame .notch {
+    width: 110px; height: 28px; background: #1c1917;
+    border-radius: 100px; margin: 0 auto 0;
+    position: relative; top: -2px; z-index: 2;
+  }
+  .phone-screen {
+    background: #fff; border-radius: 42px; overflow: hidden;
+    min-height: 760px;
+    margin-top: -8px;
+    position: relative;
+  }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 30px 0; font-size: 13px; font-weight: 600;
+  }
+
+  /* ─────────── Landing content (matches make.bookease.co) ─────────── */
+  .land { padding: 24px 20px 32px; }
+  .land .top-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .nav-brand {
+    font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .nav-brand .book { color: #1E40AF; }
+  .nav-brand .ease { color: #38BDF8; }
+  .nav-login {
+    font-size: 13px; font-weight: 600; padding: 6px 12px;
+    border: 1px solid rgba(0,0,0,0.12); border-radius: 100px;
+  }
+
+  .land h1 {
+    font-size: 34px; font-weight: 800; letter-spacing: -0.035em;
+    line-height: 1.05; margin: 8px 0 8px;
+  }
+  .land h1 em {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; color: #06c755;
+  }
+  .land .sub {
+    font-size: 15px; color: #525252; margin: 0 0 16px;
+  }
+  .land .sub strong { color: #0a0a0a; font-weight: 600; }
+
+  /* Compact teaser card (the now-stripped phone preview) */
+  .teaser {
+    width: 100%; max-width: 340px; margin: 0 auto 18px;
+    border-radius: 18px; overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.06),
+      0 12px 28px rgba(0,0,0,0.10);
+    position: relative;
+    background:
+      linear-gradient(180deg, #2a1810 0%, #5a3825 35%, #b87750 70%, #e6c4a8 100%);
+  }
+  .teaser-cover {
+    padding: 28px 18px 16px; min-height: 180px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    color: #fff;
+    background-image:
+      linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.75) 100%),
+      url('https://images.unsplash.com/photo-1604654894611-6973b376cbde?auto=format&fit=crop&w=600&q=70');
+    background-size: cover; background-position: center;
+  }
+  .teaser-cover * { text-shadow: 0 1px 4px rgba(0,0,0,0.45); }
+  .teaser-tag {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+    opacity: 0.7; margin-bottom: 4px;
+  }
+  .teaser-name {
+    font-size: 24px; font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .teaser-meta { font-size: 12px; opacity: 0.85; margin-bottom: 14px; }
+  .teaser-cta-mini {
+    background: #fff; color: #0a0a0a;
+    padding: 10px; text-align: center; border-radius: 100px;
+    font-size: 13px; font-weight: 700;
+  }
+  .teaser-services {
+    background: rgba(0,0,0,0.92); padding: 12px 18px 14px;
+    display: flex; flex-direction: column; gap: 8px;
+    color: #fff;
+  }
+  .teaser-svc {
+    display: flex; justify-content: space-between; font-size: 12.5px;
+  }
+  .teaser-svc .name { opacity: 0.85; }
+  .teaser-svc .price { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* Floating chips */
+  .chip {
+    position: absolute; padding: 7px 12px; border-radius: 100px;
+    font-size: 11px; font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    display: inline-flex; align-items: center; gap: 6px;
+    z-index: 5;
+  }
+  .chip-deposit {
+    top: 14px; right: -6px; background: #06c755; color: #fff;
+    transform: rotate(3deg);
+  }
+  .chip-saved {
+    bottom: 56px; left: -6px; background: #fff; color: #0a0a0a;
+    border: 1px solid rgba(0,0,0,0.06);
+    transform: rotate(-4deg);
+  }
+  .chip-saved .check {
+    width: 14px; height: 14px; background: #16a34a; color: #fff;
+    border-radius: 50%; font-size: 9px; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* OR divider */
+  .or-divider {
+    display: flex; align-items: center; gap: 12px;
+    color: #a1a1a1; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.02em; margin: 14px 0 10px;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.08);
+  }
+
+  /* Compact typing form */
+  .typing-form {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .typing-form input {
+    background: #f4f4f4; border: 0; border-radius: 14px;
+    padding: 14px 18px; font-size: 16px; font-family: inherit;
+    outline: none; width: 100%;
+  }
+  .typing-form button {
+    background: #0a0a0a; color: #fff; border: 0; border-radius: 14px;
+    padding: 14px 24px; font-size: 15px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     VARIANT A · Round FAB (Stripe-Snapchat fusion)
+     - Big circle 96×96 · camera icon · gradient green-blue
+     - Caption below: bold name + sub line
+     - Pulsing ring to draw eye on first paint
+     - Tap = scale + slight rotation for delight
+     ════════════════════════════════════════════════════════════════ */
+  .cta-A {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; margin: 18px 0 8px;
+  }
+  .cta-A .fab {
+    position: relative;
+    width: 96px; height: 96px; border-radius: 50%;
+    background: linear-gradient(135deg, #06c755 0%, #14b8a6 50%, #06b6d4 100%);
+    color: #fff; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 14px 32px rgba(6, 199, 85, 0.40),
+      0 6px 14px rgba(6, 199, 85, 0.20);
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cta-A .fab::before {
+    content: ''; position: absolute; inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(6,199,85,0.35), transparent 70%);
+    z-index: -1;
+    animation: pulse-A 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-A {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.18); opacity: 0; }
+  }
+  .cta-A .fab:hover { transform: scale(1.04) rotate(-3deg); }
+  .cta-A .fab:active { transform: scale(0.94) rotate(2deg); }
+  .cta-A .fab svg { width: 38px; height: 38px; }
+  .cta-A .label {
+    text-align: center; line-height: 1.25;
+  }
+  .cta-A .label .name {
+    font-size: 17px; font-weight: 800; letter-spacing: -0.01em;
+    color: #0a0a0a;
+  }
+  .cta-A .label .sub {
+    font-size: 13px; color: #525252; font-weight: 500;
+    margin: 2px 0 0;
+  }
+  .cta-A .label .sparkle {
+    display: inline-block;
+    animation: sparkle 1.6s ease-in-out infinite;
+    margin-left: 2px;
+  }
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+    50% { transform: scale(1.2) rotate(15deg); opacity: 0.7; }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     VARIANT B · Big playful pill (Friendly-card · Apple Music style)
+     - Wide pill · big rounded · saturated brand color · big emoji
+     - Two-line copy inline · arrow that bounces
+     - Slight tilt animation on idle (catches the eye)
+     ════════════════════════════════════════════════════════════════ */
+  .cta-B {
+    margin: 18px 0 8px;
+  }
+  .cta-B .big-pill {
+    width: 100%; max-width: 360px; margin: 0 auto;
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 30%, #fef9c3 70%, #ecfdf5 100%);
+    border: 2px solid rgba(16, 185, 129, 0.30);
+    border-radius: 28px;
+    color: #0a0a0a; cursor: pointer; text-decoration: none;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 14px 28px rgba(16, 185, 129, 0.18);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+    animation: tilt-B 3.2s ease-in-out infinite;
+  }
+  @keyframes tilt-B {
+    0%, 100% { transform: rotate(-0.4deg); }
+    50% { transform: rotate(0.4deg); }
+  }
+  .cta-B .big-pill:hover {
+    transform: translateY(-2px) rotate(0deg);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 22px 40px rgba(16, 185, 129, 0.28);
+    animation: none;
+  }
+  .cta-B .big-pill:active { transform: translateY(0) scale(0.98); }
+  .cta-B .emoji-wrap {
+    flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    box-shadow:
+      0 4px 12px rgba(16, 185, 129, 0.15),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    animation: bounce-B 1.4s ease-in-out infinite;
+  }
+  @keyframes bounce-B {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .cta-B .text { flex: 1; min-width: 0; line-height: 1.25; }
+  .cta-B .text .name {
+    font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
+    color: #0a0a0a;
+  }
+  .cta-B .text .sub {
+    font-size: 13px; color: #475569; font-weight: 500; margin-top: 2px;
+  }
+  .cta-B .text .sub .sparkle {
+    display: inline-block;
+    animation: sparkle 1.6s ease-in-out infinite;
+  }
+  .cta-B .arrow {
+    flex-shrink: 0; font-size: 22px; color: #059669; font-weight: 700;
+    animation: nudge-B 1.6s ease-in-out infinite;
+  }
+  @keyframes nudge-B {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
+  /* ─────────── Spec callout ─────────── */
+  .spec {
+    max-width: 980px; margin: 24px auto; padding: 24px;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .spec h3 { margin: 0 0 12px; font-size: 16px; }
+  .spec ul { margin: 0; padding-left: 20px; line-height: 1.7; font-size: 14px; }
+  .spec ul li b { color: #0a0a0a; }
+  .vote {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    background: #fafaf9; padding: 16px 20px; border-radius: 12px;
+    margin-top: 16px; font-size: 14px;
+  }
+  .vote b { color: #0a0a0a; }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <h1>make.bookease.co · mobile CTA · 2 variants</h1>
+  <div class="sub">
+    Reorder · H1 → sub → teaser → <b>OCR CTA (playful)</b> → typing form ·
+    Art's lock 2026-05-09
+  </div>
+  <span class="pill">⚠️ Preview · vote ก่อน implement</span>
+</header>
+
+<div class="compare-row">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       VARIANT A · Round FAB (96×96 · gradient · pulsing ring)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="col col-A">
+    <div class="col-label">
+      <span class="badge">Variant A</span>
+      <span class="name"><b>Round FAB</b> · Stripe-Snapchat fusion · 96px circle · pulsing ring</span>
+    </div>
+    <div class="phone-frame">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●●&nbsp;100%</span></div>
+        <div class="land">
+          <div class="top-nav">
+            <div class="nav-brand"><span class="book">Book</span><span class="ease">Ease</span></div>
+            <a class="nav-login">เข้าสู่ระบบ</a>
+          </div>
+
+          <h1>ทำเว็บร้าน<br/>ลูกค้าจองใน <em>LINE</em></h1>
+          <p class="sub"><strong>ออกแบบให้ใน 60 วินาที</strong> · <strong>ฟรี</strong></p>
+
+          <div class="teaser">
+            <div class="chip chip-deposit">✓ มัดจำ ฿200 · ล็อกคิว</div>
+            <div class="teaser-cover">
+              <div class="teaser-tag">Luxury × Nail</div>
+              <div class="teaser-name">Bare Nail<br/>Spa</div>
+              <div class="teaser-meta">เปิด 10:00 — 21:00 · ทองหล่อ 13</div>
+              <div class="teaser-cta-mini">จ่ายมัดจำ ฿200</div>
+            </div>
+            <div class="teaser-services">
+              <div class="teaser-svc"><span class="name">Gel manicure</span><span class="price">฿890</span></div>
+              <div class="teaser-svc"><span class="name">Spa pedicure</span><span class="price">฿1,290</span></div>
+            </div>
+            <div class="chip chip-saved"><span class="check">✓</span> บันทึกแล้ว · ฟรี</div>
+          </div>
+
+          <!-- THE NEW CTA -->
+          <div class="cta-A">
+            <button class="fab" type="button" aria-label="ถ่ายภาพเมนูร้าน">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                <circle cx="12" cy="13" r="3.5"/>
+              </svg>
+            </button>
+            <div class="label">
+              <div class="name">ถ่ายภาพเมนูร้าน</div>
+              <div class="sub">เห็นเว็บใน 60 วิ <span class="sparkle">✨</span></div>
+            </div>
+          </div>
+
+          <div class="or-divider">หรือพิมพ์ชื่อร้าน</div>
+          <form class="typing-form" onsubmit="return false">
+            <input type="text" placeholder="ชื่อร้านของคุณ" />
+            <button type="submit">เปิดดู</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       VARIANT B · Big playful pill (Friendly-card · Apple Music style)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="col col-B">
+    <div class="col-label">
+      <span class="badge">Variant B</span>
+      <span class="name"><b>Big Playful Pill</b> · Apple Music card · cream/mint gradient · tilting · big emoji bounce</span>
+    </div>
+    <div class="phone-frame">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●●&nbsp;100%</span></div>
+        <div class="land">
+          <div class="top-nav">
+            <div class="nav-brand"><span class="book">Book</span><span class="ease">Ease</span></div>
+            <a class="nav-login">เข้าสู่ระบบ</a>
+          </div>
+
+          <h1>ทำเว็บร้าน<br/>ลูกค้าจองใน <em>LINE</em></h1>
+          <p class="sub"><strong>ออกแบบให้ใน 60 วินาที</strong> · <strong>ฟรี</strong></p>
+
+          <div class="teaser">
+            <div class="chip chip-deposit">✓ มัดจำ ฿200 · ล็อกคิว</div>
+            <div class="teaser-cover">
+              <div class="teaser-tag">Luxury × Nail</div>
+              <div class="teaser-name">Bare Nail<br/>Spa</div>
+              <div class="teaser-meta">เปิด 10:00 — 21:00 · ทองหล่อ 13</div>
+              <div class="teaser-cta-mini">จ่ายมัดจำ ฿200</div>
+            </div>
+            <div class="teaser-services">
+              <div class="teaser-svc"><span class="name">Gel manicure</span><span class="price">฿890</span></div>
+              <div class="teaser-svc"><span class="name">Spa pedicure</span><span class="price">฿1,290</span></div>
+            </div>
+            <div class="chip chip-saved"><span class="check">✓</span> บันทึกแล้ว · ฟรี</div>
+          </div>
+
+          <!-- THE NEW CTA -->
+          <div class="cta-B">
+            <a class="big-pill" href="#" role="button">
+              <span class="emoji-wrap">📷</span>
+              <div class="text">
+                <div class="name">ถ่ายภาพเมนูร้าน</div>
+                <div class="sub">เห็นเว็บใน 60 วิ <span class="sparkle">✨</span></div>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          </div>
+
+          <div class="or-divider">หรือพิมพ์ชื่อร้าน</div>
+          <form class="typing-form" onsubmit="return false">
+            <input type="text" placeholder="ชื่อร้านของคุณ" />
+            <button type="submit">เปิดดู</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="spec">
+  <h3>📐 Design rationale</h3>
+  <ul>
+    <li><b>Variant A · Round FAB</b> · Apple iOS Camera button + Snapchat ghost-button DNA · single round shape, no copy on the button itself · pure visual focal point · the label sits BELOW so the button is the icon. 96×96 with a pulsing ring = unmissable. Gradient mint→teal→cyan = energetic but still on-brand. Bounce + slight rotate on tap = playful. Best for: <b>visceral first-impression · "what does this DO?"</b></li>
+    <li><b>Variant B · Big Playful Pill</b> · Apple Music "Listen Now" card + IG Stories highlight · two-line copy + emoji left + arrow right · gentle tilt animation on idle (eye-catcher without being annoying) · cream/mint gradient soft and friendly. The 56px white emoji circle bobs subtly. Best for: <b>literal clarity · the action AND the promise are stated</b></li>
+  </ul>
+</div>
+
+<div class="spec">
+  <h3>🎯 Reorder applied to BOTH variants (per Art 2026-05-09)</h3>
+  <ol style="margin: 0; padding-left: 22px; line-height: 1.7; font-size: 14px;">
+    <li>Hero <b>H1</b> · "ทำเว็บร้าน · ลูกค้าจองใน LINE"</li>
+    <li>Sub · "ออกแบบให้ใน 60 วินาที · ฟรี"</li>
+    <li><b>Teaser card</b> · compressed (now sized perfect per Art) · Bare Nail Spa preview</li>
+    <li><b>OCR CTA · playful</b> ← variant A or B</li>
+    <li>"หรือพิมพ์ชื่อร้าน" divider</li>
+    <li>Typing form fallback</li>
+  </ol>
+  <div class="vote">
+    <b>Vote:</b> A (Round FAB) · B (Big Playful Pill) · or hybrid (specify)?
+  </div>
+</div>
+
+<footer style="text-align: center; padding: 32px; color: #94a3b8; font-size: 13px;">
+  Preview built 2026-05-09 · vote before implementing in <code>make.bookease.co/index.html</code>
+</footer>
+
+</body>
+</html>
