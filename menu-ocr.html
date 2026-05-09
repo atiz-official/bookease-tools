@@ -345,7 +345,7 @@
       <div class="admin-status" id="adminStatus"></div>
       <input id="apiKey" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
       <button class="primary" id="saveApiKeyBtn" style="margin-top: 0;">💾 บันทึก key</button>
-      <div class="admin-hint">เร็วๆ นี้ไม่ต้องตั้ง · Atiz เป็นผู้รับผิดชอบ</div>
+      <div class="admin-hint">โหมดทดสอบส่วนตัว · ปกติเครื่องมือนี้ใช้ฟรี ไม่ต้องตั้งอะไร</div>
     </div>
   </details>
 
@@ -684,9 +684,20 @@
       try { bodyText = await res.text(); } catch {}
       console.error('Anthropic API error', res.status, bodyText);
       const snippet = bodyText.replace(/\s+/g, ' ').substring(0, 180);
-      // Friendly Thai messages for known-cause errors
+      // 2026-05-09 (public-CAC framing · feedback_remote_caravan_share_to_friend.md):
+      // tool is now a free customer-acquisition surface · Atiz pays the API ·
+      // public visitor must NEVER see "ติดต่อคุณอาท" / "ใส่ key" / "account" framing.
+      // Worker mode = neutral retry messages · legacy staff mode = direct Anthropic errors.
+      if (WORKER_URL) {
+        // Public-facing path · keep all errors generic + actionable
+        if (bodyText.includes('credit balance is too low') || bodyText.includes('rate_limit') || res.status === 429 || bodyText.includes('overloaded')) {
+          throw new Error(`🤖 ระบบ AI กำลังคุยกับคนเยอะ · ลองใหม่อีกสักครู่`);
+        }
+        throw new Error(`🤖 ระบบขัดข้องชั่วคราว · ลองใหม่อีกครั้ง`);
+      }
+      // Legacy localStorage-key mode (Atiz internal · WORKER_URL empty)
       if (bodyText.includes('credit balance is too low')) {
-        throw new Error(`💳 ยอดเครดิต Anthropic หมด · ติดต่อคุณอาทเติม credit ที่ console.anthropic.com/settings/billing`);
+        throw new Error(`💳 ยอดเครดิต Anthropic หมด · เติม credit ที่ console.anthropic.com/settings/billing`);
       }
       if (bodyText.includes('rate_limit') || res.status === 429) {
         throw new Error(`⏳ ใช้งานเยอะเกินไป · รอสักครู่แล้วลองใหม่`);
