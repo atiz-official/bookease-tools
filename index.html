@@ -156,67 +156,103 @@
   .form-row .cta:active { transform: scale(0.96); }
   .form-row .cta:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* Pass 25 v25 (Art's lock 2026-05-06 PM): OCR-first ladder
-     · OCR card = primary visual anchor (caravan use case · merchant has menu in hand)
-     · "หรือพิมพ์ชื่อร้าน" divider · neutral
-     · typing form = compact secondary (cold web fallback)
-     Per feedback_north_star_owner_in_60_sec · OCR is the dopamine moment. */
+  /* 2026-05-09 (Art's lock · Variant B · big playful pill):
+     - Cream/mint gradient · 2px green border · 28px radius
+     - 56px white emoji circle (bounces on idle)
+     - Subtle tilt animation on idle (catches eye without being annoying)
+     - Arrow nudges right · pulses on hover
+     - Apple Music "Listen Now" card + IG Stories highlight DNA · friendly
+       + playful · service-shop owner aesthetic · younger audience */
   .ocr-card {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     max-width: 520px;
-    padding: 22px 22px 22px 24px;
-    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%);
-    border: 1px solid rgba(16, 185, 129, 0.20);
-    border-radius: 24px;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 30%, #fef9c3 70%, #ecfdf5 100%);
+    border: 2px solid rgba(16, 185, 129, 0.30);
+    border-radius: 28px;
     box-shadow:
-      0 1px 2px rgba(15, 23, 42, 0.04),
-      0 12px 32px rgba(16, 185, 129, 0.10);
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 14px 28px rgba(16, 185, 129, 0.18);
     text-decoration: none;
     color: inherit;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    cursor: pointer;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+    animation: ocr-tilt 3.2s ease-in-out infinite;
+  }
+  @keyframes ocr-tilt {
+    0%, 100% { transform: rotate(-0.4deg); }
+    50% { transform: rotate(0.4deg); }
   }
   .ocr-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) rotate(0deg);
     box-shadow:
-      0 1px 2px rgba(15, 23, 42, 0.04),
-      0 18px 40px rgba(16, 185, 129, 0.16);
-    border-color: rgba(16, 185, 129, 0.32);
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 22px 40px rgba(16, 185, 129, 0.28);
+    animation: none;
   }
-  .ocr-card:active { transform: translateY(0); }
+  .ocr-card:active { transform: translateY(0) scale(0.98); }
   .ocr-card .ocr-icon {
     flex-shrink: 0;
-    width: 64px; height: 64px;
+    width: 56px; height: 56px;
     background: #ffffff;
-    border: 1px solid rgba(16, 185, 129, 0.18);
-    border-radius: 18px;
+    border: 0;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.10);
+    font-size: 30px;
+    box-shadow:
+      0 4px 12px rgba(16, 185, 129, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    animation: ocr-bounce 1.4s ease-in-out infinite;
   }
-  .ocr-card .ocr-text { flex: 1; min-width: 0; }
+  @keyframes ocr-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .ocr-card .ocr-text { flex: 1; min-width: 0; line-height: 1.25; }
   .ocr-card .ocr-h {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
     color: #0a0a0a;
     line-height: 1.2;
   }
   .ocr-card .ocr-sub {
     font-size: 13px;
-    color: #525252;
-    margin-top: 4px;
+    color: #475569;
+    margin-top: 2px;
     font-weight: 500;
+  }
+  .ocr-card .ocr-sparkle {
+    display: inline-block;
+    animation: ocr-sparkle 1.6s ease-in-out infinite;
+  }
+  @keyframes ocr-sparkle {
+    0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+    50% { transform: scale(1.2) rotate(15deg); opacity: 0.7; }
   }
   .ocr-card .ocr-arrow {
     flex-shrink: 0;
     color: #059669;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    transition: transform 0.2s ease;
+    animation: ocr-nudge 1.6s ease-in-out infinite;
   }
-  .ocr-card:hover .ocr-arrow { transform: translateX(3px); }
+  @keyframes ocr-nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+  .ocr-card:hover .ocr-arrow { animation-duration: 0.8s; }
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .ocr-card,
+    .ocr-card .ocr-icon,
+    .ocr-card .ocr-arrow,
+    .ocr-card .ocr-sparkle {
+      animation: none !important;
+    }
+  }
 
   /* "หรือพิมพ์ชื่อร้าน" divider */
   .or-divider {
@@ -469,12 +505,14 @@
     .hero h1 { order: 1; margin-bottom: 0; }
     .hero-sub { order: 2; margin-bottom: 4px; font-size: 16px; }
     .hero-sub--customer { display: none; }   /* drop · ocr-card sub covers it */
-    .ocr-card { order: 3; }                  /* primary action · above fold */
-    .mockup-wrap {                           /* compact teaser · proof below */
-      order: 4;
+    /* 2026-05-09 (Art's reorder lock · Variant B): teaser FIRST · then CTA ·
+       visual flow goes "look at the result → take action" (Apple/Tesla pattern) */
+    .mockup-wrap {                           /* compact teaser · the WOW first */
+      order: 3;
       min-height: 0;
-      margin: 4px 0 4px;
+      margin: 4px 0 8px;
     }
+    .ocr-card { order: 4; }                  /* big playful pill CTA after teaser */
     .or-divider { order: 5; margin: 6px 0; }
     .form-row { order: 6; }
 
@@ -597,12 +635,13 @@
       ล็อกคิวทันที · <strong>ไม่ต้องสมัคร</strong>
     </p>
 
-    <!-- Pass 25 v25 · OCR-first ladder (Art's lock 2026-05-06 PM) -->
+    <!-- 2026-05-09 (Art's lock · Variant B): Big playful pill · big emoji
+         left · 2-line copy + sparkle ✨ · arrow nudges · tilt animation idle -->
     <a class="ocr-card" href="https://atiz-official.github.io/bookease-tools/menu-ocr.html">
       <div class="ocr-icon">📷</div>
       <div class="ocr-text">
         <div class="ocr-h">ถ่ายภาพเมนูร้าน</div>
-        <div class="ocr-sub">เห็นทุกบริการในเว็บ · ภายใน 60 วินาที</div>
+        <div class="ocr-sub">เห็นเว็บใน 60 วิ <span class="ocr-sparkle">✨</span></div>
       </div>
       <div class="ocr-arrow">→</div>
     </a>
