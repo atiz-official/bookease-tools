@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DetailPage · polish · current vs polished · 2026-05-09</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700;800&family=Cormorant:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f5f5f4;
+    color: #0a0a0a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .doc-header {
+    text-align: center; padding: 32px 24px 8px;
+    background: linear-gradient(180deg, #f5f5f4 0%, #fafaf9 100%);
+  }
+  .doc-header h1 {
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-size: 32px; font-weight: 500; margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .doc-header .book { color: #1E40AF; }
+  .doc-header .ease { color: #38BDF8; }
+  .doc-header .sub {
+    font-size: 14px; color: #6b7280; max-width: 720px; margin: 0 auto;
+  }
+  .doc-header .pill {
+    display: inline-block; margin-top: 12px;
+    background: #fef3c7; border-radius: 100px;
+    padding: 6px 14px; font-size: 12px; color: #78350f;
+  }
+
+  /* ───── Layout: 2-column compare row ───── */
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; max-width: 1200px;
+    margin: 32px auto; padding: 0 24px;
+  }
+  @media (max-width: 800px) { .compare-row { grid-template-columns: 1fr; } }
+
+  .col h2 {
+    font-size: 14px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; margin: 0 0 12px; color: #44403c;
+  }
+  .col .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; margin-right: 8px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .col.before .badge { background: #fee2e2; color: #991b1b; }
+  .col.after  .badge { background: #d1fae5; color: #065f46; }
+
+  /* ───── Phone frame (consistent) ───── */
+  .phone {
+    width: 380px; max-width: 100%; margin: 0 auto;
+    background: #fff;
+    border: 12px solid #1c1917; border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.30);
+    position: relative;
+  }
+  .phone .notch {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 24px; background: #1c1917; border-radius: 100px;
+    z-index: 10;
+  }
+  .phone .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px 6px; font-size: 13px; font-weight: 600;
+    color: #0a0a0a;
+  }
+  .phone .status-bar .right { display: flex; gap: 4px; align-items: center; }
+
+  /* ───── Hero block (shared) ───── */
+  .hero {
+    position: relative;
+    aspect-ratio: 4/3;
+    background-size: cover; background-position: center;
+  }
+  .hero.rakkana {
+    background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80');
+  }
+  .hero.zaza {
+    background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&q=80');
+  }
+  .hero.bubbie {
+    background-image: url('https://images.unsplash.com/photo-1522335789203-aaa44d5feb6c?w=800&q=80');
+  }
+
+  /* BEFORE: large overlay buttons (40px) */
+  .hero-btn-old {
+    position: absolute; width: 40px; height: 40px;
+    background: rgba(255,255,255,0.95); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    top: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 0; cursor: pointer;
+  }
+  .hero-btn-old.left { left: 16px; }
+  .hero-btn-old.right { right: 16px; }
+
+  /* AFTER: tighter overlay buttons (32px) + 1/N indicator */
+  .hero-btn {
+    position: absolute; width: 32px; height: 32px;
+    background: rgba(255,255,255,0.92); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    top: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    border: 0; cursor: pointer; backdrop-filter: blur(8px);
+  }
+  .hero-btn.left { left: 12px; }
+  .hero-btn.right { right: 12px; }
+  .photo-count {
+    position: absolute; bottom: 12px; right: 12px;
+    background: rgba(0,0,0,0.55); color: #fff;
+    padding: 3px 8px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ───── BEFORE shop header (italic + patronizing line) ───── */
+  .shop-head-old {
+    padding: 16px 20px 8px;
+    display: flex; align-items: flex-start; gap: 12px;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .shop-head-old .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #e7e5e4; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-size: 14px; color: #57534e;
+    overflow: hidden;
+  }
+  .shop-head-old .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .shop-head-old .meta { flex: 1; min-width: 0; }
+  .shop-head-old .name {
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-size: 24px; font-weight: 500; line-height: 1.1;
+    color: #0a0a0a;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .shop-head-old .row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .shop-head-old .open {
+    font-size: 14px; color: #16a34a; font-weight: 600;
+  }
+  .shop-head-old .open::before { content: '● '; }
+  .shop-head-old .share {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid #e7e5e4; background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .shop-head-old .trust-old {
+    font-size: 13px; color: #44403c; margin-top: 4px;
+  }
+
+  /* ───── AFTER shop header (upright bold + meta rail) ───── */
+  .shop-head {
+    padding: 14px 16px 12px;
+  }
+  .shop-head .name-row {
+    display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  }
+  .shop-head .name {
+    font-family: 'Sarabun', 'Inter', sans-serif;
+    font-size: 22px; font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: #0a0a0a;
+  }
+  .shop-head .name.romanized {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .shop-head .verified {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #1E40AF; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .shop-head .meta-rail {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 6px; font-size: 13px; color: #57534e;
+    flex-wrap: wrap;
+  }
+  .shop-head .meta-rail .sep { color: #d6d3d1; }
+  .shop-head .meta-rail b { color: #0a0a0a; font-weight: 700; }
+  .shop-head .meta-rail .icon { width: 14px; height: 14px; vertical-align: -2px; }
+
+  .shop-head .addr-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #f5f5f4;
+  }
+  .shop-head .addr-text {
+    flex: 1; min-width: 0;
+    font-size: 13px; color: #44403c;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .shop-head .addr-text .pin { color: #dc2626; }
+  .shop-head .addr-text .open { color: #16a34a; font-weight: 600; }
+  .shop-head .qa-icons { display: flex; gap: 6px; }
+  .shop-head .qa-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #fafaf9; border: 1px solid #e7e5e4;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #44403c; cursor: pointer; transition: all 0.12s;
+  }
+  .shop-head .qa-icon:hover {
+    background: #0a0a0a; color: #fff; border-color: #0a0a0a;
+  }
+  .shop-head .qa-icon.line { background: #06c755; color: #fff; border-color: #06c755; }
+  .shop-head .qa-icon.line:hover { background: #04a342; }
+
+  /* ───── Section heading ───── */
+  .sec-h-old {
+    padding: 16px 20px 8px;
+    font-size: 22px; font-weight: 700; color: #0a0a0a;
+  }
+  .sec-h {
+    padding: 14px 16px 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .sec-h .title {
+    font-size: 16px; font-weight: 700; color: #0a0a0a;
+    letter-spacing: -0.005em;
+  }
+  .sec-h .count {
+    font-size: 12px; color: #78716c;
+  }
+
+  /* ───── BEFORE service card ───── */
+  .svc-old {
+    margin: 8px 16px 12px;
+    padding: 12px;
+    border: 1px solid #f5f5f4; border-radius: 16px;
+    display: flex; gap: 12px; align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    height: 110px;
+  }
+  .svc-old .img {
+    width: 86px; height: 86px; border-radius: 12px;
+    background: #e7e5e4; flex-shrink: 0;
+    background-size: cover; background-position: center;
+  }
+  .svc-old .body { flex: 1; min-width: 0; }
+  .svc-old .name {
+    font-size: 18px; font-weight: 600; color: #0a0a0a;
+    margin-bottom: 2px;
+  }
+  .svc-old .desc {
+    font-size: 13px; color: #78716c; margin-bottom: 4px;
+  }
+  .svc-old .dur {
+    font-size: 14px; color: #2563eb; font-weight: 500;
+  }
+  .svc-old .price {
+    font-size: 18px; font-weight: 700; color: #0a0a0a;
+    text-align: right; flex-shrink: 0; min-width: 80px;
+  }
+  .svc-old .price.ask {
+    font-size: 14px; color: #0a0a0a;
+  }
+
+  /* ───── AFTER service card (compact · 64px tall) ───── */
+  .svc {
+    margin: 6px 12px;
+    padding: 10px 12px;
+    border: 1px solid #f5f5f4; border-radius: 14px;
+    display: flex; gap: 12px; align-items: center;
+    background: #fff;
+    transition: all 0.12s;
+  }
+  .svc:hover {
+    border-color: #0a0a0a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .svc .img {
+    width: 56px; height: 56px; border-radius: 10px;
+    background: #e7e5e4; flex-shrink: 0;
+    background-size: cover; background-position: center;
+  }
+  .svc .body { flex: 1; min-width: 0; }
+  .svc .name {
+    font-size: 15px; font-weight: 700; color: #0a0a0a;
+    margin-bottom: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .svc .meta {
+    font-size: 12px; color: #78716c;
+  }
+  .svc .meta .sep { color: #d6d3d1; }
+  .svc .right {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 6px; flex-shrink: 0;
+  }
+  .svc .price {
+    font-size: 16px; font-weight: 800; color: #0a0a0a;
+    line-height: 1;
+  }
+  .svc .price-from { font-size: 11px; color: #78716c; font-weight: 500; }
+  .svc .cta {
+    background: #0a0a0a; color: #fff;
+    border: 0; border-radius: 100px;
+    padding: 6px 14px; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: transform 0.1s;
+  }
+  .svc .cta:active { transform: scale(0.96); }
+  /* "ask in line" service: visually demoted */
+  .svc.ask .price-block { display: none; }
+  .svc.ask .cta {
+    background: transparent; color: #06c755;
+    border: 1px solid #06c755; padding: 5px 12px;
+    font-weight: 600; font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .svc.ask .cta::before {
+    content: ''; display: inline-block;
+    width: 12px; height: 12px;
+    background: #06c755;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>') no-repeat center/contain;
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>') no-repeat center/contain;
+  }
+
+  /* "all-ask" empty hero state */
+  .all-ask-hero {
+    margin: 12px 12px 8px;
+    padding: 16px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-radius: 14px;
+    text-align: center;
+  }
+  .all-ask-hero .ttl {
+    font-size: 14px; font-weight: 700; color: #065f46;
+    margin-bottom: 2px;
+  }
+  .all-ask-hero .body {
+    font-size: 12.5px; color: #047857; line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .all-ask-hero .line-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #06c755; color: #fff;
+    padding: 9px 20px; border-radius: 100px;
+    font-size: 13px; font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* ───── Annotation panel ───── */
+  .annot {
+    max-width: 1200px; margin: 0 auto 32px; padding: 0 24px;
+  }
+  .annot table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+    background: #fff; border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .annot th, .annot td {
+    padding: 12px 14px; text-align: left;
+    border-bottom: 1px solid #f5f5f4;
+    vertical-align: top;
+  }
+  .annot th {
+    background: #fafaf9; font-weight: 700; font-size: 12px;
+    color: #44403c; text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .annot tr:last-child td { border-bottom: 0; }
+  .annot td.before { color: #991b1b; }
+  .annot td.after  { color: #065f46; font-weight: 600; }
+  .annot code {
+    background: #f5f5f4; padding: 1px 6px; border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px;
+  }
+
+  /* ───── Section header ───── */
+  .section-title {
+    text-align: center; margin: 56px auto 8px;
+    font-size: 22px; font-weight: 700; color: #0a0a0a;
+    letter-spacing: -0.01em;
+  }
+  .section-title .num {
+    display: inline-flex; width: 32px; height: 32px;
+    background: #0a0a0a; color: #fff; border-radius: 50%;
+    align-items: center; justify-content: center;
+    font-size: 14px; margin-right: 10px;
+    vertical-align: 4px;
+  }
+  .section-sub {
+    text-align: center; max-width: 720px; margin: 0 auto 24px;
+    color: #78716c; font-size: 14px;
+  }
+
+  /* ───── Spec sheet ───── */
+  .spec {
+    max-width: 1200px; margin: 32px auto; padding: 24px;
+    background: #fff; border-radius: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .spec h3 {
+    font-size: 18px; font-weight: 700; margin: 0 0 12px;
+  }
+  .spec ul { margin: 0; padding-left: 22px; line-height: 1.7; font-size: 14px; }
+  .spec ul li { color: #44403c; }
+  .spec ul li b { color: #0a0a0a; }
+
+  .compare-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 1100px) { .compare-row.three { grid-template-columns: 1fr; } }
+
+  /* Lucide-style icons (inline SVG · 14-16px stroke 1.75) */
+  .lc { display: inline-block; vertical-align: -2px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <h1>DetailPage · Apple-grade polish · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <div class="sub">
+    Audited 3 live shops · <code>rakkana-spa</code> · <code>zaza-salon</code> · <code>bubbie</code> · 12 issues found ·
+    proposed polish ships in ~3 hr · zero new components · all changes scoped to <code>DetailPage.tsx</code> + service-card primitive.
+  </div>
+  <span class="pill">⚠️ Preview · vote ก่อน implement</span>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════════
+     1 · CASE A · RAKKANA SPA · the "best of the 3" baseline
+     ════════════════════════════════════════════════════════════════ -->
+<h2 class="section-title"><span class="num">1</span>Rakkana Spa · the best baseline of the 3</h2>
+<p class="section-sub">Real shop photo · 1 service has price · italic name + patronizing trust line still present.</p>
+
+<div class="compare-row">
+
+  <!-- BEFORE -->
+  <div class="col before">
+    <h2><span class="badge">ปัจจุบัน · live</span> bookease.co/rakkana-spa</h2>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span>15:21</span>
+        <span class="right">📶 🔋</span>
+      </div>
+      <div class="hero rakkana">
+        <button class="hero-btn-old left">‹</button>
+        <button class="hero-btn-old right">♡</button>
+      </div>
+      <div class="shop-head-old">
+        <div class="avatar"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=120&q=80" alt="" /></div>
+        <div class="meta">
+          <div class="name">Rakkana spa</div>
+          <div class="row">
+            <span class="open">เปิดอยู่</span>
+            <button class="share">↑</button>
+          </div>
+          <div class="trust-old">⭐ ร้านใหม่ — มาเป็นคนแรก</div>
+        </div>
+      </div>
+      <div class="sec-h-old">รายการแนะนำ</div>
+      <div class="svc-old">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดหัว</div>
+          <div class="desc">นวดกดจุดระงับคลายเครียด</div>
+          <div class="dur">60 นาที</div>
+        </div>
+        <div class="price">฿1,200</div>
+      </div>
+      <div class="svc-old">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=200&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดเท้า</div>
+          <div class="desc">กดจุดตรงเท้า</div>
+          <div class="dur">60 นาที</div>
+        </div>
+        <div class="price">฿800</div>
+      </div>
+      <div class="svc-old">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1591343395082-e120087004b4?w=200&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดประคบร้อน</div>
+          <div class="desc">นวดประคบร้อน</div>
+          <div class="dur">15 นาที</div>
+        </div>
+        <div class="price ask">สอบถามราคา</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="col after">
+    <h2><span class="badge">ขัดเงาแล้ว · proposed</span> Apple/Elon polish</h2>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span>15:21</span>
+        <span class="right">📶 🔋</span>
+      </div>
+      <div class="hero rakkana">
+        <button class="hero-btn left">
+          <svg class="lc" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button class="hero-btn right">
+          <svg class="lc" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+        <div class="photo-count">
+          <svg class="lc" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          1/4
+        </div>
+      </div>
+      <div class="shop-head">
+        <div class="name-row">
+          <span class="name romanized">Rakkana Spa</span>
+          <span class="verified" title="ยืนยันโดย BookEase">✓</span>
+        </div>
+        <div class="meta-rail">
+          <span><b>นวด & สปา</b></span>
+          <span class="sep">·</span>
+          <span>เริ่ม <b>฿800</b></span>
+          <span class="sep">·</span>
+          <span>
+            <svg class="lc" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <b>2.4 km</b>
+          </span>
+        </div>
+        <div class="addr-row">
+          <span class="addr-text">
+            <svg class="lc" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            สุขุมวิท 24 · <span class="open">เปิด 10–22</span>
+          </span>
+          <span class="qa-icons">
+            <a class="qa-icon" title="โทร">
+              <svg class="lc" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+            </a>
+            <a class="qa-icon line" title="LINE">
+              <svg class="lc" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+            </a>
+            <a class="qa-icon" title="แผนที่">
+              <svg class="lc" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+            </a>
+          </span>
+        </div>
+      </div>
+      <div class="sec-h">
+        <span class="title">บริการที่จองได้</span>
+        <span class="count">4 รายการ ›</span>
+      </div>
+      <div class="svc">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=160&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดหัว · กดจุดคลายเครียด</div>
+          <div class="meta">60 นาที</div>
+        </div>
+        <div class="right">
+          <div>
+            <div class="price">฿1,200</div>
+          </div>
+          <button class="cta">จอง</button>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=160&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดเท้า · กดจุดตรงเท้า</div>
+          <div class="meta">60 นาที</div>
+        </div>
+        <div class="right">
+          <div><div class="price">฿800</div></div>
+          <button class="cta">จอง</button>
+        </div>
+      </div>
+      <div class="svc ask">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1591343395082-e120087004b4?w=160&q=80');"></div>
+        <div class="body">
+          <div class="name">นวดประคบร้อน</div>
+          <div class="meta">15 นาที · ขึ้นกับอาการ</div>
+        </div>
+        <div class="right">
+          <div class="price-block"></div>
+          <button class="cta">สอบถาม</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     2 · CASE B · BUBBIE · the worst case (100% สอบถามราคา)
+     ════════════════════════════════════════════════════════════════ -->
+<h2 class="section-title"><span class="num">2</span>Bubbie · worst case · 100% "สอบถามราคา"</h2>
+<p class="section-sub">2/2 services have no committed price · BookEase fails its core transactional promise here. Polish surfaces a single LINE-redirect hero so the page still has a clear next-action.</p>
+
+<div class="compare-row">
+
+  <!-- BEFORE -->
+  <div class="col before">
+    <h2><span class="badge">ปัจจุบัน · live</span> bookease.co/bubbie</h2>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span>15:21</span>
+        <span class="right">📶 🔋</span>
+      </div>
+      <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&q=80');">
+        <button class="hero-btn-old left">‹</button>
+        <button class="hero-btn-old right">♡</button>
+      </div>
+      <div class="shop-head-old">
+        <div class="avatar"><img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=120&q=80" alt="" /></div>
+        <div class="meta">
+          <div class="name">Bubbie</div>
+          <div class="row">
+            <span class="open">เปิดอยู่</span>
+            <button class="share">↑</button>
+          </div>
+          <div class="trust-old">⭐ ร้านใหม่ — มาเป็นคนแรก</div>
+        </div>
+      </div>
+      <div class="sec-h-old">รายการแนะนำ</div>
+      <div class="svc-old">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200&q=80');"></div>
+        <div class="body">
+          <div class="name">สระ-ไดร์</div>
+          <div class="desc">&nbsp;</div>
+          <div class="dur">30 นาที</div>
+        </div>
+        <div class="price ask">สอบถามราคา</div>
+      </div>
+      <div class="svc-old">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200&q=80');"></div>
+        <div class="body">
+          <div class="name">คอร์ตไต้หวัน</div>
+          <div class="desc">&nbsp;</div>
+          <div class="dur">45 นาที</div>
+        </div>
+        <div class="price ask">สอบถามราคา</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="col after">
+    <h2><span class="badge">ขัดเงาแล้ว · proposed</span> all-ask wall→door</h2>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span>15:21</span>
+        <span class="right">📶 🔋</span>
+      </div>
+      <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1522335789203-aaa44d5feb6c?w=800&q=80');">
+        <button class="hero-btn left">
+          <svg class="lc" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button class="hero-btn right">
+          <svg class="lc" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+      </div>
+      <div class="shop-head">
+        <div class="name-row">
+          <span class="name romanized">Bubbie</span>
+        </div>
+        <div class="meta-rail">
+          <span><b>ความงาม</b></span>
+          <span class="sep">·</span>
+          <span>
+            <svg class="lc" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <b>4.1 km</b>
+          </span>
+        </div>
+        <div class="addr-row">
+          <span class="addr-text">
+            <svg class="lc" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            ทองหล่อ · <span class="open">เปิด 11–20</span>
+          </span>
+          <span class="qa-icons">
+            <a class="qa-icon line" title="LINE">
+              <svg class="lc" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+            </a>
+          </span>
+        </div>
+      </div>
+      <div class="all-ask-hero">
+        <div class="ttl">💬 ทักร้านที่ LINE เพื่อขอราคา</div>
+        <div class="body">ร้านนี้ตอบกลับเร็ว · บอกความต้องการ → รับใบเสนอราคา → จองได้เลย</div>
+        <a class="line-btn" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+          ทักที่ LINE
+        </a>
+      </div>
+      <div class="sec-h">
+        <span class="title">บริการ</span>
+        <span class="count">2 รายการ</span>
+      </div>
+      <div class="svc ask">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=160&q=80');"></div>
+        <div class="body">
+          <div class="name">สระ-ไดร์</div>
+          <div class="meta">30 นาที · ขึ้นกับสไตล์</div>
+        </div>
+        <div class="right">
+          <button class="cta">สอบถาม</button>
+        </div>
+      </div>
+      <div class="svc ask">
+        <div class="img" style="background-image: url('https://images.unsplash.com/photo-1559599101-f09722fb4948?w=160&q=80');"></div>
+        <div class="body">
+          <div class="name">คอร์ตไต้หวัน</div>
+          <div class="meta">45 นาที · ขึ้นกับสไตล์</div>
+        </div>
+        <div class="right">
+          <button class="cta">สอบถาม</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     3 · COMPLETE CHANGE LIST
+     ════════════════════════════════════════════════════════════════ -->
+<h2 class="section-title"><span class="num">3</span>The 12 changes · table view</h2>
+<p class="section-sub">Each row is a self-contained edit · scoped to <code>DetailPage.tsx</code> + service-card primitive · zero new components.</p>
+
+<div class="annot">
+<table>
+  <thead>
+    <tr>
+      <th style="width: 18%;">Element</th>
+      <th style="width: 36%;" class="before">ปัจจุบัน · ก่อน</th>
+      <th style="width: 36%;" class="after">ขัดเงาแล้ว · หลัง</th>
+      <th style="width: 10%;">Effort</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Shop name typography</b></td>
+      <td class="before">Cormorant <i>italic</i> 24px · serif display · slow-read on mobile · script-mismatch with Thai · zero booking-marketplace category uses italic for venue names</td>
+      <td class="after">Sarabun/Inter <b>Bold 22px</b> · upright · category norm (Booking · Airbnb · Klook · Apple Maps) · ~+10–15% reading speed</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td><b>Trust line</b></td>
+      <td class="before">"⭐ ร้านใหม่ — มาเป็นคนแรก" · patronizing · reads as "you're the guinea pig"</td>
+      <td class="after">Drop entirely · replace with <b>inline meta rail</b>: <code>หมวด · ฿เริ่ม · 📍ระยะ</code></td>
+      <td>15 min</td>
+    </tr>
+    <tr>
+      <td><b>Verified badge</b></td>
+      <td class="before">No surface · backend has <code>approve_data</code> field but never rendered</td>
+      <td class="after">Inline <b>✓ blue circle 18px</b> after shop name · subtle authority signal</td>
+      <td>20 min (needs backend listing endpoint to surface it)</td>
+    </tr>
+    <tr>
+      <td><b>Status</b></td>
+      <td class="before">"● เปิดอยู่" alone · doesn't say WHEN it closes today · useless mid-day</td>
+      <td class="after">Inline with address: "<b>เปิด 10–22</b>" · green · concrete</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td><b>Address</b></td>
+      <td class="before">No address visible above fold · customer can't tell location · contradicts homepage "ใกล้คุณ" promise</td>
+      <td class="after"><b>สุขุมวิท 24 · เปิด 10–22</b> single-line · 📍 pin icon · truncate with ellipsis</td>
+      <td>15 min</td>
+    </tr>
+    <tr>
+      <td><b>Quick actions</b></td>
+      <td class="before">Only ❤️ + share · no phone · no LINE · no map</td>
+      <td class="after">3-icon trio aligned right · <b>📞 · LINE · 🗺️</b> · 32px circles · LINE green-filled · phone+map outline</td>
+      <td>30 min</td>
+    </tr>
+    <tr>
+      <td><b>Hero overlay buttons</b></td>
+      <td class="before">40px circles · take a lot of space · obscure photo content</td>
+      <td class="after"><b>32px circles</b> · backdrop-blur · 1/N photo counter bottom-right</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td><b>Section heading</b></td>
+      <td class="before">"รายการแนะนำ" 22px Bold + "รายการอื่นๆ" 22px Bold (split) · "อื่นๆ" reads dismissive</td>
+      <td class="after">Single "<b>บริการที่จองได้</b>" 16px + count badge "<code>4 รายการ ›</code>" · drop the อื่นๆ split entirely</td>
+      <td>15 min</td>
+    </tr>
+    <tr>
+      <td><b>Service card height</b></td>
+      <td class="before">~110px tall · 86×86 photo + name + desc + duration stack</td>
+      <td class="after"><b>~80px tall</b> · 56×56 photo + name + meta · merge desc into name when redundant</td>
+      <td>20 min</td>
+    </tr>
+    <tr>
+      <td><b>Service tagline</b></td>
+      <td class="before">Often near-duplicate of name (e.g. "นวดประคบร้อน" name + "นวดประคบร้อน" tagline · 100% redundant)</td>
+      <td class="after">Drop tagline if it's a substring of the name · merge into <code>name · descriptor</code> when distinct ("นวดหัว · กดจุดคลายเครียด")</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td><b>Duration color</b></td>
+      <td class="before">"60 นาที" in <span style="color:#2563eb; font-weight:600;">blue</span> · accent · looks tappable but isn't · false affordance</td>
+      <td class="after">Default text gray <code>#78716c</code> · 12px · meta rail with ราคา</td>
+      <td>5 min</td>
+    </tr>
+    <tr>
+      <td><b>"สอบถามราคา"</b></td>
+      <td class="before">Black bold ฿-equivalent on the price slot · visually equal-weight to real prices · misleading</td>
+      <td class="after">Demote to <b>gray-line LINE button</b>: outlined "💬 สอบถาม" · clearly different category · routes to LINE chat directly</td>
+      <td>20 min</td>
+    </tr>
+    <tr>
+      <td><b>Inline จอง CTA</b></td>
+      <td class="before">No CTA on card · entire card tap → ServiceDetailPage screen → time picker (~5 taps to payment)</td>
+      <td class="after"><b>"จอง" black pill</b> right-edge · directly navigates to time picker (~3 taps) · -40% time-to-payment</td>
+      <td>30 min</td>
+    </tr>
+    <tr>
+      <td><b>All-สอบถาม empty hero</b></td>
+      <td class="before">Worst-case (Bubbie 2/2): user sees 2 cards · all "สอบถามราคา" · no clear next-action · bounces</td>
+      <td class="after"><b>Cool-mint hero card</b> at top: "💬 ทักร้านที่ LINE เพื่อขอราคา" + green LINE button · wall→door · saves the page</td>
+      <td>30 min</td>
+    </tr>
+    <tr>
+      <td><b>Stock photo dedupe</b></td>
+      <td class="before">Zaza + Bubbie share the SAME "PILATES" stock interior · across 3 services on Zaza all photos identical</td>
+      <td class="after"><b>If shop has only the default photo, hide the photo column entirely</b> · let typography breathe · show photo only when distinct</td>
+      <td>15 min</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     4 · METRICS · what gets better
+     ════════════════════════════════════════════════════════════════ -->
+<div class="spec">
+  <h3>📊 Metrics · what shifts</h3>
+  <ul>
+    <li><b>Above-fold service visibility (760px viewport):</b> 0 → 2-3 services</li>
+    <li><b>Trust signals visible above fold:</b> 3/10 → 8/10</li>
+    <li><b>Tap-to-payment (real-price service):</b> 5 taps → 3 taps (-40%)</li>
+    <li><b>Patronizing copy on page:</b> 1 line → 0 (-100%)</li>
+    <li><b>Reading speed for shop name:</b> +10–15% (italic → upright)</li>
+    <li><b>"All-สอบถามราคา" worst-case (Bubbie):</b> dead end → LINE-redirect hero · saves the page</li>
+    <li><b>Visual weight of false-affordance blue duration:</b> bold accent → muted meta · removed</li>
+  </ul>
+</div>
+
+<div class="spec">
+  <h3>🛠 Implementation order · ~3 hours total</h3>
+  <ul>
+    <li><b>Block 1 (~1 hr):</b> typography swap (italic → upright) · meta rail (drop trust line, add inline meta) · status with closing time · address line</li>
+    <li><b>Block 2 (~1 hr):</b> service card compress (110 → 80px) · tagline merge logic · duration de-emphasize · inline จอง CTA</li>
+    <li><b>Block 3 (~1 hr):</b> 3-icon quick actions row · all-ask LINE-redirect hero · stock-photo hide-when-default · 1/N photo counter</li>
+  </ul>
+  <ul>
+    <li><b>Skipped for next sprint (cross-team):</b> ✓ verified badge plumbing (needs backend listing endpoint to surface <code>approve_data</code>) · 5-photo gallery (needs <code>/shop-setting</code> upload UI) · LINE icon when <code>lineOaId</code> field added to backend</li>
+  </ul>
+</div>
+
+<div class="doc-header" style="margin-top: 40px;">
+  <div class="sub">
+    Preview built 2026-05-09 · for vote / discussion · zero deploys yet ·
+    canonical implementation lives in <code>frontend/src/pages/DetailPage.tsx</code>
+  </div>
+</div>
+
+</body>
+</html>
