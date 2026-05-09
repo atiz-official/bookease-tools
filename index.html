@@ -448,40 +448,91 @@
   /* ─────────── Mobile ─────────── */
   @media (max-width: 880px) {
     .nav { padding: 18px 20px; }
-    /* Pass 25 v42 (Art's lock 2026-05-08 · Elon "show don't tell"):
-       Mobile reorder · phone mockup MUST be above-the-fold immediately
-       after H1 · was buried at bottom (order:2) where 80% mobile users
-       never scrolled to. Critical for caravan/share-to-friend GTM ·
-       visual conveys product capability without reading text. */
+    /* 2026-05-09 (Art's Elon-mode lock · supersedes Pass 25 v42):
+       Mobile fix · iPhone-frame chrome was eating ~480px viewport on a
+       phone-on-a-phone, pushing the OCR CTA below the fold. Strategy:
+       (1) reorder so OCR CTA appears IMMEDIATELY after H1 (primary action
+           always above fold)
+       (2) strip iPhone bezel/notch/fake-status-bar on mobile (subtract
+           the chrome · user is already on a phone · meta-pointless)
+       (3) compress teaser card to ~240-280px (was 480px)
+       (4) drop the customer-flow sub-line on mobile (covered by ocr-card
+           sub · subtraction over duplication)
+       Apple/Tesla landing pattern: H1 → primary CTA visible → proof. */
     .hero {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      padding: 16px 20px 56px;
+      gap: 14px;
+      padding: 16px 20px 40px;
     }
-    .hero-text { display: contents; }   /* ungroup children to siblings */
-    .hero h1 { order: 1; margin-bottom: 4px; }
-    .mockup-wrap {                       /* was order:2 + 540px tall */
-      order: 2;
-      min-height: 380px;                 /* compressed for mobile */
-      margin: 8px 0 12px;
+    .hero-text { display: contents; }
+    .hero h1 { order: 1; margin-bottom: 0; }
+    .hero-sub { order: 2; margin-bottom: 4px; font-size: 16px; }
+    .hero-sub--customer { display: none; }   /* drop · ocr-card sub covers it */
+    .ocr-card { order: 3; }                  /* primary action · above fold */
+    .mockup-wrap {                           /* compact teaser · proof below */
+      order: 4;
+      min-height: 0;
+      margin: 4px 0 4px;
     }
-    .hero-sub { order: 3; }
-    .hero-sub--customer { order: 4; }
-    .ocr-card { order: 5; }
-    .or-divider { order: 6; }
-    .form-row { order: 7; }
+    .or-divider { order: 5; margin: 6px 0; }
+    .form-row { order: 6; }
+
+    /* Strip iPhone frame chrome on mobile · borderless card teaser */
     .phone {
-      width: 240px;
-      height: 480px;                     /* was 560px · less dominant */
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      background: transparent;
+      padding: 0;
+      border-radius: 18px;
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.06),
+        0 12px 28px rgba(0, 0, 0, 0.10);
+      transform: none;
     }
-    .phone-shop-name { font-size: 26px; }
-    .chip-deposit { right: -8px; }
-    .chip-saved { left: -8px; }
-    .proof-inner {
-      grid-template-columns: 1fr;
-      gap: 18px;
+    .phone:hover { transform: translateY(-2px); }
+    .phone-notch,
+    .phone-status { display: none; }         /* fake notch + status bar gone */
+    .phone-screen {
+      border-radius: 18px;
+      height: auto;
     }
+    .phone-cover {
+      padding: 28px 18px 16px;
+      min-height: 180px;
+    }
+    .phone-shop-tag {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+    .phone-shop-name {
+      font-size: 24px;
+      line-height: 1.05;
+      margin-bottom: 6px;
+    }
+    .phone-shop-meta { font-size: 12px; margin-bottom: 14px; }
+    .phone-cta { padding: 10px; font-size: 13px; }
+    .phone-services {
+      padding: 12px 18px 14px;
+      gap: 8px;
+    }
+    .phone-service { font-size: 12.5px; }
+    .phone-service:nth-child(n+3) { display: none; }   /* show 2, hide rest */
+
+    /* Floating chips · smaller + repositioned for compact teaser */
+    .chip-deposit {
+      top: 14px; right: -6px;
+      padding: 7px 12px; font-size: 11px;
+    }
+    .chip-saved {
+      bottom: 56px; left: -6px;
+      padding: 7px 12px; font-size: 11px;
+    }
+
+    /* Form row · compact typing fallback */
     .form-row {
       flex-direction: column;
       background: transparent;
@@ -507,15 +558,10 @@
   }
 
   @media (max-width: 480px) {
-    .hero h1 { font-size: 38px; }
-    .hero-sub { font-size: 16px; }
-    .phone {
-      width: 260px;
-      height: 520px;
-      transform: rotate(-2deg);
-    }
-    .chip-deposit { top: 40px; padding: 8px 12px; font-size: 12px; }
-    .chip-saved { bottom: 60px; padding: 8px 12px; font-size: 12px; }
+    .hero h1 { font-size: 34px; }
+    .phone-shop-name { font-size: 22px; }
+    .chip-deposit { top: 10px; padding: 6px 10px; font-size: 10.5px; }
+    .chip-saved { bottom: 48px; padding: 6px 10px; font-size: 10.5px; }
   }
 </style>
 </head>
