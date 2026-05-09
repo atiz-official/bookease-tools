@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MenuPhotoCTA · embed everywhere · 2026-05-09</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 18px; text-align: center; }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 600; margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; max-width: 800px; margin: 8px auto 0; }
+  .header .lock {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; color: #475569; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 12px;
+  }
+
+  .section-title {
+    max-width: 1480px; margin: 36px auto 14px;
+    padding: 0 8px;
+    font-size: 14px; font-weight: 700; color: #0f172a;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #0a0a0a; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .section-title .desc {
+    font-size: 12px; font-weight: 400; color: #64748b;
+    text-transform: none; letter-spacing: 0;
+    margin-left: 8px;
+  }
+
+  .stage {
+    max-width: 1480px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start;
+  }
+  @media (max-width: 1100px) { .stage { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.before .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.after .badge  { background: #dcfce7; color: #166534; }
+  .col-label.modal .badge  { background: #fef3c7; color: #92400e; }
+  .col-label h2 { font-size: 13px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 11.5px; margin-top: 4px; line-height: 1.5; }
+
+  /* phone shell */
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 36px;
+    padding: 7px;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.14);
+    margin: 0 auto;
+    width: 360px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 760px;
+    background: #ffffff;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .notch-row { height: 26px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 84px; height: 20px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 11px; font-weight: 600;
+    color: #0f172a; flex-shrink: 0;
+  }
+
+  /* ===== signup chrome ===== */
+  .sg-header {
+    padding: 14px 16px 6px;
+    flex-shrink: 0;
+  }
+  .sg-back { font-size: 22px; color: #475569; line-height: 1; cursor: pointer; }
+  .sg-step-bar {
+    display: flex; gap: 6px; margin: 12px 0 6px;
+  }
+  .sg-step-dot {
+    height: 4px; flex: 1; border-radius: 999px;
+    background: #e2e8f0;
+  }
+  .sg-step-dot.done { background: #1E40AF; }
+  .sg-step-dot.active { background: #1E40AF; }
+  .sg-eyebrow {
+    font-size: 11px; color: #94a3b8; letter-spacing: 0.04em; text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .sg-h1 {
+    font-family: 'Sarabun'; font-size: 22px; font-weight: 700;
+    color: #0f172a; line-height: 1.2;
+    margin-top: 4px;
+  }
+  .sg-sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  .sg-body {
+    flex: 1; padding: 14px 16px 12px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .sg-cta-zone {
+    flex-shrink: 0;
+    padding: 10px 16px 16px;
+    border-top: 1px solid #f1f5f9;
+    background: #fff;
+  }
+  .cta-primary {
+    width: 100%; padding: 13px;
+    background: #cbd5e1; color: #94a3b8;
+    border-radius: 999px;
+    text-align: center; font-size: 14px; font-weight: 700;
+  }
+
+  /* ===== BEFORE · empty-list ===== */
+  .b-empty {
+    border: 2px dashed #cbd5e1; border-radius: 14px;
+    padding: 32px 18px; text-align: center;
+    background: #f8fafc;
+  }
+  .b-empty-icon { font-size: 30px; margin-bottom: 6px; opacity: 0.5; }
+  .b-empty-text { font-size: 13px; color: #94a3b8; margin-bottom: 14px; }
+  .b-add-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 999px;
+    background: #1E40AF; color: #fff;
+    font-size: 13px; font-weight: 600;
+  }
+
+  /* ===== AFTER · MenuPhotoCTA at top ===== */
+  .photo-cta {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .photo-cta::before {
+    content: '✨';
+    position: absolute; top: 6px; right: 8px;
+    font-size: 16px; opacity: 0.4;
+  }
+  .photo-cta .ico-big {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #f59e0b; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 6px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+  .photo-cta .pill-tag {
+    display: inline-block;
+    background: #f59e0b; color: #fff;
+    font-size: 9.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .photo-cta .h-line {
+    font-size: 14px; font-weight: 700; color: #78350f;
+    margin-bottom: 3px;
+  }
+  .photo-cta .sub {
+    font-size: 11px; color: #78350f; opacity: 0.85;
+    margin-bottom: 10px; line-height: 1.5;
+  }
+  .photo-cta .cta-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 999px;
+    background: #0a0a0a; color: #fff;
+    font-size: 13px; font-weight: 700;
+  }
+
+  .or-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 10px 0;
+    font-size: 11px; color: #94a3b8;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1; height: 1px; background: #e2e8f0;
+  }
+
+  .a-add-card {
+    border: 1.5px dashed #cbd5e1; border-radius: 12px;
+    padding: 14px;
+    display: flex; align-items: center; gap: 10px;
+    color: #64748b; font-size: 13px;
+    background: #f8fafc;
+  }
+  .a-add-card .ico-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #fff; border: 1px solid #cbd5e1;
+    display: grid; place-items: center;
+    font-size: 14px; color: #475569;
+  }
+
+  /* ===== MODAL state · big camera at top ===== */
+  .modal-overlay {
+    position: absolute; inset: 0;
+    background: rgba(15,23,42,0.5);
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .modal-sheet {
+    background: #fff; border-radius: 24px 24px 0 0;
+    padding: 14px 16px 18px;
+    max-height: 85%;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: #cbd5e1; border-radius: 999px;
+    margin: 0 auto 4px;
+  }
+  .modal-h1 {
+    font-family: 'Sarabun'; font-size: 17px; font-weight: 700;
+    text-align: center; margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-size: 11.5px; color: #64748b;
+    text-align: center; margin-bottom: 12px; line-height: 1.5;
+  }
+  .modal-camera-zone {
+    border: 2px dashed #cbd5e1; border-radius: 16px;
+    padding: 36px 18px; text-align: center;
+    background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+    border-color: #f59e0b;
+  }
+  .modal-camera-zone .ico-mega {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: #f59e0b; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+  }
+  .modal-camera-zone .label-big {
+    font-size: 16px; font-weight: 700; color: #78350f;
+    margin-bottom: 4px;
+  }
+  .modal-camera-zone .label-sub {
+    font-size: 12px; color: #78350f; opacity: 0.8; line-height: 1.5;
+  }
+  .modal-tips {
+    background: #f8fafc;
+    padding: 10px 12px; border-radius: 10px;
+    font-size: 11px; color: #475569; line-height: 1.6;
+  }
+  .modal-tips .label {
+    font-weight: 700; color: #0f172a; margin-bottom: 4px;
+  }
+  .modal-cta {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  .modal-cta button {
+    flex: 1; padding: 12px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 700;
+    border: 1px solid #cbd5e1;
+  }
+  .modal-cta .secondary { background: #fff; color: #475569; }
+  .modal-cta .primary { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
+
+  /* annotations */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 11px 13px; margin-top: 10px;
+  }
+  .anno h3 { font-size: 11px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 10.5px; color: #475569; padding: 1px 0; line-height: 1.5; }
+  .anno li.win::before { content: "✅ "; }
+  .anno li.miss::before { content: "❌ "; }
+  .anno li.note::before { content: "📌 "; }
+
+  /* surfaces table */
+  .surfaces {
+    max-width: 1480px; margin: 30px auto 0;
+    background: #fff; border-radius: 14px; padding: 18px 22px;
+    border: 1px solid #e2e8f0;
+  }
+  .surfaces h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
+  .surfaces table { width: 100%; border-collapse: collapse; }
+  .surfaces th, .surfaces td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 11.5px; }
+  .surfaces th { background: #f8fafc; font-weight: 700; font-size: 10.5px; color: #0f172a; }
+  .surfaces code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: 'Inter', monospace; font-size: 10.5px; }
+
+  .verdict {
+    max-width: 1480px; margin: 22px auto 0;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 14px; padding: 18px 22px;
+  }
+  .verdict h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #78350f; }
+  .verdict p { font-size: 12.5px; color: #78350f; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: rgba(120,53,15,0.1); padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>MenuPhotoCTA · embed everywhere · <span class="book">Book</span><span class="ease">Ease</span></h1>
+  <p>Tab 2 (menu camera) is more useful than Tab 1 (LINE OA) · should appear wherever services are added/edited · 1 reusable component · 5 surfaces</p>
+  <span class="lock">⚠️ Preview · vote ก่อน implement · "leverage existing tool more widely"</span>
+</div>
+
+<!-- ============ SHOP ADD/CREATE SERVICES ============ -->
+<div class="section-title">
+  <span class="num">1</span>
+  <span>shopv3 · /signup/service · initial setup</span>
+  <span class="desc">Day 1 onboarding · merchant adds services</span>
+</div>
+
+<div class="stage">
+
+  <!-- BEFORE -->
+  <div>
+    <div class="col-label before">
+      <span class="badge">CURRENT · LIVE</span>
+      <h2>empty list + manual + button</h2>
+      <p class="subline">merchant ต้องพิมพ์ทีละบริการ · 10 services = ~10 min effort</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:24</span><span>📶</span></div>
+        <div class="sg-header">
+          <span class="sg-back">‹</span>
+          <div class="sg-step-bar">
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot active"></div>
+            <div class="sg-step-dot"></div>
+            <div class="sg-step-dot"></div>
+          </div>
+          <div class="sg-eyebrow">ขั้นตอน 3 จาก 5</div>
+          <div class="sg-h1">บริการที่ร้านเปิดให้จอง</div>
+          <div class="sg-sub">รายการที่ลูกค้าจะเห็นในหน้า BookEase ของร้าน</div>
+        </div>
+        <div class="sg-body">
+          <div class="b-empty">
+            <div class="b-empty-icon">📋</div>
+            <div class="b-empty-text">ยังไม่มีบริการ</div>
+            <div class="b-add-btn">+ เพิ่มบริการแรก</div>
+          </div>
+        </div>
+        <div class="sg-cta-zone">
+          <div class="cta-primary">ต่อไป</div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>🚨 friction</h3>
+      <ul>
+        <li class="miss">empty + 1 entry point · merchant ต้องคลิก + พิมพ์ + คลิก ซ้ำ 10 ครั้ง</li>
+        <li class="miss">no shortcut · ไม่ใช้ existing menu-ocr tool ที่ Atiz มี</li>
+        <li class="miss">~10 min effort · drop-off สูงในขั้นนี้</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AFTER · with MenuPhotoCTA at top -->
+  <div>
+    <div class="col-label after">
+      <span class="badge">PROPOSED ⭐</span>
+      <h2>MenuPhotoCTA at top + manual fallback</h2>
+      <p class="subline">camera CTA prominent · "ถ่ายเมนูครั้งเดียว · กรอกอัตโนมัติ" · ~30 วิ vs 10 นาที</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:24</span><span>📶</span></div>
+        <div class="sg-header">
+          <span class="sg-back">‹</span>
+          <div class="sg-step-bar">
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot active"></div>
+            <div class="sg-step-dot"></div>
+            <div class="sg-step-dot"></div>
+          </div>
+          <div class="sg-eyebrow">ขั้นตอน 3 จาก 5</div>
+          <div class="sg-h1">บริการที่ร้านเปิดให้จอง</div>
+          <div class="sg-sub">รายการที่ลูกค้าจะเห็นในหน้า BookEase</div>
+        </div>
+        <div class="sg-body">
+
+          <!-- THE NEW COMPONENT · MenuPhotoCTA -->
+          <div class="photo-cta">
+            <span class="pill-tag">⚡ เร็วสุด</span>
+            <div class="ico-big">📷</div>
+            <div class="h-line">ถ่ายเมนูร้าน · กรอกให้อัตโนมัติ</div>
+            <div class="sub">มี OCR ดึงรายการ + ราคามาให้ · ~30 วินาที</div>
+            <div class="cta-btn">📷 ถ่าย / เลือกรูปเมนู</div>
+          </div>
+
+          <div class="or-divider">หรือ</div>
+
+          <div class="a-add-card">
+            <div class="ico-circle">+</div>
+            <span>เพิ่มบริการทีละรายการ</span>
+          </div>
+
+        </div>
+        <div class="sg-cta-zone">
+          <div class="cta-primary">ต่อไป</div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>✅ wins</h3>
+      <ul>
+        <li class="win">camera CTA เด่น · 1-tap shortcut · 30 sec แทน 10 min</li>
+        <li class="win">"หรือ" divider + manual fallback · power users ยังกรอกเองได้</li>
+        <li class="win">leverages existing menu-ocr tool · 0 new backend</li>
+        <li class="note">save merchant 9.5 min · drop-off ลดลง · activation rate ขึ้น</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MODAL state · big camera at top of modal -->
+  <div>
+    <div class="col-label modal">
+      <span class="badge">MODAL state</span>
+      <h2>tap CTA → big camera modal</h2>
+      <p class="subline">expand modal height · big icon top · tips ใต้ · primary action ล่าง</p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>10:24</span><span>📶</span></div>
+        <div class="sg-header" style="opacity: 0.5;">
+          <span class="sg-back">‹</span>
+          <div class="sg-step-bar">
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot done"></div>
+            <div class="sg-step-dot active"></div>
+            <div class="sg-step-dot"></div>
+            <div class="sg-step-dot"></div>
+          </div>
+          <div class="sg-h1">บริการที่ร้านเปิดให้จอง</div>
+        </div>
+        <div class="sg-body" style="opacity: 0.3;"></div>
+        <div class="modal-overlay">
+          <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <div class="modal-h1">ถ่ายเมนูร้าน</div>
+            <div class="modal-sub">AI จะดึงรายการ + ราคาออกมาให้</div>
+            <div class="modal-camera-zone">
+              <div class="ico-mega">📷</div>
+              <div class="label-big">ถ่ายรูป / เลือกจาก Gallery</div>
+              <div class="label-sub">เห็นชัดทุกบรรทัด · ถ่ายตรงๆ · แสงพอ</div>
+            </div>
+            <div class="modal-tips">
+              <div class="label">💡 tip</div>
+              ถ่ายเมนูบนกระดาษ · เมนูบน iPad · หรือลิสต์ราคาในมือถือ · OCR อ่านได้หมด
+            </div>
+            <div class="modal-cta">
+              <button class="secondary">ยกเลิก</button>
+              <button class="primary">📷 ถ่ายเลย</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>📌 modal UX</h3>
+      <ul>
+        <li class="win">expand height (85% viewport) · room for big visual</li>
+        <li class="win">camera icon big (72px) · top of modal · ตามที่พี่เสนอ</li>
+        <li class="win">tip ด้านล่าง · educational without being patronizing</li>
+        <li class="win">2-button bottom · ยกเลิก / ถ่ายเลย</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ SURFACES TABLE ============ -->
+<div class="surfaces">
+  <h3>📍 5 surfaces ที่ฝัง MenuPhotoCTA · same component · 1 React export</h3>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Surface</th>
+      <th>Trigger</th>
+      <th>Frequency</th>
+      <th>Time saved</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><code>shopv3/signup/service</code></td>
+      <td>initial onboarding · empty state</td>
+      <td>1 ครั้ง/ร้าน</td>
+      <td>~10 นาที</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code>shopv3/services</code> dashboard</td>
+      <td>"+ เพิ่มบริการ" alongside manual</td>
+      <td>5-50 ครั้ง/ปี</td>
+      <td>~5 นาที/ครั้ง</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code>shopv3/services/edit-all</code></td>
+      <td>"แทนที่ทั้งเมนู · ถ่ายใหม่"</td>
+      <td>1-3 ครั้ง/ปี (ฤดูใหม่)</td>
+      <td>~15 นาที</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code>make.bookease.co/menu-ocr.html</code></td>
+      <td>standalone caravan demo (existing)</td>
+      <td>caravan only</td>
+      <td>~10 นาที</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code>shopv3 dashboard quick-add</code></td>
+      <td>FAB <code>+</code> · sheet</td>
+      <td>ad-hoc</td>
+      <td>~3 นาที</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ COMPONENT API ============ -->
+<div class="surfaces">
+  <h3>🛠 Component design · <code>&lt;MenuPhotoCta /&gt;</code></h3>
+  <p style="font-size: 12.5px; color: #475569; line-height: 1.65; margin-bottom: 8px;">
+    Reusable React component · same OCR pipeline as menu-ocr.html · 1 source of truth
+  </p>
+  <pre style="background: #0f172a; color: #f8fafc; padding: 12px 14px; border-radius: 8px; font-size: 11.5px; overflow-x: auto; line-height: 1.6;"><code>// shop-frontend/src/components/menu-ocr/MenuPhotoCta.tsx
+
+interface MenuPhotoCtaProps {
+  onExtracted: (services: ExtractedService[]) =&gt; void;
+  variant?: 'card' | 'inline';   // card = full visual · inline = subtle
+  tipText?: string;
+  testId?: string;
+}
+
+// Usage on /signup/service:
+&lt;MenuPhotoCta
+  variant="card"
+  onExtracted={(services) =&gt; mergeIntoForm(services)}
+/&gt;
+
+// Usage on /services dashboard (subtle):
+&lt;MenuPhotoCta variant="inline" /&gt;</code></pre>
+  <p style="font-size: 12px; color: #475569; line-height: 1.65; margin-top: 10px;">
+    <b>Pipeline shared with menu-ocr.html:</b><br>
+    1. <code>compressForOcr(file)</code> · iter6.4 client-side resize<br>
+    2. <code>callClaudeVision(base64, mediaType, prompt)</code> · same OCR endpoint<br>
+    3. <code>extractJsonFromText(response)</code> · parse + validate<br>
+    4. <code>onExtracted(services)</code> · caller decides how to merge
+  </p>
+</div>
+
+<!-- ============ VERDICT ============ -->
+<div class="verdict">
+  <h3>🎯 Recommendation · ลุย MenuPhotoCta component</h3>
+  <p>
+    <b>Surface priority (P0 → P3):</b><br>
+    P0 · <code>shopv3/signup/service</code> · biggest activation impact (Day 1 setup)<br>
+    P1 · <code>shopv3/services</code> dashboard · recurring use<br>
+    P2 · <code>shopv3/services/edit-all</code> · seasonal menu changes<br>
+    P3 · <code>shopv3 dashboard quick-add</code> · FAB pattern
+  </p>
+  <p style="margin-top: 10px">
+    <b>ETA:</b> P0 alone ~60-90 นาที · P0+P1+P2 ~2-3 ชั่วโมง · P0-P3 ~3-4 ชั่วโมง
+  </p>
+  <p style="margin-top: 10px">
+    <b>Backend dep:</b> <code>callClaudeVision</code> endpoint already exists (used by menu-ocr.html) · zero new API needed
+  </p>
+  <p style="margin-top: 10px">
+    <b>Risk:</b> low · same OCR pipeline · same prompt · only frontend embed
+  </p>
+
+  <h3 style="margin-top: 12px">🚦 vote</h3>
+  <p>
+    A · ลุย P0 (signup/service) เท่านั้น (~60-90 min · ship today)<br>
+    B · ลุย P0+P1 (signup + dashboard) (~2 hr)<br>
+    C · ลุย P0+P1+P2+P3 (~3-4 hr · weekend project)<br>
+    D · พี่อยาก tweak component design ก่อน
+  </p>
+</div>
+
+</body>
+</html>
