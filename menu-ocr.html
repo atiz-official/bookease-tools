@@ -325,10 +325,6 @@
               <input id="prevLineOaId" type="text" placeholder="เช่น @barenailspa" />
             </div>
             <div class="branding-field full">
-              <label>สีของร้าน</label>
-              <input id="prevBrandColor" type="text" placeholder="#A78B7A" />
-            </div>
-            <div class="branding-field full">
               <label>เวลาเปิด-ปิด</label>
               <input id="prevOpenTime" type="text" placeholder="10:00-21:00" autocomplete="off" />
             </div>
@@ -409,11 +405,16 @@
           </div>
 
           <div class="actions">
-            <button class="secondary" onclick="addServiceRow()">+ เพิ่มบริการเอง</button>
-            <button class="primary green" id="menuPublishBtn" disabled style="flex: 2;">🚀 ส่งบริการเข้าร้าน</button>
+            <button class="secondary" onclick="addServiceRow()" style="flex: 1;">+ เพิ่มบริการเอง</button>
           </div>
 
-          <div class="status" id="menuPublishStatus"></div>
+          <!-- 2026-05-09 (Art's lock): "🚀 ส่งบริการเข้าร้าน" button removed ·
+               was Potemkin (showed TODO toast · wrote nowhere). Mode 1's
+               "🚀 สร้างหน้าเว็บร้านตัวอย่าง" already merges Mode 2's services
+               via collectShopData() · single canonical commit path. -->
+          <div class="hint" style="text-align: center; margin-top: 14px; font-size: 13px; color: #94a3b8;">
+            พร้อมแล้ว? กลับไปแท็บ <strong style="color: #475569;">📲 หน้าจอ LINE OA</strong> เพื่อสร้างเว็บร้าน
+          </div>
         </div>
 
       </div>
@@ -669,7 +670,6 @@
   "shopName": "...",
   "shortName": "...",
   "lineOaId": "...",
-  "brandColor": "#XXXXXX",
   "openTime": "HH:MM-HH:MM"
 }
 
@@ -684,7 +684,8 @@ Output ONLY valid JSON. No prose. No code fences.`;
       document.getElementById('prevShopName').value = cleaned;
       refreshSlugHint(cleaned);
       document.getElementById('prevLineOaId').value = data.lineOaId || '';
-      document.getElementById('prevBrandColor').value = data.brandColor || '';
+      // brandColor capture removed 2026-05-09 · derived from category palette
+      // (Pass 25 v34 lock · feedback_high_touch_imagery_system.md) · was Potemkin
       // Pass 22 (Art's lock 2026-05-04): capture openTime · used by liff-preview smart slots
       document.getElementById('prevOpenTime').value = data.openTime || '';
       showStatus('prevStatus', '✅ ดึงข้อมูลแล้ว · ตรวจ + แก้ที่ด้านขวา', 'success');
@@ -735,7 +736,8 @@ Output ONLY valid JSON. No prose. No code fences.`;
       // Pass 25 v37 iter7: slug derived from shopName (single source of truth · English-only).
       shortName: slugify(shopName),
       lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
-      brandColor: document.getElementById('prevBrandColor').value.trim() || '#2563eb',
+      // brandColor removed 2026-05-09 · derived from category palette client-side
+      // (Pass 25 v34 lock · was Potemkin · downstream consumers don't read it)
       // Pass 22 · openTime captured for liff-preview smart slots + cover badge
       openTime: document.getElementById('prevOpenTime').value.trim() || null,
       // Pass 23 · merchant's chosen design variant · persisted via signup
@@ -818,7 +820,6 @@ Output ONLY valid JSON. No prose. No code fences.`;
   const menuFile = document.getElementById('menuFile');
   const menuUploadZone = document.getElementById('menuUploadZone');
   const menuExtractBtn = document.getElementById('menuExtractBtn');
-  const menuPublishBtn = document.getElementById('menuPublishBtn');
   let menuImageData = null;
 
   menuFile.addEventListener('change', async (e) => {
@@ -902,33 +903,11 @@ Output ONLY a JSON array. No prose. No code fences.`;
 
   function recountServices() {
     const rows = document.querySelectorAll('#menuTableBody tr');
-    let count = 0;
-    rows.forEach(tr => {
-      const inputs = tr.querySelectorAll('input');
-      if (inputs.length < 3) return;
-      if (inputs[0].value.trim()) count++;
-    });
-    document.getElementById('menuPublishBtn').disabled = count === 0;
+    // recountServices kept as no-op for legacy callers · 2026-05-09:
+    // Mode 2 Potemkin "🚀 ส่งบริการเข้าร้าน" button removed (single commit
+    // path is Mode 1's "🚀 สร้างหน้าเว็บร้านตัวอย่าง" via collectShopData).
   }
   window.recountServices = recountServices;
-
-  menuPublishBtn.addEventListener('click', () => {
-    const rows = document.querySelectorAll('#menuTableBody tr');
-    const services = [];
-    rows.forEach((tr, idx) => {
-      const inputs = tr.querySelectorAll('input');
-      if (inputs.length < 3) return;
-      const serviceName = inputs[0].value.trim();
-      if (!serviceName) return;
-      services.push({
-        serviceId: `SVC-${String(idx + 1).padStart(3, '0')}`,
-        serviceName,
-        durationMin: parseInt(inputs[1].value) || null,
-        price: parseInt(inputs[2].value) || 0,
-      });
-    });
-    showStatus('menuPublishStatus', `✅ พร้อม ${services.length} บริการ · TODO: เชื่อมระบบ shopv3 (รอ Mod) · ตอนนี้ copy ใส่ shopv3 admin manual`, 'success');
-  });
 
   // ═══════════════════════════════════════════════════════════════
   // Button states
