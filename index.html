@@ -652,8 +652,9 @@
     const data = {
       shopName: shopName.trim(),
       shortName: slugify(shopName),
-      lineOaId: null,
-      brandColor: '#c9a88e',
+      // 2026-05-09 audit: lineOaId + brandColor removed from prefill blob ·
+      // lineOaId backend has no field (post-pilot work) · brandColor derives
+      // from category palette client-side
       openTime: '10:00-21:00',
       variant: 'airy',
       services: [],

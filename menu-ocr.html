@@ -321,10 +321,6 @@
               </div>
             </div>
             <div class="branding-field full">
-              <label>ไอดี LINE OA</label>
-              <input id="prevLineOaId" type="text" placeholder="เช่น @barenailspa" />
-            </div>
-            <div class="branding-field full">
               <label>เวลาเปิด-ปิด</label>
               <input id="prevOpenTime" type="text" placeholder="10:00-21:00" autocomplete="off" />
             </div>
@@ -669,7 +665,6 @@
 {
   "shopName": "...",
   "shortName": "...",
-  "lineOaId": "...",
   "openTime": "HH:MM-HH:MM"
 }
 
@@ -683,7 +678,10 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '');
       document.getElementById('prevShopName').value = cleaned;
       refreshSlugHint(cleaned);
-      document.getElementById('prevLineOaId').value = data.lineOaId || '';
+      // lineOaId capture removed 2026-05-09 · backend ShopInfo schema has no
+      // field for it (only Facebook / Instagram / TikTok / X) · wiring through
+      // = backend migration · post-pilot work. Was soft-Potemkin (captured ·
+      // shown in preview · vanished at /signup commit). Roadmap: add after pilot.
       // brandColor capture removed 2026-05-09 · derived from category palette
       // (Pass 25 v34 lock · feedback_high_touch_imagery_system.md) · was Potemkin
       // Pass 22 (Art's lock 2026-05-04): capture openTime · used by liff-preview smart slots
@@ -735,7 +733,9 @@ Output ONLY valid JSON. No prose. No code fences.`;
       shopName,
       // Pass 25 v37 iter7: slug derived from shopName (single source of truth · English-only).
       shortName: slugify(shopName),
-      lineOaId: document.getElementById('prevLineOaId').value.trim() || null,
+      // lineOaId removed 2026-05-09 · backend ShopInfo schema has no field
+      // (only Facebook / Instagram / TikTok / X) · was soft-Potemkin
+      // (preview-only · vanished at /signup commit) · roadmap: post-pilot
       // brandColor removed 2026-05-09 · derived from category palette client-side
       // (Pass 25 v34 lock · was Potemkin · downstream consumers don't read it)
       // Pass 22 · openTime captured for liff-preview smart slots + cover badge
