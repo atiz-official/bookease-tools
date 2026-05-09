@@ -41,27 +41,6 @@
   .brand-wordmark .book { color: #1E40AF; }
   .brand-wordmark .ease { color: #38BDF8; }
 
-  /* ───── Setup-needed block (shown when no API key) ───── */
-  .setup-needed {
-    background: #fff; border: 2px solid #ef4444; border-radius: 16px;
-    padding: 24px 20px; margin-bottom: 20px; text-align: center;
-  }
-  .setup-needed .icon { font-size: 48px; margin-bottom: 8px; }
-  .setup-needed h2 { margin: 0 0 8px; font-size: 20px; color: #b91c1c; }
-  .setup-needed p { margin: 0 0 16px; color: #475569; font-size: 16px; line-height: 1.5; }
-  .setup-needed .contact {
-    display: inline-block; background: #06c755; color: #fff;
-    padding: 10px 20px; border-radius: 100px; font-weight: 600;
-    text-decoration: none; font-size: 16px;
-  }
-
-  /* ───── Setup-success toast ───── */
-  .setup-ok {
-    background: #d1fae5; border: 2px solid #10b981; border-radius: 12px;
-    padding: 16px 20px; margin-bottom: 20px; text-align: center;
-    font-size: 16px; font-weight: 600; color: #065f46;
-  }
-
   /* ───── Mode tabs ───── */
   .mode-tabs {
     display: flex; gap: 4px; background: #e2e8f0; padding: 4px;
@@ -264,45 +243,6 @@
   }
 
 
-  /* ───── Admin panel (collapsed by default · for Art only) ───── */
-  .admin-panel {
-    margin: 16px 0;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    background: #fafafa;
-  }
-  .admin-panel summary {
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 13px;
-    color: #94a3b8;
-    user-select: none;
-    list-style: none;
-  }
-  .admin-panel summary::-webkit-details-marker { display: none; }
-  .admin-panel summary:hover { color: #475569; }
-  .admin-panel[open] summary {
-    border-bottom: 1px solid #e2e8f0;
-    color: #334155;
-    font-weight: 600;
-  }
-  .admin-content {
-    padding: 14px;
-  }
-  .admin-status {
-    font-size: 14px;
-    margin-bottom: 10px;
-    font-family: ui-monospace, monospace;
-  }
-  .admin-content input {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid #cbd5e1; border-radius: 8px;
-    font-family: ui-monospace, monospace; font-size: 13px;
-    margin-bottom: 10px;
-  }
-  .admin-hint {
-    font-size: 12px; color: #94a3b8; margin-top: 8px; text-align: center;
-  }
 </style>
 </head>
 <body data-mode="previsit">
@@ -325,47 +265,12 @@
        Tool teaches itself via tab labels + save button's anti-Potemkin block.
        Apple-mode: trust the UI · drop the paragraph · just-in-time learning. -->
 
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       Setup-success (shown briefly after ?setup=KEY URL)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div id="setupOk" class="setup-ok" style="display: none;">
-    ✅ ตั้งค่าเครื่องนี้เรียบร้อย · พร้อมใช้งานได้แล้ว
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       Admin panel · API key management (collapsed by default)
-       After Phase A (CF Worker proxy ships) · this section will be hidden
-       and tool works for anyone with zero setup. Until then · admin keeps
-       a key in localStorage for staff/own-network use.
-       ═══════════════════════════════════════════════════════════════ -->
-  <details class="admin-panel" id="adminPanel">
-    <summary>⚙️ ตั้งค่า API key (1 ครั้งต่อเครื่อง)</summary>
-    <div class="admin-content">
-      <div class="admin-status" id="adminStatus"></div>
-      <input id="apiKey" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
-      <button class="primary" id="saveApiKeyBtn" style="margin-top: 0;">💾 บันทึก key</button>
-      <div class="admin-hint">โหมดทดสอบส่วนตัว · ปกติเครื่องมือนี้ใช้ฟรี ไม่ต้องตั้งอะไร</div>
-    </div>
-  </details>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       Setup-needed (shown when no API key)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div id="setupNeeded" class="setup-needed" style="display: none;">
-    <div class="icon">🔒</div>
-    <h2>ยังไม่ได้ตั้งค่า</h2>
-    <p>เครื่องนี้ต้องตั้ง API key 1 ครั้งก่อนใช้<br/>กดที่ "ตั้งค่า API key" ด้านบน</p>
-    <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
-      หรือพิมพ์ชื่อร้านเองที่<br/>
-      <a href="/" style="color: #5777EF;">make.bookease.co</a> (ไม่ต้องอัปโหลดรูป)
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       Main tool (shown only when API key present)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div id="mainTool" style="display: none;">
+  <!-- 2026-05-09 (Art's lock · public-CAC framing):
+       Tool is now fully sponsored by Atiz via the CF Worker proxy ·
+       removed the legacy admin panel + ?setup=KEY URL handler entirely
+       so the public file ships ZERO key-handling code. Worker is the
+       single source of API auth. -->
+  <div id="mainTool">
 
     <!-- Mode tabs · Pass 25 v37 (Art's lock 2026-05-07):
          renamed for input-source clarity (was "ค้นหาข้อมูลร้าน" + "ถ่ายเมนู"
@@ -525,150 +430,38 @@
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  // CF Worker proxy URL (Pass 25 v6 · Art's Phase A · 2026-05-05 PM)
+  // Cloudflare Worker proxy URL · only auth path (2026-05-09 hardened)
   //
-  // Once Art deploys the Cloudflare Worker per WORKER_SETUP.md, paste the
-  // URL here · push 1-line update · tool flips to fully open mode (no API
-  // key setup needed for users · Atiz sponsors via Worker rate-limit).
-  //
-  // Empty string = legacy localStorage admin-key flow (Art-network only).
+  // Atiz sponsors API cost via the Worker · key lives ONLY in CF env vars ·
+  // public file ships zero key-handling code · removed the legacy localStorage
+  // admin panel + ?setup=KEY URL handler entirely (was a key-leak vector if
+  // a setup-URL ever got forwarded · per Art's 2026-05-09 hardening).
   // ═══════════════════════════════════════════════════════════════
   const WORKER_URL = 'https://bookease-anthropic-proxy.atiz-cloudflare-account.workers.dev/';
 
-  // ═══════════════════════════════════════════════════════════════
-  // API key bootstrap (legacy flow · superseded once WORKER_URL is set)
-  //
-  // Two paths to get an API key onto a staff laptop:
-  //   1. ?setup=KEY URL — used by Art ONCE per device. Saves to
-  //      localStorage, strips the param from URL, shows success.
-  //   2. localStorage already has key — silent use.
-  //
-  // If neither AND no Worker: show "ตั้งค่า API key" prompt.
-  // ═══════════════════════════════════════════════════════════════
-  const KEY_STORAGE = 'bookease_anthropic_key';
-  const params = new URLSearchParams(window.location.search);
-  const setupKey = params.get('setup');
-
-  if (setupKey) {
-    localStorage.setItem(KEY_STORAGE, setupKey.trim());
-    history.replaceState({}, '', window.location.pathname);
-    document.getElementById('setupOk').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('setupOk').style.display = 'none';
-    }, 4000);
+  // Defensive guard · if WORKER_URL is somehow blank (mis-deploy), fail soft:
+  // log to console (Art monitors), and let calls below surface a neutral
+  // "ระบบขัดข้อง" message rather than a brick wall.
+  if (!WORKER_URL) {
+    console.error('[menu-ocr] WORKER_URL is empty · API calls will fail · check deploy');
   }
 
-  const STORED_KEY = localStorage.getItem(KEY_STORAGE) || '';
-  // Pass 25 v6 · Worker proxy supersedes localStorage key flow when active
-  if (!STORED_KEY && !WORKER_URL) {
-    document.getElementById('setupNeeded').style.display = 'block';
-    document.getElementById('mainTool').style.display = 'none';
-  } else {
-    document.getElementById('setupNeeded').style.display = 'none';
-    document.getElementById('mainTool').style.display = 'block';
-    // Hide admin panel + remove "ตั้งค่า API key" UI once Worker active
-    if (WORKER_URL) {
-      const ap = document.getElementById('adminPanel');
-      if (ap) ap.style.display = 'none';
-    }
-  }
-
-  // ── Admin panel: paste/replace key in-page ──
-  const adminStatus = document.getElementById('adminStatus');
-  const adminInput = document.getElementById('apiKey');
-  const adminSave = document.getElementById('saveApiKeyBtn');
-  function refreshAdminStatus() {
-    const k = localStorage.getItem(KEY_STORAGE);
-    if (k) {
-      adminStatus.innerHTML = `✅ มี key อยู่แล้ว · <code>${k.slice(0, 14)}…${k.slice(-4)}</code>`;
-      adminStatus.style.color = '#047857';
-    } else {
-      adminStatus.innerHTML = '❌ ยังไม่มี key';
-      adminStatus.style.color = '#b91c1c';
-    }
-  }
-  refreshAdminStatus();
-  // If no key yet · auto-open the admin panel so Art doesn't have to hunt for it
-  if (!STORED_KEY) document.getElementById('adminPanel').open = true;
-
-  adminSave.addEventListener('click', async () => {
-    const k = adminInput.value.trim().replace(/[​-‍﻿]/g, ''); // strip zero-width chars
-    if (!k) { alert('ใส่ key ก่อน'); return; }
-    if (!k.startsWith('sk-')) { alert('Key ต้องขึ้นต้น sk-...'); return; }
-    const origText = adminSave.textContent;
-    adminSave.textContent = '🔄 ทดสอบ key...';
-    adminSave.disabled = true;
-    const test = await testApiKey(k);
-    if (!test.ok) {
-      // Detect "credit balance too low" specifically — the key WORKS but account has no credits
-      // We should still save the key (it's valid) and let Art top up · proceed.
-      if (test.body && test.body.includes('credit balance is too low')) {
-        if (confirm('✅ Key ถูกต้อง (ใช้ได้)\n\n💳 แต่ account นี้ยังไม่มี credit · ต้องเติมที่ console.anthropic.com/settings/billing ก่อนใช้งาน\n\nบันทึก key ไว้ก่อนไหม?')) {
-          localStorage.setItem(KEY_STORAGE, k);
-          adminInput.value = '';
-          refreshAdminStatus();
-          adminSave.textContent = '✅ บันทึก key แล้ว · ไปเติม credit ก่อนใช้งาน';
-          setTimeout(() => window.location.reload(), 1500);
-          return;
-        }
-        adminSave.textContent = origText;
-        adminSave.disabled = false;
-        return;
-      }
-      let msg = `❌ Key ใช้ไม่ได้\n\n`;
-      if (test.status) msg += `HTTP ${test.status}\n`;
-      if (test.body) msg += test.body;
-      if (test.error) msg += test.error;
-      alert(msg);
-      adminSave.textContent = origText;
-      adminSave.disabled = false;
-      return;
-    }
-    localStorage.setItem(KEY_STORAGE, k);
-    adminInput.value = '';
-    refreshAdminStatus();
-    adminSave.textContent = '✅ ตั้งค่าสำเร็จ · กำลัง reload...';
-    setTimeout(() => window.location.reload(), 700);
-  });
-
   // ═══════════════════════════════════════════════════════════════
-  // Anthropic API helper
+  // Anthropic API helper · Worker-only (legacy direct mode removed 2026-05-09)
   // ═══════════════════════════════════════════════════════════════
-  const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
-  const ANTHROPIC_VERSION = '2023-06-01';
   const MODEL = 'claude-sonnet-4-6'; // Sonnet 4.6 — better default for vision OCR · widely available
   const TOOL_BASE = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
 
-  // WORKER_URL declared at top of script · used for Phase A proxy mode.
-
-  async function callAnthropic(key, body) {
-    // PROXY MODE · CF Worker handles auth + rate-limiting · key never client-side
-    if (WORKER_URL) {
-      return fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-    }
-    // LEGACY MODE · client-side key from localStorage (admin set)
-    return fetch(ANTHROPIC_API, {
+  async function callAnthropic(body) {
+    return fetch(WORKER_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': ANTHROPIC_VERSION,
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
   }
 
   async function callClaudeVision(base64Image, mediaType, prompt) {
-    // Phase A integration · Worker mode bypasses STORED_KEY check
-    if (!WORKER_URL && !STORED_KEY) {
-      throw new Error('ยังไม่ได้ตั้ง API key · กดที่ "ตั้งค่า API key" ด้านบน');
-    }
-    const res = await callAnthropic(STORED_KEY, {
+    const res = await callAnthropic({
       model: MODEL,
       max_tokens: 2048,
       messages: [{
@@ -682,52 +475,17 @@
     if (!res.ok) {
       let bodyText = '';
       try { bodyText = await res.text(); } catch {}
-      console.error('Anthropic API error', res.status, bodyText);
-      const snippet = bodyText.replace(/\s+/g, ' ').substring(0, 180);
-      // 2026-05-09 (public-CAC framing · feedback_remote_caravan_share_to_friend.md):
-      // tool is now a free customer-acquisition surface · Atiz pays the API ·
-      // public visitor must NEVER see "ติดต่อคุณอาท" / "ใส่ key" / "account" framing.
-      // Worker mode = neutral retry messages · legacy staff mode = direct Anthropic errors.
-      if (WORKER_URL) {
-        // Public-facing path · keep all errors generic + actionable
-        if (bodyText.includes('credit balance is too low') || bodyText.includes('rate_limit') || res.status === 429 || bodyText.includes('overloaded')) {
-          throw new Error(`🤖 ระบบ AI กำลังคุยกับคนเยอะ · ลองใหม่อีกสักครู่`);
-        }
-        throw new Error(`🤖 ระบบขัดข้องชั่วคราว · ลองใหม่อีกครั้ง`);
+      console.error('Worker proxy error', res.status, bodyText);
+      // Public-CAC framing (feedback_remote_caravan_share_to_friend.md ·
+      // 2026-05-09): all errors collapse to two neutral retry messages ·
+      // Atiz monitors actual cause via CF Worker logs, not in-page UI.
+      if (bodyText.includes('credit balance is too low') || bodyText.includes('rate_limit') || res.status === 429 || bodyText.includes('overloaded')) {
+        throw new Error(`🤖 ระบบ AI กำลังคุยกับคนเยอะ · ลองใหม่อีกสักครู่`);
       }
-      // Legacy localStorage-key mode (Atiz internal · WORKER_URL empty)
-      if (bodyText.includes('credit balance is too low')) {
-        throw new Error(`💳 ยอดเครดิต Anthropic หมด · เติม credit ที่ console.anthropic.com/settings/billing`);
-      }
-      if (bodyText.includes('rate_limit') || res.status === 429) {
-        throw new Error(`⏳ ใช้งานเยอะเกินไป · รอสักครู่แล้วลองใหม่`);
-      }
-      if (bodyText.includes('overloaded')) {
-        throw new Error(`🌐 Anthropic ขัดข้อง · ลองใหม่อีก 30 วินาที`);
-      }
-      if (res.status === 401) throw new Error(`Key ใช้ไม่ได้ (401) · เช็คว่า paste ครบไม่มี space · หรือ key ถูก revoke แล้ว · ${snippet}`);
-      if (res.status === 404) throw new Error(`Model ไม่พบ (404) · account อาจไม่มี ${MODEL} · ${snippet}`);
-      throw new Error(`ระบบตอบ ${res.status}: ${snippet}`);
+      throw new Error(`🤖 ระบบขัดข้องชั่วคราว · ลองใหม่อีกครั้ง`);
     }
     const json = await res.json();
     return json.content[0].text;
-  }
-
-  // Test API key validity with a tiny call before saving
-  async function testApiKey(key) {
-    try {
-      const res = await callAnthropic(key, {
-        model: MODEL,
-        max_tokens: 5,
-        messages: [{ role: 'user', content: 'hi' }],
-      });
-      if (res.ok) return { ok: true };
-      let body = '';
-      try { body = await res.text(); } catch {}
-      return { ok: false, status: res.status, body: body.substring(0, 300) };
-    } catch (e) {
-      return { ok: false, error: e.message };
-    }
   }
 
   function extractJsonFromText(text) {
