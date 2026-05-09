@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DetailPage · 3-up · OLD vs CURRENT vs PROPOSED · 2026-05-09</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+    background: #f5f5f4; color: #0a0a0a; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────── Doc header ─────────── */
+  .doc-header { text-align: center; padding: 32px 24px 8px; }
+  .doc-header h1 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 30px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em;
+  }
+  .doc-header .sub {
+    font-size: 14px; color: #6b7280; max-width: 760px; margin: 0 auto;
+  }
+
+  /* ─────────── 3-up phone preview row ─────────── */
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px; max-width: 1280px; margin: 24px auto; padding: 0 24px;
+  }
+  @media (max-width: 1100px) { .compare-row { grid-template-columns: 1fr; max-width: 460px; } }
+
+  .col-label { text-align: center; margin: 0 0 16px; }
+  .col-label .badge {
+    display: inline-block; padding: 6px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .col-OLD .badge { background: #fee2e2; color: #991b1b; }
+  .col-NOW .badge { background: #fef3c7; color: #78350f; }
+  .col-NEW .badge { background: #d1fae5; color: #065f46; }
+  .col-label .name {
+    display: block; margin-top: 8px; font-size: 13px; color: #44403c; max-width: 380px; margin-left: auto; margin-right: auto;
+  }
+  .col-label .name b { color: #0a0a0a; }
+  .col-label .grade {
+    display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700;
+  }
+  .col-OLD .grade { background: #fee2e2; color: #991b1b; }
+  .col-NOW .grade { background: #fef3c7; color: #78350f; }
+  .col-NEW .grade { background: #d1fae5; color: #065f46; }
+
+  /* Phone frame */
+  .phone {
+    width: 100%; max-width: 390px; margin: 0 auto;
+    background: #1c1917; border-radius: 44px; padding: 12px;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.10),
+      0 30px 80px -20px rgba(0,0,0,0.30);
+  }
+  .phone .notch {
+    width: 100px; height: 22px; background: #1c1917;
+    border-radius: 100px; margin: 0 auto -6px;
+    position: relative; top: -2px; z-index: 5;
+  }
+  .phone-screen {
+    background: #fff; border-radius: 32px; overflow: hidden; min-height: 720px;
+    position: relative;
+  }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px 0; font-size: 12px; font-weight: 600;
+  }
+
+  /* Hero image · same in all 3 */
+  .hero {
+    position: relative; aspect-ratio: 4/3;
+    background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=70');
+    background-size: cover; background-position: center;
+    margin-top: 0;
+  }
+  .hero-btn-OLD {
+    position: absolute; width: 40px; height: 40px;
+    background: rgba(255,255,255,0.92); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    top: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 0;
+    font-size: 16px;
+  }
+  .hero-btn-NOW {
+    position: absolute; width: 38px; height: 32px;  /* drift · 38×32 oval */
+    background: rgba(0,0,0,0.42); border-radius: 100px;
+    display: flex; align-items: center; justify-content: center;
+    top: 12px; border: 0; backdrop-filter: blur(8px);
+    color: #fff; font-size: 12px; padding: 9.6px 19.2px;
+  }
+  .hero-btn-NEW {
+    position: absolute; width: 32px; height: 32px;  /* perfect circle */
+    background: rgba(0,0,0,0.42); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    top: 12px; border: 0; backdrop-filter: blur(8px);
+    color: #fff; padding: 0; box-sizing: border-box;
+  }
+  .hero-btn-OLD svg, .hero-btn-NOW svg, .hero-btn-NEW svg { width: 14px; height: 14px; }
+  .hero-btn-left { left: 12px; }
+  .hero-btn-right { right: 12px; }
+
+  /* OLD hero height */
+  .hero-OLD { height: 250px; aspect-ratio: auto; }
+  /* NOW hero height (live) */
+  .hero-NOW { height: 160px; aspect-ratio: auto; }
+  /* NEW hero height (proposed) */
+  .hero-NEW { height: 260px; aspect-ratio: auto; }
+
+  /* ─────────── OLD design ─────────── */
+  .OLD .shop-head {
+    padding: 16px 16px 8px;
+    display: flex; align-items: flex-start; gap: 12px;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .OLD .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    overflow: hidden; flex-shrink: 0; border: 1px solid #f5f5f4;
+    background: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=120&q=70');
+    background-size: cover; background-position: center;
+  }
+  .OLD .meta { flex: 1; min-width: 0; }
+  .OLD .name {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 26px; font-weight: 600; line-height: 1.1;
+    margin-bottom: 6px; letter-spacing: -0.015em;
+  }
+  .OLD .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .OLD .open { font-size: 14px; color: #16a34a; font-weight: 600; }
+  .OLD .open::before { content: '● '; }
+  .OLD .share {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid #f5f5f4; background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .OLD .trust-line {
+    font-size: 13px; color: #44403c; margin-top: 4px; flex-shrink: 0;
+  }
+  .OLD .sec-h {
+    padding: 16px 16px 8px;
+    font-size: 22px; font-weight: 700; color: #0a0a0a;
+  }
+  .OLD .svc {
+    margin: 8px 12px;
+    padding: 12px;
+    border: 1px solid #f5f5f4; border-radius: 16px;
+    display: flex; gap: 12px; align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .OLD .svc-img {
+    width: 86px; height: 86px; border-radius: 12px;
+    background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .OLD .svc-body { flex: 1; min-width: 0; }
+  .OLD .svc-name { font-size: 18px; font-weight: 600; }
+  .OLD .svc-desc { font-size: 13px; color: #78716c; margin: 2px 0 4px; }
+  .OLD .svc-dur { font-size: 14px; color: #2563eb; font-weight: 500; }   /* blue · false-affordance */
+  .OLD .svc-price {
+    font-size: 18px; font-weight: 700; min-width: 80px; text-align: right;
+  }
+  .OLD .svc-price.ask { font-size: 14px; }
+
+  /* ─────────── NOW (current live) design ─────────── */
+  .NOW .shop-head {
+    padding: 20px 16px 12px;
+  }
+  .NOW .name-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 6px;
+  }
+  .NOW .name {
+    font-family: 'Sarabun', sans-serif; font-size: 24px; font-weight: 800;
+    letter-spacing: -0.01em; line-height: 1.2; flex: 1; min-width: 0;
+  }
+  .NOW .share {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.08); background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .NOW .meta-rail {
+    font-size: 13px; color: #4a5566; line-height: 1.4; margin-bottom: 10px;
+  }
+  .NOW .meta-rail b { color: #222; font-weight: 700; }
+  .NOW .hours-row {
+    font-size: 13px; font-weight: 600; color: #16a34a;
+  }
+  .NOW .hours-row::before {
+    content: ''; display: inline-block;
+    width: 7px; height: 7px; background: #22c55e;
+    border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+  }
+  .NOW .sec-h {
+    padding: 14px 16px 6px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .NOW .sec-h .title { font-size: 16px; font-weight: 700; }
+  .NOW .sec-h .count { font-size: 12px; color: #78716c; }
+  .NOW .svc {
+    margin: 6px 12px; padding: 10px 12px;
+    border: 1px solid #a0a6a9; border-radius: 14px;   /* 1px gray border */
+    background: #fff;
+    display: flex; gap: 6px; align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .NOW .svc-img {
+    width: 56px; height: 56px; border-radius: 10px;   /* 56×56 */
+    background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .NOW .svc-body { flex: 1; min-width: 0; }
+  .NOW .svc-title { font-size: 15px; font-weight: 700; line-height: 1.25; }   /* 15px */
+  .NOW .svc-detail {
+    display: block; font-size: 13px; font-weight: 400; color: #4a5566;
+    margin-top: 1px;
+  }
+  .NOW .svc-meta {
+    display: block; font-size: 12px; color: #4a5566;   /* 12px · small */
+  }
+  .NOW .svc-price {
+    font-size: 16px; font-weight: 800;   /* 16px */
+    margin-left: 4px;
+  }
+
+  /* ─────────── NEW (proposed iter3) design ─────────── */
+  .NEW .shop-head {
+    padding: 14px 16px 12px;
+  }
+  .NEW .name-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 6px;
+  }
+  .NEW .name {
+    font-family: 'Sarabun', sans-serif; font-size: 24px; font-weight: 800;
+    letter-spacing: -0.01em; line-height: 1.2; flex: 1; min-width: 0;
+  }
+  .NEW .share {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.08); background: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  /* MERGED meta+hours into single rail · denser */
+  .NEW .meta-rail {
+    font-size: 13px; color: #4a5566; line-height: 1.4;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  }
+  .NEW .meta-rail b { color: #222; font-weight: 700; }
+  .NEW .meta-rail .sep { color: #d6d3d1; }
+  .NEW .meta-rail .hours { color: #16a34a; font-weight: 600; }
+  .NEW .meta-rail .hours::before {
+    content: ''; display: inline-block;
+    width: 6px; height: 6px; background: #22c55e;
+    border-radius: 50%; margin-right: 4px; vertical-align: 1px;
+  }
+  .NEW .sec-h {
+    padding: 14px 16px 6px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .NEW .sec-h .title { font-size: 16px; font-weight: 700; }
+  .NEW .sec-h .count { font-size: 12px; color: #78716c; }
+  .NEW .svc {
+    margin: 8px 12px; padding: 12px 14px;       /* +breathing */
+    border: 0;                                   /* drop border */
+    border-radius: 14px;
+    background: #fff;
+    display: flex; gap: 14px; align-items: center;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 4px 12px rgba(0,0,0,0.06);              /* layered shadow */
+  }
+  .NEW .svc-img {
+    width: 64px; height: 64px; border-radius: 12px;   /* 64×64 */
+    background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .NEW .svc-body { flex: 1; min-width: 0; }
+  .NEW .svc-title {
+    font-size: 16px; font-weight: 700; line-height: 1.25;   /* 16px */
+    letter-spacing: -0.01em;
+  }
+  .NEW .svc-detail {
+    display: block; font-size: 13px; font-weight: 400; color: #4a5566;
+    margin-top: 2px;
+  }
+  .NEW .svc-meta {
+    display: block; font-size: 13px; color: #4a5566;   /* 13px · matches Apple Footnote */
+    margin-top: 2px;
+  }
+  .NEW .svc-price {
+    font-size: 17px; font-weight: 800;   /* 17px · stronger anchor */
+    margin-left: 4px; letter-spacing: -0.01em;
+  }
+
+  /* ─────────── Annotations table ─────────── */
+  .annot { max-width: 1280px; margin: 32px auto; padding: 0 24px; }
+  .annot table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .annot th, .annot td {
+    padding: 11px 14px; text-align: left;
+    border-bottom: 1px solid #f5f5f4; vertical-align: top;
+  }
+  .annot th {
+    background: #fafaf9; font-weight: 700; font-size: 11px;
+    color: #44403c; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .annot td.OLD { color: #991b1b; }
+  .annot td.NOW { color: #78350f; }
+  .annot td.NEW { color: #065f46; font-weight: 600; }
+  .annot tr:last-child td { border-bottom: 0; }
+  .annot code {
+    background: #f5f5f4; padding: 1px 5px; border-radius: 4px;
+    font-family: ui-monospace, monospace; font-size: 11.5px;
+  }
+
+  .vote-callout {
+    max-width: 1280px; margin: 24px auto; padding: 18px 24px;
+    background: #fafaf9; border-radius: 12px;
+    text-align: center; font-size: 14px;
+  }
+  .vote-callout b { color: #0a0a0a; }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <h1>DetailPage · 3-up · OLD vs CURRENT vs PROPOSED</h1>
+  <div class="sub">
+    Same shop (Rakkana) · 3 design states · audited live with computed-styles measurements ·
+    Art lock 2026-05-09 PM
+  </div>
+</header>
+
+<div class="compare-row">
+
+  <!-- ════════════════════════════════════════════════
+       OLD · before any of today's polish
+       ════════════════════════════════════════════════ -->
+  <div class="col col-OLD OLD">
+    <div class="col-label">
+      <span class="badge">OLD · yesterday</span>
+      <span class="grade">Grade C</span>
+      <span class="name"><b>Italic Cormorant</b> shop name · "ร้านใหม่ มาเป็นคนแรก" patronizing trust line · "● เปิดอยู่" no closing time · 3-row card with blue duration false-affordance</span>
+    </div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●●&nbsp;100%</span></div>
+        <div class="hero hero-OLD">
+          <button class="hero-btn-OLD hero-btn-left">‹</button>
+          <button class="hero-btn-OLD hero-btn-right">♡</button>
+        </div>
+        <div class="shop-head">
+          <div class="avatar"></div>
+          <div class="meta">
+            <div class="name">Rakkana spa</div>
+            <div class="row">
+              <span class="open">เปิดอยู่</span>
+              <button class="share">↑</button>
+            </div>
+            <div class="trust-line">⭐ ร้านใหม่ — มาเป็นคนแรก</div>
+          </div>
+        </div>
+        <div class="sec-h">รายการแนะนำ</div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200&q=70');"></div>
+          <div class="svc-body">
+            <div class="svc-name">นวดหัว</div>
+            <div class="svc-desc">นวดกดจุดระงับคลายเครียด</div>
+            <div class="svc-dur">60 นาที</div>
+          </div>
+          <div class="svc-price">฿1,200</div>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=200&q=70');"></div>
+          <div class="svc-body">
+            <div class="svc-name">นวดเท้า</div>
+            <div class="svc-desc">กดจุดตรงเท้า</div>
+            <div class="svc-dur">60 นาที</div>
+          </div>
+          <div class="svc-price">฿800</div>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1591343395082-e120087004b4?w=200&q=70');"></div>
+          <div class="svc-body">
+            <div class="svc-name">นวดประคบร้อน</div>
+            <div class="svc-desc">นวดประคบร้อน</div>
+            <div class="svc-dur">15 นาที</div>
+          </div>
+          <div class="svc-price ask">สอบถามราคา</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       NOW · what's currently live
+       ════════════════════════════════════════════════ -->
+  <div class="col col-NOW NOW">
+    <div class="col-label">
+      <span class="badge">CURRENT · live now</span>
+      <span class="grade">Grade B-</span>
+      <span class="name">Drop italic + patronizing line · 38×32 oval-ish hero buttons (drift) · 160px short hero · 56×56 photo · 15px title · 12px meta · 1px gray border · meta + hours on TWO ORPHAN LINES</span>
+    </div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●●&nbsp;100%</span></div>
+        <div class="hero hero-NOW">
+          <button class="hero-btn-NOW hero-btn-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="hero-btn-NOW hero-btn-right">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </button>
+        </div>
+        <div class="shop-head">
+          <div class="name-row">
+            <h1 class="name" style="margin:0;">Rakkana spa</h1>
+            <button class="share">↑</button>
+          </div>
+          <div class="meta-rail">เริ่ม <b>฿600</b></div>
+          <div class="hours-row">เปิด 09:00–18:00</div>
+        </div>
+        <div class="sec-h">
+          <span class="title">บริการแนะนำ</span>
+          <span class="count">3 บริการ</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">นวดหัว</span>
+            <span class="svc-detail">นวดกดจุดระงับคลายเครียด</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿1,200</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">นวดเท้า</span>
+            <span class="svc-detail">กดจุดตรงเท้า</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿800</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1556228841-a3c527ebefe5?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">สครับผิว</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿600</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       NEW · proposed iter3 (pending Art's vote)
+       ════════════════════════════════════════════════ -->
+  <div class="col col-NEW NEW">
+    <div class="col-label">
+      <span class="badge">PROPOSED · iter3</span>
+      <span class="grade">Grade A</span>
+      <span class="name"><b>Hero photo 220-320px</b> (was cramped 160) · <b>32×32 perfect circle</b> hero buttons · <b>meta + hours INLINE</b> "เริ่ม ฿600 · ● เปิด 09:00-18:00" · 64×64 photo · 16px title · 13px meta · 17px price · drop 1px border · layered shadow</span>
+    </div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●●&nbsp;100%</span></div>
+        <div class="hero hero-NEW">
+          <button class="hero-btn-NEW hero-btn-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="hero-btn-NEW hero-btn-right">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </button>
+        </div>
+        <div class="shop-head">
+          <div class="name-row">
+            <h1 class="name" style="margin:0;">Rakkana spa</h1>
+            <button class="share">↑</button>
+          </div>
+          <div class="meta-rail">
+            <span>เริ่ม <b>฿600</b></span>
+            <span class="sep">·</span>
+            <span class="hours">เปิด 09:00–18:00</span>
+          </div>
+        </div>
+        <div class="sec-h">
+          <span class="title">บริการแนะนำ</span>
+          <span class="count">3 บริการ</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">นวดหัว</span>
+            <span class="svc-detail">นวดกดจุดระงับคลายเครียด</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿1,200</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">นวดเท้า</span>
+            <span class="svc-detail">กดจุดตรงเท้า</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿800</span>
+        </div>
+        <div class="svc">
+          <div class="svc-img" style="background-image: url('https://images.unsplash.com/photo-1556228841-a3c527ebefe5?w=160&q=70');"></div>
+          <div class="svc-body">
+            <span class="svc-title">สครับผิว</span>
+            <span class="svc-meta">60 นาที</span>
+          </div>
+          <span class="svc-price">฿600</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="annot">
+<table>
+  <thead>
+    <tr>
+      <th style="width: 18%;">Element</th>
+      <th class="OLD">OLD · yesterday</th>
+      <th class="NOW">CURRENT · live now</th>
+      <th class="NEW">PROPOSED · iter3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Shop name typography</b></td>
+      <td class="OLD">italic Cormorant 26px / 600 (editorial)</td>
+      <td class="NOW">Sarabun 24px / 800 upright</td>
+      <td class="NEW">Sarabun 24px / 800 upright (kept)</td>
+    </tr>
+    <tr>
+      <td><b>Trust line</b></td>
+      <td class="OLD">"⭐ ร้านใหม่ — มาเป็นคนแรก" patronizing</td>
+      <td class="NOW">dropped (good)</td>
+      <td class="NEW">dropped (kept)</td>
+    </tr>
+    <tr>
+      <td><b>Logo avatar</b></td>
+      <td class="OLD">56px circle on left of name</td>
+      <td class="NOW">dropped (good · saves horizontal)</td>
+      <td class="NEW">dropped (kept)</td>
+    </tr>
+    <tr>
+      <td><b>Hero photo height</b></td>
+      <td class="OLD">~250px</td>
+      <td class="NOW">160px (cramped · 3:1 too short)</td>
+      <td class="NEW"><code>clamp(220, 50vw, 320)</code> · responsive · feels right</td>
+    </tr>
+    <tr>
+      <td><b>Hero buttons</b></td>
+      <td class="OLD">40×40 white circle</td>
+      <td class="NOW">38×32 oval (drift · padding leak)</td>
+      <td class="NEW">32×32 perfect circle (forced padding 0)</td>
+    </tr>
+    <tr>
+      <td><b>Meta rail</b></td>
+      <td class="OLD">none · just trust line</td>
+      <td class="NOW">"เริ่ม ฿600" alone · orphan</td>
+      <td class="NEW">"เริ่ม ฿600 · ● เปิด 09:00-18:00" inline · denser</td>
+    </tr>
+    <tr>
+      <td><b>Hours indicator</b></td>
+      <td class="OLD">"● เปิดอยู่" no closing time</td>
+      <td class="NOW">standalone row · 2 orphan lines total</td>
+      <td class="NEW">merged into meta rail · saves 1 line</td>
+    </tr>
+    <tr>
+      <td><b>Section heading</b></td>
+      <td class="OLD">"รายการแนะนำ" 22px</td>
+      <td class="NOW">"บริการแนะนำ" 16px + count</td>
+      <td class="NEW">"บริการแนะนำ" 16px + count (kept)</td>
+    </tr>
+    <tr>
+      <td><b>Service photo</b></td>
+      <td class="OLD">86×86 (Booking-size)</td>
+      <td class="NOW">56×56 (anemic)</td>
+      <td class="NEW">64×64 (Apple Maps standard)</td>
+    </tr>
+    <tr>
+      <td><b>Service title</b></td>
+      <td class="OLD">18px / 600</td>
+      <td class="NOW">15px / 700 (small)</td>
+      <td class="NEW">16px / 700 (Apple Maps)</td>
+    </tr>
+    <tr>
+      <td><b>Service detail</b></td>
+      <td class="OLD">13px tagline</td>
+      <td class="NOW">13px on its own line (good)</td>
+      <td class="NEW">13px (kept)</td>
+    </tr>
+    <tr>
+      <td><b>Duration meta</b></td>
+      <td class="OLD">14px BLUE (false affordance)</td>
+      <td class="NOW">12px gray (small)</td>
+      <td class="NEW">13px gray (Apple Footnote)</td>
+    </tr>
+    <tr>
+      <td><b>Service price</b></td>
+      <td class="OLD">18px / 700 right</td>
+      <td class="NOW">16px / 800 right</td>
+      <td class="NEW">17px / 800 right (Apple anchor)</td>
+    </tr>
+    <tr>
+      <td><b>Card border</b></td>
+      <td class="OLD">1px solid · soft shadow</td>
+      <td class="NOW">1px gray border · flat shadow</td>
+      <td class="NEW">no border · layered shadow (Apple Maps)</td>
+    </tr>
+    <tr>
+      <td><b>Card padding</b></td>
+      <td class="OLD">12px</td>
+      <td class="NOW">10/12px (tight)</td>
+      <td class="NEW">12/14px (breathing)</td>
+    </tr>
+    <tr>
+      <td><b>Inline จอง CTA</b></td>
+      <td class="OLD">none</td>
+      <td class="NOW">none (correctly removed Apple-eye round 2)</td>
+      <td class="NEW">none (kept)</td>
+    </tr>
+    <tr>
+      <td><b>"สอบถามราคา" services</b></td>
+      <td class="OLD">visible · black-bold price slot</td>
+      <td class="NOW">filtered out (Art policy lock)</td>
+      <td class="NEW">filtered out (kept)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="vote-callout">
+  <b>Vote:</b> approve PROPOSED iter3 to ship now? · or specify which deltas to keep / discard
+</div>
+
+<footer style="text-align:center; padding: 32px 24px; color: #94a3b8; font-size: 12px;">
+  Preview built 2026-05-09 · static HTML mirrors live measurements · code edits paused on disk pending vote
+</footer>
+
+</body>
+</html>
