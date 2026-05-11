@@ -43,16 +43,17 @@
 
   /* ───── Mode tabs ───── */
   .mode-tabs {
-    display: flex; gap: 4px; background: #e2e8f0; padding: 4px;
+    display: flex; gap: 4px; background: #bbf7d0; padding: 4px;
     border-radius: 100px; margin-bottom: 8px;
+    transition: background 0.3s ease;
   }
   .mode-tab {
     flex: 1; padding: 12px 16px; font-size: 15px; font-weight: 600;
     border-radius: 100px; cursor: pointer; border: none;
-    background: transparent; color: #475569;
+    background: transparent; color: #15803d;
     font-family: inherit;
   }
-  .mode-tab.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .mode-tab.active { background: #f0fdf4; color: #14532d; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
   /* Pass 25 v37 (Art's lock 2026-05-07): edge-case hint under tabs.
      95% case = LINE OA screenshot · 5% edge = Google/IG/sign · hint covers both. */
   .mode-tabs-hint {
@@ -66,7 +67,8 @@
   /* Mode-aware accent · target color adapts to mode */
   body[data-mode="menu"] .mode-tabs-hint .target { color: #b45309; }
   body[data-mode="menu"] .mode-tabs { background: #fed7aa; }
-  body[data-mode="menu"] .mode-tab.active { color: #9a3412; }
+  body[data-mode="menu"] .mode-tab { color: #9a3412; }
+  body[data-mode="menu"] .mode-tab.active { background: #fff7ed; color: #9a3412; }
 
   /* Pass 25 v37 iter6 · celebration burst (B+D combo) ·
      fires when extraction success · 1.4s · NOT infinite loop in production */
