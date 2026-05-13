@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v8 · Art-spec layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --warm-cream:#fbf5ec;--warm-cream-deep:#f6ede0;--paper:#ffffff;
+    --ink-900:#1a1d29;--ink-800:#252836;--ink-700:#3d4254;
+    --ink-600:#5a5f72;--ink-500:#7a7f93;--ink-400:#9aa0b3;
+    --ink-300:#c8ccd9;--ink-200:#e4e7ee;--ink-100:#eef0f5;
+    --line:#e8e2d5;
+    --be-navy:#1E40AF;--be-sky:#38BDF8;--be-deep:#0c2461;
+    --emerald:#10b981;--emerald-50:#ecfdf5;
+    --amber:#f59e0b;--rose:#f43f5e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,-apple-system,sans-serif;
+    background:#e7e1d4;color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}
+  .tab{font-variant-numeric:tabular-nums}
+  .ed{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500}
+  .page{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
+
+  .hero{margin-bottom:24px}
+  .hero h1{font-family:'Inter';font-weight:800;letter-spacing:-0.03em;font-size:30px;margin:0 0 4px}
+  .hero h1 .b{color:var(--be-navy)}.hero h1 .e{color:var(--be-sky)}
+  .hero .sub{color:var(--ink-500);font-size:14px;font-weight:400}
+
+  /* Side-by-side layout */
+  .layout{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+  /* Critique panel */
+  .crit{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+  .crit h2{font-family:'Inter';font-weight:800;font-size:18px;margin:0 0 6px;letter-spacing:-0.02em}
+  .crit .lede{color:var(--ink-500);font-size:12px;margin-bottom:18px}
+  .verdict{
+    background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:1px solid #6ee7b7;
+    border-radius:12px;padding:14px 16px;margin-bottom:16px;
+  }
+  .verdict h3{font-family:'Inter';font-weight:800;font-size:14px;margin:0 0 4px;color:#14532d;letter-spacing:-0.005em}
+  .verdict p{margin:0;font-size:12px;color:#065f46;line-height:1.55}
+  .verdict .score{
+    display:inline-block;font-family:'Inter';font-weight:800;font-size:11px;
+    background:#10b981;color:#fff;padding:2px 9px;border-radius:6px;
+    letter-spacing:0.05em;margin-top:6px;
+  }
+
+  .takes{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+  .take{
+    background:var(--warm-cream);border-radius:10px;padding:12px 14px;
+    border-left:3px solid var(--be-deep);
+  }
+  .take.win{border-left-color:var(--emerald);background:linear-gradient(135deg,#ecfdf5,#fbf5ec)}
+  .take.poke{border-left-color:var(--amber)}
+  .take .n{font-family:'Inter';font-weight:800;font-size:10px;color:var(--ink-500);letter-spacing:0.05em;margin-bottom:3px}
+  .take.win .n{color:#047857}
+  .take.poke .n{color:#92400e}
+  .take h4{font-size:13px;font-weight:700;margin:0 0 4px;letter-spacing:-0.005em}
+  .take p{font-size:11px;color:var(--ink-700);margin:0;line-height:1.55}
+  .take .tip{
+    background:rgba(255,255,255,0.6);border-radius:6px;padding:6px 9px;margin-top:6px;
+    font-size:11px;color:var(--ink-700);
+  }
+  .take .tip b{color:var(--ink-900)}
+
+  /* Phone */
+  .phone{background:#1a1a1a;border-radius:42px;padding:11px;box-shadow:0 24px 60px rgba(0,0,0,0.25);width:100%;max-width:430px;margin:0 auto}
+  .ps{border-radius:32px;overflow:hidden;height:880px;display:flex;flex-direction:column;position:relative}
+  .notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:88px;height:24px;background:#1a1a1a;border-radius:13px;z-index:10}
+  .status{height:32px;display:flex;align-items:center;justify-content:space-between;padding:8px 24px 0;font-family:'Inter';font-weight:600;font-size:12px;flex-shrink:0;z-index:2;color:var(--ink-900)}
+  .body{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .bnav{height:56px;border-top:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:6px;z-index:5}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--ink-400);font-weight:500}
+  .bnav-item.active{color:var(--be-navy)}
+  .bnav-item svg{width:19px;height:19px}
+
+  /* ═════ V8 phone ═════ */
+  .v8{
+    background:var(--warm-cream);
+    background-image:
+      radial-gradient(circle at 8% -6%, rgba(56,189,248,0.12), transparent 36%),
+      radial-gradient(circle at 105% 12%, rgba(244,63,94,0.07), transparent 38%);
+  }
+
+  /* Row 1 · LOGO ROW */
+  .v8 .row-logo{
+    padding:14px 18px 8px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .v8 .brand{
+    display:flex;flex-direction:column;line-height:1;gap:1px;
+  }
+  .v8 .eyebrow{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+    font-size:11px;color:var(--ink-500);letter-spacing:0.02em;
+  }
+  .v8 .w{
+    font-family:'Inter';font-weight:800;font-size:22px;letter-spacing:-0.025em;line-height:1;
+  }
+  .v8 .w .b{color:var(--be-deep)}.v8 .w .e{color:var(--be-sky)}
+  .v8 .top-acts{display:flex;gap:6px}
+  .v8 .iconb{
+    width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.75);
+    border:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;
+    font-size:15px;color:var(--ink-700);backdrop-filter:blur(8px);
+  }
+
+  /* Row 2 · CATEGORY TEXT LINE */
+  .v8 .cat-line{
+    display:flex;gap:18px;overflow-x:auto;padding:6px 18px 8px;
+    border-bottom:1px solid rgba(0,0,0,0.07);margin-bottom:10px;
+    align-items:flex-end;-webkit-overflow-scrolling:touch;
+  }
+  .v8 .cat-line::-webkit-scrollbar{display:none}
+  .v8 .cat{
+    flex-shrink:0;font-size:14px;font-weight:500;color:var(--ink-500);
+    white-space:nowrap;padding-bottom:3px;position:relative;
+    letter-spacing:-0.005em;cursor:pointer;
+  }
+  .v8 .cat.act{color:var(--ink-900);font-weight:800}
+  .v8 .cat.act::after{
+    content:"";position:absolute;left:0;right:0;bottom:-9px;height:2.5px;
+    background:var(--ink-900);border-radius:999px;
+  }
+  .v8 .cat.more{color:var(--ink-400);font-weight:500;font-size:13px;padding-bottom:5px}
+
+  /* Row 3 · SEARCH + 2 FILTERS · all on same line */
+  .v8 .row-search{
+    padding:0 18px 5px;display:flex;gap:6px;align-items:center;
+  }
+  .v8 .search-pill{
+    flex:1;background:rgba(255,255,255,0.75);border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px;padding:7px 14px;font-size:12px;color:var(--ink-500);
+    display:flex;align-items:center;gap:6px;backdrop-filter:blur(6px);
+    font-weight:500;letter-spacing:-0.005em;min-width:0;
+  }
+  .v8 .search-pill .ico{font-size:13px}
+  .v8 .search-pill .txt{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
+  }
+  .v8 .filt{
+    background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px;padding:7px 11px;font-size:11px;font-weight:700;
+    color:var(--ink-700);display:inline-flex;align-items:center;gap:3px;
+    backdrop-filter:blur(6px);white-space:nowrap;flex-shrink:0;
+  }
+  .v8 .filt.pri{
+    background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-color:transparent;
+    box-shadow:0 1px 5px rgba(16,185,129,0.3);
+  }
+  .v8 .filt .ar{font-size:8px;color:var(--ink-400);margin-left:1px}
+  .v8 .filt.pri .ar{color:rgba(255,255,255,0.85)}
+
+  /* Row 4 · TINY AREA + COUNT */
+  .v8 .meta-line{
+    padding:8px 18px 6px;font-size:11px;color:var(--ink-500);font-weight:500;
+    display:flex;align-items:center;gap:5px;
+  }
+  .v8 .meta-line b{color:var(--ink-900);font-weight:700}
+  .v8 .meta-line .sep{opacity:0.4}
+  .v8 .meta-line .ct{
+    font-family:'Inter';font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink-700);
+  }
+
+  /* CARD GRID */
+  .v8 .list{
+    flex:1;overflow-y:auto;padding:6px 12px 14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;
+    background:transparent;
+  }
+  .v8 .list::-webkit-scrollbar{width:0}
+  .v8 .card{
+    background:#fff;border-radius:16px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(20,30,60,0.07),0 6px 18px rgba(20,30,60,0.05);
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .v8 .card .ph{
+    aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;
+    position:relative;
+  }
+  .v8 .av{
+    position:absolute;top:7px;left:7px;
+    background:rgba(255,255,255,0.96);padding:3px 8px;border-radius:6px;
+    font-family:'Inter';font-weight:800;font-size:10px;color:#047857;
+    display:inline-flex;align-items:center;gap:4px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.10);letter-spacing:-0.005em;
+  }
+  .v8 .av .d{
+    width:5px;height:5px;border-radius:50%;background:var(--emerald);
+    box-shadow:0 0 4px rgba(16,185,129,0.6);
+  }
+  .v8 .badge{
+    position:absolute;top:7px;right:7px;
+    background:rgba(15,23,42,0.85);color:#fff;backdrop-filter:blur(6px);
+    padding:2px 7px;border-radius:6px;
+    font-family:'Inter';font-weight:700;font-size:9px;letter-spacing:0.02em;
+  }
+  .v8 .badge.new{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+  .v8 .badge.pop{background:linear-gradient(135deg,#fb7185,#e11d48)}
+
+  .v8 .bd{padding:10px 11px 12px}
+  .v8 .nm-row{display:flex;align-items:baseline;justify-content:space-between;gap:4px;margin-bottom:3px}
+  .v8 .nm3{
+    font-family:'Sarabun','Inter',sans-serif;font-size:15px;font-weight:800;
+    letter-spacing:-0.015em;line-height:1.15;color:var(--ink-900);
+    display:flex;align-items:baseline;gap:5px;flex:1;min-width:0;
+  }
+  .v8 .nm3 .ntxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v8 .vdot{width:6px;height:6px;border-radius:50%;align-self:center;flex-shrink:0}
+  .v8 .dist{
+    font-family:'Inter';font-weight:700;font-size:11px;color:var(--ink-500);
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .v8 .variant-tag{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+    font-size:11px;color:var(--ink-500);margin-bottom:5px;letter-spacing:0.01em;
+  }
+  .v8 .mt{font-size:11px;color:var(--ink-500);display:flex;align-items:center;gap:5px;margin-bottom:5px}
+  .v8 .mt .sep{opacity:0.4}
+  .v8 .mt .pr{color:var(--ink-800);font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+  .v8 .rate{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ink-700);font-family:'Inter';font-variant-numeric:tabular-nums}
+  .v8 .rate .st{color:#f59e0b;font-size:11px}
+  .v8 .rate .ct{color:var(--ink-400);font-weight:500}
+  .v8 .rate.new{color:var(--amber);font-weight:600}
+  .v8 .rate.new::before{content:"✨"}
+
+  .footer{margin-top:24px;text-align:center;color:var(--ink-400);font-size:11px}
+  .footer .w{font-family:'Inter';font-weight:800}
+  .footer .w .b{color:var(--be-navy)}.footer .w .e{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>Pass 26 v8 · Art-spec layout</h1>
+    <div class="sub">Logo row · text categories · search+2-filter inline · tiny area+count meta · then cards</div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ───── PHONE ───── -->
+    <div class="phone"><div class="ps v8"><div class="notch"></div>
+      <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+      <div class="body">
+
+        <!-- ROW 1: LOGO + ICONS -->
+        <div class="row-logo">
+          <div class="brand">
+            <div class="eyebrow">discover &amp; book</div>
+            <div class="w"><span class="b">Book</span><span class="e">Ease</span></div>
+          </div>
+          <div class="top-acts">
+            <span class="iconb">♡</span>
+            <span class="iconb">⊙</span>
+          </div>
+        </div>
+
+        <!-- ROW 2: TEXT CATEGORIES -->
+        <div class="cat-line">
+          <span class="cat act">ทั้งหมด</span>
+          <span class="cat">เสริมสวย</span>
+          <span class="cat">นวด/สปา</span>
+          <span class="cat">เล็บ</span>
+          <span class="cat">ความงาม</span>
+          <span class="cat more">›</span>
+        </div>
+
+        <!-- ROW 3: SEARCH + 2 FILTERS · same line -->
+        <div class="row-search">
+          <div class="search-pill"><span class="ico">🔍</span><span class="txt">ค้นหา</span></div>
+          <span class="filt">📍 ใกล้ฉัน <span class="ar">▾</span></span>
+          <span class="filt pri">ว่างวันนี้ <span class="ar">▾</span></span>
+        </div>
+
+        <!-- ROW 4: TINY AREA + COUNT -->
+        <div class="meta-line">
+          📍 <b>สุขุมวิท</b><span class="sep">·</span><span class="ct">11</span> ร้านที่ว่าง<span class="sep">·</span><span class="ed" style="font-size:11px">เรียงตามใกล้สุด</span>
+        </div>
+
+        <!-- CARDS -->
+        <div class="list">
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=600')">
+              <span class="av"><span class="d"></span>19:30</span>
+              <span class="badge pop">ยอดนิยม</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Rakkana Spa</span><span class="vdot" style="background:#f59e0b"></span></div><span class="dist">1.4km</span></div>
+              <div class="variant-tag">a luxe escape</div>
+              <div class="mt">สปา<span class="sep">·</span><span class="pr">฿890+</span><span class="sep">·</span>เอกมัย</div>
+              <div class="rate"><span class="st">★</span><span class="tab">4.9</span><span class="ct">· <span class="tab">128</span> รีวิว</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=600')">
+              <span class="av"><span class="d"></span>19:05</span>
+              <span class="badge new">ใหม่</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Tll Salon</span><span class="vdot" style="background:#0ea5e9"></span></div><span class="dist">0.8km</span></div>
+              <div class="variant-tag">light &amp; airy</div>
+              <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿300+</span><span class="sep">·</span>สุขุมวิท</div>
+              <div class="rate new">เปิดใหม่ · เป็นคนแรก</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600')">
+              <span class="av"><span class="d"></span>18:55</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Moya</span><span class="vdot" style="background:#a855f7"></span></div><span class="dist">0.4km</span></div>
+              <div class="variant-tag">quiet glamour</div>
+              <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿450+</span><span class="sep">·</span>ทองหล่อ</div>
+              <div class="rate"><span class="st">★</span><span class="tab">4.7</span><span class="ct">· <span class="tab">52</span> รีวิว</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600')">
+              <span class="av"><span class="d"></span>19:00</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Zaza Salon</span><span class="vdot" style="background:#10b981"></span></div><span class="dist">1.1km</span></div>
+              <div class="variant-tag">playful &amp; fresh</div>
+              <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿380+</span><span class="sep">·</span>ทองหล่อ</div>
+              <div class="rate"><span class="st">★</span><span class="tab">4.6</span><span class="ct">· <span class="tab">34</span> รีวิว</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600')">
+              <span class="av"><span class="d"></span>19:15</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Glow Nail</span><span class="vdot" style="background:#ec4899"></span></div><span class="dist">2.1km</span></div>
+              <div class="variant-tag">soft pastel</div>
+              <div class="mt">เล็บ<span class="sep">·</span><span class="pr">฿280+</span><span class="sep">·</span>พร้อมพงษ์</div>
+              <div class="rate"><span class="st">★</span><span class="tab">4.8</span><span class="ct">· <span class="tab">89</span> รีวิว</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;font-size:36px">🌿</div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3"><span class="ntxt">Mafuang</span><span class="vdot" style="background:#f59e0b"></span></div><span class="dist">1.9km</span></div>
+              <div class="variant-tag">healing hands</div>
+              <div class="mt">นวด<span class="sep">·</span><span class="pr">฿550+</span><span class="sep">·</span>พระโขนง</div>
+              <div class="rate"><span class="st">★</span><span class="tab">4.9</span><span class="ct">· <span class="tab">217</span> รีวิว</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bnav">
+          <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+        </div>
+      </div>
+    </div></div>
+
+    <!-- ───── CRITIQUE PANEL ───── -->
+    <div class="crit">
+      <h2>🔬 Elon stress-test of your spec</h2>
+      <div class="lede">Is this perfect? Honest answer + the 3 things I'd push you on.</div>
+
+      <div class="verdict">
+        <h3>Verdict · <span class="latin">95% perfect</span></h3>
+        <p>The structure is tighter than v6/v7 — 4 functional rows, no waste. Logo → categories → search+filters → meta line → cards. Every row earns its existence. The 5% gap is in <b>row priority</b>, not row count.</p>
+        <span class="score">SHIP IF YOU APPROVE THE 3 POKES BELOW</span>
+      </div>
+
+      <div class="takes">
+
+        <div class="take win">
+          <div class="n">✓ WIN · ROW ORDER</div>
+          <h4>Categories before search · counterintuitive but correct</h4>
+          <p>Most apps put search at top (Wongnai · Gowabi). You inverted it. <b>Categories first = decision input. Search = bypass for return users.</b> Decision-led wins for trust purchases. Same logic as Apple Maps "Eat · Drink · Coffee · Bars" rows on the home.</p>
+        </div>
+
+        <div class="take win">
+          <div class="n">✓ WIN · ONE LINE FOR 3 CONTROLS</div>
+          <h4>Search · ใกล้ฉัน · ว่างวันนี้ on one row</h4>
+          <p>Compact + functional. Search shrinks to make room for both filters. Customer can change location/time in one tap without leaving the row. <b>This is the v8 invention worth keeping.</b></p>
+        </div>
+
+        <div class="take win">
+          <div class="n">✓ WIN · TINY META LINE</div>
+          <h4>"📍 สุขุมวิท · 11 ร้านที่ว่าง · เรียงตามใกล้สุด"</h4>
+          <p>Confidence signal in 11 words. Where, how many, sort order. <b>Without this line, customer wonders "is this all? am I missing something?"</b> With it, they know the system is working and trust the feed.</p>
+        </div>
+
+        <div class="take poke">
+          <div class="n">⚠ POKE 1 · LOGO ROW DENSITY</div>
+          <h4>Logo alone feels premium · but ⊙/♡ icons are filler</h4>
+          <p>Your spec said "BookEase logo." I added ♡ + ⊙ for symmetry, but Elon would ask: do those icons earn their pixels?</p>
+          <div class="tip"><b>Option A:</b> Drop both icons · pure brand-only row (most premium, most empty) · <b>Option B:</b> Keep ♡ only · functional + balanced · <b>Option C:</b> Move ♡ to bottom nav · zero clutter in header. Recommend <b>B</b>.</div>
+        </div>
+
+        <div class="take poke">
+          <div class="n">⚠ POKE 2 · "ว่างวันนี้" VS "ใกล้ฉัน" HIERARCHY</div>
+          <h4>Both are filters · but one is the BookEase edge</h4>
+          <p>Currently ว่างวันนี้ is emerald-gradient (priority) and ใกล้ฉัน is neutral. Correct, because availability is our unique advantage. <b>But Elon would push: make the emerald pulse subtly (1Hz · 6% opacity)</b> so customer's eye finds the time filter immediately.</p>
+          <div class="tip"><b>Risk:</b> animation in v0 can feel cheap if overdone. <b>Mitigation:</b> only pulse when filter is non-default (i.e. customer changed from "today" to a specific time). Default = static.</div>
+        </div>
+
+        <div class="take poke">
+          <div class="n">⚠ POKE 3 · "เรียงตามใกล้สุด" IS A LIE WHEN ICE-COLD</div>
+          <h4>Sort label says "near me" but actually we sort by availability + distance</h4>
+          <p>If a shop 0.5km away is full and a shop 2km away has 19:05 free, the 2km shop ranks higher. The label "เรียงตามใกล้สุด" misleads.</p>
+          <div class="tip"><b>Fix:</b> rename to "<b>เรียงตามความว่าง + ใกล้</b>" or simpler: "<b>ว่างก่อน · ใกล้ก่อน</b>". Honest. Reflects actual algorithm. Customer trusts the system more when label matches behavior.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="w"><span class="b">Book</span><span class="e">Ease</span> · Pass 26 v8 · Art-spec layout</div>
+    <div style="margin-top:6px">2026-05-13 · bookease-tools-public/_redesign-marketplace-v8-art-spec.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
