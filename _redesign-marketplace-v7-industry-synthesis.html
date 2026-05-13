@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v7 · industry synthesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --warm-cream:#fbf5ec;
+    --warm-cream-deep:#f6ede0;
+    --paper:#ffffff;
+    --ink-900:#1a1d29;--ink-800:#252836;--ink-700:#3d4254;
+    --ink-600:#5a5f72;--ink-500:#7a7f93;--ink-400:#9aa0b3;
+    --ink-300:#c8ccd9;--ink-200:#e4e7ee;--ink-100:#eef0f5;
+    --line:#e8e2d5;
+    --be-navy:#1E40AF;--be-sky:#38BDF8;--be-deep:#0c2461;
+    --emerald:#10b981;--emerald-50:#ecfdf5;
+    --amber:#f59e0b;--rose:#f43f5e;
+    --gowabi:#3aa48f;--klook:#FF5722;--wongnai:#0099E5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,-apple-system,sans-serif;
+    background:#e7e1d4;color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}
+  .tab{font-variant-numeric:tabular-nums}
+  .ed{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500}
+  .page{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+
+  .hero{margin-bottom:24px}
+  .hero h1{font-family:'Inter';font-weight:800;letter-spacing:-0.03em;font-size:30px;margin:0 0 4px}
+  .hero h1 .b{color:var(--be-navy)}.hero h1 .e{color:var(--be-sky)}
+  .hero .sub{color:var(--ink-500);font-size:14px;font-weight:400}
+
+  /* Industry analysis */
+  .industry{
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:24px;margin-bottom:24px;
+  }
+  .industry h2{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:20px;margin:0 0 4px}
+  .industry .lede{color:var(--ink-500);font-size:13px;margin-bottom:18px}
+  .platforms{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .plat{
+    background:var(--warm-cream);border-radius:12px;padding:16px;
+    border-top:3px solid var(--be-navy);
+  }
+  .plat.gowabi{border-top-color:var(--gowabi)}
+  .plat.klook{border-top-color:var(--klook)}
+  .plat.wongnai{border-top-color:var(--wongnai)}
+  .plat.current{border-top-color:#dc2626;opacity:0.85}
+  .plat-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .plat-name{font-family:'Inter';font-weight:800;font-size:14px;letter-spacing:-0.01em}
+  .plat-tag{font-family:'Inter';font-weight:600;font-size:10px;color:var(--ink-500);letter-spacing:0.04em;text-transform:uppercase}
+  .plat-section{margin:8px 0}
+  .plat-section .ph{font-size:11px;font-weight:700;color:var(--ink-900);margin-bottom:3px}
+  .plat-section ul{margin:0;padding-left:16px;font-size:11px;color:var(--ink-700);line-height:1.5}
+  .plat-section ul li{margin:1px 0}
+  .plat-section.steal{
+    background:rgba(16,185,129,0.08);border-radius:6px;padding:8px 10px;margin-top:10px;
+  }
+  .plat-section.steal .ph{color:#047857}
+  .plat-section.steal ul li{color:#065f46}
+  .plat-section.skip{background:rgba(239,68,68,0.05);border-radius:6px;padding:8px 10px;margin-top:6px}
+  .plat-section.skip .ph{color:#b91c1c}
+  .plat-section.skip ul li{color:#7f1d1d}
+
+  /* Synthesis callout */
+  .synth{
+    background:linear-gradient(135deg,#1e1b4b 0%,#3730a3 100%);color:#fff;
+    border-radius:18px;padding:26px 28px;margin-bottom:24px;
+  }
+  .synth h2{font-family:'Inter';font-weight:800;font-size:20px;margin:0 0 4px;letter-spacing:-0.02em;color:#fff}
+  .synth .lede{color:#c7d2fe;font-size:13px;margin-bottom:16px}
+  .synth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .synth-item{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px;padding:13px 15px;
+  }
+  .synth-item .from{
+    font-family:'Inter';font-weight:700;font-size:9px;color:#a5b4fc;
+    letter-spacing:0.05em;text-transform:uppercase;margin-bottom:4px;
+  }
+  .synth-item h4{font-size:13px;font-weight:700;margin:0 0 6px;letter-spacing:-0.01em}
+  .synth-item p{margin:0;font-size:11px;color:#dbeafe;line-height:1.55}
+
+  /* V7 phone */
+  .v7-section{
+    display:grid;grid-template-columns:1fr 1.3fr;gap:24px;margin-bottom:24px;
+    align-items:start;
+  }
+  @media(max-width:980px){.v7-section{grid-template-columns:1fr}}
+  .v7-side{
+    background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;
+  }
+  .v7-side h2{font-family:'Inter';font-weight:800;font-size:18px;margin:0 0 6px;letter-spacing:-0.02em}
+  .v7-side .lede{color:var(--ink-500);font-size:12px;margin-bottom:14px}
+  .deltas-v7{display:flex;flex-direction:column;gap:9px}
+  .d7{
+    background:var(--warm-cream);border-radius:9px;padding:11px 13px;
+    border-left:3px solid var(--be-deep);
+  }
+  .d7 .n{font-family:'Inter';font-weight:800;font-size:10px;color:var(--be-deep);letter-spacing:0.05em;margin-bottom:3px}
+  .d7 h4{font-size:13px;font-weight:700;margin:0 0 4px;letter-spacing:-0.005em}
+  .d7 p{font-size:11px;color:var(--ink-700);margin:0;line-height:1.5}
+
+  /* Phone */
+  .phone{background:#1a1a1a;border-radius:42px;padding:11px;box-shadow:0 24px 60px rgba(0,0,0,0.25);width:100%;max-width:430px;margin:0 auto}
+  .ps{border-radius:32px;overflow:hidden;height:880px;display:flex;flex-direction:column;position:relative}
+  .notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:88px;height:24px;background:#1a1a1a;border-radius:13px;z-index:10}
+  .status{height:32px;display:flex;align-items:center;justify-content:space-between;padding:8px 24px 0;font-family:'Inter';font-weight:600;font-size:12px;flex-shrink:0;z-index:2;color:var(--ink-900)}
+  .body{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .bnav{height:56px;border-top:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:6px;z-index:5}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--ink-400);font-weight:500}
+  .bnav-item.active{color:var(--be-navy)}
+  .bnav-item svg{width:19px;height:19px}
+
+  /* ═══════════════ V7 PHONE STYLES ═══════════════ */
+  .v7{
+    background:var(--warm-cream);
+    background-image:
+      radial-gradient(circle at 8% -6%, rgba(56,189,248,0.12), transparent 36%),
+      radial-gradient(circle at 105% 12%, rgba(244,63,94,0.07), transparent 38%);
+  }
+
+  /* — Compact header (Wongnai-inspired: brand + search + location in 1-2 rows) — */
+  .v7 .head{padding:14px 16px 4px;position:relative}
+  .v7 .top-row{
+    display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+    margin-bottom:10px;
+  }
+  .v7 .brand-mark{
+    display:flex;flex-direction:column;align-items:flex-start;gap:0px;line-height:1;
+  }
+  .v7 .eyebrow{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10px;
+    color:var(--ink-500);margin-bottom:1px;letter-spacing:0.02em;
+  }
+  .v7 .w{
+    font-family:'Inter';font-weight:800;font-size:18px;letter-spacing:-0.025em;line-height:1;
+  }
+  .v7 .w .b{color:var(--be-deep)}.v7 .w .e{color:var(--be-sky)}
+  .v7 .top-search{
+    background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.06);
+    border-radius:12px;padding:8px 12px;font-size:12px;color:var(--ink-400);
+    display:flex;align-items:center;gap:6px;font-weight:500;backdrop-filter:blur(6px);
+  }
+  .v7 .top-actions{display:flex;gap:6px}
+  .v7 .iconb{
+    width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.75);
+    border:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;
+    font-size:14px;color:var(--ink-700);backdrop-filter:blur(8px);
+  }
+  .v7 .loc-bar{
+    font-size:11px;color:var(--ink-600);margin-bottom:6px;
+    display:flex;align-items:center;gap:5px;
+  }
+  .v7 .loc-bar b{color:var(--ink-900);font-weight:700}
+  .v7 .loc-bar .ct{
+    margin-left:auto;font-family:'Inter';font-weight:700;color:var(--be-deep);
+    background:rgba(30,64,175,0.10);padding:3px 9px;border-radius:999px;font-size:10px;
+  }
+
+  /* — Text-line categories (v6 lock) — */
+  .v7 .cat-line{
+    display:flex;gap:18px;overflow-x:auto;padding:8px 0 7px;
+    border-bottom:1px solid rgba(0,0,0,0.07);margin-bottom:8px;
+    align-items:flex-end;-webkit-overflow-scrolling:touch;
+  }
+  .v7 .cat-line::-webkit-scrollbar{display:none}
+  .v7 .cat{
+    flex-shrink:0;font-size:14px;font-weight:500;color:var(--ink-500);
+    white-space:nowrap;padding-bottom:3px;position:relative;
+    letter-spacing:-0.005em;cursor:pointer;transition:color 0.15s;
+  }
+  .v7 .cat.act{color:var(--ink-900);font-weight:800}
+  .v7 .cat.act::after{
+    content:"";position:absolute;left:0;right:0;bottom:-7px;height:2.5px;
+    background:var(--ink-900);border-radius:999px;
+  }
+  .v7 .cat.more{color:var(--ink-400);font-weight:500;font-size:13px;padding-bottom:5px}
+
+  /* — Time/location filter row — */
+  .v7 .row2{display:flex;gap:6px;padding:2px 0 0;margin-bottom:2px;flex-wrap:wrap}
+  .v7 .chip2{
+    background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px;padding:5px 12px;font-size:11px;font-weight:600;
+    color:var(--ink-700);display:inline-flex;align-items:center;gap:4px;
+    backdrop-filter:blur(6px);white-space:nowrap;
+  }
+  .v7 .chip2.pri{
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:#fff;border-color:transparent;font-weight:700;
+    box-shadow:0 1px 5px rgba(16,185,129,0.3);
+  }
+  .v7 .chip2 .ar{color:var(--ink-400);font-size:9px}
+  .v7 .chip2.pri .ar{color:rgba(255,255,255,0.85)}
+
+  /* — Card grid (v6 + industry-best card data) — */
+  .v7 .list{
+    flex:1;overflow-y:auto;padding:12px 12px 14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;
+    background:transparent;
+  }
+  .v7 .list::-webkit-scrollbar{width:0}
+  .v7 .card{
+    background:#fff;border-radius:16px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(20,30,60,0.07),0 6px 18px rgba(20,30,60,0.05);
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .v7 .card .ph{
+    aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;
+    position:relative;
+  }
+  /* Availability pill (BookEase edge) */
+  .v7 .av{
+    position:absolute;top:7px;left:7px;
+    background:rgba(255,255,255,0.96);padding:3px 8px;border-radius:6px;
+    font-family:'Inter';font-weight:800;font-size:10px;color:#047857;
+    display:inline-flex;align-items:center;gap:4px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.10);letter-spacing:-0.005em;
+  }
+  .v7 .av .d{
+    width:5px;height:5px;border-radius:50%;background:var(--emerald);
+    box-shadow:0 0 4px rgba(16,185,129,0.6);
+  }
+  .v7 .av.tomo{color:#92400e}
+  .v7 .av.tomo .d{background:var(--amber)}
+  /* Trust badge top-right (Gowabi/Klook pattern) */
+  .v7 .badge{
+    position:absolute;top:7px;right:7px;
+    background:rgba(15,23,42,0.85);color:#fff;backdrop-filter:blur(6px);
+    padding:2px 7px;border-radius:6px;
+    font-family:'Inter';font-weight:700;font-size:9px;letter-spacing:0.02em;
+  }
+  .v7 .badge.new{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+  .v7 .badge.pop{background:linear-gradient(135deg,#fb7185,#e11d48)}
+
+  /* === Body: prominent name + variant theme italic + meta + rating === */
+  .v7 .bd{padding:10px 11px 12px}
+  .v7 .nm-row{
+    display:flex;align-items:baseline;justify-content:space-between;
+    gap:4px;margin-bottom:3px;
+  }
+  .v7 .nm3{
+    font-family:'Sarabun','Inter',sans-serif;font-size:15px;font-weight:800;
+    letter-spacing:-0.015em;line-height:1.15;color:var(--ink-900);
+    display:flex;align-items:baseline;gap:5px;flex:1;min-width:0;
+  }
+  .v7 .nm3 .ntxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v7 .vdot{width:6px;height:6px;border-radius:50%;align-self:center;flex-shrink:0}
+  .v7 .dist{
+    font-family:'Inter';font-weight:700;font-size:11px;color:var(--ink-500);
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  /* NEW: variant theme as italic sub-text (premium feel) */
+  .v7 .variant-tag{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+    font-size:11px;color:var(--ink-500);margin-bottom:5px;letter-spacing:0.01em;
+  }
+  .v7 .mt{
+    font-size:11px;color:var(--ink-500);display:flex;align-items:center;gap:5px;
+    font-weight:500;margin-bottom:5px;
+  }
+  .v7 .mt .sep{opacity:0.4}
+  .v7 .mt .pr{color:var(--ink-800);font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+  /* NEW: rating row (Gowabi/Wongnai pattern) */
+  .v7 .rate{
+    display:flex;align-items:center;gap:4px;font-size:10px;
+    color:var(--ink-700);font-family:'Inter';font-variant-numeric:tabular-nums;
+  }
+  .v7 .rate .st{color:#f59e0b;font-size:11px}
+  .v7 .rate .ct{color:var(--ink-400);font-weight:500}
+  .v7 .rate.new{color:var(--amber);font-weight:600}
+  .v7 .rate.new::before{content:"✨"}
+
+  /* Footer wordmark */
+  .footer{margin-top:24px;text-align:center;color:var(--ink-400);font-size:11px}
+  .footer .w{font-family:'Inter';font-weight:800}
+  .footer .w .b{color:var(--be-navy)}.footer .w .e{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>Pass 26 v7 · industry synthesis</h1>
+    <div class="sub">Studied Gowabi · Klook · Wongnai · steal the best · skip the rest · ship v7 = blend</div>
+  </header>
+
+  <!-- ──── INDUSTRY AUDIT ──── -->
+  <section class="industry">
+    <h2>🔬 Industry audit · what each does well, what we skip</h2>
+    <div class="lede">Live-fetched 2026-05-13 BKK. 3 closest analogs + our current. Each contributes 1-2 ideas to v7.</div>
+
+    <div class="platforms">
+
+      <div class="plat gowabi">
+        <div class="plat-head"><span class="plat-name">GoWabi</span><span class="plat-tag">DIRECT COMPETITOR</span></div>
+        <div class="plat-section">
+          <div class="ph">Layout</div>
+          <ul>
+            <li>Sidebar list of 12 categories (vertical · text + tiny icon)</li>
+            <li>3-col card grid · big discount-led promos</li>
+            <li>Cards: photo + <b>-78%</b> badge + strikethrough price + ฿actual + name + ★ stars + location</li>
+          </ul>
+        </div>
+        <div class="plat-section steal">
+          <div class="ph">✓ Steal</div>
+          <ul>
+            <li>★ rating + review count under shop name</li>
+            <li>Trust badge on photo (top-right)</li>
+            <li>Location label below name (specific area: "เอกมัย", "ทองหล่อ")</li>
+          </ul>
+        </div>
+        <div class="plat-section skip">
+          <div class="ph">✗ Skip</div>
+          <ul>
+            <li>Discount % obsession (we're transactional · no Groupon mechanic)</li>
+            <li>Sidebar nav (eats horizontal space · iOS hostile)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="plat klook">
+        <div class="plat-head"><span class="plat-name">Klook</span><span class="plat-tag">TRAVEL EXPERIENCES</span></div>
+        <div class="plat-section">
+          <div class="ph">Layout</div>
+          <ul>
+            <li>Full-bleed hero photo + overlay search</li>
+            <li>6 colored category icons in a row (Tours · Tickets · Hotels · Transport · Car · All)</li>
+            <li>"Offers for you" promo carousel · "Where to next?" destinations</li>
+          </ul>
+        </div>
+        <div class="plat-section steal">
+          <div class="ph">✓ Steal</div>
+          <ul>
+            <li>Photo-rich premium feel · large hero shots</li>
+            <li>Variant theme tag as editorial italic (we use Cormorant in /payment)</li>
+          </ul>
+        </div>
+        <div class="plat-section skip">
+          <div class="ph">✗ Skip</div>
+          <ul>
+            <li>Hero photo banner (Pass 25 v22 lock · "no marketing fluff in hero")</li>
+            <li>Colored icon-grid categories (heavier than text · per Art v6 lock)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="plat wongnai">
+        <div class="plat-head"><span class="plat-name">Wongnai</span><span class="plat-tag">THAI MARKET DIRECTORY</span></div>
+        <div class="plat-section">
+          <div class="ph">Layout</div>
+          <ul>
+            <li>Compact 1-row header: logo + location + search (genius density)</li>
+            <li>8 circular icon categories in a row · colored backgrounds</li>
+            <li>Sub-tabs with <b>text + underline</b> ("ร้านยอดนิยม") · NOT pills</li>
+          </ul>
+        </div>
+        <div class="plat-section steal">
+          <div class="ph">✓ Steal</div>
+          <ul>
+            <li><b>Compact 1-row header pattern</b> · brand + location + search inline</li>
+            <li>Text+underline sub-tabs · validates Art's v6 lock</li>
+            <li>Specific location naming (BTS station / district)</li>
+          </ul>
+        </div>
+        <div class="plat-section skip">
+          <div class="ph">✗ Skip</div>
+          <ul>
+            <li>Icon-grid categories (we tried; text-line denser per v6 lock)</li>
+            <li>Big "Users' Choice" trophy banner</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="plat current">
+        <div class="plat-head"><span class="plat-name">Current bookease.co</span><span class="plat-tag">LIVE TODAY</span></div>
+        <div class="plat-section">
+          <div class="ph">Layout</div>
+          <ul>
+            <li>Blue hero with "60 วินาที" marketing copy · 40% viewport waste</li>
+            <li>1 useless tab "ทั้งหมด" · 2 filter chips</li>
+            <li>2-col square cards · name + distance only · no availability · no price · no rating</li>
+            <li>Cherry100 at 438km leaks through · cat-meme shop leaks through</li>
+          </ul>
+        </div>
+        <div class="plat-section skip">
+          <div class="ph">✗ Below industry baseline on 5 of 6 dimensions</div>
+          <ul>
+            <li>vs Gowabi: missing price · rating · trust badge</li>
+            <li>vs Klook: missing visual premium · category nav</li>
+            <li>vs Wongnai: missing compact header · multi-tier categories</li>
+            <li>vs all: missing availability signal (BookEase's unique edge — squandered)</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── SYNTHESIS CALLOUT ──── -->
+  <section class="synth">
+    <h2>🧬 The Elon synthesis · what each contributes to v7</h2>
+    <div class="lede">"Be the best on every dimension. Borrow the best implementation of each from whoever ships it best."</div>
+    <div class="synth-grid">
+
+      <div class="synth-item">
+        <div class="from">From Wongnai</div>
+        <h4>Compact header</h4>
+        <p>Brand · search · location collapsed into ~2 rows total. Saves ~80px of prime real estate vs our current 3-row stack.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Wongnai + Art</div>
+        <h4>Text+underline category nav</h4>
+        <p>Confirmed: both Wongnai's sub-tabs and Art's v6 lock use the same pattern. Industry-validated.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Gowabi</div>
+        <h4>★ rating + review count</h4>
+        <p>Trust signal next to name. Renders only when shop has &gt;1 real review. Hidden gracefully for new shops.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Gowabi</div>
+        <h4>Trust badge (top-right of photo)</h4>
+        <p>"ใหม่" for shops &lt;30 days · "ยอดนิยม" for shops &gt;X bookings · "Verified" for KYC-passed.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Klook + Pass 25</div>
+        <h4>Variant theme as italic sub-line</h4>
+        <p>"<span class="ed">a luxe escape</span>" or "<span class="ed">light &amp; airy</span>" under shop name · Cormorant Garamond · already in /payment trust strip · brand-coherent premium feel.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Booking.com + BookEase</div>
+        <h4>"ว่างวันนี้ ▾" as primary filter</h4>
+        <p>Industry leaders use time as filter (set dates → see hotels). NO competitor in this audit uses availability for the marketplace home — our unique edge.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">From Gowabi + Wongnai</div>
+        <h4>Specific neighborhood label</h4>
+        <p>"เอกมัย" "ทองหล่อ" "อโศก" — specific district, not just distance. Thai customers think in neighborhoods, not km.</p>
+      </div>
+
+      <div class="synth-item">
+        <div class="from">All competitors</div>
+        <h4>Photo-first density</h4>
+        <p>Every winner leads with hero photos · 60%+ of card area. v7 keeps the 4:5 ratio so photo dominates without dominating scroll.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── V7 PHONE + DELTAS ──── -->
+  <section class="v7-section">
+
+    <div class="v7-side">
+      <h2>★ V7 · the synthesis</h2>
+      <div class="lede">Every choice traces back to an industry-best behavior + Art's locked principles. No invention for invention's sake.</div>
+      <div class="deltas-v7">
+
+        <div class="d7">
+          <div class="n">01 · HEADER</div>
+          <h4>Brand + location + search in 2 rows</h4>
+          <p>Wongnai's compact pattern. Eyebrow + wordmark + 🔍 ♡ icons row 1 · location bar row 2 (with count pill).</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">02 · CATEGORIES</div>
+          <h4>Text line, underline-active</h4>
+          <p>v6 lock confirmed by Wongnai. <b>ทั้งหมด</b> · เสริมสวย · นวด/สปา · เล็บ · ความงาม · ›</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">03 · TIME FILTER</div>
+          <h4>"ว่างวันนี้ ▾" (BookEase unique)</h4>
+          <p>Emerald gradient pill · the discriminator no competitor has. Sets the availability window for the whole feed.</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">04 · CARD · BADGE</div>
+          <h4>Trust badge top-right of photo</h4>
+          <p>"ใหม่" · "ยอดนิยม" · "Verified" · only when data justifies it. Gowabi pattern.</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">05 · CARD · NAME</div>
+          <h4>15px/800 prominent (v6 lock)</h4>
+          <p>Larger + heavier than meta · distance right-aligned on same row.</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">06 · CARD · VIBE TAG</div>
+          <h4>Variant theme as italic sub-line</h4>
+          <p>"<span class="ed">a luxe escape</span>" or "<span class="ed">light &amp; airy</span>" · Cormorant Garamond · premium feel · differentiates shops with the same category.</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">07 · CARD · META</div>
+          <h4>Category · price · neighborhood</h4>
+          <p>"สปา · ฿890+ · เอกมัย" · district replaces abstract distance for Thai mental model.</p>
+        </div>
+
+        <div class="d7">
+          <div class="n">08 · CARD · RATING</div>
+          <h4>★ + review count when real</h4>
+          <p>"★ 4.9 · 128" rendering only when ≥1 real review · gracefully hidden for new shops (show "✨ ใหม่" badge instead).</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHONE -->
+    <div class="phone">
+      <div class="ps v7">
+        <div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+
+          <div class="head">
+            <div class="top-row">
+              <div class="brand-mark">
+                <div class="eyebrow">discover &amp; book</div>
+                <div class="w"><span class="b">Book</span><span class="e">Ease</span></div>
+              </div>
+              <div class="top-search">🔍 ค้นหา · บริการ · พื้นที่</div>
+              <div class="top-actions">
+                <span class="iconb">♡</span>
+              </div>
+            </div>
+            <div class="loc-bar">
+              📍 <b>สุขุมวิท</b>
+              <span class="ct"><span class="tab">11</span> ร้าน</span>
+            </div>
+
+            <!-- Categories: text line with underline -->
+            <div class="cat-line">
+              <span class="cat act">ทั้งหมด</span>
+              <span class="cat">เสริมสวย</span>
+              <span class="cat">นวด/สปา</span>
+              <span class="cat">เล็บ</span>
+              <span class="cat">ความงาม</span>
+              <span class="cat more">›</span>
+            </div>
+
+            <!-- Time + location filter -->
+            <div class="row2">
+              <span class="chip2 pri">ว่างวันนี้ <span class="ar">▾</span></span>
+              <span class="chip2">📍 ใกล้ฉัน <span class="ar">▾</span></span>
+            </div>
+          </div>
+
+          <!-- Card grid -->
+          <div class="list">
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=600')">
+                <span class="av"><span class="d"></span>19:30</span>
+                <span class="badge pop">ยอดนิยม</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Rakkana Spa</span><span class="vdot" style="background:#f59e0b"></span></div>
+                  <span class="dist">1.4km</span>
+                </div>
+                <div class="variant-tag">a luxe escape</div>
+                <div class="mt">สปา<span class="sep">·</span><span class="pr">฿890+</span><span class="sep">·</span>เอกมัย</div>
+                <div class="rate"><span class="st">★</span><span class="tab">4.9</span><span class="ct">· <span class="tab">128</span> รีวิว</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=600')">
+                <span class="av"><span class="d"></span>19:05</span>
+                <span class="badge new">ใหม่</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Tll Salon</span><span class="vdot" style="background:#0ea5e9"></span></div>
+                  <span class="dist">0.8km</span>
+                </div>
+                <div class="variant-tag">light &amp; airy</div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿300+</span><span class="sep">·</span>สุขุมวิท</div>
+                <div class="rate new">เปิดใหม่ · เป็นคนแรก</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600')">
+                <span class="av"><span class="d"></span>18:55</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Moya</span><span class="vdot" style="background:#a855f7"></span></div>
+                  <span class="dist">0.4km</span>
+                </div>
+                <div class="variant-tag">quiet glamour</div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿450+</span><span class="sep">·</span>ทองหล่อ</div>
+                <div class="rate"><span class="st">★</span><span class="tab">4.7</span><span class="ct">· <span class="tab">52</span> รีวิว</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600')">
+                <span class="av"><span class="d"></span>19:00</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Zaza Salon</span><span class="vdot" style="background:#10b981"></span></div>
+                  <span class="dist">1.1km</span>
+                </div>
+                <div class="variant-tag">playful &amp; fresh</div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿380+</span><span class="sep">·</span>ทองหล่อ</div>
+                <div class="rate"><span class="st">★</span><span class="tab">4.6</span><span class="ct">· <span class="tab">34</span> รีวิว</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600')">
+                <span class="av"><span class="d"></span>19:15</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Glow Nail</span><span class="vdot" style="background:#ec4899"></span></div>
+                  <span class="dist">2.1km</span>
+                </div>
+                <div class="variant-tag">soft pastel</div>
+                <div class="mt">เล็บ<span class="sep">·</span><span class="pr">฿280+</span><span class="sep">·</span>พร้อมพงษ์</div>
+                <div class="rate"><span class="st">★</span><span class="tab">4.8</span><span class="ct">· <span class="tab">89</span> รีวิว</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;font-size:36px">🌿</div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3"><span class="ntxt">Mafuang</span><span class="vdot" style="background:#f59e0b"></span></div>
+                  <span class="dist">1.9km</span>
+                </div>
+                <div class="variant-tag">healing hands</div>
+                <div class="mt">นวด<span class="sep">·</span><span class="pr">฿550+</span><span class="sep">·</span>พระโขนง</div>
+                <div class="rate"><span class="st">★</span><span class="tab">4.9</span><span class="ct">· <span class="tab">217</span> รีวิว</span></div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="footer">
+    <div class="w"><span class="b">Book</span><span class="e">Ease</span> · Pass 26 v7 · industry synthesis</div>
+    <div style="margin-top:6px">2026-05-13 · bookease-tools-public/_redesign-marketplace-v7-industry-synthesis.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
