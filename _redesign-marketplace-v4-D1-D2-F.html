@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v4 · D1 vs D2 (+ F honest take)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cool-mist:#f5f8fc;
+    --ink-900:#0f172a;--ink-800:#1e293b;--ink-700:#334155;--ink-600:#475569;
+    --ink-500:#64748b;--ink-400:#94a3b8;--ink-300:#cbd5e1;--ink-200:#e2e8f0;
+    --ink-100:#f1f5f9;--ink-50:#f8fafc;
+    --line:#e2e8f0;
+    --be-navy:#1E40AF;--be-sky:#38BDF8;
+    --emerald:#10b981;--emerald-50:#ecfdf5;
+    --amber:#f59e0b;--red:#ef4444;--red-50:#fef2f2;--rose:#f43f5e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,-apple-system,sans-serif;
+    background:#eef2f7;color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}
+  .tab{font-variant-numeric:tabular-nums}
+  .page{max-width:1440px;margin:0 auto;padding:32px 24px 80px}
+
+  .hero{margin-bottom:24px}
+  .hero h1{font-family:'Inter';font-weight:800;letter-spacing:-0.03em;font-size:32px;margin:0 0 6px}
+  .hero h1 .b{color:var(--be-navy)}.hero h1 .e{color:var(--be-sky)}
+  .hero .sub{color:var(--ink-500);font-size:15px;font-weight:400}
+
+  /* F honest take */
+  .f-take{
+    background:linear-gradient(135deg,#0c4a6e,#1e3a8a);color:#fff;
+    border-radius:18px;padding:24px 28px;margin-bottom:28px;
+  }
+  .f-take h3{font-family:'Inter';font-weight:800;font-size:18px;margin:0 0 6px;letter-spacing:-0.01em}
+  .f-take p{margin:0 0 10px;font-size:13px;color:#dbeafe;line-height:1.65}
+  .f-take p:last-child{margin-bottom:0}
+  .f-take b{color:#fff}
+  .f-take .verdict{
+    display:inline-block;background:rgba(255,255,255,0.15);
+    padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;
+    letter-spacing:0.04em;margin-top:6px;font-family:'Inter';
+  }
+
+  /* Filter system explanation */
+  .filter-arch{
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:24px 28px;margin-bottom:28px;
+  }
+  .filter-arch h3{font-family:'Inter';font-weight:800;font-size:17px;margin:0 0 12px;letter-spacing:-0.01em}
+  .filter-arch .stack{display:flex;flex-direction:column;gap:8px}
+  .filter-arch .lvl{
+    display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
+    padding:10px 14px;background:var(--cool-mist);border-radius:10px;
+  }
+  .filter-arch .lvl .lvl-tag{
+    font-family:'Inter';font-weight:800;font-size:11px;color:var(--be-navy);
+    letter-spacing:0.05em;min-width:60px;
+  }
+  .filter-arch .lvl .lvl-body{font-size:13px;color:var(--ink-700);line-height:1.5}
+  .filter-arch .lvl .lvl-body b{color:var(--ink-900);font-weight:700}
+  .filter-arch .lvl .lvl-body code{
+    background:#fff;padding:1px 6px;border-radius:4px;font-family:'Inter';
+    font-size:11px;color:var(--ink-700);border:1px solid var(--ink-200);
+  }
+
+  /* Phone grid */
+  .compare{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+    margin-bottom:28px;
+  }
+  @media(max-width:1280px){.compare{grid-template-columns:repeat(2,1fr);gap:24px}}
+  @media(max-width:640px){.compare{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column}
+  .col-head{margin-bottom:10px;padding:0 2px}
+  .tag{
+    display:inline-flex;padding:3px 9px;border-radius:6px;font-size:10px;
+    font-weight:700;letter-spacing:0.05em;font-family:'Inter';margin-bottom:6px;
+  }
+  .tag.bad{background:var(--red-50);color:#b91c1c}
+  .tag.good{background:var(--emerald-50);color:#047857}
+  .tag.star{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}
+  .tag.try{background:#eff6ff;color:#1d4ed8}
+  .nm{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:15px;margin-bottom:2px}
+  .desc{font-size:11px;color:var(--ink-500);line-height:1.4;min-height:42px}
+
+  /* Phone frame */
+  .phone{background:#1a1a1a;border-radius:32px;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,0.15);width:100%}
+  .ps{background:#fff;border-radius:24px;overflow:hidden;height:720px;display:flex;flex-direction:column;position:relative}
+  .notch{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:72px;height:18px;background:#1a1a1a;border-radius:10px;z-index:5}
+  .status{height:26px;display:flex;align-items:center;justify-content:space-between;padding:5px 16px 0;font-family:'Inter';font-weight:600;font-size:10px;flex-shrink:0}
+  .body{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff}
+  .bnav{height:46px;border-top:1px solid var(--ink-200);background:#fff;display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:4px}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:8px;color:var(--ink-400);font-weight:500}
+  .bnav-item.active{color:var(--be-navy)}
+  .bnav-item svg{width:15px;height:15px}
+
+  /* ═══ Filter header (D1 · D2 · F · used by all 3 new variants) ═══ */
+  .fhead{padding:10px 14px 6px;background:#fff;flex-shrink:0;border-bottom:1px solid var(--ink-100)}
+  .fhead .br{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .fhead .br .w{font-family:'Inter';font-weight:800;font-size:15px;letter-spacing:-0.02em}
+  .fhead .br .w .b{color:var(--be-navy)}.fhead .br .w .e{color:var(--be-sky)}
+  .fhead .br .loc{font-size:10px;color:var(--ink-500);font-weight:500}
+  .fhead .br .loc b{color:var(--ink-900);font-weight:700}
+  .fhead .search{
+    background:var(--ink-100);border-radius:9px;padding:6px 10px;font-size:10px;
+    color:var(--ink-500);display:flex;align-items:center;gap:5px;margin-bottom:8px;
+  }
+  /* Row 1: category chips */
+  .fhead .row{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}
+  .fhead .row::-webkit-scrollbar{display:none}
+  .fhead .row .ch{
+    background:#fff;border:1px solid var(--ink-200);border-radius:999px;
+    padding:5px 11px;font-size:11px;font-weight:500;color:var(--ink-700);
+    white-space:nowrap;flex-shrink:0;
+  }
+  .fhead .row .ch.act{background:var(--ink-900);color:#fff;border-color:var(--ink-900);font-weight:700}
+  .fhead .row .ch.more{color:var(--ink-500);background:var(--ink-50)}
+  /* Row 2: time/location filter */
+  .fhead .row2{
+    display:flex;gap:5px;margin-top:5px;padding-top:5px;
+    border-top:1px solid var(--ink-100);
+  }
+  .fhead .row2 .ch{
+    background:#fff;border:1px solid var(--ink-200);border-radius:999px;
+    padding:5px 10px;font-size:10px;font-weight:600;color:var(--ink-700);
+    white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:3px;
+  }
+  .fhead .row2 .ch .arrow{color:var(--ink-400);font-size:9px}
+  .fhead .row2 .ch.pri{background:var(--emerald-50);border-color:#a7f3d0;color:#047857;font-weight:700}
+
+  /* ═══ CURRENT phone (compact, no header changes) ═══ */
+  .p1-hero{background:linear-gradient(135deg,#2D55EB,#1E40AF);color:#fff;padding:10px 12px;flex-shrink:0}
+  .p1-h1{font-size:12px;font-weight:700;margin:0 0 1px}
+  .p1-h2{font-size:11px;font-weight:700;margin:0 0 4px}
+  .p1-pin{font-size:8px;opacity:0.9}
+  .p1-search{background:#fff;border-radius:8px;padding:5px 8px;font-size:8px;color:var(--ink-400);margin-top:6px}
+  .p1-list{flex:1;overflow-y:auto;padding:6px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .p1-list::-webkit-scrollbar{width:0}
+  .p1-card{background:#fff;border:1px solid var(--ink-200);border-radius:8px;overflow:hidden}
+  .p1-card .ph{aspect-ratio:1/1;background:var(--ink-100);background-size:cover;background-position:center}
+  .p1-card .nm{padding:4px 6px 1px;font-size:10px;font-weight:700}
+  .p1-card .dt{padding:0 6px 5px;font-size:8px;color:var(--ink-500);font-family:'Inter'}
+
+  /* ═══ VARIANT D1 · BIG HOTEL CARD (1-col, 16:10) ═══ */
+  .d1-list{flex:1;overflow-y:auto;padding:8px 10px 10px;background:#fff}
+  .d1-list::-webkit-scrollbar{width:0}
+  .d1-card{background:#fff;border:1px solid var(--ink-200);border-radius:12px;overflow:hidden;margin-bottom:10px}
+  .d1-photo{aspect-ratio:16/10;background:var(--ink-100);background-size:cover;background-position:center;position:relative}
+  .d1-avail{
+    position:absolute;top:7px;left:7px;
+    background:rgba(15,23,42,0.85);color:#fff;backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    padding:3px 9px;border-radius:999px;
+    font-family:'Inter';font-weight:700;font-size:9px;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .d1-avail .dot{width:5px;height:5px;border-radius:50%;background:#34d399;box-shadow:0 0 5px rgba(52,211,153,0.9)}
+  .d1-heart{position:absolute;top:7px;right:7px;width:24px;height:24px;background:rgba(255,255,255,0.92);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);font-size:11px;color:var(--ink-700)}
+  .d1-body{padding:8px 10px 10px}
+  .d1-row1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+  .d1-name{font-size:13px;font-weight:700;letter-spacing:-0.005em;line-height:1.2;display:flex;align-items:baseline;gap:5px}
+  .d1-vdot{width:6px;height:6px;border-radius:50%;background:#fb7185;align-self:center}
+  .d1-meta{font-size:10px;color:var(--ink-500);display:flex;align-items:center;gap:4px;margin-bottom:3px}
+  .d1-meta .sep{opacity:0.4}
+  .d1-meta .price{color:var(--ink-700);font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+  .d1-slot{font-size:10px;color:#047857;font-weight:600;font-family:'Inter';font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:3px}
+
+  /* ═══ VARIANT D2 · COMPACT RESULT ROW (1-col, 4:3 smaller photo) ═══ */
+  .d2-list{flex:1;overflow-y:auto;padding:6px 10px 10px;background:#fff}
+  .d2-list::-webkit-scrollbar{width:0}
+  .d2-card{
+    background:#fff;border:1px solid var(--ink-200);border-radius:12px;
+    overflow:hidden;margin-bottom:8px;
+    display:grid;grid-template-columns:120px 1fr;
+  }
+  .d2-photo{background:var(--ink-100);background-size:cover;background-position:center;position:relative}
+  .d2-avail{
+    position:absolute;top:6px;left:6px;
+    background:rgba(255,255,255,0.96);
+    padding:3px 7px;border-radius:5px;
+    font-family:'Inter';font-weight:800;font-size:9px;color:#047857;
+    display:inline-flex;align-items:center;gap:3px;
+  }
+  .d2-avail .dot{width:5px;height:5px;border-radius:50%;background:var(--emerald)}
+  .d2-body{padding:8px 10px 8px}
+  .d2-row1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+  .d2-name{font-size:12px;font-weight:700;letter-spacing:-0.005em;line-height:1.2;display:flex;align-items:baseline;gap:5px}
+  .d2-vdot{width:6px;height:6px;border-radius:50%;background:#fb7185;align-self:center}
+  .d2-meta{font-size:10px;color:var(--ink-500);margin-bottom:3px;display:flex;align-items:center;gap:4px}
+  .d2-meta .sep{opacity:0.4}
+  .d2-meta .price{color:var(--ink-700);font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+  .d2-slot{font-size:9px;color:#047857;font-weight:600;font-family:'Inter';font-variant-numeric:tabular-nums}
+  .d2-dist{font-size:9px;color:var(--ink-500);font-family:'Inter';font-variant-numeric:tabular-nums;margin-top:2px}
+
+  /* ═══ VARIANT F · PINTEREST 2-COL ═══ */
+  .pf-list{flex:1;overflow-y:auto;padding:8px 10px 10px;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+  .pf-list::-webkit-scrollbar{width:0}
+  .pf-card{background:#fff;border:1px solid var(--ink-200);border-radius:10px;overflow:hidden}
+  .pf-photo{aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;position:relative}
+  .pf-card.short .pf-photo{aspect-ratio:1/1}
+  .pf-avail{position:absolute;top:5px;left:5px;background:rgba(255,255,255,0.96);padding:2px 6px;border-radius:4px;font-family:'Inter';font-weight:700;font-size:8px;color:#047857;display:inline-flex;align-items:center;gap:3px}
+  .pf-avail .dot{width:4px;height:4px;border-radius:50%;background:var(--emerald)}
+  .pf-body{padding:6px 8px 8px}
+  .pf-name{font-size:11px;font-weight:700;letter-spacing:-0.005em;margin-bottom:2px;line-height:1.2;display:flex;align-items:baseline;gap:4px}
+  .pf-vdot{width:5px;height:5px;border-radius:50%;background:#fb7185;align-self:center}
+  .pf-meta{font-size:9px;color:var(--ink-500);display:flex;align-items:center;gap:3px}
+  .pf-meta .sep{opacity:0.4}
+  .pf-meta .price{color:var(--ink-700);font-weight:600;font-family:'Inter';font-variant-numeric:tabular-nums}
+
+  /* Scorecard */
+  .verdict{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:28px}
+  .verdict h2{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:20px;margin:0 0 14px}
+  .scards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:900px){.scards{grid-template-columns:repeat(2,1fr)}}
+  .sc{background:var(--cool-mist);border-radius:10px;padding:12px}
+  .sc .lbl{font-family:'Inter';font-weight:700;font-size:10px;color:var(--ink-500);letter-spacing:0.05em;margin-bottom:3px}
+  .sc .nm{font-size:12px;font-weight:700;margin-bottom:7px}
+  .sc-row{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:10px;color:var(--ink-600);padding:2px 0;border-top:1px solid var(--ink-200)}
+  .sc-row:first-of-type{border-top:0}
+  .sc-row .v{font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+  .sc-row .v.r{color:#b91c1c}.sc-row .v.a{color:#92400e}.sc-row .v.g{color:#047857}
+  .sc.winner{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #6ee7b7}
+  .sc.winner .lbl{color:#047857}
+
+  .ship{background:#0f172a;color:#fff;border-radius:18px;padding:28px;margin-bottom:28px}
+  .ship h2{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:20px;margin:0 0 12px;color:#fff}
+  .ship p{margin:0 0 8px;font-size:13px;color:#dbeafe;line-height:1.65}
+  .ship p:last-child{margin-bottom:0}
+  .ship b{color:#fff}
+  .ship code{background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;font-family:'Inter';font-size:11px}
+
+  .footer{margin-top:24px;text-align:center;color:var(--ink-400);font-size:11px}
+  .footer .w{font-family:'Inter';font-weight:800;letter-spacing:-0.01em}
+  .footer .w .b{color:var(--be-navy)}.footer .w .e{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>Pass 26 v4 · D1 vs D2 + honest F take</h1>
+    <div class="sub">Two implementations of Variant D · plus an answer to "is F your best idea?"</div>
+  </header>
+
+  <!-- ──── HONEST F TAKE ──── -->
+  <section class="f-take">
+    <h3>"i like variant F. is it your best idea yet?"</h3>
+    <p><b>Honest answer: F is the safest idea, not the strongest.</b> F (Pinterest 2-col) is closest to what customers already know (Instagram · Pinterest · current bookease.co · OnlyFans grid). Familiar = low cognitive switching cost. <b>But</b> for trust-purchase decisions where vibe assessment is the limiting factor, F's smaller photos under-deliver vs D's hero card. Each 4:5 photo on F is ~140px wide on phone · D's 16:10 hero is ~340px. F shows 2.5× more shops per scroll but at ⅓ the photo area each.</p>
+    <p><b>The right answer is "ship both."</b> F as a power-user "fast browse" toggle button on the home (top-right), D1 as the default. Customer who knows what vibe they want browses in F mode. Customer in undecided/exploratory mode sees the larger D1 cards. Toggle persists in local storage. Like Twitter's "list" vs "expanded" toggle. <b>Same data, two density modes.</b></p>
+    <p class="verdict">Verdict: F = best browse mode · D1 = best decision mode · ship both as toggle</p>
+  </section>
+
+  <!-- ──── FILTER ARCHITECTURE EXPLAINED ──── -->
+  <section class="filter-arch">
+    <h3>📐 The filter system · category → time/location → shops</h3>
+    <div class="stack">
+      <div class="lvl">
+        <span class="lvl-tag">ROW 0</span>
+        <span class="lvl-body"><b>Brand wordmark + location pin</b> · "BookEase · 📍 สุขุมวิท · 11 ร้าน" · search bar below for typed queries</span>
+      </div>
+      <div class="lvl">
+        <span class="lvl-tag">ROW 1</span>
+        <span class="lvl-body"><b>Category chips</b> · <code>ทั้งหมด ●</code> <code>เสริมสวย</code> <code>นวด/สปา</code> <code>เล็บ</code> <code>ความงาม</code> <code>› ทั้งหมด</code> · "ทั้งหมด" pre-selected · scrollable for overflow categories</span>
+      </div>
+      <div class="lvl">
+        <span class="lvl-tag">ROW 2</span>
+        <span class="lvl-body"><b>Time + location filters</b> · <code>ว่างวันนี้ ▾</code> <code>📍 ใกล้ฉัน ▾</code> · both pre-populated · taps open bottom-sheet pickers</span>
+      </div>
+      <div class="lvl">
+        <span class="lvl-tag">BELOW</span>
+        <span class="lvl-body"><b>Shop cards</b> sorted by relevance (availability proximity + distance) · shops with no slot in selected time window simply do not appear</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── 4-PHONE COMPARISON ──── -->
+  <section class="compare">
+
+    <!-- ═══ CURRENT ═══ -->
+    <div class="col">
+      <div class="col-head">
+        <span class="tag bad">⚠ LIVE TODAY</span>
+        <div class="nm">Current</div>
+        <div class="desc">Square photos · name + distance · no availability · no price · 40% hero waste</div>
+      </div>
+      <div class="phone"><div class="ps"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="p1-hero">
+            <div class="p1-h1">หาร้านสปา · นวด · เสริมสวย</div>
+            <div class="p1-h2">จองได้ใน <span class="latin">60</span> วินาที</div>
+            <div class="p1-pin">📍 ใกล้คุณ <span class="latin">0</span> ร้าน</div>
+            <div class="p1-search">🔍 ค้นหา เช่น สปา, ทำเล็บ</div>
+          </div>
+          <div class="p1-list">
+            <div class="p1-card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=300')"></div><div class="nm">Rakkana spa</div><div class="dt">1.4 km</div></div>
+            <div class="p1-card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=300')"></div><div class="nm">Tll Salon</div><div class="dt">4.0 km</div></div>
+            <div class="p1-card"><div class="ph" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-family:Inter;font-weight:700">TATTOO</div><div class="nm">Mamacooked</div><div class="dt">4.0 km</div></div>
+            <div class="p1-card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300')"></div><div class="nm">Mafuang</div><div class="dt">4.0 km</div></div>
+            <div class="p1-card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=300')"></div><div class="nm">Zaza Salon</div><div class="dt">4.0 km</div></div>
+            <div class="p1-card"><div class="ph" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:22px">😺</div><div class="nm">Kaiwat Shop</div><div class="dt">4.0 km</div></div>
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ═══ D1 · HOTEL CARD ═══ -->
+    <div class="col">
+      <div class="col-head">
+        <span class="tag star">★ D1 · HOTEL CARD</span>
+        <div class="nm">D1 · Booking.com hero</div>
+        <div class="desc">16:10 photo · 1-col · vibe-first · 2.5 shops/screen · for trust-purchase decision mode</div>
+      </div>
+      <div class="phone"><div class="ps"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="fhead">
+            <div class="br">
+              <span class="w"><span class="b">Book</span><span class="e">Ease</span></span>
+              <span class="loc">📍 <b>สุขุมวิท</b> · <span class="tab">11</span> ร้าน</span>
+            </div>
+            <div class="search">🔍 ค้นหาร้าน · บริการ · พื้นที่</div>
+            <div class="row">
+              <span class="ch act">ทั้งหมด ●</span>
+              <span class="ch">เสริมสวย</span>
+              <span class="ch">นวด/สปา</span>
+              <span class="ch">เล็บ</span>
+              <span class="ch">ความงาม</span>
+              <span class="ch more">›</span>
+            </div>
+            <div class="row2">
+              <span class="ch pri">ว่างวันนี้ <span class="arrow">▾</span></span>
+              <span class="ch">📍 ใกล้ฉัน <span class="arrow">▾</span></span>
+            </div>
+          </div>
+          <div class="d1-list">
+
+            <div class="d1-card">
+              <div class="d1-photo" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=600')">
+                <span class="d1-avail"><span class="dot"></span>ว่าง 19:30</span>
+                <span class="d1-heart">♡</span>
+              </div>
+              <div class="d1-body">
+                <div class="d1-row1">
+                  <div class="d1-name">Rakkana Spa<span class="d1-vdot" style="background:#f59e0b"></span></div>
+                </div>
+                <div class="d1-meta">สปา<span class="sep">·</span>เอกมัย<span class="sep">·</span>1.4 km<span class="sep">·</span><span class="price">฿890+</span></div>
+                <div class="d1-slot">⏱ ว่าง 19:30 · 20:00 · 20:30 คืนนี้</div>
+              </div>
+            </div>
+
+            <div class="d1-card">
+              <div class="d1-photo" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=600')">
+                <span class="d1-avail"><span class="dot"></span>ว่าง 19:05</span>
+                <span class="d1-heart">♡</span>
+              </div>
+              <div class="d1-body">
+                <div class="d1-row1">
+                  <div class="d1-name">Tll Salon<span class="d1-vdot" style="background:#0ea5e9"></span></div>
+                </div>
+                <div class="d1-meta">เสริมสวย<span class="sep">·</span>สุขุมวิท<span class="sep">·</span>0.8 km<span class="sep">·</span><span class="price">฿300+</span></div>
+                <div class="d1-slot">⏱ ว่าง 19:05 · 19:35 · 20:05 คืนนี้</div>
+              </div>
+            </div>
+
+            <div class="d1-card">
+              <div class="d1-photo" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600')">
+                <span class="d1-avail"><span class="dot"></span>ว่าง 18:55</span>
+                <span class="d1-heart">♡</span>
+              </div>
+              <div class="d1-body">
+                <div class="d1-row1">
+                  <div class="d1-name">Moya<span class="d1-vdot" style="background:#a855f7"></span></div>
+                </div>
+                <div class="d1-meta">เสริมสวย<span class="sep">·</span>ทองหล่อ<span class="sep">·</span>0.4 km<span class="sep">·</span><span class="price">฿450+</span></div>
+                <div class="d1-slot">⏱ ว่าง 18:55 · 19:25 · 19:55 คืนนี้</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ═══ D2 · COMPACT RESULT ROW ═══ -->
+    <div class="col">
+      <div class="col-head">
+        <span class="tag star">★ D2 · COMPACT ROW</span>
+        <div class="nm">D2 · Booking.com search-result row</div>
+        <div class="desc">120px photo side · 1-col · 4-5 shops/screen · keeps vibe + adds density</div>
+      </div>
+      <div class="phone"><div class="ps"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="fhead">
+            <div class="br">
+              <span class="w"><span class="b">Book</span><span class="e">Ease</span></span>
+              <span class="loc">📍 <b>สุขุมวิท</b> · <span class="tab">11</span> ร้าน</span>
+            </div>
+            <div class="search">🔍 ค้นหาร้าน · บริการ · พื้นที่</div>
+            <div class="row">
+              <span class="ch act">ทั้งหมด ●</span>
+              <span class="ch">เสริมสวย</span>
+              <span class="ch">นวด/สปา</span>
+              <span class="ch">เล็บ</span>
+              <span class="ch">ความงาม</span>
+              <span class="ch more">›</span>
+            </div>
+            <div class="row2">
+              <span class="ch pri">ว่างวันนี้ <span class="arrow">▾</span></span>
+              <span class="ch">📍 ใกล้ฉัน <span class="arrow">▾</span></span>
+            </div>
+          </div>
+          <div class="d2-list">
+
+            <div class="d2-card">
+              <div class="d2-photo" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=400')">
+                <span class="d2-avail"><span class="dot"></span>19:30</span>
+              </div>
+              <div class="d2-body">
+                <div class="d2-row1"><div class="d2-name">Rakkana Spa<span class="d2-vdot" style="background:#f59e0b"></span></div></div>
+                <div class="d2-meta">สปา<span class="sep">·</span><span class="price">฿890+</span></div>
+                <div class="d2-slot">ว่าง 19:30 · 20:00 คืนนี้</div>
+                <div class="d2-dist">📍 1.4 km · เอกมัย</div>
+              </div>
+            </div>
+
+            <div class="d2-card">
+              <div class="d2-photo" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400')">
+                <span class="d2-avail"><span class="dot"></span>19:05</span>
+              </div>
+              <div class="d2-body">
+                <div class="d2-row1"><div class="d2-name">Tll Salon<span class="d2-vdot" style="background:#0ea5e9"></span></div></div>
+                <div class="d2-meta">เสริมสวย<span class="sep">·</span><span class="price">฿300+</span></div>
+                <div class="d2-slot">ว่าง 19:05 · 19:35 คืนนี้</div>
+                <div class="d2-dist">📍 0.8 km · สุขุมวิท</div>
+              </div>
+            </div>
+
+            <div class="d2-card">
+              <div class="d2-photo" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400')">
+                <span class="d2-avail"><span class="dot"></span>18:55</span>
+              </div>
+              <div class="d2-body">
+                <div class="d2-row1"><div class="d2-name">Moya<span class="d2-vdot" style="background:#a855f7"></span></div></div>
+                <div class="d2-meta">เสริมสวย<span class="sep">·</span><span class="price">฿450+</span></div>
+                <div class="d2-slot">ว่าง 18:55 · 19:25 คืนนี้</div>
+                <div class="d2-dist">📍 0.4 km · ทองหล่อ</div>
+              </div>
+            </div>
+
+            <div class="d2-card">
+              <div class="d2-photo" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400')">
+                <span class="d2-avail"><span class="dot"></span>19:00</span>
+              </div>
+              <div class="d2-body">
+                <div class="d2-row1"><div class="d2-name">Zaza Salon</div></div>
+                <div class="d2-meta">เสริมสวย<span class="sep">·</span><span class="price">฿380+</span></div>
+                <div class="d2-slot">ว่าง 19:00 · 19:30 คืนนี้</div>
+                <div class="d2-dist">📍 1.1 km · ทองหล่อ</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ═══ F · PINTEREST ═══ -->
+    <div class="col">
+      <div class="col-head">
+        <span class="tag try">F · PINTEREST</span>
+        <div class="nm">F · 2-col grid (toggle option)</div>
+        <div class="desc">4:5 photos in 2-col · 6-8 shops/screen · best as "fast browse" toggle alongside D1</div>
+      </div>
+      <div class="phone"><div class="ps"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="fhead">
+            <div class="br">
+              <span class="w"><span class="b">Book</span><span class="e">Ease</span></span>
+              <span class="loc">📍 <b>สุขุมวิท</b> · <span class="tab">11</span> ร้าน</span>
+            </div>
+            <div class="search">🔍 ค้นหาร้าน · บริการ · พื้นที่</div>
+            <div class="row">
+              <span class="ch act">ทั้งหมด ●</span>
+              <span class="ch">เสริมสวย</span>
+              <span class="ch">นวด/สปา</span>
+              <span class="ch">เล็บ</span>
+              <span class="ch">ความงาม</span>
+              <span class="ch more">›</span>
+            </div>
+            <div class="row2">
+              <span class="ch pri">ว่างวันนี้ <span class="arrow">▾</span></span>
+              <span class="ch">📍 ใกล้ฉัน <span class="arrow">▾</span></span>
+            </div>
+          </div>
+          <div class="pf-list">
+
+            <div class="pf-card">
+              <div class="pf-photo" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=400')">
+                <span class="pf-avail"><span class="dot"></span>19:30</span>
+              </div>
+              <div class="pf-body">
+                <div class="pf-name">Rakkana Spa<span class="pf-vdot" style="background:#f59e0b"></span></div>
+                <div class="pf-meta">สปา<span class="sep">·</span><span class="price">฿890</span><span class="sep">·</span>1.4km</div>
+              </div>
+            </div>
+
+            <div class="pf-card">
+              <div class="pf-photo" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400')">
+                <span class="pf-avail"><span class="dot"></span>19:05</span>
+              </div>
+              <div class="pf-body">
+                <div class="pf-name">Tll Salon<span class="pf-vdot" style="background:#0ea5e9"></span></div>
+                <div class="pf-meta">เสริมสวย<span class="sep">·</span><span class="price">฿300</span><span class="sep">·</span>0.8km</div>
+              </div>
+            </div>
+
+            <div class="pf-card">
+              <div class="pf-photo" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400')">
+                <span class="pf-avail"><span class="dot"></span>18:55</span>
+              </div>
+              <div class="pf-body">
+                <div class="pf-name">Moya<span class="pf-vdot" style="background:#a855f7"></span></div>
+                <div class="pf-meta">เสริมสวย<span class="sep">·</span><span class="price">฿450</span><span class="sep">·</span>0.4km</div>
+              </div>
+            </div>
+
+            <div class="pf-card">
+              <div class="pf-photo" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400')">
+                <span class="pf-avail"><span class="dot"></span>19:00</span>
+              </div>
+              <div class="pf-body">
+                <div class="pf-name">Zaza Salon</div>
+                <div class="pf-meta">เสริมสวย<span class="sep">·</span><span class="price">฿380</span><span class="sep">·</span>1.1km</div>
+              </div>
+            </div>
+
+            <div class="pf-card short">
+              <div class="pf-photo" style="background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;font-size:28px">🌿</div>
+              <div class="pf-body">
+                <div class="pf-name">Mafuang</div>
+                <div class="pf-meta">นวด<span class="sep">·</span><span class="price">฿550</span><span class="sep">·</span>1.9km</div>
+              </div>
+            </div>
+
+            <div class="pf-card short">
+              <div class="pf-photo" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:28px">💅</div>
+              <div class="pf-body">
+                <div class="pf-name">Momo Mod</div>
+                <div class="pf-meta">เล็บ<span class="sep">·</span><span class="price">฿280</span><span class="sep">·</span>2.8km</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </section>
+
+  <!-- ──── SCORECARD ──── -->
+  <section class="verdict">
+    <h2>📊 Scorecard · D1 vs D2 vs F · trade-off matrix</h2>
+    <div class="scards">
+
+      <div class="sc">
+        <div class="lbl">CURRENT</div>
+        <div class="nm">Live bookease.co</div>
+        <div class="sc-row"><span>Photo prominence</span><span class="v a">small</span></div>
+        <div class="sc-row"><span>Decision data on card</span><span class="v r">name+km only</span></div>
+        <div class="sc-row"><span>Filter system</span><span class="v r">1 useless tab</span></div>
+        <div class="sc-row"><span>Failure handling</span><span class="v r">leaks</span></div>
+        <div class="sc-row"><span>Shops/screen</span><span class="v a tab">4</span></div>
+      </div>
+
+      <div class="sc winner">
+        <div class="lbl">★ D1</div>
+        <div class="nm">Hotel card (default)</div>
+        <div class="sc-row"><span>Photo prominence</span><span class="v g">huge</span></div>
+        <div class="sc-row"><span>Decision data on card</span><span class="v g">name+vibe+cat+km+฿+slots</span></div>
+        <div class="sc-row"><span>Filter system</span><span class="v g">2-row complete</span></div>
+        <div class="sc-row"><span>Failure handling</span><span class="v g">hidden</span></div>
+        <div class="sc-row"><span>Shops/screen</span><span class="v a tab">2.5</span></div>
+      </div>
+
+      <div class="sc winner">
+        <div class="lbl">★ D2</div>
+        <div class="nm">Compact row (balance)</div>
+        <div class="sc-row"><span>Photo prominence</span><span class="v g">medium</span></div>
+        <div class="sc-row"><span>Decision data on card</span><span class="v g">name+cat+km+฿+slots</span></div>
+        <div class="sc-row"><span>Filter system</span><span class="v g">2-row complete</span></div>
+        <div class="sc-row"><span>Failure handling</span><span class="v g">hidden</span></div>
+        <div class="sc-row"><span>Shops/screen</span><span class="v g tab">4-5</span></div>
+      </div>
+
+      <div class="sc">
+        <div class="lbl">F</div>
+        <div class="nm">2-col (toggle)</div>
+        <div class="sc-row"><span>Photo prominence</span><span class="v a">small-med</span></div>
+        <div class="sc-row"><span>Decision data on card</span><span class="v a">name+cat+km+฿ (no slots)</span></div>
+        <div class="sc-row"><span>Filter system</span><span class="v g">2-row complete</span></div>
+        <div class="sc-row"><span>Failure handling</span><span class="v g">hidden</span></div>
+        <div class="sc-row"><span>Shops/screen</span><span class="v g tab">6-8</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── SHIP STRATEGY ──── -->
+  <section class="ship">
+    <h2>🚀 Ship strategy · ทั้ง D และ F · toggle pattern</h2>
+    <p><b>Default view = D1</b> (hotel hero card). New customers + first-time visitors land here. Maximizes vibe assessment per scroll. Card includes 3 inline slots so customer verifies bookability without leaving home.</p>
+    <p><b>Toggle to F</b> (2-col grid) via a small icon in the top-right header (next to location pin). Persists in localStorage. Power users + return visitors who already know their preferred shops scan faster in F mode. <code>view=hero|grid</code> URL param so the choice survives shares + links.</p>
+    <p><b>D2 is the safer compromise</b> if you ship only one. Keeps the vibe photo but adds 60% more shops per scroll vs D1. Like Booking.com's mobile search-result page (which is exactly this layout). If pilot data shows customers scroll too much in D1, switch default to D2.</p>
+    <p><b>Pick one for caravan #1</b> · <b>D1 if your gut says "premium first impression matters"</b> · <b>D2 if your gut says "Bangkok customers want to see options fast."</b> Both ship the same filter system (category row + time/location row). Same backend contract. Same card data. Only the visual presentation differs.</p>
+  </section>
+
+  <footer class="footer">
+    <div class="w"><span class="b">Book</span><span class="e">Ease</span> · Pass 26 v4 · D1 + D2 + honest F take</div>
+    <div style="margin-top:6px">2026-05-13 · bookease-tools-public/_redesign-marketplace-v4-D1-D2-F.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
