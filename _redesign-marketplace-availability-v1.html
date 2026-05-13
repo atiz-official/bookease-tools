@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v1 · old vs new (availability-first)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cool-mist:#f5f8fc;
+    --ink-900:#0f172a;
+    --ink-700:#334155;
+    --ink-500:#64748b;
+    --ink-400:#94a3b8;
+    --ink-300:#cbd5e1;
+    --ink-200:#e2e8f0;
+    --ink-100:#f1f5f9;
+    --line:#e2e8f0;
+    --be-navy:#1E40AF;
+    --be-sky:#38BDF8;
+    --commit:#2D55EB;
+    --emerald:#10b981;
+    --emerald-50:#ecfdf5;
+    --emerald-100:#d1fae5;
+    --amber:#f59e0b;
+    --amber-50:#fffbeb;
+    --amber-100:#fef3c7;
+    --slate-400:#94a3b8;
+    --red-500:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,-apple-system,sans-serif;
+    background:#eef2f7;
+    color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}
+  .tabular{font-variant-numeric:tabular-nums}
+
+  /* ─── Page chrome ─── */
+  .page{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+  .page-header{margin-bottom:32px}
+  .page-header h1{
+    font-family:'Inter',sans-serif;
+    font-weight:800;letter-spacing:-0.025em;
+    font-size:28px;margin:0 0 4px;
+  }
+  .page-header h1 .book{color:var(--be-navy)}
+  .page-header h1 .ease{color:var(--be-sky)}
+  .page-header .sub{
+    color:var(--ink-500);font-size:14px;font-weight:400;
+  }
+  .pill-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .pill{
+    background:#fff;border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;
+    font-size:12px;color:var(--ink-700);font-weight:500;
+  }
+  .pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+  .pill.green{background:var(--emerald-50);border-color:#a7f3d0;color:#047857}
+  .pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+
+  /* ─── Comparison grid ─── */
+  .compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:32px;
+    align-items:start;
+  }
+  @media(max-width:960px){.compare{grid-template-columns:1fr}}
+
+  .col-label{
+    font-family:'Inter',sans-serif;font-weight:700;letter-spacing:-0.01em;
+    font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  }
+  .col-label .tag{
+    padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;
+  }
+  .tag-old{background:#fef2f2;color:#b91c1c}
+  .tag-new{background:var(--emerald-50);color:#047857}
+
+  /* ─── Phone frame ─── */
+  .phone{
+    background:#1a1a1a;border-radius:42px;padding:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.18);
+    width:100%;max-width:380px;margin:0 auto;
+  }
+  .phone-screen{
+    background:#fff;border-radius:30px;overflow:hidden;
+    height:760px;display:flex;flex-direction:column;
+    position:relative;
+  }
+  .phone-status{
+    height:32px;display:flex;align-items:center;justify-content:space-between;
+    padding:8px 24px 0;font-family:'Inter';font-weight:600;font-size:13px;
+    color:var(--ink-900);
+  }
+  .phone-notch{
+    position:absolute;top:6px;left:50%;transform:translateX(-50%);
+    width:100px;height:24px;background:#1a1a1a;border-radius:14px;
+  }
+  .phone-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+  /* ─── App header ─── */
+  .app-header{
+    padding:16px 16px 8px;background:#fff;
+  }
+  .search-row{display:flex;gap:8px;margin-bottom:12px}
+  .search-bar{
+    flex:1;background:var(--ink-100);border-radius:14px;
+    padding:10px 14px;font-size:13px;color:var(--ink-500);
+    display:flex;align-items:center;gap:8px;
+  }
+  .chip-filter{
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:8px 14px;font-size:12px;font-weight:500;color:var(--ink-700);
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .chip-filter.active{background:var(--ink-900);color:#fff;border-color:var(--ink-900)}
+  .chip-filter.new-pill{
+    background:linear-gradient(135deg,var(--emerald) 0%,#059669 100%);
+    color:#fff;border-color:transparent;font-weight:700;
+  }
+  .chip-row{
+    display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .chip-row::-webkit-scrollbar{display:none}
+
+  /* ─── Card grid ─── */
+  .card-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    padding:8px 12px 80px;flex:1;overflow-y:auto;
+  }
+  .card-grid::-webkit-scrollbar{width:0}
+
+  /* ─── OLD card ─── */
+  .card-old{
+    background:#fff;border:1px solid var(--ink-200);
+    border-radius:14px;overflow:hidden;
+  }
+  .card-old .photo{
+    aspect-ratio:1/1;background:var(--ink-100);
+    background-size:cover;background-position:center;
+  }
+  .card-old .body{padding:10px}
+  .card-old .name{
+    font-weight:700;font-size:14px;letter-spacing:-0.01em;
+  }
+
+  /* ─── NEW card ─── */
+  .card-new{
+    background:#fff;border:1px solid var(--ink-200);
+    border-radius:16px;overflow:hidden;position:relative;
+    box-shadow:0 1px 2px rgba(0,0,0,0.04);
+  }
+  .card-new.dim{opacity:0.55;filter:saturate(0.6)}
+  .card-new .photo{
+    aspect-ratio:4/3;background:var(--ink-100);
+    background-size:cover;background-position:center;
+    position:relative;
+  }
+  /* Availability pill on photo */
+  .avail-pill{
+    position:absolute;top:8px;left:8px;
+    background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-radius:999px;padding:4px 9px;
+    font-size:11px;font-weight:700;letter-spacing:-0.01em;
+    display:inline-flex;align-items:center;gap:5px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
+  .avail-pill .dot{
+    width:7px;height:7px;border-radius:50%;
+  }
+  .avail-pill.green{color:#047857}
+  .avail-pill.green .dot{background:var(--emerald)}
+  .avail-pill.amber{color:#92400e}
+  .avail-pill.amber .dot{background:var(--amber)}
+  .avail-pill.gray{color:var(--ink-500)}
+  .avail-pill.gray .dot{background:var(--slate-400)}
+  /* Distance pill on photo */
+  .dist-pill{
+    position:absolute;bottom:8px;right:8px;
+    background:rgba(15,23,42,0.7);color:#fff;backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border-radius:999px;padding:3px 8px;
+    font-size:10px;font-weight:600;letter-spacing:-0.005em;
+    font-family:'Inter',sans-serif;
+  }
+
+  .card-new .body{padding:10px 11px 11px}
+  .card-new .name{
+    font-weight:700;font-size:14px;letter-spacing:-0.01em;
+    margin-bottom:2px;line-height:1.25;
+  }
+  .card-new .meta{
+    color:var(--ink-500);font-size:11px;display:flex;align-items:center;gap:5px;
+    margin-bottom:8px;
+  }
+  .card-new .meta .sep{opacity:0.5}
+  .card-new .meta .price{color:var(--ink-700);font-weight:600;font-family:'Inter';font-variant-numeric:tabular-nums}
+
+  /* Quick slot chips */
+  .slot-row{display:flex;gap:4px}
+  .slot-chip{
+    flex:1;background:var(--cool-mist);border:1px solid var(--ink-200);
+    border-radius:8px;padding:5px 4px;text-align:center;
+    font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;
+    font-size:11px;font-weight:700;color:var(--ink-900);
+    transition:background 0.15s;
+  }
+  .slot-chip.primary{
+    background:var(--ink-900);color:#fff;border-color:var(--ink-900);
+  }
+  .slot-chip .day{
+    display:block;font-size:9px;font-weight:500;color:var(--ink-500);
+    margin-top:1px;letter-spacing:0;
+  }
+  .slot-chip.primary .day{color:rgba(255,255,255,0.7)}
+
+  .full-cta{
+    width:100%;background:var(--ink-100);border:1px solid var(--ink-200);
+    border-radius:8px;padding:6px;text-align:center;
+    font-size:11px;font-weight:600;color:var(--ink-500);
+  }
+
+  /* Collapsed "full shops" expander */
+  .full-expander{
+    grid-column:1/-1;background:var(--ink-100);border-radius:14px;
+    padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+    font-size:13px;color:var(--ink-700);font-weight:500;
+  }
+  .full-expander .count{color:var(--ink-500);font-size:12px;font-weight:400}
+
+  /* ─── Bottom nav (both phones) ─── */
+  .bottom-nav{
+    position:absolute;bottom:0;left:0;right:0;
+    background:#fff;border-top:1px solid var(--ink-200);
+    height:60px;display:flex;align-items:center;justify-content:space-around;
+    padding-bottom:6px;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-size:10px;color:var(--ink-400);font-weight:500;
+  }
+  .nav-item.active{color:var(--be-navy)}
+  .nav-item svg{width:20px;height:20px}
+
+  /* ─── Annotations below phones ─── */
+  .annotations{
+    margin-top:32px;background:#fff;border:1px solid var(--line);
+    border-radius:20px;padding:32px;
+  }
+  .annotations h2{
+    font-family:'Inter',sans-serif;font-weight:800;letter-spacing:-0.02em;
+    font-size:22px;margin:0 0 4px;
+  }
+  .annotations .sub2{color:var(--ink-500);font-size:13px;margin-bottom:24px}
+  .deltas{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .delta{
+    background:var(--cool-mist);border-radius:12px;padding:16px;
+    border-left:3px solid var(--be-navy);
+  }
+  .delta .num{
+    font-family:'Inter',sans-serif;font-weight:800;font-size:11px;
+    color:var(--be-navy);letter-spacing:0.05em;margin-bottom:4px;
+  }
+  .delta h3{
+    font-size:14px;font-weight:700;margin:0 0 6px;letter-spacing:-0.01em;
+  }
+  .delta p{font-size:13px;color:var(--ink-700);margin:0;line-height:1.55}
+  .delta .ba{
+    display:block;margin-top:8px;font-size:12px;color:var(--ink-500);
+  }
+  .delta .ba b{color:var(--ink-900);font-weight:600}
+
+  /* Elon principles section */
+  .principles{
+    margin-top:32px;background:#0f172a;color:#fff;
+    border-radius:20px;padding:32px;
+  }
+  .principles h2{
+    font-family:'Inter',sans-serif;font-weight:800;letter-spacing:-0.02em;
+    font-size:22px;margin:0 0 4px;color:#fff;
+  }
+  .principles .sub3{color:#cbd5e1;font-size:13px;margin-bottom:24px}
+  .principle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .principle{
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px;padding:16px;
+  }
+  .principle .icon{font-size:24px;margin-bottom:8px}
+  .principle h4{font-size:14px;font-weight:700;margin:0 0 6px}
+  .principle p{font-size:12px;color:#cbd5e1;margin:0;line-height:1.55}
+
+  /* Funnel diagram */
+  .funnel-compare{
+    margin-top:32px;background:#fff;border:1px solid var(--line);
+    border-radius:20px;padding:32px;
+  }
+  .funnel-row{
+    display:grid;grid-template-columns:120px 1fr;gap:16px;
+    align-items:center;margin-bottom:14px;
+  }
+  .funnel-label{font-size:13px;font-weight:600;color:var(--ink-700)}
+  .funnel-track{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    font-size:12px;color:var(--ink-500);
+  }
+  .funnel-step{
+    background:var(--cool-mist);border:1px solid var(--ink-200);
+    padding:6px 12px;border-radius:8px;font-weight:500;
+    font-family:'Inter',sans-serif;
+  }
+  .funnel-step.bad{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+  .funnel-step.good{background:var(--emerald-50);border-color:#a7f3d0;color:#047857}
+  .funnel-arrow{color:var(--ink-400);font-size:14px}
+
+  /* Footer */
+  .footer{
+    margin-top:48px;text-align:center;color:var(--ink-400);font-size:11px;
+  }
+  .footer .wordmark{
+    font-family:'Inter',sans-serif;font-weight:800;letter-spacing:-0.01em;
+  }
+  .footer .wordmark .book{color:var(--be-navy)}
+  .footer .wordmark .ease{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ──────────────────────── HEADER ──────────────────────── -->
+  <header class="page-header">
+    <h1><span class="book">Book</span><span class="ease">Ease</span> · Marketplace · Pass 26 v1</h1>
+    <div class="sub">Availability-first card · "where can I go right now?" answered on the home screen · zero tap to decide</div>
+    <div class="pill-row">
+      <span class="pill red">Old: 3 taps + async wait → "เต็มแล้ว"</span>
+      <span class="pill green">New: 0 taps → see availability + price + distance + next slot</span>
+      <span class="pill blue">Funnel collapse from 4 steps to 1</span>
+    </div>
+  </header>
+
+  <!-- ──────────────────────── COMPARISON ──────────────────────── -->
+  <section class="compare">
+
+    <!-- ═══════════════ OLD ═══════════════ -->
+    <div>
+      <div class="col-label">
+        <span class="tag tag-old">CURRENT · Pass 25</span>
+        bookease.co / home — what customer sees today
+      </div>
+
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="phone-status">
+            <span>5:38</span>
+            <span class="latin">68 ⚡</span>
+          </div>
+
+          <div class="phone-body">
+            <div class="app-header">
+              <div class="search-row">
+                <div class="search-bar">🔍 ค้นหาร้าน</div>
+              </div>
+              <div class="chip-row">
+                <span class="chip-filter">📍 ใกล้ฉัน</span>
+                <span class="chip-filter">📅 วันนี้</span>
+              </div>
+              <div class="chip-row" style="margin-top:12px">
+                <span class="chip-filter active">ทั้งหมด</span>
+                <span class="chip-filter">ร้านเสริมสวย</span>
+                <span class="chip-filter">สปา</span>
+                <span class="chip-filter">เล็บ</span>
+                <span class="chip-filter">คลินิกความงาม</span>
+              </div>
+            </div>
+
+            <div class="card-grid">
+
+              <div class="card-old">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400')"></div>
+                <div class="body"><div class="name">Moya</div></div>
+              </div>
+
+              <div class="card-old">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400')"></div>
+                <div class="body"><div class="name">Bubbie</div></div>
+              </div>
+
+              <div class="card-old">
+                <div class="photo" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:48px">😺</div>
+                <div class="body"><div class="name">Lunaria</div></div>
+              </div>
+
+              <div class="card-old">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400')"></div>
+                <div class="body"><div class="name">Tll Salon</div></div>
+              </div>
+
+              <div class="card-old">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=400')"></div>
+                <div class="body"><div class="name">Rakkana Spa</div></div>
+              </div>
+
+              <div class="card-old">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400')"></div>
+                <div class="body"><div class="name">Glow Nail</div></div>
+              </div>
+
+            </div>
+
+            <div class="bottom-nav">
+              <div class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg>
+                <span>หน้าแรก</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                <span>บันทึก</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span>การจอง</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>บัญชี</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;font-size:12px;color:#7f1d1d;line-height:1.6">
+        <b>What the customer sees:</b> 6 pretty photos · 6 shop names. Nothing else.<br>
+        <b>What the customer needs to know:</b> Where can I book at 19:00 tonight, near me, for under ฿500?<br>
+        <b>Gap:</b> Customer must click into each shop → click into each service → wait → discover answer. <b>3 taps × 6 shops = 18 dead-end taps</b> to survey availability.
+      </div>
+    </div>
+
+    <!-- ═══════════════ NEW ═══════════════ -->
+    <div>
+      <div class="col-label">
+        <span class="tag tag-new">SHIP · Pass 26 v1</span>
+        availability-first · "ดูปุ๊บรู้ปั๊บ"
+      </div>
+
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="phone-status">
+            <span>5:38</span>
+            <span class="latin">68 ⚡</span>
+          </div>
+
+          <div class="phone-body">
+            <div class="app-header">
+              <div class="search-row">
+                <div class="search-bar">🔍 ค้นหาร้าน · เวลา · บริการ</div>
+              </div>
+              <div class="chip-row">
+                <span class="chip-filter new-pill">⚡ ว่างตอนนี้</span>
+                <span class="chip-filter">📅 พรุ่งนี้</span>
+                <span class="chip-filter">📍 ใกล้ฉัน</span>
+                <span class="chip-filter">฿ ต่ำกว่า 500</span>
+                <span class="chip-filter">ทั้งหมด</span>
+              </div>
+            </div>
+
+            <div class="card-grid">
+
+              <!-- 🟢 Tll Salon — has slots NOW -->
+              <div class="card-new">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400')">
+                  <span class="avail-pill green"><span class="dot"></span>ว่าง 19:05</span>
+                  <span class="dist-pill">0.8 km</span>
+                </div>
+                <div class="body">
+                  <div class="name">Tll Salon</div>
+                  <div class="meta">
+                    <span>ร้านเสริมสวย</span>
+                    <span class="sep">·</span>
+                    <span class="price">฿300+</span>
+                  </div>
+                  <div class="slot-row">
+                    <button class="slot-chip primary">19:05<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">19:35<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">20:05<span class="day">วันนี้</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 🟢 Moya — has slots NOW -->
+              <div class="card-new">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400')">
+                  <span class="avail-pill green"><span class="dot"></span>ว่าง 18:45</span>
+                  <span class="dist-pill">1.2 km</span>
+                </div>
+                <div class="body">
+                  <div class="name">Moya</div>
+                  <div class="meta">
+                    <span>เสริมสวย</span>
+                    <span class="sep">·</span>
+                    <span class="price">฿450+</span>
+                  </div>
+                  <div class="slot-row">
+                    <button class="slot-chip primary">18:45<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">19:15<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">19:45<span class="day">วันนี้</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 🟢 Rakkana Spa -->
+              <div class="card-new">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=400')">
+                  <span class="avail-pill green"><span class="dot"></span>ว่าง 20:00</span>
+                  <span class="dist-pill">2.1 km</span>
+                </div>
+                <div class="body">
+                  <div class="name">Rakkana Spa</div>
+                  <div class="meta">
+                    <span>สปา</span>
+                    <span class="sep">·</span>
+                    <span class="price">฿890+</span>
+                  </div>
+                  <div class="slot-row">
+                    <button class="slot-chip primary">20:00<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">20:30<span class="day">วันนี้</span></button>
+                    <button class="slot-chip">21:00<span class="day">วันนี้</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 🟡 Bubbie — tomorrow only -->
+              <div class="card-new">
+                <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400')">
+                  <span class="avail-pill amber"><span class="dot"></span>พรุ่งนี้ 10:00</span>
+                  <span class="dist-pill">1.5 km</span>
+                </div>
+                <div class="body">
+                  <div class="name">Bubbie</div>
+                  <div class="meta">
+                    <span>เสริมสวย</span>
+                    <span class="sep">·</span>
+                    <span class="price">฿520+</span>
+                  </div>
+                  <div class="slot-row">
+                    <button class="slot-chip primary">10:00<span class="day">พรุ่งนี้</span></button>
+                    <button class="slot-chip">11:30<span class="day">พรุ่งนี้</span></button>
+                    <button class="slot-chip">14:00<span class="day">พรุ่งนี้</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsed "full" expander -->
+              <div class="full-expander">
+                <span>⚫ ร้านที่เต็มแล้ว <span class="count tabular">(12 ร้าน)</span></span>
+                <span style="color:var(--ink-400)">›</span>
+              </div>
+
+            </div>
+
+            <div class="bottom-nav">
+              <div class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg>
+                <span>หน้าแรก</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                <span>บันทึก</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span>การจอง</span>
+              </div>
+              <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>บัญชี</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:var(--emerald-50);border:1px solid #a7f3d0;border-radius:12px;font-size:12px;color:#064e3b;line-height:1.6">
+        <b>What the customer sees:</b> Availability · price · distance · 3 quick-pick slots — all on the card.<br>
+        <b>What the customer does:</b> 1 tap on "19:05" → straight to /payment. <b>4 taps collapsed into 1.</b><br>
+        <b>What's removed:</b> The shop detail page becomes optional · only for browsing photos/reviews. The booking flow no longer requires it.
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────── FUNNEL COMPARISON ──────────────────────── -->
+  <section class="funnel-compare">
+    <h2 style="font-family:'Inter',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:22px;margin:0 0 16px">Funnel · old vs new · tap-count math</h2>
+
+    <div class="funnel-row">
+      <div class="funnel-label">CURRENT</div>
+      <div class="funnel-track">
+        <span class="funnel-step bad">home · 0 info</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step bad">tap shop</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step bad">tap service</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step bad">wait 800ms async</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step bad">🟡 เต็มแล้ว · back</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step bad">repeat ×6 shops</span>
+      </div>
+    </div>
+
+    <div class="funnel-row">
+      <div class="funnel-label">PASS 26 v1</div>
+      <div class="funnel-track">
+        <span class="funnel-step good">home · all info visible</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step good">tap slot chip</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step good">/payment (Apple Pay sheet)</span>
+        <span class="funnel-arrow">→</span>
+        <span class="funnel-step good">paid · done</span>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 16px;background:var(--cool-mist);border-radius:12px;font-size:13px;color:var(--ink-700);line-height:1.6">
+      <b>Tap reduction:</b> 5 taps + 1 async wait → <b>2 taps</b>, no wait. <b>~60% drop in friction.</b><br>
+      <b>Decision time:</b> 30-60 sec ("ไหนว่างบ้าง") → <b>~5 sec</b> (scan home, tap chip).<br>
+      <b>Dead-end recovery:</b> ⚫ full shops are sorted to bottom + collapsed · zero wasted taps.
+    </div>
+  </section>
+
+  <!-- ──────────────────────── DELTAS ──────────────────────── -->
+  <section class="annotations">
+    <h2>The 7 deltas · what changed and why</h2>
+    <div class="sub2">Each change is information-density-positive · removes a tap or removes a guess</div>
+
+    <div class="deltas">
+
+      <div class="delta">
+        <div class="num">01</div>
+        <h3>🟢 Availability pill on photo</h3>
+        <p>Top-left, blurred-white background, time visible. Customer reads "ว่าง 19:05" before consciously deciding to look.</p>
+        <span class="ba"><b>Before:</b> No signal · <b>After:</b> Decision-ready glance</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">02</div>
+        <h3>📏 Distance pill on photo</h3>
+        <p>Bottom-right, dark glass. "0.8 km" answers "ใกล้ฉันไหม?" without opening Maps or filtering.</p>
+        <span class="ba"><b>Before:</b> Hidden in shop detail · <b>After:</b> On card</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">03</div>
+        <h3>💰 Starting price visible</h3>
+        <p>"฿300+" in tabular nums. Filters budget customers in/out instantly. No surprise at checkout.</p>
+        <span class="ba"><b>Before:</b> Discoverable only after 3 taps · <b>After:</b> Card</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">04</div>
+        <h3>⚡ 3 quick-pick slot chips</h3>
+        <p>Tappable. First chip = primary (black). 1 tap → straight to /payment with slot prefilled. Service detail page becomes optional.</p>
+        <span class="ba"><b>Before:</b> 3 taps to reach slot picker · <b>After:</b> 1 tap to commit</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">05</div>
+        <h3>📊 Sort by availability</h3>
+        <p>🟢 shops bubble to top automatically. ⚫ full shops sort to bottom, collapsed under "(12 ร้าน) ›" expander.</p>
+        <span class="ba"><b>Before:</b> Alphabetical/random · <b>After:</b> Actionable-first</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">06</div>
+        <h3>🎯 "ว่างตอนนี้" default filter</h3>
+        <p>Pre-selected green pill at top. The default view answers the most common intent ("where can I go now") without filtering.</p>
+        <span class="ba"><b>Before:</b> "ทั้งหมด" default (noise) · <b>After:</b> "ว่างตอนนี้" default (signal)</span>
+      </div>
+
+      <div class="delta">
+        <div class="num">07</div>
+        <h3>🚮 No more dead-end "เต็มแล้ว" flash</h3>
+        <p>Loading skeleton on the chip itself, not a full-page banner. If full → ⚫ pill on card + collapse, never a wasted click.</p>
+        <span class="ba"><b>Before:</b> 800ms flash of "full" · <b>After:</b> 0ms · never seen</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──────────────────────── ELON PRINCIPLES ──────────────────────── -->
+  <section class="principles">
+    <h2>What would Elon do?</h2>
+    <div class="sub3">First principles applied to the marketplace card</div>
+
+    <div class="principle-grid">
+
+      <div class="principle">
+        <div class="icon">🚮</div>
+        <h4>"The best part is no part"</h4>
+        <p>The shop-detail page is no longer required for booking. It still exists for browsing photos/reviews, but it's not in the critical path. Funnel deletes 1 entire screen.</p>
+      </div>
+
+      <div class="principle">
+        <div class="icon">⚡</div>
+        <h4>"The best process is no process"</h4>
+        <p>The 5-step booking process (home → shop → service → slot picker → payment) collapses to 2 (home → payment). Information-first replaces sequential disclosure.</p>
+      </div>
+
+      <div class="principle">
+        <div class="icon">🎯</div>
+        <h4>"Make requirements less dumb"</h4>
+        <p>Q: "Why must customer click 3 levels deep to discover availability?" A: There is no reason. The data is in atizrail already. The card was the dumb requirement.</p>
+      </div>
+
+      <div class="principle">
+        <div class="icon">📊</div>
+        <h4>"Question every requirement"</h4>
+        <p>Old card requirements: "show photo + name". Q: who said? Booking.com/Airbnb/Uber all show 4-6 data points on the card. We were below industry baseline.</p>
+      </div>
+
+      <div class="principle">
+        <div class="icon">🔥</div>
+        <h4>"Delete, delete, delete"</h4>
+        <p>Deleted: shop browse flow (optional now) · 5 category tabs (replaced by 3 intent chips) · 800ms async-wait flash · alphabetical sort · "ทั้งหมด" default filter.</p>
+      </div>
+
+      <div class="principle">
+        <div class="icon">🚀</div>
+        <h4>"Then accelerate"</h4>
+        <p>Only after deletion. Precompute next-slot per shop on the backend (cache 60s). Sort/filter by precomputed field. No N+1 queries from the frontend.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wordmark"><span class="book">Book</span><span class="ease">Ease</span> · Pass 26 v1 · marketplace availability-first</div>
+    <div style="margin-top:6px">2026-05-13 · saved at bookease-tools-public/_redesign-marketplace-availability-v1.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
