@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v9 · locale + simplified card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --warm-cream:#fbf5ec;--paper:#ffffff;
+    --ink-900:#1a1d29;--ink-700:#3d4254;--ink-500:#7a7f93;
+    --ink-400:#9aa0b3;--ink-300:#c8ccd9;--ink-200:#e4e7ee;
+    --ink-100:#eef0f5;--line:#e8e2d5;
+    --be-deep:#0c2461;--be-sky:#38BDF8;
+    --emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,sans-serif;
+    background:#e7e1d4;color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}.tab{font-variant-numeric:tabular-nums}
+  .ed{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500}
+  .page{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
+  .hero{margin-bottom:24px}
+  .hero h1{font-family:'Inter';font-weight:800;letter-spacing:-0.03em;font-size:30px;margin:0 0 4px}
+  .hero h1 .b{color:var(--be-deep)}.hero h1 .e{color:var(--be-sky)}
+  .hero .sub{color:var(--ink-500);font-size:14px}
+
+  /* Corrections summary */
+  .fixes{
+    background:#1a1d29;color:#fff;border-radius:14px;padding:20px 24px;
+    margin-bottom:24px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;
+  }
+  .fixes .ic{font-size:32px}
+  .fixes h3{font-family:'Inter';font-weight:800;font-size:15px;margin:0 0 6px}
+  .fixes ul{margin:0;padding-left:18px;font-size:12px;color:#cbd5e1;line-height:1.75}
+  .fixes ul b{color:#fff}
+
+  .layout{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+  /* Notes */
+  .notes{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+  .notes h2{font-family:'Inter';font-weight:800;font-size:18px;margin:0 0 6px}
+  .notes .lede{color:var(--ink-500);font-size:12px;margin-bottom:18px}
+  .stack{display:flex;flex-direction:column;gap:10px}
+  .item{background:var(--warm-cream);border-radius:10px;padding:12px 14px;border-left:3px solid var(--be-deep)}
+  .item .n{font-family:'Inter';font-weight:800;font-size:10px;color:var(--be-deep);letter-spacing:0.05em;margin-bottom:3px}
+  .item h4{font-size:13px;font-weight:700;margin:0 0 4px;letter-spacing:-0.005em}
+  .item p{font-size:11px;color:var(--ink-700);margin:0;line-height:1.55}
+  .item.win{border-left-color:var(--emerald);background:linear-gradient(135deg,#ecfdf5,#fbf5ec)}
+  .item.win .n{color:#047857}
+
+  /* Phone */
+  .phone{background:#1a1a1a;border-radius:42px;padding:11px;box-shadow:0 24px 60px rgba(0,0,0,0.25);width:100%;max-width:430px;margin:0 auto}
+  .ps{border-radius:32px;overflow:hidden;height:880px;display:flex;flex-direction:column;position:relative}
+  .notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:88px;height:24px;background:#1a1a1a;border-radius:13px;z-index:10}
+  .status{height:32px;display:flex;align-items:center;justify-content:space-between;padding:8px 24px 0;font-family:'Inter';font-weight:600;font-size:12px;flex-shrink:0;z-index:2;color:var(--ink-900)}
+  .body{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .bnav{height:56px;border-top:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:6px}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--ink-400);font-weight:500}
+  .bnav-item.active{color:var(--be-deep)}
+  .bnav-item svg{width:19px;height:19px}
+
+  /* V9 phone */
+  .v9{
+    background:var(--warm-cream);
+    background-image:
+      radial-gradient(circle at 8% -6%, rgba(56,189,248,0.12), transparent 36%),
+      radial-gradient(circle at 105% 12%, rgba(244,63,94,0.07), transparent 38%);
+  }
+  .v9 .row-logo{padding:14px 18px 8px;display:flex;align-items:center;justify-content:space-between}
+  .v9 .brand{display:flex;flex-direction:column;line-height:1;gap:1px}
+  .v9 .eyebrow{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--ink-500);letter-spacing:0.02em}
+  .v9 .w{font-family:'Inter';font-weight:800;font-size:22px;letter-spacing:-0.025em;line-height:1}
+  .v9 .w .b{color:var(--be-deep)}.v9 .w .e{color:var(--be-sky)}
+
+  /* === LOCALE PICKER · 3 flags inline === */
+  .v9 .locale-row{
+    display:inline-flex;background:rgba(255,255,255,0.7);
+    border:1px solid rgba(0,0,0,0.06);border-radius:999px;padding:3px;
+    backdrop-filter:blur(8px);gap:2px;
+  }
+  .v9 .flag-btn{
+    width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:14px;background:transparent;cursor:pointer;transition:background 0.15s;
+    border:none;
+  }
+  .v9 .flag-btn.act{background:var(--ink-900);box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+
+  /* Categories */
+  .v9 .cat-line{display:flex;gap:18px;overflow-x:auto;padding:6px 18px 8px;border-bottom:1px solid rgba(0,0,0,0.07);margin-bottom:10px;align-items:flex-end;-webkit-overflow-scrolling:touch}
+  .v9 .cat-line::-webkit-scrollbar{display:none}
+  .v9 .cat{flex-shrink:0;font-size:14px;font-weight:500;color:var(--ink-500);white-space:nowrap;padding-bottom:3px;position:relative;letter-spacing:-0.005em}
+  .v9 .cat.act{color:var(--ink-900);font-weight:800}
+  .v9 .cat.act::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:2.5px;background:var(--ink-900);border-radius:999px}
+  .v9 .cat.more{color:var(--ink-400);font-weight:500;font-size:13px;padding-bottom:5px}
+
+  /* Search + 2 filters */
+  .v9 .row-search{padding:0 18px 5px;display:flex;gap:6px;align-items:center}
+  .v9 .search-pill{flex:1;background:rgba(255,255,255,0.75);border:1px solid rgba(0,0,0,0.06);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--ink-500);display:flex;align-items:center;gap:6px;backdrop-filter:blur(6px);font-weight:500;min-width:0}
+  .v9 .filt{background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.06);border-radius:999px;padding:7px 11px;font-size:11px;font-weight:700;color:var(--ink-700);display:inline-flex;align-items:center;gap:3px;backdrop-filter:blur(6px);white-space:nowrap}
+  .v9 .filt.pri{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-color:transparent;box-shadow:0 1px 5px rgba(16,185,129,0.3)}
+  .v9 .filt .ar{font-size:8px;color:var(--ink-400);margin-left:1px}
+  .v9 .filt.pri .ar{color:rgba(255,255,255,0.85)}
+
+  /* Meta line */
+  .v9 .meta-line{padding:8px 18px 6px;font-size:11px;color:var(--ink-500);font-weight:500;display:flex;align-items:center;gap:5px}
+  .v9 .meta-line b{color:var(--ink-900);font-weight:700}
+  .v9 .meta-line .sep{opacity:0.4}
+  .v9 .meta-line .ct{font-family:'Inter';font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink-700)}
+
+  /* ═══ SIMPLIFIED CARD (name + 1-2 max) ═══ */
+  .v9 .list{flex:1;overflow-y:auto;padding:6px 12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+  .v9 .list::-webkit-scrollbar{width:0}
+  .v9 .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,60,0.07),0 6px 18px rgba(20,30,60,0.05);border:1px solid rgba(0,0,0,0.03)}
+  .v9 .card .ph{aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;position:relative}
+  .v9 .av{position:absolute;top:7px;left:7px;background:rgba(255,255,255,0.96);padding:3px 8px;border-radius:6px;font-family:'Inter';font-weight:800;font-size:10px;color:#047857;display:inline-flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.10);letter-spacing:-0.005em}
+  .v9 .av .d{width:5px;height:5px;border-radius:50%;background:var(--emerald);box-shadow:0 0 4px rgba(16,185,129,0.6)}
+  .v9 .av.tomo{color:#92400e}.v9 .av.tomo .d{background:var(--amber)}
+
+  /* Card body · 2 lines only · name + price/distance */
+  .v9 .bd{padding:10px 11px 12px}
+  .v9 .nm-row{display:flex;align-items:baseline;justify-content:space-between;gap:4px;margin-bottom:3px}
+  .v9 .nm3{
+    font-family:'Sarabun','Inter',sans-serif;font-size:15px;font-weight:800;
+    letter-spacing:-0.015em;line-height:1.15;color:var(--ink-900);
+    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .v9 .dist{font-family:'Inter';font-weight:700;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums;flex-shrink:0}
+  .v9 .pr{font-family:'Inter';font-weight:700;font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums}
+
+  .footer{margin-top:24px;text-align:center;color:var(--ink-400);font-size:11px}
+  .footer .w{font-family:'Inter';font-weight:800}
+  .footer .w .b{color:var(--be-deep)}.footer .w .e{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>Pass 26 v9 · locale + simplified card</h1>
+    <div class="sub">v8 corrections applied · ♡⊙ → 3 flags · card stripped to name + price + distance only</div>
+  </header>
+
+  <section class="fixes">
+    <div class="ic">✓</div>
+    <div>
+      <h3>2 corrections from v8</h3>
+      <ul>
+        <li><b>Replace ♡ + ⊙ with locale picker</b> · 3 flag buttons inline: 🇹🇭 ไทย · 🇬🇧 EN · 🇨🇳 中文 · active flag has dark pill background · tap to switch</li>
+        <li><b>Card stripped to essentials</b> · Photo + availability pill (top-left of photo) + Shop name + ฿price + distance · DROPPED: rating row · variant italic · neighborhood label · trust badge top-right · category label</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="layout">
+
+    <!-- Phone -->
+    <div class="phone"><div class="ps v9"><div class="notch"></div>
+      <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+      <div class="body">
+
+        <!-- ROW 1 · LOGO + LOCALE PICKER -->
+        <div class="row-logo">
+          <div class="brand">
+            <div class="eyebrow">discover &amp; book</div>
+            <div class="w"><span class="b">Book</span><span class="e">Ease</span></div>
+          </div>
+          <div class="locale-row">
+            <button class="flag-btn act" aria-label="ไทย">🇹🇭</button>
+            <button class="flag-btn" aria-label="English">🇬🇧</button>
+            <button class="flag-btn" aria-label="中文">🇨🇳</button>
+          </div>
+        </div>
+
+        <!-- ROW 2 · CATEGORIES -->
+        <div class="cat-line">
+          <span class="cat act">ทั้งหมด</span>
+          <span class="cat">เสริมสวย</span>
+          <span class="cat">นวด/สปา</span>
+          <span class="cat">เล็บ</span>
+          <span class="cat">ความงาม</span>
+          <span class="cat more">›</span>
+        </div>
+
+        <!-- ROW 3 · SEARCH + FILTERS -->
+        <div class="row-search">
+          <div class="search-pill"><span>🔍</span><span>ค้นหา</span></div>
+          <span class="filt">📍 ใกล้ฉัน <span class="ar">▾</span></span>
+          <span class="filt pri">ว่างวันนี้ <span class="ar">▾</span></span>
+        </div>
+
+        <!-- ROW 4 · META -->
+        <div class="meta-line">
+          📍 <b>สุขุมวิท</b><span class="sep">·</span><span class="ct">11</span> ร้านที่ว่าง<span class="sep">·</span><span class="ed" style="font-size:11px">ว่างก่อน · ใกล้ก่อน</span>
+        </div>
+
+        <!-- ═══ SIMPLIFIED CARDS · name + price + distance only ═══ -->
+        <div class="list">
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=600')">
+              <span class="av"><span class="d"></span>19:30</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Rakkana Spa</div><span class="dist">1.4km</span></div>
+              <div class="pr">฿890+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=600')">
+              <span class="av"><span class="d"></span>19:05</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Tll Salon</div><span class="dist">0.8km</span></div>
+              <div class="pr">฿300+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600')">
+              <span class="av"><span class="d"></span>18:55</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Moya</div><span class="dist">0.4km</span></div>
+              <div class="pr">฿450+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600')">
+              <span class="av"><span class="d"></span>19:00</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Zaza Salon</div><span class="dist">1.1km</span></div>
+              <div class="pr">฿380+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600')">
+              <span class="av"><span class="d"></span>19:15</span>
+            </div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Glow Nail</div><span class="dist">2.1km</span></div>
+              <div class="pr">฿280+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;font-size:36px">🌿</div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Mafuang</div><span class="dist">1.9km</span></div>
+              <div class="pr">฿550+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background:linear-gradient(135deg,#e9d5ff,#c4b5fd);display:flex;align-items:center;justify-content:center;font-size:36px">✨</div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Bubbie</div><span class="dist">2.3km</span></div>
+              <div class="pr">฿520+</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ph" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:36px">💅</div>
+            <div class="bd">
+              <div class="nm-row"><div class="nm3">Momo Mod</div><span class="dist">2.8km</span></div>
+              <div class="pr">฿280+</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bnav">
+          <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+          <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+        </div>
+      </div>
+    </div></div>
+
+    <!-- Notes -->
+    <div class="notes">
+      <h2>The v9 spec · locked</h2>
+      <div class="lede">Ship-ready. Implementation begins in this turn.</div>
+      <div class="stack">
+
+        <div class="item win">
+          <div class="n">✓ HEADER</div>
+          <h4>Brand mark + 3-flag locale picker</h4>
+          <p><b>Left:</b> "discover &amp; book" eyebrow + BookEase wordmark<br><b>Right:</b> single pill containing 3 flag buttons (🇹🇭 🇬🇧 🇨🇳). Active = dark fill. Tap = switch instantly. Existing <code style="font-family:Inter">localeStore.ts</code> already supports this.</p>
+        </div>
+
+        <div class="item win">
+          <div class="n">✓ CARD · MINIMAL</div>
+          <h4>Photo · pill · name · price · distance · stop.</h4>
+          <p><b>On photo:</b> only the availability time pill (top-left).<br><b>Below photo:</b> Shop Name (15px/800) + distance right · Price below.<br><b>Dropped:</b> rating row · variant italic · neighborhood label · trust badge top-right · category label · review count.</p>
+        </div>
+
+        <div class="item">
+          <div class="n">↺ FILTER ROW</div>
+          <h4>Same as v8 (locked)</h4>
+          <p>Search pill + 📍 ใกล้ฉัน + ว่างวันนี้ (emerald gradient) on one row.</p>
+        </div>
+
+        <div class="item">
+          <div class="n">↺ META LINE</div>
+          <h4>"ว่างก่อน · ใกล้ก่อน" honest sort label</h4>
+          <p>From v8 poke 3 · matches actual ranking algorithm (availability primary, distance secondary).</p>
+        </div>
+
+        <div class="item">
+          <div class="n">→ FRONTEND IMPL</div>
+          <h4>Starting in this turn</h4>
+          <p>Modify <code style="font-family:Inter">ServiceCard.tsx</code> first (drop rating row · simplify body) · then <code style="font-family:Inter">HomeHeader.tsx</code> · then <code style="font-family:Inter">HomePage.tsx</code> layout shell. Multiple commits to <code style="font-family:Inter">develop/sarasin</code>.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="w"><span class="b">Book</span><span class="e">Ease</span> · Pass 26 v9 · locale + simplified card</div>
+    <div style="margin-top:6px">2026-05-13 · bookease-tools-public/_redesign-marketplace-v9-locale-simplified.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
