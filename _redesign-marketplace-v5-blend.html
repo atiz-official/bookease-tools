@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BookEase · Marketplace · Pass 26 v5 · current × F blend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --warm-cream:#fbf5ec;
+    --warm-cream-deep:#f6ede0;
+    --paper:#ffffff;
+    --ink-900:#1a1d29;
+    --ink-800:#252836;
+    --ink-700:#3d4254;
+    --ink-600:#5a5f72;
+    --ink-500:#7a7f93;
+    --ink-400:#9aa0b3;
+    --ink-300:#c8ccd9;
+    --ink-200:#e4e7ee;
+    --ink-100:#eef0f5;
+    --line:#e8e2d5;
+    --be-navy:#1E40AF;
+    --be-sky:#38BDF8;
+    --be-deep:#0c2461;
+    --emerald:#10b981;
+    --emerald-50:#ecfdf5;
+    --amber:#f59e0b;
+    --rose:#f43f5e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,-apple-system,sans-serif;
+    background:#e7e1d4;color:var(--ink-900);
+    -webkit-font-smoothing:antialiased;line-height:1.45;
+  }
+  .latin{font-family:'Inter',sans-serif}
+  .tab{font-variant-numeric:tabular-nums}
+  .ed{font-family:'Cormorant Garamond',serif;font-style:italic}
+  .page{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+
+  .hero{margin-bottom:24px}
+  .hero h1{font-family:'Inter';font-weight:800;letter-spacing:-0.03em;font-size:30px;margin:0 0 4px}
+  .hero h1 .b{color:var(--be-navy)}.hero h1 .e{color:var(--be-sky)}
+  .hero .sub{color:var(--ink-500);font-size:14px;font-weight:400}
+
+  /* Correction summary */
+  .fixes{
+    background:#1a1d29;color:#fff;border-radius:14px;padding:18px 22px;
+    margin-bottom:24px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;
+  }
+  .fixes .ic{font-size:32px}
+  .fixes h3{font-family:'Inter';font-weight:800;font-size:15px;margin:0 0 6px;letter-spacing:-0.01em}
+  .fixes ul{margin:0;padding-left:18px;font-size:12px;color:#cbd5e1;line-height:1.7}
+  .fixes ul li b{color:#fff}
+
+  /* Comparison grid */
+  .grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    margin-bottom:28px;
+  }
+  @media(max-width:1024px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column}
+  .ch{margin-bottom:10px;padding:0 4px}
+  .tg{display:inline-flex;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:0.05em;font-family:'Inter';margin-bottom:6px}
+  .tg.bad{background:#fef2f2;color:#b91c1c}
+  .tg.try{background:#eff6ff;color:#1d4ed8}
+  .tg.star{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}
+  .nm{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:16px;margin-bottom:2px}
+  .dc{font-size:11px;color:var(--ink-500);line-height:1.4;min-height:46px}
+
+  /* Phone */
+  .phone{background:#1a1a1a;border-radius:36px;padding:9px;box-shadow:0 18px 50px rgba(0,0,0,0.18);width:100%}
+  .ps{border-radius:28px;overflow:hidden;height:760px;display:flex;flex-direction:column;position:relative}
+  .notch{position:absolute;top:5px;left:50%;transform:translateX(-50%);width:78px;height:20px;background:#1a1a1a;border-radius:11px;z-index:10}
+  .status{height:28px;display:flex;align-items:center;justify-content:space-between;padding:6px 18px 0;font-family:'Inter';font-weight:600;font-size:11px;flex-shrink:0;z-index:2}
+  .body{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .bnav{height:50px;border-top:1px solid var(--ink-200);background:#fff;display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:4px;z-index:5}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:9px;color:var(--ink-400);font-weight:500}
+  .bnav-item.active{color:var(--be-navy)}
+  .bnav-item svg{width:17px;height:17px}
+
+  /* ───────── CURRENT phone (slim ref) ───────── */
+  .p1{background:#fff}
+  .p1 .status{background:linear-gradient(135deg,#2D55EB,#1E40AF);color:#fff}
+  .p1 .hero1{background:linear-gradient(135deg,#2D55EB,#1E40AF);color:#fff;padding:10px 12px 14px;flex-shrink:0}
+  .p1 .h1a{font-size:12px;font-weight:700;margin:0 0 1px}
+  .p1 .h1b{font-size:11px;font-weight:700;margin:0 0 4px}
+  .p1 .pin{font-size:8px;opacity:0.9}
+  .p1 .search{background:#fff;border-radius:8px;padding:5px 8px;font-size:8px;color:var(--ink-400);margin-top:6px}
+  .p1 .list{flex:1;overflow-y:auto;padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#fff}
+  .p1 .list::-webkit-scrollbar{width:0}
+  .p1 .card{background:#fff;border:1px solid var(--ink-200);border-radius:8px;overflow:hidden}
+  .p1 .card .ph{aspect-ratio:1/1;background:var(--ink-100);background-size:cover;background-position:center}
+  .p1 .card .nm2{padding:4px 6px 1px;font-size:10px;font-weight:700}
+  .p1 .card .dt{padding:0 6px 5px;font-size:8px;color:var(--ink-500);font-family:'Inter'}
+
+  /* ───────── F phone (slim ref) ───────── */
+  .pf{background:#fff}
+  .pf .head{background:#fff;padding:10px 14px 6px;border-bottom:1px solid var(--ink-100);flex-shrink:0}
+  .pf .br{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .pf .w{font-family:'Inter';font-weight:800;font-size:15px;letter-spacing:-0.02em}
+  .pf .w .b{color:var(--be-navy)}.pf .w .e{color:var(--be-sky)}
+  .pf .loc{font-size:10px;color:var(--ink-500)}
+  .pf .loc b{color:var(--ink-900)}
+  .pf .search{background:var(--ink-100);border-radius:9px;padding:6px 10px;font-size:10px;color:var(--ink-500);margin-bottom:8px}
+  .pf .row{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}
+  .pf .row::-webkit-scrollbar{display:none}
+  .pf .chip{background:#fff;border:1px solid var(--ink-200);border-radius:999px;padding:5px 11px;font-size:11px;font-weight:500;color:var(--ink-700);white-space:nowrap;flex-shrink:0}
+  .pf .chip.act{background:var(--ink-900);color:#fff;border-color:var(--ink-900);font-weight:700}
+  .pf .row2{display:flex;gap:5px;margin-top:5px;padding-top:5px;border-top:1px solid var(--ink-100)}
+  .pf .row2 .chip{padding:5px 10px;font-size:10px;display:inline-flex;align-items:center;gap:3px}
+  .pf .row2 .chip.pri{background:var(--emerald-50);border-color:#a7f3d0;color:#047857;font-weight:700}
+  .pf .list{flex:1;overflow-y:auto;padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fff;align-content:start}
+  .pf .list::-webkit-scrollbar{width:0}
+  .pf .card{background:#fff;border:1px solid var(--ink-200);border-radius:10px;overflow:hidden}
+  .pf .card .ph{aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;position:relative}
+  .pf .av{position:absolute;top:5px;left:5px;background:rgba(255,255,255,0.96);padding:2px 6px;border-radius:4px;font-family:'Inter';font-weight:700;font-size:8px;color:#047857;display:inline-flex;align-items:center;gap:3px}
+  .pf .av .d{width:4px;height:4px;border-radius:50%;background:var(--emerald)}
+  .pf .bd{padding:6px 8px 8px}
+  .pf .nm3{font-size:11px;font-weight:700;margin-bottom:2px;line-height:1.2}
+  .pf .mt{font-size:9px;color:var(--ink-500)}
+  .pf .mt .sep{opacity:0.4;margin:0 3px}
+  .pf .mt .pr{color:var(--ink-700);font-weight:600;font-family:'Inter'}
+
+  /* ═════════════════════════════════════════
+     PHONE 3 · V5 · current × F blend
+     ═════════════════════════════════════════ */
+  .p5{
+    background:var(--warm-cream);
+    background-image:
+      radial-gradient(circle at 8% -6%, rgba(56,189,248,0.10), transparent 36%),
+      radial-gradient(circle at 105% 12%, rgba(244,63,94,0.06), transparent 38%);
+  }
+  .p5 .status{color:var(--ink-900)}
+  .p5 .head{
+    background:transparent;padding:12px 14px 8px;flex-shrink:0;position:relative;
+  }
+  /* Decorative serif word above brand · stylistic touch */
+  .p5 .eyebrow{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+    font-size:11px;color:var(--ink-500);letter-spacing:0.02em;margin-bottom:1px;
+    opacity:0.85;
+  }
+  .p5 .br{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .p5 .w{
+    font-family:'Inter';font-weight:800;font-size:19px;letter-spacing:-0.025em;
+    line-height:1;
+  }
+  .p5 .w .b{color:var(--be-deep)}.p5 .w .e{color:var(--be-sky)}
+  .p5 .act-row{display:flex;align-items:center;gap:8px}
+  .p5 .icon-btn{
+    width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.65);
+    border:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;
+    font-size:13px;color:var(--ink-700);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  .p5 .loc-bar{
+    font-size:11px;color:var(--ink-600);margin-bottom:9px;
+    display:flex;align-items:center;gap:4px;
+  }
+  .p5 .loc-bar b{color:var(--ink-900);font-weight:700}
+  .p5 .loc-bar .ct{
+    margin-left:auto;font-family:'Inter';font-weight:700;color:var(--be-deep);
+    background:rgba(30,64,175,0.10);padding:2px 8px;border-radius:999px;font-size:10px;
+  }
+
+  /* FILTER ROW 1 · category chips */
+  .p5 .row1{
+    display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;
+    margin-bottom:7px;
+  }
+  .p5 .row1::-webkit-scrollbar{display:none}
+  .p5 .chip{
+    background:rgba(255,255,255,0.75);border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600;
+    color:var(--ink-700);white-space:nowrap;flex-shrink:0;
+    backdrop-filter:blur(6px);
+  }
+  .p5 .chip.act{
+    background:var(--ink-900);color:#fff;border-color:var(--ink-900);
+    font-weight:700;
+  }
+  .p5 .chip.more{background:transparent;border:none;color:var(--ink-500);padding-left:4px;padding-right:8px}
+
+  /* FILTER ROW 2 · time + location */
+  .p5 .row2{display:flex;gap:5px;flex-wrap:nowrap}
+  .p5 .row2 .chip2{
+    background:rgba(255,255,255,0.75);border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px;padding:5px 11px;font-size:11px;font-weight:600;color:var(--ink-700);
+    display:inline-flex;align-items:center;gap:4px;backdrop-filter:blur(6px);white-space:nowrap;
+  }
+  .p5 .row2 .chip2 .ar{color:var(--ink-400);font-size:9px}
+  .p5 .row2 .chip2.pri{
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:#fff;border-color:transparent;font-weight:700;
+    box-shadow:0 1px 4px rgba(16,185,129,0.30);
+  }
+  .p5 .row2 .chip2.pri .ar{color:rgba(255,255,255,0.8)}
+
+  /* CARD GRID · 2-col with rich info */
+  .p5 .list{
+    flex:1;overflow-y:auto;padding:8px 10px 14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;
+    background:transparent;
+  }
+  .p5 .list::-webkit-scrollbar{width:0}
+  .p5 .card{
+    background:var(--paper);border-radius:14px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(20,30,60,0.06),0 4px 14px rgba(20,30,60,0.04);
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .p5 .card .ph{
+    aspect-ratio:4/5;background:var(--ink-100);background-size:cover;background-position:center;
+    position:relative;
+  }
+  .p5 .av{
+    position:absolute;top:6px;left:6px;
+    background:rgba(255,255,255,0.96);padding:3px 8px;border-radius:6px;
+    font-family:'Inter';font-weight:800;font-size:10px;color:#047857;
+    display:inline-flex;align-items:center;gap:4px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.08);
+  }
+  .p5 .av .d{width:5px;height:5px;border-radius:50%;background:var(--emerald)}
+  .p5 .av.tomo{color:#92400e}
+  .p5 .av.tomo .d{background:var(--amber)}
+  .p5 .heart{
+    position:absolute;top:6px;right:6px;width:24px;height:24px;
+    background:rgba(255,255,255,0.9);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;color:var(--ink-600);
+    backdrop-filter:blur(4px);
+  }
+  .p5 .heart.fav{color:var(--rose)}
+
+  .p5 .bd{padding:8px 10px 10px}
+  .p5 .nm-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;gap:4px}
+  .p5 .nm3{font-size:12px;font-weight:700;letter-spacing:-0.005em;line-height:1.2;display:flex;align-items:baseline;gap:5px}
+  .p5 .vdot{width:6px;height:6px;border-radius:50%;background:#fb7185;align-self:center;flex-shrink:0}
+  .p5 .dist{
+    font-family:'Inter';font-weight:600;font-size:9px;color:var(--ink-500);
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .p5 .mt{font-size:10px;color:var(--ink-500);display:flex;align-items:center;gap:4px}
+  .p5 .mt .sep{opacity:0.4}
+  .p5 .mt .pr{color:var(--ink-700);font-weight:700;font-family:'Inter';font-variant-numeric:tabular-nums}
+
+  /* bottom nav over warm cream */
+  .p5 .bnav{background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-top-color:rgba(0,0,0,0.05)}
+
+  /* ───── Notes panel ───── */
+  .notes{
+    background:#fff;border:1px solid #e8e2d5;border-radius:18px;padding:24px;margin-bottom:24px;
+  }
+  .notes h2{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:20px;margin:0 0 6px}
+  .notes .lede{color:var(--ink-500);font-size:13px;margin-bottom:18px}
+  .delta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .delta{background:var(--warm-cream);border-radius:10px;padding:13px 15px;border-left:3px solid var(--be-deep)}
+  .delta .n{font-family:'Inter';font-weight:800;font-size:10px;color:var(--be-deep);letter-spacing:0.05em;margin-bottom:3px}
+  .delta h4{font-size:13px;font-weight:700;margin:0 0 5px;letter-spacing:-0.01em}
+  .delta p{font-size:12px;color:var(--ink-700);margin:0;line-height:1.55}
+
+  /* Stylistic ref panel */
+  .style-ref{
+    background:linear-gradient(135deg,#fbf5ec,#f6ede0);
+    border:1px solid #e8e2d5;border-radius:18px;padding:24px;margin-bottom:24px;
+  }
+  .style-ref h2{font-family:'Inter';font-weight:800;letter-spacing:-0.02em;font-size:20px;margin:0 0 4px}
+  .style-ref .lede{color:var(--ink-500);font-size:13px;margin-bottom:14px}
+  .style-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  .swatch{background:#fff;border-radius:10px;padding:14px;border:1px solid rgba(0,0,0,0.05)}
+  .swatch .sw{height:32px;border-radius:6px;margin-bottom:8px}
+  .swatch .lbl{font-family:'Inter';font-weight:700;font-size:11px;color:var(--ink-700);letter-spacing:0.02em;margin-bottom:2px}
+  .swatch .hex{font-family:'Inter';font-size:10px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+  .swatch .nt{font-size:11px;color:var(--ink-600);margin-top:5px;line-height:1.4}
+
+  .footer{margin-top:24px;text-align:center;color:var(--ink-400);font-size:11px}
+  .footer .w{font-family:'Inter';font-weight:800}
+  .footer .w .b{color:var(--be-navy)}.footer .w .e{color:var(--be-sky)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>Pass 26 v5 · current × F blend</h1>
+    <div class="sub">2-col grid · 2 filter rows · warm cream chrome · F's info density · current's familiar shape</div>
+  </header>
+
+  <!-- Corrections applied -->
+  <section class="fixes">
+    <div class="ic">✓</div>
+    <div>
+      <h3>4 corrections from v4 → v5</h3>
+      <ul>
+        <li><b>2 rows of filters, not 3</b> · search bar dropped · becomes 🔍 icon in header · row 1 = categories · row 2 = time + location</li>
+        <li><b>No "●" on selected chips</b> · dark bg alone = selection · the dot was redundant</li>
+        <li><b>Warm cream background</b> · <code style="background:#fbf5ec;padding:2px 5px;border-radius:3px;border:1px solid #e8e2d5;font-family:Inter;font-size:11px">#fbf5ec</code> instead of plain white · white cards on cream = visual rhythm</li>
+        <li><b>2-col grid like current</b> + F's info richness · photo + availability pill + name + variant dot + category + ฿price + distance per card</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── 3-phone comparison: Current · F · V5 ─── -->
+  <section class="grid">
+
+    <div class="col">
+      <div class="ch">
+        <span class="tg bad">⚠ CURRENT</span>
+        <div class="nm">Current</div>
+        <div class="dc">Plain white · square photos · name + distance only · no availability · no price.</div>
+      </div>
+      <div class="phone"><div class="ps p1"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="hero1">
+            <div class="h1a">หาร้านสปา · นวด · เสริมสวย</div>
+            <div class="h1b">จองได้ใน <span class="latin">60</span> วินาที</div>
+            <div class="pin">📍 ใกล้คุณ <span class="latin">0</span> ร้าน</div>
+            <div class="search">🔍 ค้นหา เช่น สปา, ทำเล็บ</div>
+          </div>
+          <div class="list">
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=300')"></div><div class="nm2">Rakkana spa</div><div class="dt">1.4 km</div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=300')"></div><div class="nm2">Tll Salon</div><div class="dt">4.0 km</div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300')"></div><div class="nm2">Mafuang</div><div class="dt">4.0 km</div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=300')"></div><div class="nm2">Zaza Salon</div><div class="dt">4.0 km</div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=300')"></div><div class="nm2">Glow Nail</div><div class="dt">2.1 km</div></div>
+            <div class="card"><div class="ph" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:22px">😺</div><div class="nm2">Kaiwat Shop</div><div class="dt">4.0 km</div></div>
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="col">
+      <div class="ch">
+        <span class="tg try">F · BASELINE</span>
+        <div class="nm">F (v4) baseline</div>
+        <div class="dc">2-col grid · adds info · but plain white · 3 filter rows · selection dot · generic.</div>
+      </div>
+      <div class="phone"><div class="ps pf"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <div class="head">
+            <div class="br">
+              <span class="w"><span class="b">Book</span><span class="e">Ease</span></span>
+              <span class="loc">📍 <b>สุขุมวิท</b> · <span class="tab">11</span> ร้าน</span>
+            </div>
+            <div class="search">🔍 ค้นหาร้าน · บริการ · พื้นที่</div>
+            <div class="row">
+              <span class="chip act">ทั้งหมด ●</span>
+              <span class="chip">เสริมสวย</span>
+              <span class="chip">นวด/สปา</span>
+              <span class="chip">เล็บ</span>
+            </div>
+            <div class="row2">
+              <span class="chip pri">ว่างวันนี้ ▾</span>
+              <span class="chip">📍 ใกล้ฉัน ▾</span>
+            </div>
+          </div>
+          <div class="list">
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=400')"><span class="av"><span class="d"></span>19:30</span></div><div class="bd"><div class="nm3">Rakkana Spa</div><div class="mt">สปา<span class="sep">·</span><span class="pr">฿890</span><span class="sep">·</span>1.4km</div></div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400')"><span class="av"><span class="d"></span>19:05</span></div><div class="bd"><div class="nm3">Tll Salon</div><div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿300</span><span class="sep">·</span>0.8km</div></div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400')"><span class="av"><span class="d"></span>18:55</span></div><div class="bd"><div class="nm3">Moya</div><div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿450</span><span class="sep">·</span>0.4km</div></div></div>
+            <div class="card"><div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400')"><span class="av"><span class="d"></span>19:00</span></div><div class="bd"><div class="nm3">Zaza Salon</div><div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿380</span><span class="sep">·</span>1.1km</div></div></div>
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ═════════════════════════════════════════
+         V5 · BLEND · the ship candidate
+         ═════════════════════════════════════════ -->
+    <div class="col">
+      <div class="ch">
+        <span class="tg star">★ V5 · BLEND</span>
+        <div class="nm">V5 · cream chrome + 2-col</div>
+        <div class="dc">Warm cream chrome · 2 filter rows · no selection dot · white cards on cream · full info density · stylistic.</div>
+      </div>
+      <div class="phone"><div class="ps p5"><div class="notch"></div>
+        <div class="status"><span>18:40</span><span class="latin">●●● 68</span></div>
+        <div class="body">
+          <!-- HEADER (above the filter rows) -->
+          <div class="head">
+            <div class="eyebrow">discover &amp; book</div>
+            <div class="br">
+              <span class="w"><span class="b">Book</span><span class="e">Ease</span></span>
+              <div class="act-row">
+                <span class="icon-btn">🔍</span>
+                <span class="icon-btn">♡</span>
+              </div>
+            </div>
+            <div class="loc-bar">
+              📍 <b>สุขุมวิท</b>
+              <span class="ct"><span class="tab">11</span> ร้าน</span>
+            </div>
+
+            <!-- FILTER ROW 1 · categories · no dot on active -->
+            <div class="row1">
+              <span class="chip act">ทั้งหมด</span>
+              <span class="chip">เสริมสวย</span>
+              <span class="chip">นวด/สปา</span>
+              <span class="chip">เล็บ</span>
+              <span class="chip">ความงาม</span>
+              <span class="chip more">›</span>
+            </div>
+
+            <!-- FILTER ROW 2 · time + location -->
+            <div class="row2">
+              <span class="chip2 pri">ว่างวันนี้ <span class="ar">▾</span></span>
+              <span class="chip2">📍 ใกล้ฉัน <span class="ar">▾</span></span>
+            </div>
+          </div>
+
+          <!-- CARD GRID · 2-col · white cards on cream -->
+          <div class="list">
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1583416750470-965b2707b355?w=500')">
+                <span class="av"><span class="d"></span>19:30</span>
+                <span class="heart">♡</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Rakkana Spa<span class="vdot" style="background:#f59e0b"></span></div>
+                  <span class="dist">1.4km</span>
+                </div>
+                <div class="mt">สปา<span class="sep">·</span><span class="pr">฿890+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=500')">
+                <span class="av"><span class="d"></span>19:05</span>
+                <span class="heart fav">♥</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Tll Salon<span class="vdot" style="background:#0ea5e9"></span></div>
+                  <span class="dist">0.8km</span>
+                </div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿300+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500')">
+                <span class="av"><span class="d"></span>18:55</span>
+                <span class="heart">♡</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Moya<span class="vdot" style="background:#a855f7"></span></div>
+                  <span class="dist">0.4km</span>
+                </div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿450+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=500')">
+                <span class="av"><span class="d"></span>19:00</span>
+                <span class="heart">♡</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Zaza Salon<span class="vdot" style="background:#10b981"></span></div>
+                  <span class="dist">1.1km</span>
+                </div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿380+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500')">
+                <span class="av"><span class="d"></span>19:15</span>
+                <span class="heart">♡</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Glow Nail<span class="vdot" style="background:#ec4899"></span></div>
+                  <span class="dist">2.1km</span>
+                </div>
+                <div class="mt">เล็บ<span class="sep">·</span><span class="pr">฿280+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;font-size:32px">🌿</div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Mafuang<span class="vdot" style="background:#f59e0b"></span></div>
+                  <span class="dist">1.9km</span>
+                </div>
+                <div class="mt">นวด<span class="sep">·</span><span class="pr">฿550+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1591019479261-1c7d8b8c4f4d?w=500'),linear-gradient(135deg,#e9d5ff,#c4b5fd);background-size:cover;background-position:center;">
+                <span class="av tomo"><span class="d"></span>10:00 พรุ่งนี้</span>
+                <span class="heart">♡</span>
+              </div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Bubbie<span class="vdot" style="background:#a855f7"></span></div>
+                  <span class="dist">2.3km</span>
+                </div>
+                <div class="mt">เสริมสวย<span class="sep">·</span><span class="pr">฿520+</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ph" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);display:flex;align-items:center;justify-content:center;font-size:32px">💅</div>
+              <div class="bd">
+                <div class="nm-row">
+                  <div class="nm3">Momo Mod<span class="vdot" style="background:#ec4899"></span></div>
+                  <span class="dist">2.8km</span>
+                </div>
+                <div class="mt">เล็บ<span class="sep">·</span><span class="pr">฿280+</span></div>
+              </div>
+            </div>
+
+          </div>
+          <div class="bnav">
+            <div class="bnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3z"/></svg><span>หน้าแรก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>บันทึก</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>การจอง</span></div>
+            <div class="bnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg><span>บัญชี</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </section>
+
+  <!-- ─── Stylistic notes ─── -->
+  <section class="style-ref">
+    <h2>🎨 Stylistic decisions · cream chrome, white cards, warm but disciplined</h2>
+    <div class="lede">Background does the work. Cards stay neutral white. No need for illustration noise.</div>
+    <div class="style-grid">
+
+      <div class="swatch">
+        <div class="sw" style="background:#fbf5ec;border:1px solid #e8e2d5"></div>
+        <div class="lbl">Warm Cream</div>
+        <div class="hex">#fbf5ec</div>
+        <div class="nt">Page background · gives stylistic warmth without competing with shop photos</div>
+      </div>
+
+      <div class="swatch">
+        <div class="sw" style="background:#ffffff;border:1px solid var(--ink-200)"></div>
+        <div class="lbl">Card Paper</div>
+        <div class="hex">#ffffff</div>
+        <div class="nt">Cards stay clean white · creates rhythm against cream</div>
+      </div>
+
+      <div class="swatch">
+        <div class="sw" style="background:linear-gradient(135deg,#0c2461,#38BDF8)"></div>
+        <div class="lbl">Wordmark</div>
+        <div class="hex">#0c2461 + #38BDF8</div>
+        <div class="nt">Deeper navy (was #1E40AF) reads more premium on cream</div>
+      </div>
+
+      <div class="swatch">
+        <div class="sw" style="background:radial-gradient(circle at 8% -6%, rgba(56,189,248,0.4), transparent 40%), radial-gradient(circle at 100% 10%, rgba(244,63,94,0.3), transparent 42%), #fbf5ec"></div>
+        <div class="lbl">Subtle Wash</div>
+        <div class="hex">radial gradients</div>
+        <div class="nt">Soft sky + rose tints at corners · 6-10% opacity · gives depth without pattern noise</div>
+      </div>
+
+      <div class="swatch">
+        <div class="sw" style="background:linear-gradient(135deg,#10b981,#059669)"></div>
+        <div class="lbl">Active Filter</div>
+        <div class="hex">emerald gradient</div>
+        <div class="nt">"ว่างวันนี้" pill in active state · only the time filter pulses · scarcity/freshness signal</div>
+      </div>
+
+      <div class="swatch">
+        <div class="sw" style="background:#1a1d29"></div>
+        <div class="lbl">Selected Chip</div>
+        <div class="hex">#1a1d29</div>
+        <div class="nt">No "●" needed · the dark fill is unambiguous · selection state visible at a glance</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Deltas ─── -->
+  <section class="notes">
+    <h2>The 7 design decisions in V5</h2>
+    <div class="lede">Why each choice · how it serves the customer · how it differs from F</div>
+    <div class="delta-grid">
+
+      <div class="delta">
+        <div class="n">01</div>
+        <h4>2 filter rows, not 3</h4>
+        <p>Dropped the search bar — became a 🔍 icon in the top-right. Saves a row (~40px) for shop cards. Search is a low-frequency action; categories + time are high-frequency.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">02</div>
+        <h4>No "●" on selected chip</h4>
+        <p>The black fill alone is unambiguous selection. The dot was redundant + reduced negative-space inside the chip. Apple/iOS pattern.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">03</div>
+        <h4>Warm cream chrome</h4>
+        <p><code style="background:#fbf5ec;padding:1px 5px;border-radius:3px;font-family:Inter;font-size:11px;border:1px solid #e8e2d5">#fbf5ec</code> background + white cards. Familiar warmth (Airbnb · Booking.com · Squarespace) without being beige-grandma. Soft radial gradient tints at corners add depth.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">04</div>
+        <h4>2-col grid kept (current)</h4>
+        <p>Familiar to your existing users. Doesn't force a learning step. Customer scans 6-8 shops per phone-height — same density as current Pinterest pattern.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">05</div>
+        <h4>5 info points per card (F upgrade)</h4>
+        <p>Photo · availability pill · shop name · variant dot · category · ฿price · distance · heart. Current shows only photo + name + distance. 4× more decision-critical info, same space.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">06</div>
+        <h4>Distance moves to name row</h4>
+        <p>"1.4km" rendered on the right of the shop name, tabular-num. Reads as "Rakkana Spa  ·  1.4km" in one glance. Category + price get their own line below, color-distinguished.</p>
+      </div>
+
+      <div class="delta">
+        <div class="n">07</div>
+        <h4>Stylistic eyebrow</h4>
+        <p>Tiny italic "discover & book" above the wordmark · Cormorant Garamond serif · signals "this is curated, not a database dump." Pass 25 v37 already uses Cormorant on /payment trust strip · brand-coherent.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="w"><span class="b">Book</span><span class="e">Ease</span> · Pass 26 v5 · current × F blend</div>
+    <div style="margin-top:6px">2026-05-13 · bookease-tools-public/_redesign-marketplace-v5-blend.html</div>
+  </footer>
+
+</div>
+</body>
+</html>
