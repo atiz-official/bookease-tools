@@ -391,34 +391,6 @@
     opacity: 0.55;
   }
 
-  /* Variant: RELAXED · middle · 2-line · italic tagline */
-  [data-variant="relaxed"] .cover-canvas .brand-mark {
-    top: 45%; transform: translate(-50%, -50%);
-  }
-  [data-variant="relaxed"] .cover-canvas .brand-name {
-    font-size: clamp(14px, 3.6vw, 20px);
-    letter-spacing: 5px;
-    font-weight: 500;
-  }
-  [data-variant="relaxed"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: italic; font-weight: 400;
-    font-size: clamp(13px, 3vw, 17px);
-    margin-top: 10px;
-    opacity: 0.65; letter-spacing: 0;
-  }
-  [data-variant="relaxed"] .cover-canvas .brand-divider {
-    display: block;
-    width: 32px; height: 1px;
-    background: var(--pal-text);
-    opacity: 0.4;
-    margin: 18px auto 0;
-  }
-  [data-variant="relaxed"] .cover-canvas .brand-est {
-    font-size: 9px; letter-spacing: 3px;
-    margin-top: 16px; opacity: 0.55;
-  }
-
   /* Variant: LUXURY · center-lower · italic refined · vignette */
   [data-variant="luxury"] .cover-canvas .brand-mark {
     bottom: 22%; top: auto; transform: translateX(-50%);
@@ -484,36 +456,36 @@
   }
 
   /* Variant: REFRESHING · mint clean · airy modern */
-  [data-variant="refreshing"] .cover-canvas {
+  [data-variant="fresh"] .cover-canvas {
     background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 50%, #6ee7b7 100%);
   }
-  [data-variant="refreshing"] .cover-canvas .layer-warmth {
+  [data-variant="fresh"] .cover-canvas .layer-warmth {
     background: radial-gradient(circle at 70% 20%, #ecfeff 0%, transparent 60%);
     opacity: 0.6;
   }
-  [data-variant="refreshing"] .cover-canvas .brand-mark {
+  [data-variant="fresh"] .cover-canvas .brand-mark {
     top: 50%; transform: translate(-50%, -50%);
     color: #064e3b;
   }
-  [data-variant="refreshing"] .cover-canvas .brand-name {
+  [data-variant="fresh"] .cover-canvas .brand-name {
     font-size: clamp(16px, 4.4vw, 24px);
     letter-spacing: 4px; font-weight: 600;
   }
-  [data-variant="refreshing"] .cover-canvas .brand-divider {
+  [data-variant="fresh"] .cover-canvas .brand-divider {
     display: block;
     width: 60px; height: 2px;
     background: #10b981; opacity: 0.85;
     margin: 14px auto;
     border-radius: 100px;
   }
-  [data-variant="refreshing"] .cover-canvas .brand-tagline {
+  [data-variant="fresh"] .cover-canvas .brand-tagline {
     display: block;
     font-style: normal; font-weight: 400;
     font-size: clamp(12px, 2.8vw, 15px);
     color: #047857; letter-spacing: 1px;
     text-transform: lowercase;
   }
-  [data-variant="refreshing"] .cover-canvas .brand-est {
+  [data-variant="fresh"] .cover-canvas .brand-est {
     font-size: 9px; letter-spacing: 3px; margin-top: 14px;
     color: #065f46; opacity: 0.7;
   }
@@ -658,25 +630,25 @@
   }
 
   /* REFRESHING · mint clean throughout */
-  [data-variant="refreshing"] .phone-screen {
+  [data-variant="fresh"] .phone-screen {
     background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 100%);
   }
-  [data-variant="refreshing"] .service-card {
+  [data-variant="fresh"] .service-card {
     background: #ffffff;
     border: 1px solid #6ee7b7;
   }
-  [data-variant="refreshing"] .screen-title {
+  [data-variant="fresh"] .screen-title {
     color: #064e3b; font-weight: 600;
   }
-  [data-variant="refreshing"] .service-name { color: #064e3b; }
-  [data-variant="refreshing"] [data-script="latin"] .service-name {
+  [data-variant="fresh"] .service-name { color: #064e3b; }
+  [data-variant="fresh"] [data-script="latin"] .service-name {
     font-family: 'Sarabun', sans-serif !important;
     font-weight: 600; font-style: normal;
   }
-  [data-variant="refreshing"] .service-tag { color: #047857; letter-spacing: 2px; }
-  [data-variant="refreshing"] .service-meta { color: #047857; }
-  [data-variant="refreshing"] .service-divider { background: rgba(16, 185, 129, 0.25); }
-  [data-variant="refreshing"] .phone-address {
+  [data-variant="fresh"] .service-tag { color: #047857; letter-spacing: 2px; }
+  [data-variant="fresh"] .service-meta { color: #047857; }
+  [data-variant="fresh"] .service-divider { background: rgba(16, 185, 129, 0.25); }
+  [data-variant="fresh"] .phone-address {
     background: rgba(236, 253, 245, 0.85); color: #064e3b;
   }
 
@@ -1374,10 +1346,9 @@
   <div class="variant-tabs-scroll" id="variantTabsScroll">
     <div class="variant-tabs" role="tablist">
       <button data-variant="airy" class="active" type="button" aria-label="โปร่ง · Airy">โปร่ง</button>
-      <button data-variant="relaxed" type="button" aria-label="ผ่อนคลาย · Relaxed">ผ่อนคลาย</button>
       <button data-variant="luxury" type="button" aria-label="หรูหรา · Luxury">หรูหรา</button>
       <button data-variant="fun" type="button" aria-label="สนุก · Fun">สนุก</button>
-      <button data-variant="refreshing" type="button" aria-label="สดชื่น · Refreshing">สดชื่น</button>
+      <button data-variant="fresh" type="button" aria-label="สดชื่น · Fresh">สดชื่น</button>
       <button data-variant="surprise" type="button" aria-label="เซอร์ไพรส์ · Surprise">เซอร์ไพรส์</button>
     </div>
   </div>
@@ -1536,7 +1507,7 @@
   let currentIndustry = urlIndustry && INDUSTRIES.includes(urlIndustry)
     ? urlIndustry
     : detectIndustry(shopData.shopName);
-  let currentVariant = urlVariant && ['airy','relaxed','luxury','fun','refreshing','bold','soft','neon'].includes(urlVariant)
+  let currentVariant = urlVariant && ['airy','luxury','fun','fresh','surprise'].includes(urlVariant)
     ? urlVariant
     : 'airy';
   const currentScript = detectScript(shopData.shopName);
