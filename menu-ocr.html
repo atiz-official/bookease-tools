@@ -761,7 +761,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
     const hint = document.getElementById('prevSlugHint');
     const live = document.getElementById('prevSlugLive');
     if (slug) {
-      live.textContent = 'bookease.co/' + slug;
+      live.textContent = slug; // prefix "bookease.co/" is already static in the HTML (#prevSlugHint)
       hint.style.display = 'block';
     } else {
       hint.style.display = 'none';
