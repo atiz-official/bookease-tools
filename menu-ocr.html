@@ -654,6 +654,12 @@
     prevImageData = { base64: await fileToBase64(file), mediaType: file.type };
     showStatus('prevStatus', '', '');
     updateButtonStates();
+    // Pass 26 v11.19 (Art's lock 2026-05-16): auto-fire extract the moment
+    // the image is loaded · saves the manual "ดึงข้อมูลร้านให้" tap. Staff
+    // never waits to press a button · photo → extracting immediately.
+    // Guarded: prevExtractBtn handler no-ops if !prevImageData (already set).
+    prevExtractBtn.disabled = false;
+    prevExtractBtn.click();
   });
 
   prevExtractBtn.addEventListener('click', async () => {
@@ -845,6 +851,11 @@ Output ONLY valid JSON. No prose. No code fences.`;
     menuImageData = { base64: await fileToBase64(file), mediaType: file.type };
     showStatus('menuStatus', '', '');
     updateButtonStates();
+    // Pass 26 v11.19 (Art's lock 2026-05-16): auto-fire extract on image
+    // load · saves the manual "ดึงรายการบริการให้" tap. Photo → parsing
+    // immediately · 1 fewer precious click for caravan staff/merchant.
+    menuExtractBtn.disabled = false;
+    menuExtractBtn.click();
   });
 
   menuExtractBtn.addEventListener('click', async () => {
