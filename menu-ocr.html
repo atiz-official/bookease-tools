@@ -244,7 +244,103 @@
     border: 1px solid #dbeafe;
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     Pass 26 v11.20 (Art's lock 2026-05-16) · ELON 1-PAGE REDESIGN
+     0 tabs · 0 LINE-OA upload · 0 white cards · name=title-input ·
+     flat service list · default open-time chip · sticky brand-pill
+     CTA. JS untouched · all element IDs preserved · LINE-OA bits
+     kept hidden so the script's getElementById bindings don't throw.
+     ═══════════════════════════════════════════════════════════════ */
+  body, body[data-mode="menu"], body[data-mode="previsit"] {
+    background: #f7f9fc; color: #1a1d29;
+  }
+  .container { max-width: 560px; padding: 22px 18px 110px; }
+  /* hide legacy chrome that the redesign drops */
+  header h1, .mode-tabs, .mode-tabs-hint { display: none !important; }
+  .grid { display: block !important; }
+  .card { background: none !important; border: none !important;
+    box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; }
+  .card .hint { display: none; }
+  .branding-grid { display: block; }
+  .hidden-el, #prevUploadZone, #prevExtractBtn { display: none !important; }
 
+  .e-wm { font-family:'Inter',system-ui,sans-serif; font-weight:800;
+    font-size:15px; letter-spacing:-.01em; line-height:1; }
+  .e-wm .book { color:#1E40AF; } .e-wm .ease { color:#38BDF8; }
+  .e-hero { font-family:'Sarabun',system-ui,sans-serif; font-weight:800;
+    font-size:19px; letter-spacing:-.01em; color:#134783;
+    margin:10px 0 18px; }
+
+  /* shop name = the page title AND the input · 1 element, 2 jobs */
+  #prevShopName {
+    width:100%; border:none; outline:none; background:transparent;
+    font-family:'Sarabun',system-ui,sans-serif; font-weight:800;
+    font-size:24px; letter-spacing:-.015em; color:#1a1d29;
+    padding:0 0 2px;
+  }
+  #prevShopName::placeholder { color:#c4cad6; font-weight:800; }
+  #prevSlugHint { margin:2px 0 20px !important; font-size:12px !important;
+    color:#7a7f93 !important; font-family:'Inter',monospace; }
+  #prevSlugLive { color:#134783 !important; font-weight:700 !important;
+    font-family:'Inter',ui-monospace,monospace !important; }
+
+  /* camera target (was menuUploadZone) */
+  #menuUploadZone.upload-zone {
+    border:2px dashed #c9d3e3; border-radius:16px; background:#fff;
+    padding:30px 16px;
+  }
+  #menuUploadZone.upload-zone:active { border-color:#38BDF8; background:#f3f9ff; }
+  #menuUploadZone.has-file { padding:10px; border-style:solid; border-color:#38BDF8; }
+  #menuUploadZone .upload-icon { font-size:34px; margin-bottom:8px; }
+  #menuUploadZone .upload-label { font-size:16px; font-weight:800; color:#134783; }
+
+  /* services = flat list · no card · hairline rows */
+  #menuTable { margin-top:14px; }
+  #menuTable thead th {
+    background:none; border:none; border-bottom:1px solid #e8edf3;
+    font-size:11px; font-weight:700; color:#9aa1b2; text-transform:none;
+    padding:6px 6px; letter-spacing:.02em;
+  }
+  #menuTable td { border-bottom:1px solid #f1f4f8; padding:7px 6px; }
+  #menuTable input { background:transparent; border:1px solid transparent;
+    font-size:14px; padding:7px 8px; }
+  #menuTable input:focus { background:#fff; border-color:#38BDF8; }
+  #menuTable input.num { text-align:right; font-variant-numeric:tabular-nums;
+    font-family:'Inter',monospace; font-weight:700; }
+  #menuTableBody .empty { color:#aab1c2 !important; font-size:13px !important;
+    padding:26px 8px !important; }
+  .addbtn { background:none; border:none; color:#134783; font-weight:700;
+    font-size:13px; font-family:inherit; padding:12px 0 4px; cursor:pointer; }
+  .actions { display:none; }
+
+  /* open-time chip · default 10:00-21:00 · tiny inline */
+  .timechip { margin-top:16px; font-size:12px; color:#7a7f93;
+    font-family:'Sarabun',sans-serif; }
+  .timechip #prevOpenTime {
+    width:104px; border:none; border-bottom:1px dashed #c9d3e3;
+    background:transparent; font-family:'Inter',monospace; font-size:12px;
+    font-weight:700; color:#1a1d29; padding:1px 2px; text-align:center;
+  }
+  .timechip #prevOpenTime:focus { outline:none; border-bottom-color:#38BDF8; }
+
+  /* sticky brand-pill CTA */
+  .cta-bar {
+    position:fixed; left:0; right:0; bottom:0; padding:14px 16px 18px;
+    background:linear-gradient(180deg,rgba(247,249,252,0),#f7f9fc 26%);
+    z-index:50;
+  }
+  .cta-bar .inner { max-width:560px; margin:0 auto; }
+  #prevCreateBtn.primary, #prevCreateBtn.primary.green {
+    width:100%; min-height:52px; border:none; border-radius:999px;
+    background:linear-gradient(135deg,#1E40AF,#38BDF8); color:#fff;
+    font-family:'Sarabun',sans-serif; font-size:16px; font-weight:800;
+    letter-spacing:-.01em; margin:0;
+    box-shadow:0 8px 20px -6px rgba(30,64,175,.45); cursor:pointer;
+  }
+  #prevCreateBtn.primary:disabled, #prevCreateBtn.primary.green:disabled {
+    background:#a8a29e; color:#f4f4f3; box-shadow:none; cursor:not-allowed;
+  }
+  #prevStatus.status, #menuStatus.status { border-radius:12px; }
 </style>
 </head>
 <body data-mode="previsit">
@@ -258,8 +354,8 @@
 
 <div class="container">
   <header>
-    <div class="brand-wordmark"><span class="book">Book</span><span class="ease">Ease</span></div>
-    <h1>สร้างเว็บร้านพร้อมใช้ใน 60 วินาที</h1>
+    <div class="e-wm"><span class="book">Book</span><span class="ease">Ease</span></div>
+    <div class="e-hero">สร้างเว็บร้านใน 60 วิ</div>
   </header>
 
   <!-- Pass 25 v6 (2026-05-05 PM · Art's lock): caravan banner removed.
@@ -278,9 +374,9 @@
          · "ค้นหา" misled users to expect Google search · new label says
          exactly what input you upload · 📲 vs 📷 emoji pairs digital vs
          physical input clearly) -->
-    <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="previsit">📲 หน้าจอ LINE OA ของร้าน</button>
-      <button class="mode-tab" data-mode="menu">📷 รูปเมนูที่ร้าน</button>
+    <div class="mode-tabs" hidden>
+      <button class="mode-tab active" data-mode="previsit">previsit</button>
+      <button class="mode-tab" data-mode="menu">menu</button>
     </div>
     <!-- Pass 25 v37 iter7 (Art's lock 2026-05-07 PM): tab hint REMOVED.
          95% case = LINE OA screenshot · 5% edge = Google/IG/sign · ตัด edge
@@ -290,52 +386,55 @@
     <!-- ───────────────────────────────────────────────────────────
          MODE 1 · ค้นหาข้อมูลร้าน (เตรียมก่อนเข้าร้าน)
          ─────────────────────────────────────────────────────────── -->
+    <!-- Pass 26 v11.20 (Art's lock 2026-05-16) · ELON 1-page.
+         #mode-previsit kept as the wrapper so updateButtonStates'
+         querySelectorAll('#mode-previsit input') still binds prevShopName.
+         LINE-OA upload (prevFile/prevUploadZone/prevExtractBtn) kept
+         in DOM but hidden — JS getElementById bindings must not throw. -->
     <div id="mode-previsit">
-      <div class="grid">
+      <input id="prevShopName" type="text" placeholder="ชื่อร้าน (พิมพ์อังกฤษ)" autocapitalize="words" autocomplete="organization" spellcheck="false" maxlength="80" pattern="[a-zA-Z0-9 -]+" />
+      <div id="prevSlugHint" class="slug-hint" style="margin-top:6px;">
+        bookease.co/<span id="prevSlugLive">your-shop</span>
+      </div>
+      <!-- hidden LINE-OA bits · JS binds these by id (do not remove) -->
+      <input type="hidden" id="prevVariant" value="airy" />
+      <input id="prevFile" type="file" accept="image/*" class="hidden-el" />
+      <label for="prevFile" class="upload-zone hidden-el" id="prevUploadZone"></label>
+      <button class="primary hidden-el" id="prevExtractBtn" disabled>x</button>
+      <div class="status" id="prevStatus"></div>
+    </div>
 
-        <!-- Upload card -->
-        <div class="card">
-          <!-- Pass 25 v37 iter8 (Art's lock 2026-05-07 PM): card heading dropped ·
-               redundant with tab + upload zone · "1. รูปหน้า LINE OA" appeared 3x
-               (tab + heading + upload label) · upload zone speaks for itself -->
-          <div class="hint" style="text-align: center; margin-bottom: 14px;">screenshot ของร้าน · จาก LINE app</div>
+    <!-- camera + flat service list (was Mode 2 · now inline · un-hidden) -->
+    <div id="mode-menu">
+      <label for="menuFile" class="upload-zone" id="menuUploadZone">
+        <div class="upload-icon">📸</div>
+        <div class="upload-label">ถ่ายรูปเมนูร้าน</div>
+        <div class="upload-sub">ระบบอ่านบริการ + ราคาให้ ~7 วิ</div>
+      </label>
+      <input id="menuFile" type="file" accept="image/*" />
+      <button class="primary hidden-el" id="menuExtractBtn" disabled>x</button>
+      <div class="status" id="menuStatus"></div>
+      <table id="menuTable">
+        <thead>
+          <tr>
+            <th style="width:56%;">บริการ</th>
+            <th style="width:17%;">เวลา</th>
+            <th style="width:17%;">ราคา</th>
+            <th style="width:10%;"></th>
+          </tr>
+        </thead>
+        <tbody id="menuTableBody">
+          <tr><td colspan="4" class="empty">ถ่ายรูปเมนู แล้วบริการจะขึ้นที่นี่</td></tr>
+        </tbody>
+      </table>
+      <button class="addbtn" onclick="addServiceRow()">+ เพิ่มบริการ</button>
+      <div class="actions"><button class="secondary" onclick="addServiceRow()">+ เพิ่มบริการเอง</button></div>
+    </div>
 
-          <label for="prevFile" class="upload-zone" id="prevUploadZone">
-            <div class="upload-icon">📱</div>
-            <div class="upload-label">เลือก screenshot</div>
-          </label>
-          <input id="prevFile" type="file" accept="image/*" />
+    <div class="timechip">เปิด <input id="prevOpenTime" type="text" value="10:00-21:00" autocomplete="off" /> · แตะแก้</div>
 
-          <button class="primary" id="prevExtractBtn" disabled>🤖 ดึงข้อมูลร้านให้</button>
-
-          <div class="status" id="prevStatus"></div>
-        </div>
-
-        <!-- Result + edit card -->
-        <div class="card">
-          <div class="branding-grid">
-            <div class="branding-field full">
-              <label>ชื่อร้าน <span style="font-weight: 400; color: #525252;">(อังกฤษเท่านั้น)</span></label>
-              <input id="prevShopName" type="text" placeholder="เช่น Bare Nail Spa" autocapitalize="words" autocomplete="organization" spellcheck="false" maxlength="80" pattern="[a-zA-Z0-9 -]+" />
-              <div id="prevSlugHint" class="slug-hint" style="display: none; margin-top: 6px; font-size: 13px; color: #737373;">
-                ลิงก์ร้าน: <span id="prevSlugLive" style="color: #0a0a0a; font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;"></span>
-              </div>
-            </div>
-            <div class="branding-field full">
-              <label>เวลาเปิด-ปิด</label>
-              <input id="prevOpenTime" type="text" placeholder="10:00-21:00" autocomplete="off" />
-            </div>
-          </div>
-
-          <!-- Pass 23 (Art's lock 2026-05-05 PM): variant picker moved to liff-preview
-               for live WYSIWYG · merchant sees variant change in real time on the
-               actual demo phone before committing. Hidden default 'airy' kept for
-               backwards compat with collectShopData. -->
-          <input type="hidden" id="prevVariant" value="airy" />
-
-          <button class="primary green" id="prevCreateBtn" disabled>🚀 สร้างหน้าเว็บร้านตัวอย่าง</button>
-
-          <div class="link-box" id="prevLiffBox" style="display: none;">
+    <div style="max-width:560px;margin:0 auto;">
+      <div class="link-box" id="prevLiffBox" style="display: none;">
             <div class="label">✅ เว็บร้านพร้อมแล้ว · เปิดดูใน tab ใหม่</div>
             <div style="font-size: 13px; color: #1e40af; font-weight: 600; margin-top: 8px;">URL จริง (เมื่อ Atiz ติดตั้งครบ):</div>
             <div class="url" id="prevPublicUrl" style="font-size: 14px; font-weight: 600;"></div>
@@ -356,68 +455,16 @@
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- ───────────────────────────────────────────────────────────
-         MODE 2 · ถ่ายเมนู (ที่ร้าน · ขั้นตอนสำคัญที่สุด)
-         ─────────────────────────────────────────────────────────── -->
-    <div id="mode-menu" style="display: none;">
-      <div class="grid">
-
-        <!-- Upload card -->
-        <div class="card">
-          <!-- Pass 25 v37 iter8 (Art's lock 2026-05-07 PM): card heading dropped ·
-               "รูปเมนู" appeared 3x (tab + heading + upload label) · keep one tip
-               with photography guidance · upload zone speaks for itself -->
-          <div class="hint" style="text-align: center; margin-bottom: 14px;">แสงสว่างพอ · เห็นชัดทุกบรรทัด</div>
-
-          <label for="menuFile" class="upload-zone" id="menuUploadZone">
-            <div class="upload-icon">📷</div>
-            <div class="upload-label">ถ่าย / เลือกรูป</div>
-          </label>
-          <input id="menuFile" type="file" accept="image/*" />
-
-          <button class="primary" id="menuExtractBtn" disabled>🤖 ดึงรายการบริการให้ (~15 วิ)</button>
-
-          <div class="status" id="menuStatus"></div>
-        </div>
-
-        <!-- Services table card -->
-        <div class="card">
-          <div style="overflow-x: auto;">
-            <table id="menuTable">
-              <thead>
-                <tr>
-                  <th style="width: 55%;">ชื่อบริการ</th>
-                  <th style="width: 18%;">เวลา (นาที)</th>
-                  <th style="width: 17%;">ราคา (฿)</th>
-                  <th style="width: 10%;"></th>
-                </tr>
-              </thead>
-              <tbody id="menuTableBody">
-                <tr><td colspan="4" style="text-align: center; padding: 32px; color: #94a3b8;">ยังไม่มีรายการ · แตะเลือกรูปเมนูก่อน</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="actions">
-            <button class="secondary" onclick="addServiceRow()" style="flex: 1;">+ เพิ่มบริการเอง</button>
-          </div>
-
-          <!-- 2026-05-09 (Art's lock): "🚀 ส่งบริการเข้าร้าน" button removed ·
-               was Potemkin (showed TODO toast · wrote nowhere). Mode 1's
-               "🚀 สร้างหน้าเว็บร้านตัวอย่าง" already merges Mode 2's services
-               via collectShopData() · single canonical commit path. -->
-          <div class="hint" style="text-align: center; margin-top: 14px; font-size: 13px; color: #94a3b8;">
-            พร้อมแล้ว? กลับไปแท็บ <strong style="color: #475569;">📲 หน้าจอ LINE OA</strong> เพื่อสร้างเว็บร้าน
-          </div>
-        </div>
-
-      </div>
-    </div>
-
   </div><!-- /#mainTool -->
+</div>
+
+<!-- Pass 26 v11.20 · sticky brand-pill CTA · prevCreateBtn re-homed here
+     (JS binds prevCreateBtn by id · must exist · doCreatePreview →
+     collectShopData → openPreview wiring unchanged). -->
+<div class="cta-bar">
+  <div class="inner">
+    <button class="primary green" id="prevCreateBtn" disabled>✨ เปิดดูเว็บร้านของคุณ</button>
+  </div>
 </div>
 
 <script>
