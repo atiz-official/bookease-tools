@@ -163,36 +163,32 @@
      - Arrow nudges right · pulses on hover
      - Apple Music "Listen Now" card + IG Stories highlight DNA · friendly
        + playful · service-shop owner aesthetic · younger audience */
+  /* 2026-05-17 (Art on-device review): CTA = black pill per the FINAL
+     mock · one-CTA-grammar (#0a0a0a · same as P2/claim/OTP downstream).
+     Superseded the 2026-05-09 yellow "playful" card. Single-line label,
+     left-aligned text-block edge, full content width. */
   .ocr-card {
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
     max-width: 520px;
-    padding: 18px 22px;
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 30%, #fef9c3 70%, #ecfdf5 100%);
-    border: 2px solid rgba(16, 185, 129, 0.30);
-    border-radius: 28px;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 14px 28px rgba(16, 185, 129, 0.18);
-    text-decoration: none;
-    color: inherit;
+    padding: 17px 24px;
+    background: #0a0a0a;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     cursor: pointer;
-    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
-    animation: ocr-tilt 3.2s ease-in-out infinite;
+    text-decoration: none;
+    transition: transform 0.12s ease, opacity 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12), 0 10px 28px rgba(0,0,0,0.18);
   }
-  @keyframes ocr-tilt {
-    0%, 100% { transform: rotate(-0.4deg); }
-    50% { transform: rotate(0.4deg); }
-  }
-  .ocr-card:hover {
-    transform: translateY(-2px) rotate(0deg);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 22px 40px rgba(16, 185, 129, 0.28);
-    animation: none;
-  }
-  .ocr-card:active { transform: translateY(0) scale(0.98); }
+  .ocr-card:active { transform: scale(0.97); }
   .ocr-card .ocr-icon {
     flex-shrink: 0;
     width: 56px; height: 56px;
@@ -539,6 +535,7 @@
       order: 3;
       min-height: 0;
       margin: 4px 0 8px;
+      justify-content: flex-start;           /* 2026-05-17: left edge = text edge (mock) */
     }
     .ocr-card { order: 4; }                  /* big playful pill CTA after teaser */
     .or-divider { order: 5; margin: 6px 0; }
@@ -548,7 +545,7 @@
     /* Strip iPhone frame chrome on mobile · borderless card teaser */
     .phone {
       width: 100%;
-      max-width: 340px;
+      max-width: 100%;                        /* 2026-05-17: full-width left card (mock) */
       height: auto;
       background: transparent;
       padding: 0;
@@ -664,14 +661,7 @@
          ตัว OCR · ขาย + ถ่ายรูป รวมหน้าเดียว". The photo/OCR runs INLINE
          here — NO separate menu-ocr.html hop (that touchpoint collapsed).
          Same proven CF-Worker OCR brain (ported below) → straight to P2. -->
-    <button type="button" class="ocr-card" id="ocrCard">
-      <div class="ocr-icon">📷</div>
-      <div class="ocr-text">
-        <div class="ocr-h">ถ่ายภาพเมนูร้าน</div>
-        <div class="ocr-sub">เห็นเว็บใน 60 วิ <span class="ocr-sparkle">✨</span></div>
-      </div>
-      <div class="ocr-arrow">→</div>
-    </button>
+    <button type="button" class="ocr-card" id="ocrCard">📸 ถ่ายรูปเมนู · เริ่มเลย</button>
     <!-- No `capture` attr → mobile shows the native chooser
          (Photo Library · Take Photo · Choose File) instead of forcing
          the camera. User picks the source. -->
