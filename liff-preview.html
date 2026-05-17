@@ -35,6 +35,33 @@
   /* preview hint */
   .pvhint{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 14px}
 
+  /* §6c · customer preview · 3-page horizontal swipe (FINAL mock P2 top) */
+  .pvpager{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+    margin:14px 0 0;border-radius:18px;scrollbar-width:none}
+  .pvpager::-webkit-scrollbar{display:none}
+  .pvpage{flex:0 0 100%;scroll-snap-align:center;height:212px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;text-align:center;
+    background:linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4);color:#5a4636}
+  .pvpage .pv-url{position:absolute;top:11px;left:11px;background:rgba(255,255,255,.82);
+    font-size:10px;font-weight:600;color:#7a6a58;padding:3px 9px;border-radius:999px}
+  .pvpage .pv-tag{position:absolute;top:11px;right:11px;background:rgba(255,255,255,.82);
+    font-size:9px;font-weight:700;color:#9c8161;padding:3px 9px;border-radius:999px;letter-spacing:.06em}
+  .pvpage .pv-ttl{position:absolute;top:12px;left:50%;transform:translateX(-50%);
+    font-size:9px;font-weight:700;color:#9c8161;letter-spacing:.08em}
+  .pv-brand{font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.3em;font-size:25px}
+  .pv-dv{width:30px;height:1px;background:currentColor;opacity:.45;margin:12px 0 9px}
+  .pv-est{font-size:10px;letter-spacing:.3em;font-weight:600;opacity:.7}
+  .pv-svcname{font-size:20px;font-weight:700;margin-bottom:5px}
+  .pv-svcpr{font-size:13px;opacity:.78;font-weight:600;margin-bottom:16px}
+  .pv-btn{background:#5a4636;color:#f7eee4;font-size:12px;font-weight:700;padding:9px 20px;border-radius:999px}
+  .pv-chips{display:flex;gap:6px;margin-bottom:16px}
+  .pv-chip{border:1px solid currentColor;font-size:10px;font-weight:700;padding:5px 10px;border-radius:9px;opacity:.65}
+  .pv-chip.on{background:#5a4636;color:#f7eee4;border-color:#5a4636;opacity:1}
+  .pvdots{display:flex;gap:6px;justify-content:center;margin:10px 0 2px}
+  .pvdots i{width:6px;height:6px;border-radius:50%;background:#d8d2c7;transition:all .2s}
+  .pvdots i.on{background:var(--head);width:18px;border-radius:99px}
+
   /* ตรวจพบ category chip + เปลี่ยน */
   .cat{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;
     border:1px solid #a7f3d0;border-radius:999px;padding:6px 13px;
@@ -123,6 +150,31 @@
       <div class="wm"><span class="b">Book</span><span class="e">Ease</span></div>
       <a class="login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
     </div>
+
+    <!-- §6c · customer preview ON TOP (what the customer sees · swipe 3) -->
+    <div class="pvpager" id="pvp">
+      <div class="pvpage" id="pvCover">
+        <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
+        <div class="pv-tag" id="pvTag">โปร่ง</div>
+        <div class="pv-ttl">หน้าร้าน</div>
+        <div class="pv-brand" id="pvBrand">SHOP</div>
+        <div class="pv-dv"></div>
+        <div class="pv-est">EST. 2026</div>
+      </div>
+      <div class="pvpage">
+        <div class="pv-ttl">หน้าบริการ</div>
+        <div class="pv-svcname" id="pvSvcName">บริการของร้าน</div>
+        <div class="pv-svcpr" id="pvSvcPr">฿—</div>
+        <div class="pv-btn">จองคิว →</div>
+      </div>
+      <div class="pvpage">
+        <div class="pv-ttl">หน้าเลือกเวลา</div>
+        <div class="pv-chips"><span class="pv-chip on">วันนี้ 14:00</span><span class="pv-chip">16:30</span><span class="pv-chip">18:00</span></div>
+        <div class="pv-btn">ยืนยัน</div>
+      </div>
+    </div>
+    <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
+
     <div class="pvhint">← ปัดดูทุกหน้าที่ลูกค้าเห็น · นี่คือเว็บร้านของคุณ →</div>
 
     <div class="cat">
@@ -235,10 +287,46 @@
     renderCat();
   });
 
+  // §6c · customer preview · variant labels + per-variant cover tint
+  var VLABEL={airy:'โปร่ง',luxury:'หรูหรา',fun:'สนุก',fresh:'สดชื่น',surprise:'เซอร์ไพรส์'};
+  var VBG={
+    airy:'linear-gradient(165deg,#f4f7fb,#e8eef6 60%,#dde6f2)',
+    luxury:'linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4)',
+    fun:'linear-gradient(165deg,#fff4e6,#ffe2c2 55%,#ffd2a8)',
+    fresh:'linear-gradient(165deg,#eefaf2,#d9f0e3 55%,#c4e8d3)',
+    surprise:'linear-gradient(165deg,#241f33,#2f2747 60%,#3c3160)'
+  };
+  function renderPreview(){
+    var slug=document.getElementById('pvSlug'); if(!slug)return;
+    slug.textContent = shopData.shortName || 'shop';
+    document.getElementById('pvBrand').textContent = (shopData.shopName||'SHOP').toUpperCase();
+    document.getElementById('pvTag').textContent = VLABEL[currentVariant] || 'โปร่ง';
+    var cover=document.getElementById('pvCover');
+    cover.style.background = VBG[currentVariant] || VBG.luxury;
+    cover.style.color = (currentVariant==='surprise') ? '#f1ecff' : '#5a4636';
+    var s=(services.filter(function(x){return (x.serviceName||'').trim();})[0])||services[0];
+    document.getElementById('pvSvcName').textContent =
+      (s && s.serviceName) ? s.serviceName : 'บริการของร้าน';
+    var pr=(s && s.price!=null) ? '฿'+Number(s.price).toLocaleString() : '฿—';
+    var du=(s && s.durationMin!=null) ? ' · '+s.durationMin+' นาที' : '';
+    document.getElementById('pvSvcPr').textContent = pr+du;
+  }
+  // dots sync to horizontal swipe
+  (function(){
+    var p=document.getElementById('pvp'),d=document.getElementById('pvd');
+    if(!p||!d)return;
+    var dots=d.querySelectorAll('i');
+    p.addEventListener('scroll',function(){
+      var i=Math.round(p.scrollLeft/p.clientWidth);
+      dots.forEach(function(x,n){x.classList.toggle('on',n===i);});
+    },{passive:true});
+  })();
+
   function renderVariant(){
     document.querySelectorAll('.vp').forEach(function(b){
       b.classList.toggle('on', b.dataset.v === currentVariant);
     });
+    renderPreview();
   }
   document.getElementById('variantRow').addEventListener('click', function(e){
     var b = e.target.closest('.vp'); if (!b) return;
@@ -277,6 +365,7 @@
       });
       box.appendChild(row);
     });
+    renderPreview();
   }
   document.getElementById('addSvc').addEventListener('click', function(){
     services.push({ serviceName:'', durationMin:null, price:null });
