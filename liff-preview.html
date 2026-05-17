@@ -122,11 +122,15 @@
     text-decoration:underline dotted;width:130px;outline:none}
   /* settable open-days · 7 toggle chips (Art: there was NO control —
      just dead text · "how do they set weekdays-only?") */
-  .dayrow{display:flex;gap:5px;margin:9px 0 2px}
-  .dc{flex:1;min-width:0;padding:9px 0;border:1px solid var(--line);border-radius:9px;
-    background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:var(--faint);cursor:pointer}
-  .dc.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .dc:active{transform:scale(.95)}
+  /* recycled VERBATIM from shopv3 register_service.tsx day-picker so
+     the preview matches the real signup the merchant lands on */
+  .dayhdr{font-size:13px;color:#737373;margin:14px 0 0}
+  .dayrow{display:flex;gap:6px;margin:8px 0 2px}
+  .dc{flex:1;min-width:0;height:44px;border:2px solid #e5e5e5;border-radius:8px;
+    background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:#a1a1a1;cursor:pointer}
+  .dc.on{background:#0a0a0a;color:#fff;border-color:#0a0a0a;
+    box-shadow:0 2px 8px rgba(0,0,0,0.10)}
+  .dc:active{transform:scale(.96)}
   #daySum{color:var(--ink);font-weight:700}
 
   /* deposit segmented */
@@ -232,9 +236,8 @@
     <div class="h">บริการร้าน</div>
     <div id="svcList"></div>
     <button class="addrow" id="addSvc" type="button">+ เพิ่มบริการ</button>
-    <div class="opent">
-      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · <span id="daySum">ทุกวัน</span>
-    </div>
+    <div class="opent">เปิด <input class="ed" id="openEd" value="10:00–21:00" /> น.</div>
+    <div class="dayhdr">วันที่เปิด · <span id="daySum">เปิดทุกวัน</span></div>
     <div class="dayrow" id="dayRow">
       <button class="dc on" type="button" data-d="1">จ</button>
       <button class="dc on" type="button" data-d="2">อ</button>
@@ -345,9 +348,14 @@
     slug.textContent = shopData.shortName || 'shop';
     document.getElementById('pvBrand').textContent = (shopData.shopName||'SHOP').toUpperCase();
     document.getElementById('pvTag').textContent = VLABEL[currentVariant] || 'โปร่ง';
-    var cover=document.getElementById('pvCover');
-    cover.style.background = VBG[currentVariant] || VBG.luxury;
-    cover.style.color = (currentVariant==='surprise') ? '#f1ecff' : '#5a4636';
+    // Art: ALL 3 pager pages carry the picked variant (the shop's page
+    // IS variant-skinned · the white slot chips on page 3 keep their
+    // real ServiceDetailPage look, floating on the variant bg).
+    var bg = VBG[currentVariant] || VBG.luxury;
+    var fg = (currentVariant === 'surprise') ? '#f1ecff' : '#5a4636';
+    document.querySelectorAll('.pvpage').forEach(function(pg){
+      pg.style.background = bg; pg.style.color = fg;
+    });
     var s=(services.filter(function(x){return (x.serviceName||'').trim();})[0])||services[0];
     document.getElementById('pvSvcName').textContent =
       (s && s.serviceName) ? s.serviceName : 'บริการของร้าน';
@@ -434,12 +442,12 @@
     return [].slice.call(document.querySelectorAll('#dayRow .dc.on'))
       .map(function(b){ return +b.dataset.d; });
   }
+  // daysHint text recycled VERBATIM from shopv3 register_service.tsx
   function renderDays(){
-    var on = daysOn(), n = on.length, s;
-    if (n === 7) s = 'ทุกวัน';
-    else if (n === 5 && on.indexOf(6) < 0 && on.indexOf(7) < 0) s = 'จันทร์–ศุกร์';
-    else if (n === 0) s = 'ยังไม่เลือกวัน';
-    else s = 'เปิด ' + n + ' วัน';
+    var n = daysOn().length, s;
+    if (n === 7) s = 'เปิดทุกวัน';
+    else if (n === 0) s = '⚠️ ปิดทุกวัน · กรุณาเลือกอย่างน้อย 1 วัน';
+    else s = 'เปิด ' + n + ' วัน/สัปดาห์';
     document.getElementById('daySum').textContent = s;
   }
   if (Array.isArray(shopData.daysOpen) && shopData.daysOpen.length){
