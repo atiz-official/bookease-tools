@@ -64,7 +64,6 @@
     color:#7a6a58;padding:4px 11px;border-radius:999px;white-space:nowrap}
   .pvfoot .cat{margin:0;font-size:12px;padding:5px 11px;gap:6px;
     box-shadow:0 4px 12px rgba(0,0,0,.10)}
-  .pvfoot .cat .chg{font-size:12px}
 
   /* page 3 · the USUAL square slot picker (mirrors ServiceDetailPage
      SlotPickerSection · NOT the advanced wheel) · extra bottom pad so
@@ -89,8 +88,9 @@
     font-size:13px;font-weight:700;color:#065f46;margin-bottom:10px}
   .cat .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
   .cat .lbl{color:#059669;font-weight:600}
-  .cat .chg{color:#059669;text-decoration:underline;font-weight:700;
-    background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:0}
+  /* the VALUE itself is the click-to-change (underlined) · no "เปลี่ยน" word */
+  .cat .catv{color:#065f46;text-decoration:underline;font-weight:800;
+    background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0}
 
   /* section heading · payouts blue */
   .h{font-size:17px;font-weight:700;color:var(--head);margin:22px 0 9px}
@@ -131,7 +131,7 @@
   .svc .del:hover{color:#ef4444}
   .addrow{color:var(--accent);font-weight:700;font-size:15px;background:none;border:none;
     cursor:pointer;font-family:inherit;padding:8px 0 2px;display:block}
-  .opent{font-size:13px;color:var(--muted);margin:16px 0 0}
+  .opent{font-size:15px;color:#0a0a0a;font-weight:600;margin:16px 0 0}
   /* native time picker · recycled from shopv3 InputBox RegisterTimeInput
      (bg-slate-50 · border-slate-300 · rounded-lg) — easier than free text */
   .tin{background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;
@@ -141,7 +141,7 @@
      just dead text · "how do they set weekdays-only?") */
   /* recycled VERBATIM from shopv3 register_service.tsx day-picker so
      the preview matches the real signup the merchant lands on */
-  .dayhdr{font-size:13px;color:#737373;margin:14px 0 0}
+  .dayhdr{font-size:14px;color:#0a0a0a;font-weight:600;margin:14px 0 0}
   .dayrow{display:flex;gap:6px;margin:8px 0 2px}
   .dc{flex:1;min-width:0;height:44px;border:2px solid #e5e5e5;border-radius:8px;
     background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:#a1a1a1;cursor:pointer}
@@ -159,8 +159,6 @@
   .seg button.on{background:var(--ink);color:#fff}
   .seg .s{display:block;font-size:11px;font-weight:600;opacity:.72;margin-top:2px}
   .seg button.on .s{opacity:.85}
-  .dephint{margin:8px 0 2px;font-size:14px;color:#374151}
-  .dephint b{color:var(--ink)}
 
   /* viral bar (preserved verbs · §6c lock · GTM) */
   .viral{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);
@@ -203,7 +201,6 @@
     <div class="pvpage" id="pvCover">
       <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
       <div class="pv-tag" id="pvTag">โปร่ง</div>
-      <div class="pv-ttl">เพจร้าน</div>
       <div class="pv-brand" id="pvBrand">SHOP</div>
       <div class="pv-dv"></div>
       <div class="pv-est">EST. 2026</div>
@@ -237,8 +234,7 @@
       <span class="cat">
         <span class="d"></span>
         <span class="lbl">ประเภทร้าน:</span>
-        <span id="catName">ความงาม</span>
-        <button class="chg" id="catChange" type="button">เปลี่ยน</button>
+        <button class="catv" id="catName" type="button">ความงาม</button>
       </span>
     </div>
   </div>
@@ -276,7 +272,6 @@
       <button data-d="percent"   type="button">มัดจำ %<span class="s">ตามราคา</span></button>
       <button data-d="full"      type="button">จ่ายเต็ม<span class="s">เต็มจำนวน ✓</span></button>
     </div>
-    <div class="dephint">เงินเข้าร้าน<b>ครบ</b> · กัน no-show 100%</div>
   </div>
 
   <div class="viral">
@@ -351,7 +346,7 @@
 
   // ── render ──
   function renderCat(){ document.getElementById('catName').textContent = catName; }
-  document.getElementById('catChange').addEventListener('click', function(){
+  document.getElementById('catName').addEventListener('click', function(){
     catName = CATS[(CATS.indexOf(catName) + 1) % CATS.length];
     renderCat();
   });
