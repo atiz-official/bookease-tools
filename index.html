@@ -672,15 +672,14 @@
       </div>
       <div class="ocr-arrow">→</div>
     </button>
-    <input type="file" id="ocrFile" accept="image/*" capture="environment" hidden />
+    <!-- No `capture` attr → mobile shows the native chooser
+         (Photo Library · Take Photo · Choose File) instead of forcing
+         the camera. User picks the source. -->
+    <input type="file" id="ocrFile" accept="image/*" hidden />
 
-    <div class="or-divider">หรือพิมพ์ชื่อร้าน</div>
-
-    <form class="form-row compact" id="goForm" autocomplete="off">
-      <input type="text" id="shopName" placeholder="ชื่อร้านของคุณ" />
-      <button type="submit" class="cta" id="goBtn" disabled>เปิดดู</button>
-    </form>
-
+    <!-- Typed-name fallback removed (Art 2026-05-17): weak path, not in
+         the FINAL mock · photo-first single entry. cta-note kept here =
+         exactly the mock's ctanote under the primary CTA. -->
     <p class="cta-note">ไม่ต้องสมัคร · ไม่ต้องลง app</p>
   </div>
 
@@ -754,10 +753,8 @@
 
 <script>
 (function () {
-  const input = document.getElementById('shopName');
-  const btn = document.getElementById('goBtn');
-  const form = document.getElementById('goForm');
-
+  // Typed-name path removed 2026-05-17 (photo-first single entry).
+  // slugify kept — the inline OCR path derives the shop slug from it.
   function slugify(s) {
     return (s || '')
       .toLowerCase()
@@ -767,32 +764,6 @@
       .replace(/^-+|-+$/g, '')
       .slice(0, 40) || 'myshop';
   }
-
-  function buildPreviewUrl(shopName) {
-    const data = {
-      shopName: shopName.trim(),
-      shortName: slugify(shopName),
-      // 2026-05-09 audit: lineOaId + brandColor removed from prefill blob ·
-      // lineOaId backend has no field (post-pilot work) · brandColor derives
-      // from category palette client-side
-      openTime: '10:00-21:00',
-      variant: 'airy',
-      services: [],
-    };
-    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-    return 'liff-preview.html?data=' + encodeURIComponent(b64);
-  }
-
-  input.addEventListener('input', () => {
-    btn.disabled = !input.value.trim();
-  });
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = input.value.trim();
-    if (!name) return;
-    window.location.href = buildPreviewUrl(name);
-  });
 
   // ════════════════════════════════════════════════════════════════
   // §6c · INLINE OCR — collapsed FROM menu-ocr.html into this page
@@ -917,9 +888,8 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '').trim();
       if (!cleaned) {
         hideOverlay();
-        alert('อ่านชื่อร้านไม่ชัด · พิมพ์ชื่อร้านด้านล่างได้เลย');
-        input.focus();
         ocrFile.value = '';
+        alert('อ่านชื่อร้านไม่ชัด · ลองถ่าย/เลือกรูปที่เห็นชื่อร้านชัดๆ อีกครั้ง');
         return;
       }
       const blob = {
@@ -935,8 +905,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
     } catch (err) {
       hideOverlay();
       ocrFile.value = '';
-      alert((err && err.message ? err.message : 'ระบบขัดข้อง') + '\nพิมพ์ชื่อร้านด้านล่างได้เลย');
-      input.focus();
+      alert((err && err.message ? err.message : 'ระบบขัดข้อง') + '\nแตะปุ่มถ่ายรูปลองใหม่อีกครั้ง');
     }
   });
 })();
