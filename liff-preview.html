@@ -174,14 +174,14 @@
   /* Apple pattern: solid systemFill chip (not a frail hairline) + a
      tiny label so copy/share are self-explanatory · the caption then
      only carries the non-obvious viral hook */
-  .ico{width:60px;flex:0 0 60px;border:none;border-radius:15px;
-    background:#eef0f3;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;gap:3px;color:#334155;cursor:pointer;font-family:inherit}
-  .ico .g{font-size:18px;line-height:1}
-  .ico .ico-l{font-size:10px;font-weight:700;color:#475569}
+  /* icon-only · copy/share are universal in 2026 · standard glyphs
+     (link icon · iOS share box-arrow) so no labels needed */
+  .ico{width:54px;flex:0 0 54px;border:none;border-radius:15px;
+    background:#eef0f3;display:flex;align-items:center;justify-content:center;
+    color:#334155;cursor:pointer;font-family:inherit}
+  .ico svg{width:21px;height:21px;display:block}
   .ico:active{transform:scale(.96)}
   .ico.copied{background:var(--ok);color:#fff}
-  .ico.copied .ico-l{color:rgba(255,255,255,.82)}
   .vbar-cap{max-width:480px;margin:9px auto 0;text-align:center;font-size:12.5px;
     color:#6b7280;line-height:1.45}
 
@@ -277,8 +277,8 @@
   <div class="viral">
     <div class="viral-in">
       <button class="save" id="saveBtn" type="button">✓ บันทึกร้านนี้</button>
-      <button class="ico" id="copyBtn" type="button" aria-label="คัดลอกลิงก์"><span class="g">⧉</span><span class="ico-l">คัดลอก</span></button>
-      <button class="ico" id="shareBtn" type="button" aria-label="แชร์"><span class="g">↗</span><span class="ico-l">แชร์</span></button>
+      <button class="ico" id="copyBtn" type="button" aria-label="คัดลอกลิงก์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+      <button class="ico" id="shareBtn" type="button" aria-label="แชร์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></button>
     </div>
     <div class="vbar-cap">ส่งให้เพื่อน → เขาเซฟเป็นร้านตัวเองได้</div>
   </div>
@@ -360,6 +360,22 @@
     fresh:'linear-gradient(165deg,#eefaf2,#d9f0e3 55%,#c4e8d3)',
     surprise:'linear-gradient(165deg,#241f33,#2f2747 60%,#3c3160)'
   };
+  // เซอร์ไพรส์ = re-roll · each tap → a NEW random surprise look (Art:
+  // keep the prior behaviour). Distinct bold palettes + matching text.
+  var SURPRISE_POOL=[
+    {bg:'linear-gradient(165deg,#241f33,#2f2747 60%,#3c3160)',fg:'#f1ecff'},
+    {bg:'linear-gradient(165deg,#0b3b3c,#0f5152 58%,#0a6b63)',fg:'#dffaf3'},
+    {bg:'linear-gradient(165deg,#3a0d1f,#5e1430 58%,#7d1942)',fg:'#ffe4ee'},
+    {bg:'linear-gradient(165deg,#1a1140,#3b1d8a 60%,#6d28d9)',fg:'#ede9ff'},
+    {bg:'linear-gradient(165deg,#16261a,#1f3d28 58%,#2f5d3a)',fg:'#e3f6e8'},
+    {bg:'linear-gradient(165deg,#3a2406,#7c3f06 58%,#b45309)',fg:'#fff1dd'}
+  ];
+  var surpriseIdx=0;
+  function rollSurprise(){
+    if(SURPRISE_POOL.length<2){surpriseIdx=0;return;}
+    var n;do{n=Math.floor(Math.random()*SURPRISE_POOL.length);}while(n===surpriseIdx);
+    surpriseIdx=n;
+  }
   function renderPreview(){
     var slug=document.getElementById('pvSlug'); if(!slug)return;
     slug.textContent = shopData.shortName || 'shop';
@@ -368,8 +384,14 @@
     // Art: ALL 3 pager pages carry the picked variant (the shop's page
     // IS variant-skinned · the white slot chips on page 3 keep their
     // real ServiceDetailPage look, floating on the variant bg).
-    var bg = VBG[currentVariant] || VBG.luxury;
-    var fg = (currentVariant === 'surprise') ? '#f1ecff' : '#5a4636';
+    var bg, fg;
+    if (currentVariant === 'surprise') {
+      var sp = SURPRISE_POOL[surpriseIdx] || SURPRISE_POOL[0];
+      bg = sp.bg; fg = sp.fg;
+    } else {
+      bg = VBG[currentVariant] || VBG.luxury;
+      fg = '#5a4636';
+    }
     document.querySelectorAll('.pvpage').forEach(function(pg){
       pg.style.background = bg; pg.style.color = fg;
     });
@@ -399,6 +421,7 @@
   }
   document.getElementById('variantRow').addEventListener('click', function(e){
     var b = e.target.closest('.vp'); if (!b) return;
+    if (b.dataset.v === 'surprise') rollSurprise(); // new look every tap
     currentVariant = b.dataset.v; renderVariant();
   });
 
