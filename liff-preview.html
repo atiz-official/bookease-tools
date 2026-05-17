@@ -1,2088 +1,364 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>เว็บร้าน · BookEase</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@700;800&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>เว็บร้านของคุณ · BookEase</title>
+<meta name="description" content="พรีวิวเว็บร้าน · แก้บริการ · เลือกลุค · บันทึกร้านนี้">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  :root {
-    /* Industry palettes (auto-applied via [data-industry] attribute) */
-    --pal-bg: #fef3f2;
-    --pal-mid: #f0d7d3;
-    --pal-deep: #c98c80;
-    --pal-text: #4a1f1a;
-    --pal-text-muted: #7a3a32;
-    --pal-card-border: rgba(74, 31, 26, 0.12);
-    --pal-warm-overlay: #fff8e7;
+  /* ── ONE locked type scale + payouts.tsx colour hierarchy (shipped) ──
+     §6c binding mandate · FINAL onboarding mock P2 (Art-locked 2026-05-16):
+     section heading = #134783 blue · values #0a0a0a · links #5777EF ·
+     meta slate · ONE scale (no เดี๋ยวใหญ่เดี๋ยวเล็ก). Brain (decode /
+     save→shopv3 prefill / copy / share) preserved EXACTLY from the
+     shipped chain — only the layout becomes the agreed mock panel. */
+  :root{
+    --ink:#0a0a0a; --head:#134783; --accent:#5777EF; --line:#ececec;
+    --cream:#faf7f2; --muted:#6b7280; --faint:#9ca3af; --ok:#10b981;
+    --line-green:#06C755;
   }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Sarabun','Inter',system-ui,sans-serif;background:#fff;
+    color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:22px 20px calc(108px + env(safe-area-inset-bottom));}
 
-  /* ─── 5 INDUSTRY PALETTES ─── */
-  [data-industry="nail"] {
-    --pal-bg: #f4e4d4; --pal-mid: #c9a88e; --pal-deep: #7a5c42;
-    --pal-text: #1c1410; --pal-text-muted: #5a463a;
-    --pal-card-border: rgba(28, 20, 16, 0.10); --pal-warm-overlay: #fff8e7;
-  }
-  [data-industry="wellness"] {
-    --pal-bg: #f0ebe3; --pal-mid: #a8c9b8; --pal-deep: #6b8e7f;
-    --pal-text: #2d3d35; --pal-text-muted: #5a6e64;
-    --pal-card-border: rgba(45, 61, 53, 0.10); --pal-warm-overlay: #fbf8f0;
-  }
-  [data-industry="cafe"] {
-    --pal-bg: #faf3e7; --pal-mid: #c4a485; --pal-deep: #7a5c42;
-    --pal-text: #2a1810; --pal-text-muted: #5a3a28;
-    --pal-card-border: rgba(42, 24, 16, 0.10); --pal-warm-overlay: #fff8e7;
-  }
-  [data-industry="salon"] {
-    --pal-bg: #f5f5f5; --pal-mid: #b8b0a8; --pal-deep: #3f3a35;
-    --pal-text: #0a0808; --pal-text-muted: #525252;
-    --pal-card-border: rgba(10, 8, 8, 0.10); --pal-warm-overlay: #ffffff;
-  }
-  [data-industry="beauty"] {
-    --pal-bg: #fef3f2; --pal-mid: #f0d7d3; --pal-deep: #c98c80;
-    --pal-text: #4a1f1a; --pal-text-muted: #7a3a32;
-    --pal-card-border: rgba(74, 31, 26, 0.10); --pal-warm-overlay: #fff5f3;
-  }
+  /* top: wordmark + login */
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .wm{font-family:'Inter';font-weight:800;font-size:19px;letter-spacing:-.01em}
+  .wm .b{color:#1E40AF}.wm .e{color:#38BDF8}
+  .login{font-size:13px;font-weight:600;color:var(--ink);border:1px solid rgba(0,0,0,.12);
+    padding:7px 14px;border-radius:999px;text-decoration:none}
 
-  body {
-    margin: 0;
-    font-family: 'Sarabun','Noto Sans Thai','Sukhumvit Set','-apple-system','SF Pro',sans-serif;
-    background: #eef2f7; color: #0f172a;
-    font-size: 16px; line-height: 1.5;
-    min-height: 100vh;
-  }
+  /* preview hint */
+  .pvhint{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 14px}
 
-  /* ════════════════════════════════════════════════════════════════
-     CONTROL PANEL · staff-mode only
-     ════════════════════════════════════════════════════════════════ */
-  body[data-mode="share"] .control-panel,
-  body[data-mode="share"] .action-bar,
-  body[data-mode="share"] .staff-cta-row { display: none; }
-  /* Pass 23 (2026-05-05) · staff CTA hover/active states */
-  #openSignupCta:hover { transform: translateY(-1px); }
-  #openSignupCta:active { transform: scale(0.98); }
-  #openSignupCta:disabled {
-    background: #cbd5e1; color: #fff; box-shadow: none; cursor: not-allowed; transform: none;
-  }
-  body[data-mode="share"] .phone-wrap { padding: 0; }
-  body[data-mode="share"] .phone {
-    border-radius: 0; padding: 0; box-shadow: none;
-    max-width: 100%;
-  }
-  body[data-mode="share"] .phone-screen { border-radius: 0; min-height: 100vh; }
+  /* ตรวจพบ category chip + เปลี่ยน */
+  .cat{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;
+    border:1px solid #a7f3d0;border-radius:999px;padding:6px 13px;
+    font-size:13px;font-weight:700;color:#065f46;margin-bottom:22px}
+  .cat .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+  .cat .lbl{color:#059669;font-weight:600}
+  .cat .chg{color:#059669;text-decoration:underline;font-weight:700;
+    background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:0}
 
-  .control-panel {
-    max-width: 880px; margin: 0 auto;
-    padding: 16px 16px 0;
-  }
-  /* 2026-05-17 (binding one-cohesive-style mandate · payouts.tsx hierarchy):
-     merchant-chrome page title = consistent Sarabun scale, #0a0a0a bold —
-     NOT a Cormorant-italic flourish (same font ping-pong fixed on the P1
-     landing). In-phone variant typography is untouched (variant system). */
-  .control-panel .header-compact {
-    margin: 0 0 8px;
-    font-size: 22px; font-weight: 700;
-    color: #0a0a0a;
-  }
+  /* section heading · payouts blue */
+  .h{font-size:18px;font-weight:700;color:var(--head);margin:22px 0 10px}
+  .h:first-of-type{margin-top:0}
 
-  /* ─── URL block (compact · blend · Pass 22 Art's lock) ─── */
-  .url-block {
-    background: transparent; border: none; padding: 0;
-    margin-bottom: 10px;
-  }
-  .url-block .public-url {
-    font-family: ui-monospace, monospace;
-    font-size: 16px; font-weight: 600;
-    color: #475569; padding: 0;
-    background: transparent; border: none;
-    word-break: break-all;
-  }
-  .url-block .public-url .accent {
-    color: var(--pal-deep); font-weight: 700;
-  }
+  /* variant pills */
+  .vrow{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .vrow::-webkit-scrollbar{display:none}
+  .vp{flex:0 0 auto;font-size:14px;font-weight:600;color:var(--faint);
+    padding:9px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);
+    cursor:pointer;font-family:inherit;transition:all .15s}
+  .vp.on{color:var(--ink);background:#f1efe9;border-color:#dcd7cd;font-weight:800}
+  .vp[data-v="surprise"]{color:#b45309}
+  .vp[data-v="surprise"].on{background:#fffbeb;border-color:#fcd34d;color:#b45309}
 
-  /* ─── Industry badge (auto-detect + 1-tap cycle · compact) ─── */
-  .industry-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: transparent; border: 1px solid #e2e8f0; border-radius: 100px;
-    padding: 5px 10px; font-size: 12px;
-    cursor: pointer; font-family: inherit;
-    color: #475569; margin-bottom: 12px;
-    transition: border-color 0.15s;
-  }
-  .industry-badge:hover { border-color: var(--pal-deep); }
-  .industry-badge .label { color: #94a3b8; font-size: 11px; }
-  .industry-badge .industry-name {
-    color: #0f172a; font-weight: 700;
-  }
-  .industry-badge .cycle-hint {
-    font-size: 11px; color: #cbd5e1;
-    border-left: 1px solid #e2e8f0; padding-left: 10px;
-  }
+  /* editable services */
+  .svc{display:flex;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line)}
+  .svc:first-of-type{border-top:none}
+  .svc .nm{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ink);
+    border:none;background:transparent;font-family:inherit;padding:2px 0;outline:none}
+  .svc .nm:focus{border-bottom:1.5px solid var(--accent)}
+  .svc .du{width:62px;text-align:right;font-size:13px;color:var(--muted);
+    border:none;background:transparent;font-family:inherit;outline:none}
+  .svc .du:focus{color:var(--ink)}
+  .svc .duu{font-size:13px;color:var(--muted);margin-left:-6px}
+  .svc .pr{width:84px;text-align:right;font-size:15px;font-weight:800;color:var(--ink);
+    border:none;background:transparent;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
+  .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
+  .svc .pen{color:#cbd5e1;font-size:14px;flex:0 0 auto}
+  .svc .del{color:#cbd5e1;background:none;border:none;cursor:pointer;font-size:15px;
+    flex:0 0 auto;padding:2px 4px}
+  .svc .del:hover{color:#ef4444}
+  .addrow{color:var(--accent);font-weight:700;font-size:15px;background:none;border:none;
+    cursor:pointer;font-family:inherit;padding:13px 0 4px;display:block}
+  .opent{font-size:13px;color:var(--muted);margin:8px 0 2px}
+  .opent .ed{color:var(--ink);border:none;background:transparent;font-family:inherit;
+    text-decoration:underline dotted;width:130px;outline:none}
+  .opent .chg{color:var(--accent);font-weight:600}
 
-  /* ─── Variant switcher (Pass 25 v12 · 1-row horizontal scroll · Art's lock 2026-05-06) ─── */
-  .variant-tabs-wrap {
-    position: fixed; left: 0; right: 0;
-    bottom: 72px;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid #f1f5f9;
-    padding: 6px 0 8px;
-    z-index: 49;
-  }
-  .variant-tabs-wrap > .variant-tabs-scroll {
-    max-width: 880px; margin: 0 auto;
-    position: relative;
-  }
-  body[data-mode="share"] .variant-tabs-wrap { display: none; }
-  /* horizontal scroll · scroll-snap · gradient fade right edge as scroll indicator */
-  .variant-tabs {
-    display: flex; flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0 16px;
-    gap: 4px;
-  }
-  .variant-tabs::-webkit-scrollbar { display: none; }
-  .variant-tabs button {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    background: transparent; border: none;
-    padding: 6px 14px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; line-height: 1.2;
-    color: #94a3b8;
-    border-radius: 999px;
-    transition: color 0.15s, background 0.15s;
-    white-space: nowrap;
-  }
-  .variant-tabs button:hover { color: #475569; }
-  .variant-tabs button.active {
-    color: #0f172a; font-weight: 700;
-    background: rgba(15, 23, 42, 0.06);
-  }
-  .variant-tabs button[data-variant="surprise"] { color: #b45309; }
-  .variant-tabs button[data-variant="surprise"].active {
-    color: #92400e; background: rgba(217, 119, 6, 0.10);
-  }
-  /* scroll indicator · right-edge fade hint */
-  .variant-tabs-scroll::after {
-    content: '›';
-    position: absolute;
-    right: 4px; top: 50%; transform: translateY(-50%);
-    width: 22px; height: 22px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255, 255, 255, 0.92);
-    border-radius: 50%;
-    color: #94a3b8;
-    font-size: 18px; font-weight: 600;
-    pointer-events: none;
-    box-shadow: -4px 0 8px rgba(255, 255, 255, 0.85);
-    opacity: 0.85;
-    transition: opacity 0.2s;
-  }
-  .variant-tabs-scroll.scrolled-end::after { opacity: 0; }
+  /* deposit segmented */
+  .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:6px}
+  .seg button{flex:1;text-align:center;padding:11px 4px;font-size:13px;font-weight:700;
+    color:var(--muted);border:none;border-right:1px solid var(--line);background:#fff;
+    cursor:pointer;font-family:inherit}
+  .seg button:last-child{border-right:none}
+  .seg button.on{background:var(--ink);color:#fff}
+  .seg .s{display:block;font-size:9px;font-weight:600;opacity:.6;margin-top:2px}
+  .seg button.on .s{opacity:.85}
+  .dephint{margin-top:9px;font-size:13px;color:#374151}
+  .dephint b{color:var(--ink)}
 
-  /* Surprise reveal toast · centered above variant tabs */
-  .surprise-toast {
-    position: fixed;
-    bottom: 144px; left: 50%; /* clears 1-row variant-tabs (~38) + action-bar (~76) + spacer (~30) */
-    transform: translate(-50%, 20px);
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    color: #78350f;
-    padding: 8px 16px;
-    border-radius: 100px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 4px 16px rgba(180, 83, 9, 0.25);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 51;
-    white-space: nowrap;
-  }
-  .surprise-toast.show {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+  /* viral bar (preserved verbs · §6c lock · GTM) */
+  .viral{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    z-index:50}
+  .viral-in{max-width:480px;margin:0 auto;display:flex;gap:10px;align-items:stretch}
+  .save{flex:1;background:var(--line-green);color:#fff;border:none;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;
+    font-weight:800;font-family:inherit;cursor:pointer;min-height:52px;
+    box-shadow:0 5px 16px rgba(6,199,85,.28)}
+  .save:active{transform:scale(.98)}
+  .ico{width:52px;flex:0 0 52px;border:1px solid var(--line);border-radius:15px;
+    background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;
+    color:#374151;cursor:pointer}
+  .ico.copied{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .vbar-cap{max-width:480px;margin:8px auto 0;text-align:center;font-size:11px;color:var(--muted)}
 
-  /* Soft prompt · "save before closing" · 60-sec engagement timer */
-  .soft-prompt {
-    position: fixed;
-    bottom: -200px;
-    left: 16px; right: 16px;
-    max-width: 480px; margin: 0 auto;
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 16px 18px;
-    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.18), 0 1px 3px rgba(15, 23, 42, 0.08);
-    z-index: 60;
-    transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border: 2px solid var(--pal-deep);
-  }
-  .soft-prompt.show { bottom: 160px; }
-  body[data-mode="share"] .soft-prompt { display: none; }
-  .soft-prompt .head {
-    font-size: 14px; font-weight: 700; color: var(--pal-text);
-    margin-bottom: 4px;
-  }
-  .soft-prompt .body {
-    font-size: 12px; color: var(--pal-text-muted);
-    line-height: 1.5;
-  }
-  .soft-prompt .row-actions {
-    display: flex; gap: 8px; margin-top: 12px;
-  }
-  .soft-prompt .save-now {
-    flex: 1;
-    background: linear-gradient(180deg, #10b981, #059669);
-    color: #fff; border: none;
-    border-radius: 100px;
-    padding: 10px 14px;
-    font-weight: 700; font-size: 14px;
-    cursor: pointer;
-  }
-  .soft-prompt .dismiss {
-    background: transparent;
-    color: var(--pal-text-muted);
-    border: none;
-    padding: 10px 14px;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     PHONE FRAME · always visible
-     ════════════════════════════════════════════════════════════════ */
-  .phone-wrap {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 0 16px calc(120px + env(safe-area-inset-bottom)); /* clear variant-tabs (~38px · 1-row) + action-bar (~76px + safe-area) */
-  }
-  body[data-mode="share"] .phone-wrap { padding-bottom: 0; }
-  /* Pass 25 v13 · subtle "preview" chip · disambiguates phone mockup from real app
-     (Art's lock 2026-05-06 · tells merchant "this is what customer sees")
-     Hidden in share mode (customer side) since context is obvious. */
-  .preview-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin: 0 0 10px;
-    padding: 4px 12px;
-    background: rgba(15, 23, 42, 0.05);
-    border: 1px solid rgba(15, 23, 42, 0.06);
-    border-radius: 999px;
-    font-size: 11px; font-weight: 500;
-    color: #475569;
-    letter-spacing: 0.01em;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
-  .preview-tag .eye {
-    width: 12px; height: 12px;
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #64748b;
-  }
-  body[data-mode="share"] .preview-tag { display: none; }
-  .phone {
-    width: 100%; max-width: 380px;
-    background: #000; border-radius: 36px;
-    padding: 8px;
-    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
-    position: relative;
-  }
-  .phone-screen {
-    background: var(--pal-bg);
-    border-radius: 30px; overflow: hidden;
-    min-height: 680px; display: flex; flex-direction: column;
-  }
-
-  .phone-status {
-    height: 28px;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 18px; font-size: 12px; font-weight: 600;
-    color: var(--pal-text);
-    flex-shrink: 0;
-  }
-  .phone-address {
-    margin: 0 8px;
-    background: rgba(255,255,255,0.5); backdrop-filter: blur(8px);
-    padding: 8px 14px; border-radius: 10px;
-    font-family: ui-monospace, monospace; font-size: 12px;
-    color: var(--pal-text); display: flex; align-items: center; gap: 6px;
-    flex-shrink: 0;
-  }
-
-  /* ─── Reset button (staff mode only) ─── */
-  .reset-btn {
-    position: absolute; top: 16px; right: 16px;
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
-    border: 1px solid rgba(0,0,0,0.08); border-radius: 100px;
-    padding: 6px 12px; font-size: 11px; cursor: pointer;
-    color: #475569; font-family: inherit; font-weight: 500;
-    z-index: 10;
-  }
-  body[data-mode="share"] .reset-btn { display: none; }
-
-  /* ════════════════════════════════════════════════════════════════
-     LIFF CONTENT (the 5 screens)
-     ════════════════════════════════════════════════════════════════ */
-  .liff-content {
-    flex: 1; padding: 16px 20px 80px; overflow-y: auto;
-  }
-  .liff-content .screen { display: none; }
-  .liff-content .screen.active {
-    display: flex; flex-direction: column;
-    animation: fadeIn 0.25s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     SCREEN 1 · COVER (the editorial hero)
-     ════════════════════════════════════════════════════════════════ */
-  .cover-canvas {
-    position: relative;
-    aspect-ratio: 4/5;
-    border-radius: 18px; overflow: hidden;
-    background: linear-gradient(135deg, var(--pal-bg) 0%, var(--pal-mid) 50%, var(--pal-deep) 100%);
-    margin-bottom: 18px;
-  }
-  .cover-canvas .layer-warmth {
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at 25% 18%, var(--pal-warm-overlay) 0%, transparent 65%);
-    opacity: 0.45;
-    pointer-events: none;
-  }
-  .cover-canvas .layer-grain {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
-    background-size: 3px 3px;
-    mix-blend-mode: multiply; opacity: 0.6;
-    pointer-events: none;
-  }
-  .cover-canvas .vignette {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center 50%, transparent 40%, rgba(0,0,0,0.22) 100%);
-    pointer-events: none; opacity: 0;
-  }
-  [data-variant="luxury"] .cover-canvas .vignette { opacity: 1; }
-
-  .cover-canvas .brand-mark {
-    position: absolute; left: 50%; transform: translateX(-50%);
-    text-align: center; color: var(--pal-text);
-    z-index: 5; padding: 0 20px;
-  }
-  /* Variant: AIRY · center · large · letter-spaced wide */
-  [data-variant="airy"] .cover-canvas .brand-mark {
-    top: 50%; transform: translate(-50%, -50%);
-  }
-  [data-variant="airy"] .cover-canvas .brand-name {
-    font-size: clamp(15px, 4vw, 22px);
-    letter-spacing: 8px;
-    font-weight: 500;
-  }
-  [data-variant="airy"] .cover-canvas .brand-tagline { display: none; }
-  [data-variant="airy"] .cover-canvas .brand-est {
-    font-size: 10px; letter-spacing: 4px; margin-top: 12px;
-    opacity: 0.55;
-  }
-
-  /* Variant: LUXURY · center-lower · italic refined · vignette */
-  [data-variant="luxury"] .cover-canvas .brand-mark {
-    bottom: 22%; top: auto; transform: translateX(-50%);
-  }
-  [data-variant="luxury"] .cover-canvas .brand-name {
-    font-size: clamp(14px, 3.6vw, 20px);
-    letter-spacing: 6px;
-    font-weight: 500;
-  }
-  [data-variant="luxury"] .cover-canvas .brand-divider {
-    display: block;
-    width: 40px; height: 0.7px;
-    background: var(--pal-text); opacity: 0.45;
-    margin: 14px auto;
-  }
-  [data-variant="luxury"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: italic; font-weight: 400;
-    font-size: clamp(13px, 3.2vw, 17px);
-    opacity: 0.78;
-  }
-  [data-variant="luxury"] .cover-canvas .brand-est {
-    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
-    opacity: 0.55;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     ROW 2 VARIANTS · Pass 24 (2026-05-05 PM · Art's lock)
-     Energy/bold styles · injected via Surprise OR direct pick
-     ════════════════════════════════════════════════════════════════ */
-
-  /* Variant: FUN · sunshine pop · large bold · top-anchor */
-  [data-variant="fun"] .cover-canvas {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 35%, #fbbf24 100%);
-  }
-  [data-variant="fun"] .cover-canvas .layer-warmth {
-    background: radial-gradient(circle at 80% 30%, #fef9c3 0%, transparent 50%),
-                radial-gradient(circle at 20% 75%, #fde68a 0%, transparent 50%);
-    opacity: 0.7;
-  }
-  [data-variant="fun"] .cover-canvas .brand-mark {
-    top: 38%; transform: translate(-50%, -50%);
-    color: #78350f;
-  }
-  [data-variant="fun"] .cover-canvas .brand-name {
-    font-size: clamp(18px, 5.5vw, 28px);
-    letter-spacing: 2px; font-weight: 800;
-    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5);
-  }
-  [data-variant="fun"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: normal; font-weight: 600;
-    font-size: clamp(13px, 3vw, 16px);
-    margin-top: 8px;
-    color: #b45309; letter-spacing: 1px;
-  }
-  [data-variant="fun"] .cover-canvas .brand-est {
-    display: inline-block;
-    font-size: 10px; letter-spacing: 2px; margin-top: 14px;
-    background: #78350f; color: #fef3c7;
-    padding: 4px 10px; border-radius: 100px;
-    font-weight: 700;
-  }
-
-  /* Variant: REFRESHING · mint clean · airy modern */
-  [data-variant="fresh"] .cover-canvas {
-    background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 50%, #6ee7b7 100%);
-  }
-  [data-variant="fresh"] .cover-canvas .layer-warmth {
-    background: radial-gradient(circle at 70% 20%, #ecfeff 0%, transparent 60%);
-    opacity: 0.6;
-  }
-  [data-variant="fresh"] .cover-canvas .brand-mark {
-    top: 50%; transform: translate(-50%, -50%);
-    color: #064e3b;
-  }
-  [data-variant="fresh"] .cover-canvas .brand-name {
-    font-size: clamp(16px, 4.4vw, 24px);
-    letter-spacing: 4px; font-weight: 600;
-  }
-  [data-variant="fresh"] .cover-canvas .brand-divider {
-    display: block;
-    width: 60px; height: 2px;
-    background: #10b981; opacity: 0.85;
-    margin: 14px auto;
-    border-radius: 100px;
-  }
-  [data-variant="fresh"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: normal; font-weight: 400;
-    font-size: clamp(12px, 2.8vw, 15px);
-    color: #047857; letter-spacing: 1px;
-    text-transform: lowercase;
-  }
-  [data-variant="fresh"] .cover-canvas .brand-est {
-    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
-    color: #065f46; opacity: 0.7;
-  }
-
-  /* Surprise variants (hidden · revealed only via Surprise reroll) */
-
-  /* Variant: BOLD · magazine-cover · dark + neon accent */
-  [data-variant="bold"] .cover-canvas {
-    background: linear-gradient(180deg, #0a0a0a 0%, #1c1917 100%);
-  }
-  [data-variant="bold"] .cover-canvas .layer-warmth { display: none; }
-  [data-variant="bold"] .cover-canvas .layer-grain {
-    opacity: 0.2; mix-blend-mode: screen;
-  }
-  [data-variant="bold"] .cover-canvas .brand-mark {
-    bottom: 12%; top: auto; transform: translateX(-50%);
-    color: #fafaf9; padding: 0 24px;
-  }
-  [data-variant="bold"] .cover-canvas .brand-name {
-    font-size: clamp(20px, 6.5vw, 36px);
-    letter-spacing: 1px; font-weight: 800;
-    line-height: 1; color: #fafaf9;
-  }
-  [data-variant="bold"] .cover-canvas .brand-divider {
-    display: block;
-    width: 50px; height: 3px;
-    background: #facc15; opacity: 1;
-    margin: 14px auto;
-  }
-  [data-variant="bold"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: normal; font-weight: 500;
-    font-size: clamp(11px, 2.6vw, 13px);
-    color: #facc15; letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-  [data-variant="bold"] .cover-canvas .brand-est {
-    display: none;
-  }
-
-  /* Variant: SOFT · pastel watercolor · feminine handwritten feel */
-  [data-variant="soft"] .cover-canvas {
-    background: linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 35%, #f9a8d4 100%);
-  }
-  [data-variant="soft"] .cover-canvas .layer-warmth {
-    background: radial-gradient(circle at 30% 25%, #fef3c7 0%, transparent 40%),
-                radial-gradient(circle at 75% 65%, #ddd6fe 0%, transparent 45%);
-    opacity: 0.55;
-  }
-  [data-variant="soft"] .cover-canvas .brand-mark {
-    top: 50%; transform: translate(-50%, -50%);
-    color: #831843;
-  }
-  [data-variant="soft"] .cover-canvas .brand-name {
-    font-size: clamp(20px, 5.6vw, 30px);
-    letter-spacing: 0.5px; font-weight: 500;
-    font-style: italic !important;
-    text-transform: none !important;
-  }
-  [data-variant="soft"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: italic; font-weight: 400;
-    font-size: clamp(12px, 2.8vw, 15px);
-    margin-top: 6px;
-    color: #be185d; opacity: 0.75;
-    letter-spacing: 0;
-  }
-  [data-variant="soft"] .cover-canvas .brand-est {
-    font-size: 10px; letter-spacing: 2px; margin-top: 14px;
-    color: #9d174d; opacity: 0.6;
-  }
-  [data-variant="soft"] [data-script="latin"] .cover-canvas .brand-name {
-    font-family: 'Cormorant Garamond', serif;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     COHESION · variants extend to ALL screens (Pass 25 v4 · Art's lock 2026-05-05)
-     Service list · time picker · confirm · success carry the same vibe
-     instead of falling back to generic palette.
-     ════════════════════════════════════════════════════════════════ */
-
-  /* LUXURY · italic refined throughout */
-  [data-variant="luxury"] .screen-title {
-    font-style: italic; letter-spacing: 1px;
-  }
-  [data-variant="luxury"] .service-card {
-    background: rgba(255, 255, 255, 0.7);
-  }
-  [data-variant="luxury"] .service-tag {
-    color: var(--pal-deep); letter-spacing: 2.5px;
-  }
-  [data-variant="luxury"] [data-script="latin"] .service-name {
-    font-style: italic;
-  }
-
-  /* SOFT · pastel pink throughout */
-  [data-variant="soft"] .phone-screen {
-    background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 100%);
-  }
-  [data-variant="soft"] .service-card {
-    background: rgba(255, 255, 255, 0.75);
-    border-color: rgba(190, 24, 93, 0.18);
-  }
-  [data-variant="soft"] .screen-title {
-    color: #831843; font-style: italic;
-  }
-  [data-variant="soft"] .service-name { color: #831843; }
-  [data-variant="soft"] .service-meta { color: #be185d; }
-  [data-variant="soft"] .service-divider { background: rgba(190, 24, 93, 0.2); }
-  [data-variant="soft"] [data-script="latin"] .service-name { font-style: italic; }
-  [data-variant="soft"] .phone-address {
-    background: rgba(253, 242, 248, 0.85); color: #831843;
-  }
-
-  /* FUN · sunshine pop throughout */
-  [data-variant="fun"] .phone-screen {
-    background: linear-gradient(180deg, #fef9c3 0%, #fef3c7 100%);
-  }
-  [data-variant="fun"] .service-card {
-    background: #ffffff;
-    border: 2px solid #fcd34d;
-  }
-  [data-variant="fun"] .screen-title {
-    color: #78350f; font-weight: 800;
-  }
-  [data-variant="fun"] .service-name {
-    color: #78350f; font-weight: 800;
-  }
-  [data-variant="fun"] [data-script="latin"] .service-name {
-    font-family: 'Sarabun', sans-serif !important;
-    font-weight: 800; font-style: normal; font-size: 17px;
-  }
-  [data-variant="fun"] .service-tag {
-    background: #fbbf24; color: #78350f;
-    padding: 3px 8px; border-radius: 6px; display: inline-block;
-    letter-spacing: 1px;
-  }
-  [data-variant="fun"] .service-meta { color: #b45309; }
-  [data-variant="fun"] .service-divider { background: rgba(180, 83, 9, 0.2); }
-  [data-variant="fun"] .phone-address {
-    background: rgba(254, 243, 199, 0.85); color: #78350f;
-  }
-
-  /* REFRESHING · mint clean throughout */
-  [data-variant="fresh"] .phone-screen {
-    background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 100%);
-  }
-  [data-variant="fresh"] .service-card {
-    background: #ffffff;
-    border: 1px solid #6ee7b7;
-  }
-  [data-variant="fresh"] .screen-title {
-    color: #064e3b; font-weight: 600;
-  }
-  [data-variant="fresh"] .service-name { color: #064e3b; }
-  [data-variant="fresh"] [data-script="latin"] .service-name {
-    font-family: 'Sarabun', sans-serif !important;
-    font-weight: 600; font-style: normal;
-  }
-  [data-variant="fresh"] .service-tag { color: #047857; letter-spacing: 2px; }
-  [data-variant="fresh"] .service-meta { color: #047857; }
-  [data-variant="fresh"] .service-divider { background: rgba(16, 185, 129, 0.25); }
-  [data-variant="fresh"] .phone-address {
-    background: rgba(236, 253, 245, 0.85); color: #064e3b;
-  }
-
-  /* BOLD · dark magazine-cover throughout */
-  [data-variant="bold"] .phone-screen {
-    background: #0a0a0a; color: #fafaf9;
-  }
-  [data-variant="bold"] .service-card {
-    background: #1c1917;
-    border: 1px solid #292524;
-    color: #fafaf9;
-  }
-  [data-variant="bold"] .screen-title {
-    color: #fafaf9; font-weight: 800; letter-spacing: 0.5px;
-  }
-  [data-variant="bold"] .service-name { color: #fafaf9; }
-  [data-variant="bold"] [data-script="latin"] .service-name {
-    font-family: 'Sarabun', sans-serif !important;
-    font-weight: 800; font-style: normal;
-  }
-  [data-variant="bold"] .service-tag {
-    color: #facc15; letter-spacing: 2px; font-weight: 800;
-  }
-  [data-variant="bold"] .service-meta { color: #d6d3d1; }
-  [data-variant="bold"] .service-divider { background: rgba(250, 204, 21, 0.3); }
-  [data-variant="bold"] .phone-address {
-    background: #1c1917; color: #fafaf9; border-color: #292524;
-  }
-  [data-variant="bold"] .cta-btn.secondary {
-    background: #1c1917; color: #fafaf9; border-color: #292524;
-  }
-
-  /* NEON · cyberpunk dark + glow throughout */
-  [data-variant="neon"] .phone-screen {
-    background: linear-gradient(180deg, #0c0a09 0%, #1e1b4b 100%);
-    color: #f0abfc;
-  }
-  [data-variant="neon"] .service-card {
-    background: rgba(30, 27, 75, 0.6);
-    border: 1px solid rgba(168, 85, 247, 0.35);
-    color: #f0abfc;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-  [data-variant="neon"] .screen-title {
-    color: #f0abfc;
-    text-shadow: 0 0 14px rgba(236, 72, 153, 0.5);
-  }
-  [data-variant="neon"] .service-name { color: #f0abfc; }
-  [data-variant="neon"] .service-tag {
-    color: #67e8f9; letter-spacing: 2px;
-  }
-  [data-variant="neon"] .service-meta { color: #c4b5fd; }
-  [data-variant="neon"] .service-divider { background: rgba(168, 85, 247, 0.35); }
-  [data-variant="neon"] .phone-address {
-    background: rgba(0, 0, 0, 0.4); color: #f0abfc;
-    border-color: rgba(168, 85, 247, 0.25);
-  }
-  [data-variant="neon"] .cta-btn.secondary {
-    background: rgba(30, 27, 75, 0.6); color: #f0abfc;
-    border-color: rgba(168, 85, 247, 0.35);
-  }
-
-  /* Variant: NEON · cyberpunk dark · electric accents (cover · existing) */
-  [data-variant="neon"] .cover-canvas {
-    background: linear-gradient(135deg, #0c0a09 0%, #1e1b4b 60%, #5b21b6 100%);
-  }
-  [data-variant="neon"] .cover-canvas .layer-warmth {
-    background: radial-gradient(circle at 75% 30%, #ec4899 0%, transparent 40%),
-                radial-gradient(circle at 20% 70%, #06b6d4 0%, transparent 45%);
-    opacity: 0.45;
-    mix-blend-mode: screen;
-  }
-  [data-variant="neon"] .cover-canvas .layer-grain { opacity: 0.15; }
-  [data-variant="neon"] .cover-canvas .brand-mark {
-    top: 50%; transform: translate(-50%, -50%);
-    color: #f0abfc;
-  }
-  [data-variant="neon"] .cover-canvas .brand-name {
-    font-size: clamp(18px, 5vw, 26px);
-    letter-spacing: 4px; font-weight: 700;
-    text-shadow: 0 0 20px rgba(236, 72, 153, 0.7),
-                 0 0 40px rgba(168, 85, 247, 0.4);
-    color: #f0abfc;
-  }
-  [data-variant="neon"] .cover-canvas .brand-divider {
-    display: block;
-    width: 80px; height: 1px;
-    background: linear-gradient(90deg, transparent, #06b6d4, transparent);
-    margin: 16px auto; opacity: 1;
-  }
-  [data-variant="neon"] .cover-canvas .brand-tagline {
-    display: block;
-    font-style: normal; font-weight: 400;
-    font-size: clamp(11px, 2.6vw, 13px);
-    color: #67e8f9; letter-spacing: 3px;
-    text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
-  }
-  [data-variant="neon"] .cover-canvas .brand-est {
-    font-size: 9px; letter-spacing: 3px; margin-top: 14px;
-    color: #c4b5fd; opacity: 0.85;
-  }
-
-  /* Brand mark · Latin script: serif italic + regular mix */
-  [data-script="latin"] .brand-name {
-    font-family: 'Cormorant Garamond', serif;
-    text-transform: uppercase;
-  }
-  [data-script="latin"] .brand-tagline {
-    font-family: 'Cormorant Garamond', serif;
-  }
-  [data-script="latin"] .brand-est {
-    font-family: 'Cormorant Garamond', serif;
-    text-transform: uppercase;
-  }
-
-  /* Brand mark · Thai script: Sarabun weight contrast */
-  [data-script="thai"] .brand-name {
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 700;
-  }
-  [data-script="thai"] .brand-tagline {
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 300;
-    font-style: normal !important;
-  }
-  [data-script="thai"] .brand-est {
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 400;
-  }
-
-  /* Cover CTA */
-  .cover-cta {
-    text-align: center; padding: 8px 4px 0;
-  }
-  .cover-cta h2 {
-    margin: 0 0 6px; font-size: 22px;
-    color: var(--pal-text); font-weight: 700;
-  }
-  [data-script="latin"] .cover-cta h2 {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
-    font-size: 28px;
-  }
-  .cover-cta p {
-    margin: 0 0 16px; color: var(--pal-text-muted);
-    font-size: 14px;
-  }
-
-  /* Pass 22 (Art's lock 2026-05-04) · open hours trust badge */
-  .cover-open-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: 100px;
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    margin: 0 auto 16px; font-size: 13px;
-    color: #047857; font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
-  .cover-open-badge .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #10b981;
-    animation: pulse-dot 2s infinite;
-  }
-  .cover-open-badge .label { color: #047857; font-weight: 500; }
-  .cover-open-badge .hours { color: #065f46; font-weight: 700; }
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     SHARED · screen titles + buttons + cards
-     ════════════════════════════════════════════════════════════════ */
-  .screen-title {
-    margin: 0 0 14px; font-size: 22px; font-weight: 700;
-    color: var(--pal-text);
-  }
-  [data-script="latin"] .screen-title {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-weight: 500; font-size: 28px;
-  }
-
-  .cta-btn {
-    width: 100%; padding: 14px;
-    background: var(--pal-deep); color: #fff;
-    border: none; border-radius: 12px;
-    font-family: 'Sarabun', sans-serif; font-size: 16px;
-    font-weight: 700; cursor: pointer; min-height: 52px;
-  }
-  .cta-btn:active { transform: translateY(1px); }
-  .cta-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .cta-btn.secondary {
-    background: transparent; color: var(--pal-text);
-    border: 1px solid var(--pal-card-border);
-  }
-
-  .nav-row { display: flex; gap: 10px; margin-top: 16px; }
-  .nav-row .cta-btn.secondary { flex: 1; }
-  .nav-row .cta-btn { flex: 2; }
-
-  /* ════════════════════════════════════════════════════════════════
-     SCREEN 2 · SERVICE LIST
-     ════════════════════════════════════════════════════════════════ */
-  .service-list {
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  /* 2026-05-09 · .add-service-inline rules removed · single-source-of-truth
-     audit · liff-preview is now read-only · capture lives at menu-ocr Mode 2
-     and (Phase 2) /signup/service + /shop-setting via MenuPhotoCTA */
-  .service-card {
-    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
-    border: 1px solid var(--pal-card-border);
-    border-radius: 14px; padding: 14px 16px;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .service-card:hover, .service-card.selected {
-    border-color: var(--pal-deep);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  }
-  .service-card.selected {
-    background: rgba(255,255,255,0.85);
-  }
-  .service-tag {
-    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
-    color: var(--pal-text-muted); text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .service-name {
-    font-weight: 700; font-size: 16px;
-    color: var(--pal-text); margin-bottom: 4px;
-  }
-  [data-script="latin"] .service-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600; font-size: 18px;
-  }
-  .service-divider {
-    width: 36px; height: 1px;
-    background: var(--pal-deep); opacity: 0.4;
-    margin: 6px 0;
-  }
-  .service-meta {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-top: 6px;
-  }
-  .service-duration {
-    font-size: 13px; color: var(--pal-text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .service-price {
-    font-size: 17px; font-weight: 800;
-    color: var(--pal-text); font-variant-numeric: tabular-nums;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     SCREEN 3 · TIME PICKER
-     ════════════════════════════════════════════════════════════════ */
-  .date-row {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 8px; margin-bottom: 18px;
-  }
-  .date-pill {
-    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
-    border: 1px solid var(--pal-card-border);
-    border-radius: 12px; padding: 12px 4px;
-    text-align: center; cursor: pointer; transition: all 0.15s;
-  }
-  .date-pill .day-num {
-    font-size: 18px; font-weight: 700; color: var(--pal-text);
-    font-variant-numeric: tabular-nums;
-  }
-  .date-pill .day-label {
-    font-size: 11px; color: var(--pal-text-muted);
-  }
-  .date-pill.selected {
-    background: var(--pal-deep); border-color: var(--pal-deep);
-  }
-  .date-pill.selected .day-num,
-  .date-pill.selected .day-label { color: #fff; }
-
-  .time-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .time-pill {
-    background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
-    border: 1px solid var(--pal-card-border);
-    border-radius: 12px; padding: 14px 6px;
-    text-align: center; cursor: pointer;
-    font-size: 15px; font-weight: 600;
-    color: var(--pal-text); font-variant-numeric: tabular-nums;
-    transition: all 0.15s;
-  }
-  .time-pill:hover { border-color: var(--pal-deep); }
-  .time-pill.selected {
-    background: var(--pal-deep); border-color: var(--pal-deep); color: #fff;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     SCREEN 4 · CONFIRM + PAY
-     ════════════════════════════════════════════════════════════════ */
-  .summary-card {
-    background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
-    border: 1px solid var(--pal-card-border);
-    border-radius: 14px; padding: 16px;
-    margin-bottom: 16px;
-  }
-  .summary-row {
-    display: flex; justify-content: space-between;
-    padding: 6px 0; font-size: 14px;
-  }
-  .summary-label { color: var(--pal-text-muted); }
-  .summary-value {
-    color: var(--pal-text); font-weight: 600;
-    font-variant-numeric: tabular-nums; text-align: right;
-  }
-  .summary-row.total {
-    border-top: 1px dashed var(--pal-card-border);
-    margin-top: 8px; padding-top: 12px;
-    font-weight: 800; font-size: 17px;
-  }
-  .summary-row.total .summary-value { color: var(--pal-deep); font-size: 19px; }
-
-  .input-thai {
-    width: 100%; padding: 12px 14px;
-    border: 1px solid var(--pal-card-border);
-    border-radius: 12px;
-    font-family: inherit; font-size: 15px;
-    background: rgba(255,255,255,0.7); color: var(--pal-text);
-    margin-bottom: 10px;
-  }
-  .input-thai:focus { outline: none; border-color: var(--pal-deep); }
-  .input-label {
-    font-size: 13px; font-weight: 600; color: var(--pal-text);
-    margin-bottom: 6px; display: block;
-  }
-
-  .test-disclaimer {
-    background: rgba(255, 196, 0, 0.12); border: 1px solid rgba(255, 196, 0, 0.4);
-    color: #92400e; padding: 12px 14px; border-radius: 10px;
-    font-size: 13px; line-height: 1.5; margin: 14px 0;
-  }
-  .test-disclaimer strong { color: #713f12; }
-
-  .promptpay-mock {
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
-    border: 1px solid var(--pal-card-border);
-    border-radius: 14px; padding: 18px 16px;
-    text-align: center; margin-bottom: 14px;
-  }
-  .promptpay-mock .qr-canvas {
-    width: 160px; height: 160px; margin: 0 auto 12px;
-    background: #fff; border: 2px solid #0f172a; border-radius: 8px;
-    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
-    padding: 8px; gap: 1px;
-  }
-  .promptpay-mock .qr-canvas div { background: transparent; }
-  .promptpay-mock .qr-canvas div.fill { background: #0f172a; }
-  .promptpay-mock .label {
-    font-size: 13px; color: var(--pal-text-muted);
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     SCREEN 5 · SUCCESS
-     ════════════════════════════════════════════════════════════════ */
-  .success-icon {
-    width: 80px; height: 80px;
-    background: rgba(16, 185, 129, 0.15);
-    border: 2px solid #10b981;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px; color: #10b981;
-    margin: 8px auto 18px;
-  }
-  .success-text {
-    text-align: center;
-  }
-  .success-text h2 {
-    margin: 0 0 8px; font-size: 24px; font-weight: 700;
-    color: var(--pal-text);
-  }
-  [data-script="latin"] .success-text h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-weight: 500; font-size: 28px;
-  }
-  .success-text p {
-    margin: 0 0 6px; color: var(--pal-text-muted);
-    font-size: 14px; line-height: 1.5;
-  }
-  .booking-qr {
-    margin: 18px auto;
-    width: 130px; height: 130px;
-    background: #fff; border: 1px solid var(--pal-card-border);
-    border-radius: 12px;
-    display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr);
-    padding: 8px; gap: 1px;
-  }
-  .booking-qr div { background: transparent; }
-  .booking-qr div.fill { background: #0f172a; }
-
-  /* ════════════════════════════════════════════════════════════════
-     PAGINATION DOTS
-     ════════════════════════════════════════════════════════════════ */
-  .pagination {
-    display: flex; justify-content: center; gap: 6px;
-    padding: 12px 0 16px;
-  }
-  .pagination .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--pal-card-border);
-    transition: all 0.15s;
-  }
-  .pagination .dot.active {
-    background: var(--pal-deep); width: 22px;
-  }
-
-  /* ════════════════════════════════════════════════════════════════
-     STICKY ACTION BAR · staff mode (merchant share/copy/QR)
-     ════════════════════════════════════════════════════════════════ */
-  /* ─── Action bar · Apple-grade · single primary + QR icon (Art's lock 2026-05-04) ─── */
-  .action-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    display: flex; gap: 10px; align-items: center;
-    max-width: 880px; margin: 0 auto;
-    z-index: 50;
-  }
-  .action-bar .primary {
-    flex: 1;
-    display: inline-flex; align-items: center; justify-content: center;
-    gap: 8px;
-    /* Pass 23 (2026-05-05 PM): green commit color · semantic "go/save"
-       distinct from the merchant's chosen palette · trust signal */
-    background: linear-gradient(180deg, #10b981 0%, #059669 100%); color: #fff;
-    border: none; border-radius: 100px;
-    font-family: inherit; font-size: 16px; font-weight: 700;
-    letter-spacing: 0.2px;
-    min-height: 52px; padding: 0 24px;
-    cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
-    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.18), 0 6px 20px rgba(5, 150, 105, 0.28);
-  }
-  .action-bar .primary:active {
-    transform: scale(0.97);
-    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.18);
-  }
-  .action-bar .primary:disabled {
-    background: #cbd5e1; color: #fff; cursor: not-allowed; box-shadow: none;
-    transform: none;
-  }
-  .action-bar .primary .arrow { flex-shrink: 0; transform: translateY(-1px); }
-  .action-bar .icon-btn {
-    flex-shrink: 0;
-    width: 52px; height: 52px;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: #fff; color: #0f172a;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    cursor: pointer;
-    transition: transform 0.12s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
-  }
-  .action-bar .icon-btn:hover { background: #f8fafc; }
-  .action-bar .icon-btn:active { transform: scale(0.94); }
-  .action-bar .icon-btn.copied {
-    background: #10b981; color: #fff; border-color: #10b981;
-  }
-  .action-bar .icon-btn .icon-check { display: none; }
-  .action-bar .icon-btn.copied .icon-default { display: none; }
-  .action-bar .icon-btn.copied .icon-check { display: block; }
-
-  /* ─── QR modal ─── */
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
-    display: none; align-items: center; justify-content: center;
-    z-index: 100; padding: 20px;
-  }
-  .modal-backdrop.show { display: flex; }
-  .modal {
-    background: #fff; border-radius: 20px; padding: 24px;
-    max-width: 320px; width: 100%; text-align: center;
-  }
-  .modal h3 { margin: 0 0 14px; font-size: 18px; font-weight: 700; }
-  .modal img { width: 100%; max-width: 240px; }
-  .modal p { font-size: 13px; color: #64748b; margin: 12px 0; line-height: 1.4; }
-  .modal button { margin-top: 12px; }
-
-  /* ─── Mobile responsive ─── */
-  @media (max-width: 480px) {
-    .control-panel { padding: 12px 12px 0; }
-    .header-compact { font-size: 20px; }
-    .url-block .public-url { font-size: 15px; }
-    /* Variant pills: keep 16px Thai for legibility (Pass 22 lock) */
-    .phone-wrap { padding: 0 8px calc(120px + env(safe-area-inset-bottom)); }
-    .action-bar { gap: 8px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
-    .action-bar .primary { font-size: 15px; min-height: 50px; padding: 0 20px; }
-    .action-bar .icon-btn { width: 50px; height: 50px; }
+  @media (max-width:380px){
+    .wrap{padding:18px 14px calc(104px + env(safe-area-inset-bottom))}
+    .vp{padding:8px 13px;font-size:13px}
   }
 </style>
 </head>
-<body data-industry="beauty" data-variant="airy" data-script="latin" data-mode="staff">
-
-<!-- ═══════════════════════════════════════════════════════════════
-     CONTROL PANEL · staff-mode only (hidden when ?mode=share)
-     Pass 22 (Art's lock 2026-05-04): ultra-compact · preview seen right away
-     - Drop sub-text + URL heading + collapsible test URL
-     - Variant selector moved BELOW preview (between phone + action bar)
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="control-panel">
-  <h1 id="controlHeader" class="header-compact">Your shop preview</h1>
-
-  <!-- URL block · single line · no heading -->
-  <div class="url-block">
-    <div class="public-url">bookease.co/<span class="accent" id="publicSlug">demoshop</span></div>
-  </div>
-
-  <!-- Industry badge · compact pill -->
-  <button class="industry-badge" id="industryBadge" type="button">
-    <span class="label">ตรวจพบ:</span>
-    <span class="industry-name" id="industryName">Beauty</span>
-    <span class="cycle-hint">↻</span>
-  </button>
-
-  <!-- Pass 25 v5 (2026-05-05 PM · Art's lock) · top pill removed · share
-       icon at bottom action bar is sufficient · less clutter. -->
-
-  <!-- Pass 23 (Art's lock 2026-05-05 PM) · "Open signup" CTA moved to action
-       bar at very bottom (Elon-mode · users decide AFTER seeing options).
-       Anti-Potemkin warning still surfaces near top so staff knows BEFORE
-       merchant picks variant if menu is missing. -->
-  <div id="ctaWarn" style="display:none; margin-top: 10px; padding: 10px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 12px; color: #78350f; line-height: 1.5;">
-    💡 ยังไม่มีบริการ · กดปุ่ม "📷 ถ่ายรูปเมนู" ด้านล่างเพื่อเริ่ม
-  </div>
-
-  <!-- Hidden test URL for clipboard fallback (kept in DOM for share/copy logic) -->
-  <span id="testUrl" style="display: none;"></span>
-</div>
-
-<!-- Pass 25 v2 · receiver banner removed · LINE chat already conveys "from whom" -->
-
-<!-- ═══════════════════════════════════════════════════════════════
-     PHONE FRAME · always visible (drops border in share mode on mobile)
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="phone-wrap">
-  <!-- Pass 25 v13 · subtle preview chip · disambiguates mockup from real app -->
-  <span class="preview-tag" aria-hidden="true">
-    <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
-    ตัวอย่าง · นี่คือสิ่งที่ลูกค้าจะเห็น
-  </span>
-  <div class="phone">
-    <button class="reset-btn" id="resetBtn" type="button">↻ เริ่มใหม่</button>
-    <div class="phone-screen" id="phoneScreen">
-      <div class="phone-status">
-        <span>9:41</span>
-        <span>▰▰▰▰▰</span>
-      </div>
-      <div class="phone-address">
-        <span>🔒</span>
-        <span>bookease.co/<span id="addressSlug">demoshop</span></span>
-      </div>
-
-      <div class="liff-content">
-
-        <!-- Screen 1: COVER -->
-        <div class="screen active" data-screen="1">
-          <div class="cover-canvas">
-            <div class="layer-warmth"></div>
-            <div class="layer-grain"></div>
-            <div class="vignette"></div>
-            <div class="brand-mark">
-              <div class="brand-name" id="brandName">DEMOSHOP</div>
-              <div class="brand-divider"></div>
-              <div class="brand-tagline" id="brandTagline">— a quiet ritual</div>
-              <div class="brand-est" id="brandEst">EST. 2024</div>
-            </div>
-          </div>
-          <div class="cover-cta">
-            <h2 id="coverShopName">Demoshop</h2>
-            <p>กดเลือกบริการ · จ่ายมัดจำ · ล็อกคิวทันที</p>
-            <div id="coverOpenBadge" class="cover-open-badge" style="display: none;">
-              <span class="dot"></span>
-              <span class="label">เปิดวันนี้</span>
-              <span class="hours" id="coverOpenHours">10:00 - 21:00</span>
-            </div>
-            <button class="cta-btn" data-go="2" type="button">เริ่มจอง</button>
-          </div>
-        </div>
-
-        <!-- Screen 2: SERVICE LIST -->
-        <div class="screen" data-screen="2">
-          <h2 class="screen-title">เลือกบริการ</h2>
-          <div class="service-list" id="serviceList"></div>
-          <!-- 2026-05-09 (Art's lock): inline service editor REMOVED ·
-               liff-preview is now read-only WYSIWYG · single capture surface
-               for services = menu-ocr Mode 2 + /signup/service (with
-               MenuPhotoCTA · Phase 2). Anti-redundancy audit verdict. -->
-          <div class="nav-row">
-            <button class="cta-btn secondary" data-go="1" type="button">ย้อน</button>
-            <button class="cta-btn" data-go="3" id="serviceNext" type="button" disabled>ถัดไป</button>
-          </div>
-        </div>
-
-        <!-- Screen 3: TIME PICKER -->
-        <div class="screen" data-screen="3">
-          <h2 class="screen-title">เลือกวัน-เวลา</h2>
-          <div class="date-row" id="dateRow"></div>
-          <div class="time-grid" id="timeGrid"></div>
-          <div class="nav-row">
-            <button class="cta-btn secondary" data-go="2" type="button">ย้อน</button>
-            <button class="cta-btn" data-go="4" id="timeNext" type="button" disabled>ถัดไป</button>
-          </div>
-        </div>
-
-        <!-- Screen 4: CONFIRM + PAY -->
-        <div class="screen" data-screen="4">
-          <h2 class="screen-title">ยืนยันการจอง</h2>
-
-          <div class="summary-card">
-            <div class="summary-row">
-              <span class="summary-label">ร้าน</span>
-              <span class="summary-value" id="confirmShopName">Demoshop</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">บริการ</span>
-              <span class="summary-value" id="confirmService">—</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">วันเวลา</span>
-              <span class="summary-value" id="confirmDateTime">—</span>
-            </div>
-            <div class="summary-row total">
-              <span>มัดจำล็อกคิว</span>
-              <span class="summary-value">฿200</span>
-            </div>
-          </div>
-
-          <label class="input-label" for="custName">ชื่อ-สกุล</label>
-          <input class="input-thai" type="text" id="custName" placeholder="กรอกชื่อ" />
-
-          <label class="input-label" for="custPhone">เบอร์โทร</label>
-          <input class="input-thai" type="tel" id="custPhone" placeholder="0XX-XXX-XXXX" />
-
-          <div class="test-disclaimer">
-            <strong>โหมดทดสอบ:</strong> นี่คือการลองจองให้ดู flow · <strong>ยังไม่หักเงินจริง</strong> · เริ่มรับเงินจริงเมื่อ Atiz เปิดใช้งานครบ (~1 สัปดาห์)
-          </div>
-
-          <div class="promptpay-mock">
-            <div class="qr-canvas" id="payQr"></div>
-            <div class="label">QR PromptPay (mock) · ฿200</div>
-          </div>
-
-          <div class="nav-row">
-            <button class="cta-btn secondary" data-go="3" type="button">ย้อน</button>
-            <button class="cta-btn" data-go="5" type="button">จ่าย ฿200 (ทดสอบ)</button>
-          </div>
-        </div>
-
-        <!-- Screen 5: SUCCESS -->
-        <div class="screen" data-screen="5">
-          <div class="success-icon">✓</div>
-          <div class="success-text">
-            <h2>จองเรียบร้อย</h2>
-            <p>ร้าน <strong id="successShopName">Demoshop</strong> จะยืนยันใน LINE chat ภายใน 30 นาที</p>
-            <div class="booking-qr" id="bookingQr"></div>
-            <p style="font-size: 12px;">QR สำหรับแสดงตอนเข้าร้าน</p>
-          </div>
-          <button class="cta-btn secondary" data-go="1" type="button" style="margin-top: 16px;">จองอีกครั้ง</button>
-        </div>
-
-      </div><!-- /.liff-content -->
-
-      <div class="pagination" id="pagination">
-        <div class="dot active"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
-    </div><!-- /.phone-screen -->
-  </div><!-- /.phone -->
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     VARIANT SWITCHER (Pass 25 v12 · 1-row horizontal scroll · Art's lock 2026-05-06)
-     · drop English subtitle to save vertical space
-     · scroll indicator (›) on right edge · fades on scroll-end
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="variant-tabs-wrap">
-  <div class="variant-tabs-scroll" id="variantTabsScroll">
-    <div class="variant-tabs" role="tablist">
-      <button data-variant="airy" class="active" type="button" aria-label="โปร่ง · Airy">โปร่ง</button>
-      <button data-variant="luxury" type="button" aria-label="หรูหรา · Luxury">หรูหรา</button>
-      <button data-variant="fun" type="button" aria-label="สนุก · Fun">สนุก</button>
-      <button data-variant="fresh" type="button" aria-label="สดชื่น · Fresh">สดชื่น</button>
-      <button data-variant="surprise" type="button" aria-label="เซอร์ไพรส์ · Surprise">เซอร์ไพรส์</button>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="wm"><span class="b">Book</span><span class="e">Ease</span></div>
+      <a class="login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
     </div>
+    <div class="pvhint">← ปัดดูทุกหน้าที่ลูกค้าเห็น · นี่คือเว็บร้านของคุณ →</div>
+
+    <div class="cat">
+      <span class="d"></span>
+      <span class="lbl">ตรวจพบ:</span>
+      <span id="catName">ความงาม</span>
+      <button class="chg" id="catChange" type="button">เปลี่ยน</button>
+    </div>
+
+    <div class="h">ลุคร้าน</div>
+    <div class="vrow" id="variantRow">
+      <button class="vp" data-v="airy"     type="button">โปร่ง</button>
+      <button class="vp" data-v="luxury"   type="button">หรูหรา</button>
+      <button class="vp" data-v="fun"      type="button">สนุก</button>
+      <button class="vp" data-v="fresh"    type="button">สดชื่น</button>
+      <button class="vp" data-v="surprise" type="button">เซอร์ไพรส์</button>
+    </div>
+
+    <div class="h">บริการที่ AI อ่านได้ · แตะแก้</div>
+    <div id="svcList"></div>
+    <button class="addrow" id="addSvc" type="button">+ เพิ่มบริการ</button>
+    <div class="opent">
+      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · ทุกวัน ·
+      <span class="chg">แตะแก้</span>
+    </div>
+
+    <div class="h">ลูกค้าจ่าย</div>
+    <div class="seg" id="depSeg">
+      <button data-d="fixed_200" type="button">มัดจำ ฿200<span class="s">เก็บคงที่</span></button>
+      <button data-d="percent"   type="button">มัดจำ %<span class="s">ตามราคา</span></button>
+      <button data-d="full"      type="button">จ่ายเต็ม<span class="s">เต็มจำนวน ✓</span></button>
+    </div>
+    <div class="dephint">เงินเข้าร้าน<b>ครบ</b> · กัน no-show 100%</div>
   </div>
-</div>
 
-<!-- Surprise reveal toast (transient · shows variant name when Surprise rerolls) -->
-<div class="surprise-toast" id="surpriseToast"></div>
-
-<!-- Soft prompt · "save before closing" · 60-sec engagement timer -->
-<div class="soft-prompt" id="softPrompt">
-  <div class="head">🔒 อย่าให้สิ่งที่คุณเลือกหายไป</div>
-  <div class="body">เห็นแล้วใช่มั้ย? บันทึกร้านนี้ไว้ก่อนปิดหน้า · ลูกค้าจะเห็นแบบเดียวกันตอนจอง</div>
-  <div class="row-actions">
-    <button class="save-now" id="softPromptSave">✓ บันทึกร้านนี้</button>
-    <button class="dismiss" id="softPromptDismiss">เล่นต่อ</button>
+  <div class="viral">
+    <div class="viral-in">
+      <button class="save" id="saveBtn" type="button">✓ บันทึกร้านนี้</button>
+      <button class="ico" id="copyBtn" type="button" aria-label="คัดลอกลิงก์">⧉</button>
+      <button class="ico" id="shareBtn" type="button" aria-label="แชร์">↗</button>
+    </div>
+    <div class="vbar-cap">คัดลอกลิงก์ · แชร์ให้เพื่อน → เพื่อน save เป็นร้านตัวเองได้</div>
   </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     ACTION BAR (sticky · merchant tools · staff mode only)
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="action-bar">
-  <!-- Pass 25 v5 (Art's lock 2026-05-05 PM):
-       · Arrow ↗ removed from save CTA (was duplicating "→ goes elsewhere"
-         signal · clean text only)
-       · QR button dropped (preview URL ≠ live shop · re-add when shop real)
-       · Order (Art's lock 2026-05-07): Save (primary) · Copy (clipboard) · Share (Web Share API)
-       · Rationale: copy = silent commit (no friction) → place adjacent to save · share = social broadcast → far right -->
-  <button class="primary" id="openSignupCta" type="button">
-    <span>✓ บันทึกร้านนี้</span>
-  </button>
-  <button class="icon-btn" id="copyBtn" type="button" aria-label="คัดลอกลิงก์">
-    <svg class="icon-default" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <rect x="9" y="9" width="13" height="13" rx="2.5"/>
-      <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
-    </svg>
-    <svg class="icon-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M5 12l5 5L20 7"/>
-    </svg>
-  </button>
-  <button class="icon-btn" id="shareBtn" type="button" aria-label="แชร์ผ่าน LINE / IG / อื่นๆ">
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-      <polyline points="16 6 12 2 8 6"/>
-      <line x1="12" y1="2" x2="12" y2="15"/>
-    </svg>
-  </button>
-</div>
-
-<!-- Pass 25 v37 (Art's lock 2026-05-07): tiny "Powered by BookEase" footer
-     · zone 1 rule (variant 100% shop home · BookEase mark discreet)
-     · sits below action-bar · safe-area aware · subtle but present -->
-<div style="
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 0px);
-  left: 0; right: 0;
-  text-align: center;
-  font-size: 9.5px;
-  color: rgba(100, 116, 139, 0.6);
-  padding: 4px;
-  z-index: 49;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%);
-">
-  <span>Powered by</span>
-  <span style="font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 10px; letter-spacing: -0.01em;">
-    <span style="color: #1E40AF;">Book</span><span style="color: #38BDF8;">Ease</span>
-  </span>
-</div>
-
-<!-- QR modal -->
-<div class="modal-backdrop" id="qrModal">
-  <div class="modal">
-    <h3>QR สำหรับลูกค้าสแกน</h3>
-    <img id="qrImage" alt="QR code" />
-    <p>ให้ลูกค้าสแกน QR นี้บนมือถือเขา · จะเปิดเว็บร้านของคุณ</p>
-    <button class="cta-btn secondary" type="button" onclick="document.getElementById('qrModal').classList.remove('show')">ปิด</button>
-  </div>
-</div>
-
-<!-- 2026-05-09 · "+ เพิ่มบริการ" inline modal removed (single source of
-     truth audit) · capture lives at menu-ocr Mode 2 (or /signup/service
-     with Phase 2 MenuPhotoCTA) · liff-preview is pure read-only WYSIWYG -->
 
 <script>
   // ════════════════════════════════════════════════════════════════
-  // 1. URL DECODE · shop data + mode
+  // BRAIN — preserved EXACTLY from the shipped chain (§6c lock):
+  // decode ?data → save → shopv3.bookease.co/signup?prefill= → copy/share
   // ════════════════════════════════════════════════════════════════
-  const params = new URLSearchParams(window.location.search);
-  const dataB64 = params.get('data');
-  const urlMode = params.get('mode'); // 'share' or null
-  const urlIndustry = params.get('industry');
-  const urlVariant = params.get('variant');
+  var params = new URLSearchParams(location.search);
 
-  function decodeData(b64) {
+  function decodeData(b64){
     try { return JSON.parse(decodeURIComponent(escape(atob(b64)))); }
-    catch (e) { return null; }
+    catch(e){ return null; }
   }
 
-  let shopData = dataB64 ? decodeData(dataB64) : null;
-  if (!shopData) {
-    shopData = {
-      shopName: 'Bare Nail Spa',
-      shortName: 'barenailspa',
-      branch: 'Sukhumvit',
-      // brandColor + lineOaId removed 2026-05-09 from sample data ·
-      // brandColor derives from category palette · lineOaId removed from
-      // capture pipeline (backend has no field · post-pilot work)
-      services: [
-        { serviceName: 'Manicure คลาสสิก', durationMin: 60, price: 500 },
-        { serviceName: 'Pedicure คลาสสิก', durationMin: 60, price: 600 },
-        { serviceName: 'Gel Polish', durationMin: 75, price: 800 },
-        { serviceName: 'Spa Manicure', durationMin: 90, price: 1200 },
+  var shopData = (function(){
+    var d = params.get('data') ? decodeData(params.get('data')) : null;
+    if (d) return d;
+    return {
+      shopName:'Bare Nail Spa', shortName:'barenailspa',
+      openTime:'10:00-21:00', variant:'airy',
+      categoryName:'ความงาม',
+      services:[
+        { serviceName:'Manicure คลาสสิก', durationMin:60, price:500 },
+        { serviceName:'Gel Polish', durationMin:75, price:800 },
       ],
     };
+  })();
+
+  // services normalised to {serviceName,durationMin,price} (the chain shape
+  // register_index already decodes). Edits write back here → into the blob.
+  var services = Array.isArray(shopData.services) ? shopData.services.map(function(s){
+    return {
+      serviceName: s.serviceName || s.name || '',
+      durationMin: (typeof s.durationMin==='number') ? s.durationMin
+                 : (typeof s.durationMinutes==='number') ? s.durationMinutes : null,
+      price: (typeof s.price==='number') ? s.price : null,
+    };
+  }) : [];
+  if (services.length === 0) services.push({ serviceName:'', durationMin:null, price:null });
+
+  var currentVariant = ['airy','luxury','fun','fresh','surprise']
+    .indexOf(shopData.variant) > -1 ? shopData.variant : 'airy';
+
+  // deposit · default จ่ายเต็ม (full) — §6c · FINAL mock · Art lock 2026-05-16
+  var depositType = ['fixed_200','percent','full'].indexOf(shopData.depositType) > -1
+    ? shopData.depositType : 'full';
+  var depositValue = typeof shopData.depositValue === 'number'
+    ? shopData.depositValue
+    : (depositType === 'fixed_200' ? 200 : depositType === 'percent' ? 50 : 0);
+
+  // category · light detect mirroring the signup macro vocabulary
+  var CATS = ['นวด & สปา','ความงาม','คลินิก','ฟิตเนส','อื่นๆ'];
+  function detectCat(name){
+    var n = (name||'').toLowerCase();
+    if (/นวด|massage|สปา|spa|wellness/.test(n)) return 'นวด & สปา';
+    if (/เล็บ|nail|ผม|hair|salon|beauty|ความงาม|คิ้ว|ขนตา|brow|lash/.test(n)) return 'ความงาม';
+    if (/คลินิก|clinic|หมอ|skin|derma|aesthetic/.test(n)) return 'คลินิก';
+    if (/ฟิต|fitness|gym|yoga|มวย|โยคะ/.test(n)) return 'ฟิตเนส';
+    return 'ความงาม';
   }
+  var catName = shopData.categoryName && CATS.indexOf(shopData.categoryName) > -1
+    ? shopData.categoryName : detectCat(shopData.shopName);
 
-  // ════════════════════════════════════════════════════════════════
-  // 2. INDUSTRY DETECTION (5 industries · cycled by tap)
-  // ════════════════════════════════════════════════════════════════
-  const INDUSTRIES = ['beauty', 'nail', 'wellness', 'cafe', 'salon'];
-  const INDUSTRY_LABELS = {
-    beauty: 'Beauty',
-    nail: 'Nail · Beauty',
-    wellness: 'Massage · Wellness',
-    cafe: 'Cafe · Restaurant',
-    salon: 'Hair · Salon',
-  };
-
-  function detectIndustry(shopName) {
-    const n = (shopName || '').toLowerCase();
-    // Order matters · most specific first. "Nail Spa" should be nail · not wellness.
-    if (/เล็บ|nail|มานิ|pedi|manicure|คิ้ว|ขนตา|\bbrow\b|\blash\b/i.test(n)) return 'nail';
-    if (/ตัดผม|ทำผม|salon|hair|barber|saloon/i.test(n)) return 'salon';
-    if (/คาเฟ่|cafe|coffee|กาแฟ|bistro|restaurant|ร้านอาหาร|kitchen/i.test(n)) return 'cafe';
-    // Wellness only matches massage-specific terms · NOT generic "spa" suffix
-    if (/นวด|massage|สปา|wellness|reflex|onsen|อบสมุนไพร/i.test(n)) return 'wellness';
-    return 'beauty';
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // 3. SCRIPT DETECTION (Thai vs Latin)
-  // ════════════════════════════════════════════════════════════════
-  function detectScript(name) {
-    if (/[฀-๿]/.test(name)) return 'thai';
-    return 'latin';
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // 4. APPLY DATA TO BODY ATTRIBUTES + DOM
-  // ════════════════════════════════════════════════════════════════
-  let currentIndustry = urlIndustry && INDUSTRIES.includes(urlIndustry)
-    ? urlIndustry
-    : detectIndustry(shopData.shopName);
-  let currentVariant = urlVariant && ['airy','luxury','fun','fresh','surprise'].includes(urlVariant)
-    ? urlVariant
-    : 'airy';
-  const currentScript = detectScript(shopData.shopName);
-  const currentMode = urlMode === 'share' ? 'share' : 'staff';
-
-  document.body.dataset.industry = currentIndustry;
-  document.body.dataset.variant = currentVariant;
-  document.body.dataset.script = currentScript;
-  document.body.dataset.mode = currentMode;
-
-  // Inject shop data
-  document.getElementById('controlHeader').textContent = `เว็บร้าน${currentScript === 'thai' ? '' : ' '}${shopData.shopName}`;
-  document.getElementById('publicSlug').textContent = shopData.shortName;
-  document.getElementById('addressSlug').textContent = shopData.shortName;
-  document.getElementById('testUrl').textContent = window.location.href;
-
-  // Brand mark
-  const brandName = shopData.shopName.toUpperCase();
-  document.getElementById('brandName').textContent = brandName;
-  document.getElementById('brandEst').textContent =
-    `EST. 2024${shopData.branch ? ' · ' + shopData.branch.toUpperCase() : ''}`;
-  document.getElementById('brandTagline').textContent =
-    currentScript === 'thai' ? '· จองออนไลน์ ·' : '— a quiet ritual';
-
-  // Pass 22 · open hours badge on cover screen (trust signal)
-  if (shopData.openTime && shopData.openTime.includes('-')) {
-    const [open, close] = shopData.openTime.split('-').map(s => s.trim());
-    document.getElementById('coverOpenHours').textContent = `${open} - ${close}`;
-    document.getElementById('coverOpenBadge').style.display = 'inline-flex';
-  }
-
-  // Cover CTA shop name
-  document.getElementById('coverShopName').textContent = shopData.shopName;
-  document.getElementById('confirmShopName').textContent = shopData.shopName;
-  document.getElementById('successShopName').textContent = shopData.shopName;
-
-  // Industry badge
-  document.getElementById('industryName').textContent = INDUSTRY_LABELS[currentIndustry];
-
-  // Variant active button
-  document.querySelectorAll('.variant-tabs button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.variant === currentVariant);
+  // ── render ──
+  function renderCat(){ document.getElementById('catName').textContent = catName; }
+  document.getElementById('catChange').addEventListener('click', function(){
+    catName = CATS[(CATS.indexOf(catName) + 1) % CATS.length];
+    renderCat();
   });
 
-  // ════════════════════════════════════════════════════════════════
-  // 5. RENDER SERVICES · re-callable (Pass 25 v3 · inline service editor)
-  // ════════════════════════════════════════════════════════════════
-  const serviceList = document.getElementById('serviceList');
-  let selectedService = null;
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function renderVariant(){
+    document.querySelectorAll('.vp').forEach(function(b){
+      b.classList.toggle('on', b.dataset.v === currentVariant);
+    });
   }
+  document.getElementById('variantRow').addEventListener('click', function(e){
+    var b = e.target.closest('.vp'); if (!b) return;
+    currentVariant = b.dataset.v; renderVariant();
+  });
 
-  function renderServices() {
-    serviceList.innerHTML = '';
-    selectedService = null;
-    const nextBtn = document.getElementById('serviceNext');
-    if (nextBtn) nextBtn.disabled = true;
-
-    (shopData.services || []).slice(0, 8).forEach((svc, idx) => {
-      const card = document.createElement('div');
-      card.className = 'service-card';
-      card.innerHTML = `
-        ${idx === 0 ? '<div class="service-tag">SIGNATURE</div>' : ''}
-        <div class="service-name">${escapeHtml(svc.serviceName || 'บริการ')}</div>
-        <div class="service-divider"></div>
-        <div class="service-meta">
-          <span class="service-duration">${svc.durationMin ? svc.durationMin + ' นาที' : '—'}</span>
-          <span class="service-price">฿${(svc.price || 0).toLocaleString()}</span>
-        </div>
-      `;
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedService = svc;
-        document.getElementById('serviceNext').disabled = false;
-        document.getElementById('confirmService').textContent =
-          `${svc.serviceName} (${svc.durationMin || '—'} นาที)`;
+  function renderSvc(){
+    var box = document.getElementById('svcList');
+    box.innerHTML = '';
+    services.forEach(function(s, i){
+      var row = document.createElement('div');
+      row.className = 'svc';
+      row.innerHTML =
+        '<input class="nm" placeholder="ชื่อบริการ" />' +
+        '<input class="du" inputmode="numeric" placeholder="–" />' +
+        '<span class="duu">น</span>' +
+        '<input class="pr" inputmode="numeric" placeholder="฿" />' +
+        '<span class="pen">✎</span>' +
+        '<button class="del" type="button" aria-label="ลบ">×</button>';
+      var nm = row.querySelector('.nm'), du = row.querySelector('.du'),
+          pr = row.querySelector('.pr');
+      nm.value = s.serviceName || '';
+      du.value = (s.durationMin != null) ? s.durationMin : '';
+      pr.value = (s.price != null) ? s.price : '';
+      nm.addEventListener('input', function(){ services[i].serviceName = nm.value; });
+      du.addEventListener('input', function(){
+        du.value = du.value.replace(/\D/g,''); services[i].durationMin = du.value ? +du.value : null;
       });
-      serviceList.appendChild(card);
+      pr.addEventListener('input', function(){
+        pr.value = pr.value.replace(/\D/g,''); services[i].price = pr.value ? +pr.value : null;
+      });
+      row.querySelector('.del').addEventListener('click', function(){
+        services.splice(i,1);
+        if (services.length === 0) services.push({serviceName:'',durationMin:null,price:null});
+        renderSvc();
+      });
+      box.appendChild(row);
     });
-
-    if (!serviceList.children.length) {
-      // Pass 25 v17 (Art's lock 2026-05-06 PM · "show, don't tell"):
-      // Empty state branches by mode:
-      //   - Staff mode (preview tool · merchant building): show 2 ghost sample
-      //     services greyed-out + helper "↓ แทนด้วยของคุณ" → trailer pattern
-      //   - Share mode (customer side · published shop): existing LINE OA fallback
-      const isShareMode = document.body.dataset.mode === 'share';
-
-      if (!isShareMode) {
-        // STAFF · 2 ghost sample services + nudge to "+ เพิ่มบริการ"
-        // Pass 25 v24 fix (Art's catch 2026-05-06 PM): duration ใน name string
-        // ทำให้แสดง 2 ที่ ("60 นาที" + "— นาที"). Move duration to bottom row only.
-        const samples = [
-          { name: 'นวดอโรม่า', durationMin: 60, price: 890 },
-          { name: 'สปาเท้า',   durationMin: 90, price: 1290 },
-        ];
-        const sampleHtml = samples.map((s, idx) => `
-          <div class="service-card" style="opacity: 0.42; pointer-events: none; position: relative;" aria-hidden="true">
-            ${idx === 0 ? '<div class="service-tag" style="opacity:0.7;">ตัวอย่าง</div>' : ''}
-            <div class="service-name">${escapeHtml(s.name)}</div>
-            <div class="service-divider"></div>
-            <div class="service-meta">
-              <span class="service-duration">${s.durationMin} นาที</span>
-              <span class="service-price">฿${s.price.toLocaleString()}</span>
-            </div>
-          </div>
-        `).join('');
-        serviceList.innerHTML = sampleHtml + `
-          <div style="text-align:center; padding: 4px 8px 0; font-size: 12px; color: var(--pal-text-muted);">
-            ↑ ตัวอย่าง · กดปุ่ม "📷 ถ่ายรูปเมนู" ด้านล่างเพื่อแทนด้วยของคุณ
-          </div>
-        `;
-        return;
-      }
-
-      // SHARE mode (customer view) · empty-state placeholder.
-      // 2026-05-09: simplified · LINE OA deeplink button removed because
-      // lineOaId capture was retired (backend has no field for it · post-pilot
-      // work). Customer in this state contacts merchant via the same LINE
-      // chat that brought them here · no deeplink needed.
-      serviceList.innerHTML = `
-        <div style="text-align:center; padding: 24px 16px; background: rgba(255,255,255,0.6); border-radius: 14px; border: 1px solid var(--pal-card-border);">
-          <div style="font-size: 36px; margin-bottom: 12px;">💬</div>
-          <div style="font-weight: 700; color: var(--pal-text); margin-bottom: 6px;">ยังไม่มีเมนู</div>
-          <div style="font-size: 13px; color: var(--pal-text-muted); line-height: 1.5;">
-            ทักร้านในห้องแชท LINE · ร้านจะส่งเมนู + ลิงก์จองให้
-          </div>
-        </div>
-      `;
-    }
-
-    // Pass 25 v3 · re-evaluate anti-Potemkin guard on save CTA after services change
-    refreshSaveCtaState();
   }
+  document.getElementById('addSvc').addEventListener('click', function(){
+    services.push({ serviceName:'', durationMin:null, price:null });
+    renderSvc();
+  });
 
-  function refreshSaveCtaState() {
-    // 2026-05-09 (Art's lock · post-audit) · "wall→door" preserved:
-    // Disabled gray pill ("เพิ่มบริการก่อนบันทึก") was a dead-end.
-    // Now: when no services → active pill "📷 ถ่ายรูปเมนู" → routes back to
-    //      menu-ocr Mode 2 (the single capture surface).
-    //      After ≥1 service → pill flips to "✓ บันทึกร้านนี้" (commit to signup).
-    // Inline modal removed in 2026-05-09 audit · liff-preview is read-only.
-    const cta = document.getElementById('openSignupCta');
-    const warn = document.getElementById('ctaWarn');
-    if (!cta) return;
-    const hasServices = Array.isArray(shopData.services) && shopData.services.length > 0;
-    const span = cta.querySelector('span');
-    cta.disabled = false;
-    if (hasServices) {
-      cta.dataset.state = 'save';
-      if (span) span.textContent = '✓ บันทึกร้านนี้';
-      if (warn) warn.style.display = 'none';
-    } else {
-      cta.dataset.state = 'capture-services';
-      if (span) span.textContent = '📷 ถ่ายรูปเมนู';
-      if (warn) warn.style.display = 'none'; // CTA itself communicates state · no redundant yellow box
-    }
-  }
-
-  renderServices();
-
-  // 2026-05-09 (Art's lock): inline service editor (5b) REMOVED.
-  // Single source of truth for service capture is menu-ocr Mode 2 (and
-  // Phase 2 MenuPhotoCTA inside /signup/service + /shop-setting). This
-  // file is now pure read-only WYSIWYG. Anti-redundancy audit verdict.
-
-  // ════════════════════════════════════════════════════════════════
-  // 6. DATE + TIME PICKERS
-  // ════════════════════════════════════════════════════════════════
-  const dateRow = document.getElementById('dateRow');
-  const timeGrid = document.getElementById('timeGrid');
-  let selectedDate = null, selectedTime = null;
-  const days = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
-  const monthsTh = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-  const today = new Date();
-  for (let i = 0; i < 4; i++) {
-    const d = new Date(today.getTime() + i * 86400000);
-    const pill = document.createElement('div');
-    pill.className = 'date-pill';
-    pill.innerHTML = `
-      <div class="day-num">${d.getDate()}</div>
-      <div class="day-label">${i === 0 ? 'วันนี้' : days[d.getDay()] + ' ' + monthsTh[d.getMonth()]}</div>
-    `;
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
-      pill.classList.add('selected');
-      selectedDate = d;
-      checkTimeNext();
+  function renderDep(){
+    document.querySelectorAll('#depSeg button').forEach(function(b){
+      b.classList.toggle('on', b.dataset.d === depositType);
     });
-    dateRow.appendChild(pill);
   }
-  // Pass 22 (Art's lock 2026-05-04) · smart mock slots within shop's openTime
-  // - Reads shopData.openTime if provided (from OCR auto-detect or manual entry)
-  // - Generates slots every 1.5 hr from open to (close - service buffer)
-  // - Falls back to fixed mock if openTime not provided
-  // - NO real availability tracking · still mock · just respects shop hours
-  function parseHourMinutes(hhmm) {
-    const m = /^(\d{1,2}):(\d{2})$/.exec((hhmm || '').trim());
-    if (!m) return null;
-    return parseInt(m[1]) + parseInt(m[2]) / 60;
-  }
-  function formatHour(decimalHr) {
-    const h = Math.floor(decimalHr);
-    const m = Math.round((decimalHr - h) * 60);
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  }
-  function generateSmartSlots(openTime, serviceBuffer = 1) {
-    const fixedFallback = ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'];
-    if (!openTime || !openTime.includes('-')) return fixedFallback;
-    const [openStr, closeStr] = openTime.split('-').map(s => s.trim());
-    const open = parseHourMinutes(openStr);
-    const close = parseHourMinutes(closeStr);
-    if (open === null || close === null || close <= open) return fixedFallback;
-    const lastStartable = close - serviceBuffer; // last slot start time · finishes by close
-    const slots = [];
-    for (let t = open; t <= lastStartable + 0.001; t += 1.5) {
-      slots.push(formatHour(t));
-      if (slots.length >= 8) break; // cap mobile UX
-    }
-    return slots.length > 0 ? slots : fixedFallback;
-  }
-  generateSmartSlots(shopData.openTime).forEach(t => {
-    const pill = document.createElement('div');
-    pill.className = 'time-pill';
-    pill.textContent = t;
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
-      pill.classList.add('selected');
-      selectedTime = t;
-      checkTimeNext();
-    });
-    timeGrid.appendChild(pill);
-  });
-  function checkTimeNext() {
-    document.getElementById('timeNext').disabled = !(selectedDate && selectedTime);
-    if (selectedDate && selectedTime) {
-      const d = selectedDate;
-      const dayLabel = d.toDateString() === today.toDateString() ? 'วันนี้' : days[d.getDay()];
-      document.getElementById('confirmDateTime').textContent =
-        `${dayLabel} ${d.getDate()} ${monthsTh[d.getMonth()]} · ${selectedTime}`;
-    }
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // 7. MOCK QR (deterministic from shop name · looks scan-able)
-  // ════════════════════════════════════════════════════════════════
-  function fillMockQr(elId) {
-    const el = document.getElementById(elId);
-    const cs = getComputedStyle(el);
-    const cols = parseInt(cs.gridTemplateColumns.split(' ').length);
-    const rows = parseInt(cs.gridTemplateRows.split(' ').length);
-    el.innerHTML = '';
-    const seed = shopData.shopName.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-    for (let i = 0; i < cols * rows; i++) {
-      const div = document.createElement('div');
-      const x = i % cols, y = Math.floor(i / cols);
-      const isCorner = (x < 2 && y < 2) || (x >= cols - 2 && y < 2) || (x < 2 && y >= rows - 2);
-      const fill = isCorner || ((seed + i * 7) % 3 === 0);
-      if (fill) div.classList.add('fill');
-      el.appendChild(div);
-    }
-  }
-  fillMockQr('payQr');
-  fillMockQr('bookingQr');
-
-  // ════════════════════════════════════════════════════════════════
-  // 8. SCREEN NAVIGATION (Pass 25 v24 · 2026-05-06 PM · Art's lock):
-  //    + swipe gesture (touch) between screens
-  //    + dot click direct navigation
-  // ════════════════════════════════════════════════════════════════
-  let currentScreen = 1;
-  const TOTAL_SCREENS = 5;
-
-  function goToScreen(n) {
-    if (n < 1 || n > TOTAL_SCREENS) return;
-    currentScreen = n;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const target = document.querySelector(`[data-screen="${n}"]`);
-    if (target) target.classList.add('active');
-    document.querySelectorAll('.pagination .dot').forEach((d, i) => {
-      d.classList.toggle('active', i === n - 1);
-    });
-    document.querySelector('.liff-content').scrollTop = 0;
-  }
-  document.querySelectorAll('[data-go]').forEach(btn => {
-    btn.addEventListener('click', () => goToScreen(parseInt(btn.dataset.go)));
+  document.getElementById('depSeg').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    depositType = b.dataset.d;
+    depositValue = depositType === 'fixed_200' ? 200 : depositType === 'percent' ? 50 : 0;
+    renderDep();
   });
 
-  // Pagination dot clickable · direct navigation
-  document.querySelectorAll('.pagination .dot').forEach((d, i) => {
-    d.style.cursor = 'pointer';
-    d.addEventListener('click', () => goToScreen(i + 1));
-  });
+  // open hours (display uses en-dash; blob uses hyphen — chain contract)
+  var openEd = document.getElementById('openEd');
+  openEd.value = (shopData.openTime || '10:00-21:00').replace('-', '–');
 
-  // Swipe gesture (left = next · right = prev)
-  // Listen on phone-screen (the iPhone-frame inner area) so swipe works
-  // anywhere on the mockup — not just inside .liff-content.
-  (function () {
-    const swipeArea = document.getElementById('phoneScreen');
-    if (!swipeArea) return;
+  renderCat(); renderVariant(); renderSvc(); renderDep();
 
-    let startX = 0, startY = 0, startTime = 0;
-    let tracking = false;
-
-    const SWIPE_THRESHOLD_X = 60;   // min horizontal travel
-    const SWIPE_THRESHOLD_Y = 50;   // max vertical drift (else = scroll)
-    const SWIPE_MAX_TIME = 600;     // ms · fast flick
-
-    swipeArea.addEventListener('touchstart', (e) => {
-      if (e.touches.length !== 1) return;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startTime = Date.now();
-      tracking = true;
-    }, { passive: true });
-
-    swipeArea.addEventListener('touchend', (e) => {
-      if (!tracking) return;
-      tracking = false;
-      const t = e.changedTouches[0];
-      const dx = t.clientX - startX;
-      const dy = t.clientY - startY;
-      const dt = Date.now() - startTime;
-      if (dt > SWIPE_MAX_TIME) return;
-      if (Math.abs(dx) < SWIPE_THRESHOLD_X) return;
-      if (Math.abs(dy) > SWIPE_THRESHOLD_Y) return;
-      // Don't swipe if user touched a button/input (let click bubble normally)
-      if (e.target.closest('button, input, textarea, a, [role="button"]')) return;
-      // dx < 0 = finger moved left = next screen
-      // dx > 0 = finger moved right = prev screen
-      goToScreen(currentScreen + (dx < 0 ? 1 : -1));
-    }, { passive: true });
-
-    swipeArea.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
-  })();
-
-  // Reset
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    selectedService = null; selectedDate = null; selectedTime = null;
-    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-    document.getElementById('serviceNext').disabled = true;
-    document.getElementById('timeNext').disabled = true;
-    document.getElementById('custName').value = '';
-    document.getElementById('custPhone').value = '';
-    goToScreen(1);
-  });
-
-  // ════════════════════════════════════════════════════════════════
-  // 9. INDUSTRY CYCLE (1-tap correction)
-  // ════════════════════════════════════════════════════════════════
-  document.getElementById('industryBadge').addEventListener('click', () => {
-    const idx = INDUSTRIES.indexOf(currentIndustry);
-    currentIndustry = INDUSTRIES[(idx + 1) % INDUSTRIES.length];
-    document.body.dataset.industry = currentIndustry;
-    document.getElementById('industryName').textContent = INDUSTRY_LABELS[currentIndustry];
-    // Re-render mock QRs to update industry-tinted borders if any
-    fillMockQr('payQr');
-    fillMockQr('bookingQr');
-  });
-
-  // ════════════════════════════════════════════════════════════════
-  // 10. VARIANT SWITCHER · 6 variants + Surprise wildcard
-  //     (Pass 24 · 2026-05-05 PM · Art's lock · preview-first model)
-  // ════════════════════════════════════════════════════════════════
-
-  // Surprise pool · 3 hidden variants only revealed via 🎲 reroll
-  const SURPRISE_VARIANTS = [
-    { id: 'bold',    label: 'Bold Editorial' },
-    { id: 'soft',    label: 'Soft Watercolor' },
-    { id: 'neon',    label: 'Neon Dreams' },
-  ];
-  let surpriseIdx = -1;
-
-  function showSurpriseToast(label) {
-    const t = document.getElementById('surpriseToast');
-    if (!t) return;
-    t.textContent = label;
-    t.classList.add('show');
-    clearTimeout(t._t);
-    t._t = setTimeout(() => t.classList.remove('show'), 1800);
-  }
-
-  function activateVariantTab(btn) {
-    document.querySelectorAll('.variant-tabs button').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-  }
-
-  document.querySelectorAll('.variant-tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const v = btn.dataset.variant;
-      if (v === 'surprise') {
-        // Reroll · cycle through hidden surprise variants
-        surpriseIdx = (surpriseIdx + 1) % SURPRISE_VARIANTS.length;
-        const pick = SURPRISE_VARIANTS[surpriseIdx];
-        currentVariant = pick.id;
-        document.body.dataset.variant = currentVariant;
-        showSurpriseToast(pick.label);
-        activateVariantTab(btn); // keep Surprise button highlighted across rerolls
-      } else {
-        currentVariant = v;
-        document.body.dataset.variant = currentVariant;
-        activateVariantTab(btn);
-      }
-      // scroll active tab into center view (helps when tabs overflow)
-      try { btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch {}
-      // Mark merchant has interacted with variants · used by soft-prompt timer
-      window._variantInteractions = (window._variantInteractions || 0) + 1;
-    });
-  });
-
-  // Pass 25 v12 · scroll-end indicator · hide '›' chevron when scrolled to end
-  (function () {
-    const scrollWrap = document.getElementById('variantTabsScroll');
-    const scrollInner = scrollWrap?.querySelector('.variant-tabs');
-    if (!scrollWrap || !scrollInner) return;
-    const updateIndicator = () => {
-      const remaining = scrollInner.scrollWidth - scrollInner.clientWidth - scrollInner.scrollLeft;
-      scrollWrap.classList.toggle('scrolled-end', remaining < 8);
-    };
-    scrollInner.addEventListener('scroll', updateIndicator, { passive: true });
-    window.addEventListener('resize', updateIndicator);
-    setTimeout(updateIndicator, 100);
-  })();
-
-  // ────────────────────────────────────────────────────────────────────
-  // 10c. SOFT PROMPT · "save before closing" timer
-  // (Pass 24 · 2026-05-05 PM)
-  // Triggers if merchant taps variants ≥3 times within 60s engagement
-  // window · catches the "playing but not committing" sweet spot.
-  // ────────────────────────────────────────────────────────────────────
-  let softPromptShown = false;
-  function maybeShowSoftPrompt() {
-    if (softPromptShown) return;
-    if ((window._variantInteractions || 0) < 3) return;
-    if (document.body.dataset.mode === 'share') return; // never in customer view
-    // Don't pop if shop empty (anti-Potemkin still wins · button is disabled anyway)
-    if (!Array.isArray(shopData.services) || shopData.services.length === 0) return;
-    const prompt = document.getElementById('softPrompt');
-    if (!prompt) return;
-    prompt.classList.add('show');
-    softPromptShown = true;
-  }
-  setTimeout(maybeShowSoftPrompt, 60 * 1000); // 60 sec post-load
-
-  document.getElementById('softPromptDismiss')?.addEventListener('click', () => {
-    document.getElementById('softPrompt').classList.remove('show');
-  });
-  document.getElementById('softPromptSave')?.addEventListener('click', () => {
-    document.getElementById('softPrompt').classList.remove('show');
-    document.getElementById('openSignupCta')?.click();
-  });
-
-  // ════════════════════════════════════════════════════════════════
-  // 10b. STAFF/SAVE CTA · "✓ บันทึกร้านนี้" · adapts to receiver mode
-  //     (Pass 23 · Art 2026-05-05 PM)
-  //     (Pass 25 · 2026-05-05 PM · receiver mode + share button)
-  // ════════════════════════════════════════════════════════════════
-
-  // Pass 25 v2 (2026-05-05 PM): sender attribution dropped · LINE chat
-  // already shows who sent + adds zero value beyond "who" which medium
-  // already conveys. Visual IS the message. Less friction · cleaner.
-
-  function buildShopSignupUrlFromPreview() {
-    // Re-encode shopData INCLUDING the live currentVariant the merchant just
-    // picked (which the variant tabs above mutate in-place). Industry is
-    // derived from main_category at signup (per Pass 23 audit) · we don't
-    // include it here.
-    const finalData = {
-      ...shopData,
+  // ── blob · EXACT chain contract + variant + edited services + deposit ──
+  function buildBlob(){
+    var cleanSvc = services.filter(function(s){ return (s.serviceName||'').trim(); })
+      .map(function(s){
+        return { serviceName:s.serviceName.trim(),
+                 durationMin: s.durationMin, price: s.price };
+      });
+    return Object.assign({}, shopData, {
+      shopName: shopData.shopName,
+      shortName: shopData.shortName,
+      openTime: (openEd.value || '10:00–21:00').replace('–','-'),
       variant: currentVariant,
-    };
-    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
-    // Pass 25 v12 (2026-05-06 · Art's chain-cohesion lock):
-    // Point to shopv3 because v1 master doesn't have the prefill decoder
-    // yet (Mod cherry-pick pending). After CF DNS flip (shop CNAME → v3 VM),
-    // change back to canonical shop.bookease.co · same code serves both.
-    return 'https://shopv3.bookease.co/signup?prefill=' + encodeURIComponent(b64);
+      categoryName: catName,
+      services: cleanSvc,
+      depositType: depositType,
+      depositValue: depositValue,
+    });
+  }
+  function encodeBlob(){
+    return btoa(unescape(encodeURIComponent(JSON.stringify(buildBlob()))));
   }
 
-  // Anti-Potemkin guard moved to refreshSaveCtaState() · called by
-  // renderServices() so it auto-clears when merchant adds a service via
-  // the inline editor. Per memory feedback_no_potemkin_demos.md.
-
-  document.getElementById('openSignupCta')?.addEventListener('click', () => {
-    // 2026-05-09 (Art's lock · post-audit): branch on state · "wall→door".
-    if (!shopData.shopName || !shopData.shortName) {
-      alert('ไม่มีข้อมูลร้าน · กลับไป menu-ocr ก่อน');
-      return;
+  // SAVE → shopv3 signup prefill (EXACT preserved target · opens claim sheet)
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    if (!shopData.shopName || !shopData.shortName){
+      alert('ไม่มีข้อมูลร้าน · กลับไปหน้าแรกก่อน'); return;
     }
-    const cta = document.getElementById('openSignupCta');
-    const state = cta?.dataset.state;
-    if (state === 'capture-services') {
-      // Wall→door · route to menu-ocr Mode 2 (single capture surface).
-      // Re-encode current shopData so user keeps what they built when they
-      // arrive at menu-ocr. Open in new tab so they can come back.
-      const finalData = { ...shopData, variant: currentVariant };
-      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
-      const ocrUrl = window.location.origin + '/menu-ocr.html?prefill=' + encodeURIComponent(b64) + '#mode-menu';
-      window.open(ocrUrl, '_blank', 'noopener');
-      return;
-    }
-    // state === 'save' · commit to signup
-    const url = buildShopSignupUrlFromPreview();
+    var url = 'https://shopv3.bookease.co/signup?prefill=' +
+      encodeURIComponent(encodeBlob());
     window.open(url, '_blank', 'noopener');
   });
 
-  // ════════════════════════════════════════════════════════════════
-  // 10d. SHARE TO PEER · "ส่งต่อให้เพื่อน · เขาบันทึกเองได้"
-  //     (Pass 25 · 2026-05-05 PM · viral coefficient mechanic ·
-  //      Art's lock · friend-makes-for-friend pattern)
-  // ════════════════════════════════════════════════════════════════
-  function buildPeerShareUrl() {
-    // Re-encode shopData with current variant so receiver sees what creator chose.
-    const finalData = { ...shopData, variant: currentVariant };
-    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(finalData))));
-    const u = new URL(window.location.href);
-    u.search = '';
-    u.searchParams.set('data', b64);
+  // peer share URL = this page with ?data= (receiver saves as own · viral)
+  function peerUrl(){
+    var u = new URL(location.href); u.search = '';
+    u.searchParams.set('data', encodeBlob());
     return u.toString();
   }
-
-  // Pass 25 v5 · top sharePeerBtn HTML removed · share via bottom Copy icon
-  // (now wired to Web Share API + peer URL · receiver gets save-as-own flow)
-
-
-  // ════════════════════════════════════════════════════════════════
-  // 11. ACTION BAR · share / copy / QR
-  // ════════════════════════════════════════════════════════════════
-  function buildShareUrl() {
-    // Persist current industry + variant in the share URL
-    const u = new URL(window.location.href);
-    u.searchParams.set('mode', 'share');
-    u.searchParams.set('industry', currentIndustry);
-    u.searchParams.set('variant', currentVariant);
-    return u.toString();
-  }
-
-  // Pass 25 v5 · Action bar share + copy · both use PEER share URL (no mode
-   // flag · receiver gets save-as-own flow · friend-merchant pattern)
-
-  // SHARE · Web Share API · OS share sheet · falls back to clipboard
-  document.getElementById('shareBtn')?.addEventListener('click', async () => {
-    const url = buildPeerShareUrl();
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: shopData.shopName, url });
-      } catch (e) { /* user canceled · silent */ }
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var btn = this;
+    navigator.clipboard.writeText(peerUrl()).then(function(){
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.classList.remove('copied'); }, 1400);
+    }).catch(function(){});
+  });
+  document.getElementById('shareBtn').addEventListener('click', async function(){
+    var btn = this, url = peerUrl();
+    if (navigator.share){
+      try { await navigator.share({ title: shopData.shopName, url: url }); }
+      catch(e){}
     } else {
       try {
         await navigator.clipboard.writeText(url);
-        const btn = document.getElementById('shareBtn');
         btn.classList.add('copied');
-        setTimeout(() => btn.classList.remove('copied'), 1400);
-      } catch {}
+        setTimeout(function(){ btn.classList.remove('copied'); }, 1400);
+      } catch(e){}
     }
   });
-
-  // COPY · clipboard only · paste-anywhere (LINE chat · email · etc.)
-  document.getElementById('copyBtn')?.addEventListener('click', async () => {
-    const url = buildPeerShareUrl();
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch (e) { /* silent */ }
-    const btn = document.getElementById('copyBtn');
-    btn.classList.add('copied');
-    setTimeout(() => btn.classList.remove('copied'), 1400);
-  });
-
-  // QR button removed in v5 · re-add when shop URL is real (post-save)
 </script>
-
 </body>
 </html>
