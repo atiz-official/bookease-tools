@@ -23,14 +23,14 @@
     font-family:'Sarabun','Inter',system-ui,sans-serif;background:#fff;
     color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;
   }
-  .wrap{max-width:480px;margin:0 auto;padding:22px 20px calc(108px + env(safe-area-inset-bottom));}
+  .wrap{max-width:480px;margin:0 auto;padding:10px 20px calc(96px + env(safe-area-inset-bottom));}
 
   /* §6c · customer preview · FULL-BLEED 3-page swipe hero · very top
      (no topbar · no wordy hint · dots self-explain) */
   .pvpager{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
     width:100%;max-width:480px;margin:0 auto;scrollbar-width:none}
   .pvpager::-webkit-scrollbar{display:none}
-  .pvpage{flex:0 0 100%;scroll-snap-align:center;height:clamp(300px,56vw,400px);
+  .pvpage{flex:0 0 100%;scroll-snap-align:center;height:clamp(208px,46vw,280px);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     position:relative;text-align:center;
     background:linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4);color:#5a4636}
@@ -44,26 +44,26 @@
   .pv-dv{width:30px;height:1px;background:currentColor;opacity:.45;margin:12px 0 9px}
   .pv-est{font-size:10px;letter-spacing:.3em;font-weight:600;opacity:.7}
   .pv-svcname{font-size:20px;font-weight:700;margin-bottom:5px}
-  .pv-svcpr{font-size:13px;opacity:.78;font-weight:600;margin-bottom:16px}
+  .pv-svcpr{font-size:13px;opacity:.78;font-weight:600;margin-bottom:10px}
   .pv-btn{background:#5a4636;color:#f7eee4;font-size:12px;font-weight:700;padding:9px 20px;border-radius:999px}
   .pv-chips{display:flex;gap:6px;margin-bottom:16px}
   .pv-chip{border:1px solid currentColor;font-size:10px;font-weight:700;padding:5px 10px;border-radius:9px;opacity:.65}
   .pv-chip.on{background:#5a4636;color:#f7eee4;border-color:#5a4636;opacity:1}
-  .pvdots{display:flex;gap:6px;justify-content:center;margin:10px 0 2px}
+  .pvdots{display:flex;gap:6px;justify-content:center;margin:7px 0 0}
   .pvdots i{width:6px;height:6px;border-radius:50%;background:#d8d2c7;transition:all .2s}
   .pvdots i.on{background:var(--head);width:18px;border-radius:99px}
 
   /* ตรวจพบ category chip + เปลี่ยน */
   .cat{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;
     border:1px solid #a7f3d0;border-radius:999px;padding:6px 13px;
-    font-size:13px;font-weight:700;color:#065f46;margin-bottom:22px}
+    font-size:13px;font-weight:700;color:#065f46;margin-bottom:10px}
   .cat .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
   .cat .lbl{color:#059669;font-weight:600}
   .cat .chg{color:#059669;text-decoration:underline;font-weight:700;
     background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:0}
 
   /* section heading · payouts blue */
-  .h{font-size:18px;font-weight:700;color:var(--head);margin:22px 0 10px}
+  .h{font-size:17px;font-weight:700;color:var(--head);margin:15px 0 7px}
   .h:first-of-type{margin-top:0}
 
   /* variant pills */
@@ -77,7 +77,7 @@
   .vp[data-v="surprise"].on{background:#fffbeb;border-color:#fcd34d;color:#b45309}
 
   /* editable services */
-  .svc{display:flex;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line)}
+  .svc{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
   .svc:first-of-type{border-top:none}
   .svc .nm{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ink);
     border:none;background:transparent;font-family:inherit;padding:2px 0;outline:none}
@@ -94,14 +94,14 @@
     flex:0 0 auto;padding:2px 4px}
   .svc .del:hover{color:#ef4444}
   .addrow{color:var(--accent);font-weight:700;font-size:15px;background:none;border:none;
-    cursor:pointer;font-family:inherit;padding:13px 0 4px;display:block}
-  .opent{font-size:13px;color:var(--muted);margin:8px 0 2px}
+    cursor:pointer;font-family:inherit;padding:8px 0 2px;display:block}
+  .opent{font-size:13px;color:var(--muted);margin:5px 0 0}
   .opent .ed{color:var(--ink);border:none;background:transparent;font-family:inherit;
     text-decoration:underline dotted;width:130px;outline:none}
   .opent .chg{color:var(--accent);font-weight:600}
 
   /* deposit segmented */
-  .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:6px}
+  .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:4px}
   .seg button{flex:1;text-align:center;padding:11px 4px;font-size:13px;font-weight:700;
     color:var(--muted);border:none;border-right:1px solid var(--line);background:#fff;
     cursor:pointer;font-family:inherit}
@@ -109,7 +109,7 @@
   .seg button.on{background:var(--ink);color:#fff}
   .seg .s{display:block;font-size:9px;font-weight:600;opacity:.6;margin-top:2px}
   .seg button.on .s{opacity:.85}
-  .dephint{margin-top:9px;font-size:13px;color:#374151}
+  .dephint{margin-top:6px;font-size:13px;color:#374151}
   .dephint b{color:var(--ink)}
 
   /* viral bar (preserved verbs · §6c lock · GTM) */
