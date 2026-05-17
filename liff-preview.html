@@ -118,8 +118,11 @@
   .addrow{color:var(--accent);font-weight:700;font-size:15px;background:none;border:none;
     cursor:pointer;font-family:inherit;padding:8px 0 2px;display:block}
   .opent{font-size:13px;color:var(--muted);margin:16px 0 0}
-  .opent .ed{color:var(--ink);border:none;background:transparent;font-family:inherit;
-    text-decoration:underline dotted;width:130px;outline:none}
+  /* native time picker · recycled from shopv3 InputBox RegisterTimeInput
+     (bg-slate-50 · border-slate-300 · rounded-lg) — easier than free text */
+  .tin{background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;
+    padding:7px 9px;font-family:inherit;font-size:14px;color:#0a0a0a;outline:none}
+  .tin:focus{border-color:#1E40AF;box-shadow:0 0 0 2px rgba(30,64,175,.12)}
   /* settable open-days · 7 toggle chips (Art: there was NO control —
      just dead text · "how do they set weekdays-only?") */
   /* recycled VERBATIM from shopv3 register_service.tsx day-picker so
@@ -236,7 +239,7 @@
     <div class="h">บริการร้าน</div>
     <div id="svcList"></div>
     <button class="addrow" id="addSvc" type="button">+ เพิ่มบริการ</button>
-    <div class="opent">เปิด <input class="ed" id="openEd" value="10:00–21:00" /> น.</div>
+    <div class="opent">เปิด <input type="time" id="openS" value="10:00" class="tin" /> – <input type="time" id="openE" value="21:00" class="tin" /></div>
     <div class="dayhdr">วันที่เปิด · <span id="daySum">เปิดทุกวัน</span></div>
     <div class="dayrow" id="dayRow">
       <button class="dc on" type="button" data-d="1">จ</button>
@@ -263,7 +266,7 @@
       <button class="ico" id="copyBtn" type="button" aria-label="คัดลอกลิงก์"><span class="g">⧉</span><span class="ico-l">คัดลอก</span></button>
       <button class="ico" id="shareBtn" type="button" aria-label="แชร์"><span class="g">↗</span><span class="ico-l">แชร์</span></button>
     </div>
-    <div class="vbar-cap">แชร์ให้เพื่อน → เขาเซฟเป็นร้านของตัวเองได้</div>
+    <div class="vbar-cap">เพื่อนเซฟเป็นร้านตัวเองได้</div>
   </div>
 
 <script>
@@ -460,9 +463,18 @@
     b.classList.toggle('on'); renderDays();
   });
 
-  // open hours (display uses en-dash; blob uses hyphen — chain contract)
-  var openEd = document.getElementById('openEd');
-  openEd.value = (shopData.openTime || '10:00-21:00').replace('-', '–');
+  // open hours · two native time inputs (recycled shopv3 pattern).
+  // blob keeps the chain contract "HH:MM-HH:MM" (hyphen).
+  (function(){
+    var ot = (shopData.openTime || '10:00-21:00').split('-');
+    var os = document.getElementById('openS'), oe = document.getElementById('openE');
+    if (os && ot[0]) os.value = ot[0].trim();
+    if (oe && ot[1]) oe.value = ot[1].trim();
+  })();
+  function openTimeStr(){
+    var os = document.getElementById('openS'), oe = document.getElementById('openE');
+    return ((os && os.value) || '10:00') + '-' + ((oe && oe.value) || '21:00');
+  }
 
   renderCat(); renderVariant(); renderSvc(); renderDep(); renderDays();
 
@@ -476,7 +488,7 @@
     return Object.assign({}, shopData, {
       shopName: shopData.shopName,
       shortName: shopData.shortName,
-      openTime: (openEd.value || '10:00–21:00').replace('–','-'),
+      openTime: openTimeStr(),
       variant: currentVariant,
       categoryName: catName,
       services: cleanSvc,
