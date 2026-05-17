@@ -102,6 +102,8 @@
     border:none;background:transparent;font-family:inherit;outline:none}
   .svc .du:focus{color:var(--ink)}
   .svc .duu{font-size:13px;color:var(--muted);margin-left:-6px}
+  /* ฿ prefix · same weight/colour as the price so "฿500" reads as one */
+  .svc .prc{font-size:15px;font-weight:800;color:var(--ink);margin-right:-6px;flex:0 0 auto}
   .svc .pr{width:84px;text-align:right;font-size:15px;font-weight:800;color:var(--ink);
     border:none;background:transparent;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
   .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
@@ -360,7 +362,8 @@
         '<input class="nm" placeholder="ชื่อบริการ" />' +
         '<input class="du" inputmode="numeric" placeholder="–" />' +
         '<span class="duu">น</span>' +
-        '<input class="pr" inputmode="numeric" placeholder="฿" />' +
+        '<span class="prc">฿</span>' +
+        '<input class="pr" inputmode="numeric" placeholder="–" />' +
         '<span class="pen">✎</span>' +
         '<button class="del" type="button" aria-label="ลบ">×</button>';
       var nm = row.querySelector('.nm'), du = row.querySelector('.du'),
