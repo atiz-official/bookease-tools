@@ -25,21 +25,12 @@
   }
   .wrap{max-width:480px;margin:0 auto;padding:22px 20px calc(108px + env(safe-area-inset-bottom));}
 
-  /* top: wordmark + login */
-  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-  .wm{font-family:'Inter';font-weight:800;font-size:19px;letter-spacing:-.01em}
-  .wm .b{color:#1E40AF}.wm .e{color:#38BDF8}
-  .login{font-size:13px;font-weight:600;color:var(--ink);border:1px solid rgba(0,0,0,.12);
-    padding:7px 14px;border-radius:999px;text-decoration:none}
-
-  /* preview hint */
-  .pvhint{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 14px}
-
-  /* §6c · customer preview · 3-page horizontal swipe (FINAL mock P2 top) */
+  /* §6c · customer preview · FULL-BLEED 3-page swipe hero · very top
+     (no topbar · no wordy hint · dots self-explain) */
   .pvpager{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
-    margin:14px 0 0;border-radius:18px;scrollbar-width:none}
+    width:100%;max-width:480px;margin:0 auto;scrollbar-width:none}
   .pvpager::-webkit-scrollbar{display:none}
-  .pvpage{flex:0 0 100%;scroll-snap-align:center;height:212px;
+  .pvpage{flex:0 0 100%;scroll-snap-align:center;height:clamp(300px,56vw,400px);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     position:relative;text-align:center;
     background:linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4);color:#5a4636}
@@ -145,37 +136,33 @@
 </style>
 </head>
 <body>
+  <!-- §6c · customer preview · FULL-BLEED hero at the very top.
+       No BookEase topbar (Art: not necessary on P2). No wordy hint —
+       the dots self-explain the swipe. -->
+  <div class="pvpager" id="pvp">
+    <div class="pvpage" id="pvCover">
+      <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
+      <div class="pv-tag" id="pvTag">โปร่ง</div>
+      <div class="pv-ttl">หน้าร้าน</div>
+      <div class="pv-brand" id="pvBrand">SHOP</div>
+      <div class="pv-dv"></div>
+      <div class="pv-est">EST. 2026</div>
+    </div>
+    <div class="pvpage">
+      <div class="pv-ttl">หน้าบริการ</div>
+      <div class="pv-svcname" id="pvSvcName">บริการของร้าน</div>
+      <div class="pv-svcpr" id="pvSvcPr">฿—</div>
+      <div class="pv-btn">จองคิว →</div>
+    </div>
+    <div class="pvpage">
+      <div class="pv-ttl">หน้าเลือกเวลา</div>
+      <div class="pv-chips"><span class="pv-chip on">วันนี้ 14:00</span><span class="pv-chip">16:30</span><span class="pv-chip">18:00</span></div>
+      <div class="pv-btn">ยืนยัน</div>
+    </div>
+  </div>
+  <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
+
   <div class="wrap">
-    <div class="topbar">
-      <div class="wm"><span class="b">Book</span><span class="e">Ease</span></div>
-      <a class="login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
-    </div>
-
-    <!-- §6c · customer preview ON TOP (what the customer sees · swipe 3) -->
-    <div class="pvpager" id="pvp">
-      <div class="pvpage" id="pvCover">
-        <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
-        <div class="pv-tag" id="pvTag">โปร่ง</div>
-        <div class="pv-ttl">หน้าร้าน</div>
-        <div class="pv-brand" id="pvBrand">SHOP</div>
-        <div class="pv-dv"></div>
-        <div class="pv-est">EST. 2026</div>
-      </div>
-      <div class="pvpage">
-        <div class="pv-ttl">หน้าบริการ</div>
-        <div class="pv-svcname" id="pvSvcName">บริการของร้าน</div>
-        <div class="pv-svcpr" id="pvSvcPr">฿—</div>
-        <div class="pv-btn">จองคิว →</div>
-      </div>
-      <div class="pvpage">
-        <div class="pv-ttl">หน้าเลือกเวลา</div>
-        <div class="pv-chips"><span class="pv-chip on">วันนี้ 14:00</span><span class="pv-chip">16:30</span><span class="pv-chip">18:00</span></div>
-        <div class="pv-btn">ยืนยัน</div>
-      </div>
-    </div>
-    <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
-
-    <div class="pvhint">← ปัดดูทุกหน้าที่ลูกค้าเห็น · นี่คือเว็บร้านของคุณ →</div>
 
     <div class="cat">
       <span class="d"></span>
