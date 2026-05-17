@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 spacing · ปัจจุบัน vs ใหม่</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0a;--head:#134783;--accent:#5777EF;--line:#ececec;--faint:#9ca3af;--ok:#10b981;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Inter',sans-serif;background:#e9edf2;color:var(--ink);padding:22px 14px 60px;-webkit-font-smoothing:antialiased}
+  .head{max-width:860px;margin:0 auto 18px;text-align:center}
+  .head h1{font-size:20px;font-weight:800}
+  .head p{font-size:13px;color:#5b6370;margin-top:6px;line-height:1.5}
+  .row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;max-width:860px;margin:0 auto}
+  .col{width:330px}
+  .lab{text-align:center;font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:8px;text-transform:uppercase}
+  .lab.a{color:#b91c1c}.lab.b{color:#047857}
+  .sub{text-align:center;font-size:11px;color:#6b7280;margin-bottom:10px;min-height:28px}
+  .phone{width:330px;background:#fff;border:1px solid #dcdfe4;border-radius:26px;overflow:hidden;box-shadow:0 14px 34px -16px rgba(0,0,0,.3)}
+
+  /* faithful slice of liff-preview */
+  .pvpage{height:clamp(208px,46vw,280px);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;background:linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4);color:#5a4636;position:relative}
+  .b .pvpage{height:clamp(228px,50vw,304px)}             /* NEW: ~9% taller */
+  .pv-url{position:absolute;top:11px;left:11px;background:rgba(255,255,255,.82);font-size:12px;font-weight:600;color:#7a6a58;padding:4px 10px;border-radius:999px}
+  .pv-tag{position:absolute;top:11px;right:11px;background:rgba(255,255,255,.82);font-size:9px;font-weight:700;color:#9c8161;padding:3px 9px;border-radius:999px;letter-spacing:.06em}
+  .pv-brand{font-family:'Inter';font-weight:300;letter-spacing:.3em;font-size:23px}
+  .pv-dv{width:30px;height:1px;background:currentColor;opacity:.45;margin:12px 0 9px}
+  .pv-est{font-size:10px;letter-spacing:.3em;font-weight:600;opacity:.7}
+  .pvdots{display:flex;gap:6px;justify-content:center;margin:7px 0 0}
+  .b .pvdots{margin:5px 0 0}                              /* NEW */
+  .pvdots i{width:6px;height:6px;border-radius:50%;background:#d8d2c7}
+  .pvdots i.on{background:var(--head);width:18px;border-radius:99px}
+
+  .wrap{padding:10px 18px 16px}
+  .b .wrap{padding:3px 18px 16px}                         /* NEW: kill top dead-space */
+  .cat{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;border:1px solid #a7f3d0;
+    border-radius:999px;padding:6px 13px;font-size:13px;font-weight:700;color:#065f46;margin-bottom:10px}
+  .b .cat{margin-bottom:6px}                              /* NEW */
+  .cat .d{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+  .cat .lbl{color:#059669;font-weight:600}
+  .cat .chg{color:#059669;text-decoration:underline;font-weight:700}
+  .h{font-size:17px;font-weight:700;color:var(--head);margin:22px 0 9px}
+  .b .h{margin:9px 0 9px}                                 /* NEW: selector hugs preview */
+  .vrow{display:flex;gap:8px;overflow:hidden}
+  .vp{flex:0 0 auto;font-size:14px;font-weight:600;color:var(--faint);padding:9px 14px;
+    border-radius:999px;background:#fff;border:1px solid var(--line)}
+  .vp.on{color:var(--ink);background:#f1efe9;border-color:#dcd7cd;font-weight:800}
+  .svcline{font-size:15px;font-weight:600;color:var(--ink);margin-top:14px}
+  .hsvc{font-size:17px;font-weight:700;color:var(--head);margin:14px 0 7px}
+
+  /* the gap being killed · visual marker */
+  .gapmark{position:relative}
+  .a .gapmark::after{content:"ช่องว่างเสีย";position:absolute;right:6px;top:-2px;font-size:9px;
+    font-weight:800;color:#b91c1c;background:#fee2e2;padding:2px 6px;border-radius:6px}
+  .foot{max-width:860px;margin:20px auto 0;text-align:center;font-size:12px;color:#5b6370;line-height:1.6}
+  .foot b{color:var(--ink)}
+  @media(max-width:740px){.col{width:330px}}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>P2 · ระยะ preview ↔ ตัวเลือก variant</h1>
+    <p>ปัญหา: ช่องว่างระหว่าง preview/จุด กับ <b>ประเภทร้าน + ธีมเพจร้าน</b> ห่างไป → ไม่รู้ว่ากด variant กระทบ preview ข้างบน.
+    เสนอ: ดันตัวเลือกขึ้นชิด preview + ขยาย preview สูงขึ้น ~9%. <b>ดู 2 อันนี้แล้วบอกว่าโอเคไหม ก่อนผม apply ลง liff-preview จริง</b>.</p>
+  </div>
+
+  <div class="row">
+
+    <!-- CURRENT -->
+    <div class="col a">
+      <div class="lab a">ปัจจุบัน (LIVE)</div>
+      <div class="sub">preview clamp(208–280) · ช่องว่าง dots→ประเภท→ธีม รวม ~50px</div>
+      <div class="phone">
+        <div class="pvpage">
+          <div class="pv-url">🔒 bookease.co/barenailspa</div>
+          <div class="pv-tag">โปร่ง</div>
+          <div class="pv-brand">BARE NAIL SPA</div>
+          <div class="pv-dv"></div>
+          <div class="pv-est">EST. 2026</div>
+        </div>
+        <div class="pvdots"><i class="on"></i><i></i><i></i></div>
+        <div class="wrap gapmark">
+          <span class="cat"><span class="d"></span><span class="lbl">ประเภทร้าน:</span>&nbsp;ความงาม&nbsp;<span class="chg">เปลี่ยน</span></span>
+          <div class="h">ธีมเพจร้าน</div>
+          <div class="vrow"><span class="vp on">โปร่ง</span><span class="vp">หรูหรา</span><span class="vp">สนุก</span></div>
+          <div class="hsvc">บริการร้าน</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW -->
+    <div class="col b">
+      <div class="lab b">ใหม่ (เสนอ)</div>
+      <div class="sub">ตัวเลือก variant ชิด preview · preview สูงขึ้น ~9% (ใช้พื้นที่ที่ได้คืน)</div>
+      <div class="phone">
+        <div class="pvpage">
+          <div class="pv-url">🔒 bookease.co/barenailspa</div>
+          <div class="pv-tag">โปร่ง</div>
+          <div class="pv-brand">BARE NAIL SPA</div>
+          <div class="pv-dv"></div>
+          <div class="pv-est">EST. 2026</div>
+        </div>
+        <div class="pvdots"><i class="on"></i><i></i><i></i></div>
+        <div class="wrap">
+          <span class="cat"><span class="d"></span><span class="lbl">ประเภทร้าน:</span>&nbsp;ความงาม&nbsp;<span class="chg">เปลี่ยน</span></span>
+          <div class="h">ธีมเพจร้าน</div>
+          <div class="vrow"><span class="vp on">โปร่ง</span><span class="vp">หรูหรา</span><span class="vp">สนุก</span></div>
+          <div class="hsvc">บริการร้าน</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    การเปลี่ยน (ทั้งหมดเป็น CSS · reversible): <b>.pvpager สูงขึ้น clamp(208/46vw/280 → 228/50vw/304)</b> ·
+    .pvdots mt 7→5 · .wrap pad-top 10→3 · .cat mb 10→6 · <b>.h mt 22→9</b> (ดึงตัวเลือก variant ขึ้นชิด preview).<br>
+    ผลรวม: ตัวเลือก variant อยู่ใต้ preview ทันที (เห็นชัดว่ากดแล้วกระทบ) + preview ใหญ่ขึ้น. ยังไม่ apply ลงของจริง · รออนุมัติ.
+  </div>
+</body>
+</html>
