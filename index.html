@@ -324,12 +324,46 @@
 
   /* ─────────── Phone mockup ─────────── */
   .mockup-wrap {
-    position: relative;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 600px;
+    align-items: flex-start;
   }
+  /* §6c · clean demo card per FINAL mock (replaces phone-frame) */
+  .demo {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 4 / 5;
+    border-radius: 22px;
+    overflow: hidden;
+    background-image:
+      linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.05) 38%, rgba(0,0,0,0.78) 100%),
+      url('https://images.unsplash.com/photo-1604654894611-6973b376cbde?auto=format&fit=crop&w=600&q=70');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 18px 40px rgba(0,0,0,0.16);
+  }
+  .demo-pill {
+    position: absolute; top: 13px; right: 13px;
+    background: #10b981; color: #fff;
+    font-size: 12px; font-weight: 700;
+    padding: 6px 12px; border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(16,185,129,0.30);
+  }
+  .demo-body {
+    position: absolute; left: 18px; right: 18px; bottom: 18px;
+    color: #fff;
+  }
+  .demo-body * { text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+  .demo-name { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  .demo-meta { font-size: 13px; opacity: 0.85; margin: 5px 0 12px; }
+  .demo-svc {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; padding-top: 8px; margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.22);
+  }
+  .demo-svc:first-of-type { border-top: none; margin-top: 0; }
+  .demo-svc b { font-weight: 800; font-variant-numeric: tabular-nums; }
   .phone {
     position: relative;
     width: 320px;
@@ -523,6 +557,10 @@
     .hero {
       display: flex;
       flex-direction: column;
+      align-items: stretch;          /* 2026-05-17 ROOT FIX: base .hero
+         has align-items:center (for the desktop grid) which was
+         centering EVERY child in this mobile flex column → text not
+         left-aligned. stretch = full-width children · text falls left. */
       gap: 14px;
       padding: 16px 20px 40px;
     }
@@ -673,50 +711,19 @@
     <p class="cta-note">ไม่ต้องสมัคร · ไม่ต้องลง app</p>
   </div>
 
-  <!-- Phone mockup -->
+  <!-- §6c · clean demo card per FINAL mock: ONE full-width 4:5 card ·
+       photo + dark bottom · deposit pill top-right · name/meta/2 svc
+       rows. NO phone-frame chrome · NO จองคิว btn · NO floating chips. -->
   <div class="mockup-wrap">
-
-    <div class="chip chip-deposit">
-      ✓ มัดจำ ฿200 · ล็อกคิว
-    </div>
-
-    <div class="phone">
-      <div class="phone-notch"></div>
-      <div class="phone-screen">
-        <div class="phone-status">
-          <span>9:41</span>
-          <span>●●●●&nbsp;&nbsp;100%</span>
-        </div>
-
-        <div class="phone-cover">
-          <div class="phone-shop-tag">Luxury × Nail</div>
-          <div class="phone-shop-name">Bare Nail Spa</div>
-          <div class="phone-shop-meta">เปิด 10:00–21:00 · ทองหล่อ</div>
-          <div class="phone-cta">จองคิว →</div>
-        </div>
-
-        <div class="phone-services">
-          <div class="phone-service">
-            <span class="phone-service-name">Gel manicure</span>
-            <span class="phone-service-price">฿890</span>
-          </div>
-          <div class="phone-service">
-            <span class="phone-service-name">Spa pedicure</span>
-            <span class="phone-service-price">฿1,290</span>
-          </div>
-          <div class="phone-service">
-            <span class="phone-service-name">Nail art design</span>
-            <span class="phone-service-price">฿1,490</span>
-          </div>
-        </div>
+    <div class="demo">
+      <div class="demo-pill">✓ มัดจำ ฿200 · ล็อกคิว</div>
+      <div class="demo-body">
+        <div class="demo-name">Bare Nail Spa</div>
+        <div class="demo-meta">เปิด 10:00–21:00 · ทองหล่อ</div>
+        <div class="demo-svc"><span>Gel manicure</span><b>฿890</b></div>
+        <div class="demo-svc"><span>Spa pedicure</span><b>฿1,290</b></div>
       </div>
     </div>
-
-    <div class="chip chip-saved">
-      <span class="check">✓</span>
-      บันทึกแล้ว · ฟรี
-    </div>
-
   </div>
 </section>
 
