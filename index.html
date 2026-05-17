@@ -307,6 +307,25 @@
     font-weight: 500;
   }
 
+  /* §6c inline-OCR overlay (replaces the menu-ocr.html page hop) */
+  .ocr-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(255, 255, 255, 0.96);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; padding: 24px; text-align: center;
+  }
+  .ocr-overlay[hidden] { display: none; }
+  .ocr-spinner {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 3px solid rgba(16, 185, 129, 0.18);
+    border-top-color: #10b981;
+    animation: ocr-spin 0.8s linear infinite;
+  }
+  @keyframes ocr-spin { to { transform: rotate(360deg); } }
+  .ocr-overlay-title { font-size: 17px; font-weight: 800; color: #0a0a0a; }
+  .ocr-overlay-sub { font-size: 13px; color: #6b7280; }
+
   /* ─────────── Phone mockup ─────────── */
   .mockup-wrap {
     position: relative;
@@ -641,16 +660,19 @@
       <strong>ฟรี</strong> · ออกแบบเว็บร้านให้ใน 60 วินาที
     </p>
 
-    <!-- 2026-05-09 (Art's lock · Variant B): Big playful pill · big emoji
-         left · 2-line copy + sparkle ✨ · arrow nudges · tilt animation idle -->
-    <a class="ocr-card" href="https://atiz-official.github.io/bookease-tools/menu-ocr.html">
+    <!-- §6c (Art image-lock 2026-05-16): "หน้า 1 = make.bookease.co =
+         ตัว OCR · ขาย + ถ่ายรูป รวมหน้าเดียว". The photo/OCR runs INLINE
+         here — NO separate menu-ocr.html hop (that touchpoint collapsed).
+         Same proven CF-Worker OCR brain (ported below) → straight to P2. -->
+    <button type="button" class="ocr-card" id="ocrCard">
       <div class="ocr-icon">📷</div>
       <div class="ocr-text">
         <div class="ocr-h">ถ่ายภาพเมนูร้าน</div>
         <div class="ocr-sub">เห็นเว็บใน 60 วิ <span class="ocr-sparkle">✨</span></div>
       </div>
       <div class="ocr-arrow">→</div>
-    </a>
+    </button>
+    <input type="file" id="ocrFile" accept="image/*" capture="environment" hidden />
 
     <div class="or-divider">หรือพิมพ์ชื่อร้าน</div>
 
@@ -712,6 +734,13 @@
 <!-- Pass 25 v10 (2026-05-06 · Art's lock 'B'): proof strip dropped.
      DREAM-first hero · pricing revealed at signup commit time only. -->
 
+<!-- §6c inline-OCR loading overlay (no menu-ocr.html hop) -->
+<div id="ocrOverlay" class="ocr-overlay" hidden>
+  <div class="ocr-spinner" aria-hidden="true"></div>
+  <div class="ocr-overlay-title" id="ocrOverlayMsg">📷 กำลังอ่านเมนูร้าน…</div>
+  <div class="ocr-overlay-sub">รอแป๊บนึง · ไม่ต้องสมัคร ไม่ต้องลง app</div>
+</div>
+
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
   <div>
@@ -720,8 +749,6 @@
   </div>
   <div>
     <a href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
-    &nbsp;·&nbsp;
-    <a href="https://atiz-official.github.io/bookease-tools/menu-ocr.html">เครื่องมือถ่ายเมนู</a>
   </div>
 </footer>
 
@@ -765,6 +792,152 @@
     const name = input.value.trim();
     if (!name) return;
     window.location.href = buildPreviewUrl(name);
+  });
+
+  // ════════════════════════════════════════════════════════════════
+  // §6c · INLINE OCR — collapsed FROM menu-ocr.html into this page
+  // (Art image-lock 2026-05-16: "ขาย + ถ่ายรูป รวมหน้าเดียว").
+  // Brain ported VERBATIM from the proven menu-ocr.html chain — same
+  // CF Worker proxy (key stays server-side · project_menu_ocr lock) ·
+  // same compress · same vision prompt · same blob → liff-preview (P2).
+  // ════════════════════════════════════════════════════════════════
+  const WORKER_URL = 'https://bookease-anthropic-proxy.atiz-cloudflare-account.workers.dev/';
+  const MODEL = 'claude-sonnet-4-6';
+  const ocrCard = document.getElementById('ocrCard');
+  const ocrFile = document.getElementById('ocrFile');
+  const overlay = document.getElementById('ocrOverlay');
+  const overlayMsg = document.getElementById('ocrOverlayMsg');
+
+  function showOverlay(msg) {
+    if (msg) overlayMsg.textContent = msg;
+    overlay.hidden = false;
+  }
+  function hideOverlay() { overlay.hidden = true; }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+  function loadImageFromFile(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = ev.target.result;
+      };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+  async function compressForOcr(file) {
+    if (file.size <= 1500000) return file;
+    try {
+      const img = await loadImageFromFile(file);
+      const scale = Math.min(1, 1600 / img.width);
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      let q = 0.85, blob = null;
+      while (q >= 0.4) {
+        blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+        if (blob && blob.size <= 1500000) break;
+        q -= 0.1;
+      }
+      if (!blob) return file;
+      return new File([blob], 'menu.jpg', { type: 'image/jpeg' });
+    } catch (e) { return file; }
+  }
+  function extractJsonFromText(text) {
+    const cb = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (cb) return JSON.parse(cb[1]);
+    const m = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (m) return JSON.parse(m[0]);
+    throw new Error('ตอบกลับมาไม่ถูกต้อง · ลองใหม่');
+  }
+  async function callClaudeVision(b64, mediaType, prompt) {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 2048,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
+            { type: 'text', text: prompt },
+          ],
+        }],
+      }),
+    });
+    if (!res.ok) {
+      let t = ''; try { t = await res.text(); } catch {}
+      console.error('Worker proxy error', res.status, t);
+      if (t.includes('credit balance is too low') || t.includes('rate_limit') || res.status === 429 || t.includes('overloaded'))
+        throw new Error('🤖 ระบบ AI กำลังคุยกับคนเยอะ · ลองใหม่อีกสักครู่');
+      throw new Error('🤖 ระบบขัดข้องชั่วคราว · ลองใหม่อีกครั้ง');
+    }
+    const j = await res.json();
+    return j.content[0].text;
+  }
+
+  const OCR_PROMPT = `This is a screenshot of a Thai service shop's LINE OA (Official Account) page. Extract the following branding info as JSON:
+
+{
+  "shopName": "...",
+  "openTime": "HH:MM-HH:MM"
+}
+
+For shopName: Look at the LINE OA green header bar at the top of the screen first — the account display name shown there (e.g. "KOZY Sleep Salon", "Zen Spa Bangkok"). This is always the most reliable source. If not clear from the header, use the bold name shown below the profile avatar. Prefer the English or English-mixed name over a Thai-only name when both are visible.
+
+For openTime: extract opening hours if visible. Format as 24-hour HH:MM-HH:MM (e.g. "10:00-21:00"). If hours are not visible or unclear, set openTime to null.
+
+Output ONLY valid JSON. No prose. No code fences.`;
+
+  ocrCard.addEventListener('click', () => ocrFile.click());
+
+  ocrFile.addEventListener('change', async (e) => {
+    let file = e.target.files && e.target.files[0];
+    if (!file) return;
+    showOverlay('📷 กำลังอ่านเมนูร้าน…');
+    try {
+      file = await compressForOcr(file);
+      const b64 = await fileToBase64(file);
+      const text = await callClaudeVision(b64, file.type || 'image/jpeg', OCR_PROMPT);
+      const data = extractJsonFromText(text);
+      const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '').trim();
+      if (!cleaned) {
+        hideOverlay();
+        alert('อ่านชื่อร้านไม่ชัด · พิมพ์ชื่อร้านด้านล่างได้เลย');
+        input.focus();
+        ocrFile.value = '';
+        return;
+      }
+      const blob = {
+        shopName: cleaned,
+        shortName: slugify(cleaned),
+        openTime: data.openTime || '10:00-21:00',
+        variant: 'airy',
+        services: [],
+      };
+      const enc = btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
+      // SAME contract as the typed path → P2 (liff-preview), no page hop
+      window.location.href = 'liff-preview.html?data=' + encodeURIComponent(enc);
+    } catch (err) {
+      hideOverlay();
+      ocrFile.value = '';
+      alert((err && err.message ? err.message : 'ระบบขัดข้อง') + '\nพิมพ์ชื่อร้านด้านล่างได้เลย');
+      input.focus();
+    }
   });
 })();
 </script>
