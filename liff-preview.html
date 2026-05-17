@@ -154,13 +154,14 @@
       <div class="pv-svcpr" id="pvSvcPr">฿—</div>
       <div class="pv-btn">จองคิว →</div>
     </div>
-    <div class="pvpage">
-      <div class="pv-ttl">หน้าเลือกเวลา</div>
-      <div class="pv-chips"><span class="pv-chip on">วันนี้ 14:00</span><span class="pv-chip">16:30</span><span class="pv-chip">18:00</span></div>
-      <div class="pv-btn">ยืนยัน</div>
-    </div>
+    <!-- §6c · NO fake "หน้าเลือกเวลา" page: the real time picker
+         (TimePickerBottomSheet) is generic BookEase booking chrome —
+         same for every shop & looks nothing like 3 stub chips. Faking
+         it misrepresents the product (no-Potemkin lock). The preview
+         shows only what's genuinely the merchant's shop: cover + their
+         real services. -->
   </div>
-  <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
+  <div class="pvdots" id="pvd"><i class="on"></i><i></i></div>
 
   <div class="wrap">
 
