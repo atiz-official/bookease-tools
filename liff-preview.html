@@ -35,7 +35,7 @@
     position:relative;text-align:center;
     background:linear-gradient(165deg,#f7eee4,#efdccd 52%,#e6cab4);color:#5a4636}
   .pvpage .pv-url{position:absolute;top:11px;left:11px;background:rgba(255,255,255,.82);
-    font-size:10px;font-weight:600;color:#7a6a58;padding:3px 9px;border-radius:999px}
+    font-size:12px;font-weight:600;color:#7a6a58;padding:4px 10px;border-radius:999px}
   .pvpage .pv-tag{position:absolute;top:11px;right:11px;background:rgba(255,255,255,.82);
     font-size:9px;font-weight:700;color:#9c8161;padding:3px 9px;border-radius:999px;letter-spacing:.06em}
   .pvpage .pv-ttl{position:absolute;top:12px;left:50%;transform:translateX(-50%);
@@ -98,13 +98,15 @@
   .svc .nm{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ink);
     border:none;background:transparent;font-family:inherit;padding:2px 0;outline:none}
   .svc .nm:focus{border-bottom:1.5px solid var(--accent)}
-  .svc .du{width:62px;text-align:right;font-size:13px;color:var(--muted);
+  .svc .du{width:34px;text-align:right;font-size:14px;color:var(--muted);
     border:none;background:transparent;font-family:inherit;outline:none}
   .svc .du:focus{color:var(--ink)}
-  .svc .duu{font-size:13px;color:var(--muted);margin-left:-6px}
-  /* ฿ prefix · same weight/colour as the price so "฿500" reads as one */
-  .svc .prc{font-size:15px;font-weight:800;color:var(--ink);margin-right:-6px;flex:0 0 auto}
-  .svc .pr{width:84px;text-align:right;font-size:15px;font-weight:800;color:var(--ink);
+  .svc .duu{font-size:14px;color:var(--muted);margin-left:-4px}
+  /* ฿ glued to the PRICE ("฿500" one unit) · NOT next to นาที.
+     pr is left-aligned auto-width so the number sits right after ฿
+     (was 84px right-aligned → huge dead gap between ฿ and the number) */
+  .svc .prc{font-size:15px;font-weight:800;color:var(--ink);margin-left:auto;margin-right:-7px;flex:0 0 auto}
+  .svc .pr{width:auto;min-width:42px;max-width:84px;text-align:left;font-size:15px;font-weight:800;color:var(--ink);
     border:none;background:transparent;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
   .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
   /* shared pencil-edit affordance · used in service rows AND open-hours
@@ -118,7 +120,14 @@
   .opent{font-size:13px;color:var(--muted);margin:16px 0 0}
   .opent .ed{color:var(--ink);border:none;background:transparent;font-family:inherit;
     text-decoration:underline dotted;width:130px;outline:none}
-  .opent .pen{margin-left:5px}
+  /* settable open-days · 7 toggle chips (Art: there was NO control —
+     just dead text · "how do they set weekdays-only?") */
+  .dayrow{display:flex;gap:5px;margin:9px 0 2px}
+  .dc{flex:1;min-width:0;padding:9px 0;border:1px solid var(--line);border-radius:9px;
+    background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:var(--faint);cursor:pointer}
+  .dc.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dc:active{transform:scale(.95)}
+  #daySum{color:var(--ink);font-weight:700}
 
   /* deposit segmented */
   .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:4px}
@@ -171,13 +180,13 @@
     <div class="pvpage" id="pvCover">
       <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
       <div class="pv-tag" id="pvTag">โปร่ง</div>
-      <div class="pv-ttl">หน้าร้าน</div>
+      <div class="pv-ttl">เพจร้าน</div>
       <div class="pv-brand" id="pvBrand">SHOP</div>
       <div class="pv-dv"></div>
       <div class="pv-est">EST. 2026</div>
     </div>
     <div class="pvpage">
-      <div class="pv-ttl">หน้าบริการ</div>
+      <div class="pv-ttl">เพจบริการ</div>
       <div class="pv-svcname" id="pvSvcName">บริการของร้าน</div>
       <div class="pv-svcpr" id="pvSvcPr">฿—</div>
       <div class="pv-btn">จองคิว →</div>
@@ -188,7 +197,7 @@
          time chips [time + day · selected=black] · เลือกวันอื่น →) —
          NOT the advanced wheel. -->
     <div class="pvpage pv-tpage">
-      <div class="pv-ttl">หน้าเลือกเวลา</div>
+      <div class="pv-ttl">เพจเลือกเวลา</div>
       <div class="pv-slotbanner">🟢 มีว่าง</div>
       <div class="pv-slotlabel">เลือกด่วน</div>
       <div class="pv-slotrow">
@@ -224,8 +233,16 @@
     <div id="svcList"></div>
     <button class="addrow" id="addSvc" type="button">+ เพิ่มบริการ</button>
     <div class="opent">
-      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · ทุกวัน
-      <span class="pen">✎</span>
+      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · <span id="daySum">ทุกวัน</span>
+    </div>
+    <div class="dayrow" id="dayRow">
+      <button class="dc on" type="button" data-d="1">จ</button>
+      <button class="dc on" type="button" data-d="2">อ</button>
+      <button class="dc on" type="button" data-d="3">พ</button>
+      <button class="dc on" type="button" data-d="4">พฤ</button>
+      <button class="dc on" type="button" data-d="5">ศ</button>
+      <button class="dc on" type="button" data-d="6">ส</button>
+      <button class="dc on" type="button" data-d="7">อา</button>
     </div>
 
     <div class="h">ลูกค้าจ่าย</div>
@@ -412,11 +429,34 @@
     renderDep();
   });
 
+  // ── settable open-days · 7 toggle chips (Art: there was NO control) ──
+  function daysOn(){
+    return [].slice.call(document.querySelectorAll('#dayRow .dc.on'))
+      .map(function(b){ return +b.dataset.d; });
+  }
+  function renderDays(){
+    var on = daysOn(), n = on.length, s;
+    if (n === 7) s = 'ทุกวัน';
+    else if (n === 5 && on.indexOf(6) < 0 && on.indexOf(7) < 0) s = 'จันทร์–ศุกร์';
+    else if (n === 0) s = 'ยังไม่เลือกวัน';
+    else s = 'เปิด ' + n + ' วัน';
+    document.getElementById('daySum').textContent = s;
+  }
+  if (Array.isArray(shopData.daysOpen) && shopData.daysOpen.length){
+    document.querySelectorAll('#dayRow .dc').forEach(function(b){
+      b.classList.toggle('on', shopData.daysOpen.indexOf(+b.dataset.d) > -1);
+    });
+  }
+  document.getElementById('dayRow').addEventListener('click', function(e){
+    var b = e.target.closest('.dc'); if (!b) return;
+    b.classList.toggle('on'); renderDays();
+  });
+
   // open hours (display uses en-dash; blob uses hyphen — chain contract)
   var openEd = document.getElementById('openEd');
   openEd.value = (shopData.openTime || '10:00-21:00').replace('-', '–');
 
-  renderCat(); renderVariant(); renderSvc(); renderDep();
+  renderCat(); renderVariant(); renderSvc(); renderDep(); renderDays();
 
   // ── blob · EXACT chain contract + variant + edited services + deposit ──
   function buildBlob(){
@@ -434,6 +474,7 @@
       services: cleanSvc,
       depositType: depositType,
       depositValue: depositValue,
+      daysOpen: daysOn(),
     });
   }
   function encodeBlob(){
