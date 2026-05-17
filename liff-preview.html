@@ -53,6 +53,17 @@
   .pvdots i{width:6px;height:6px;border-radius:50%;background:#d8d2c7;transition:all .2s}
   .pvdots i.on{background:var(--head);width:18px;border-radius:99px}
 
+  /* page 3 · resembles the real TimePickerBottomSheet (dual wheel) */
+  .pv-tpage{justify-content:flex-start;padding:34px 18px 18px;gap:12px}
+  .pv-tphead{font-size:12px;font-weight:700;color:#7a6a58;letter-spacing:.02em}
+  .pv-wheel{position:relative;display:flex;gap:26px;justify-content:center;width:100%;margin:2px 0 4px}
+  .pv-wcol{display:flex;flex-direction:column;align-items:center;gap:7px}
+  .pv-wi{font-size:13px;color:#bcaf9c;font-weight:600}
+  .pv-wi.on{font-size:16px;color:#5a4636;font-weight:800}
+  .pv-wbar{position:absolute;left:12%;right:12%;top:50%;transform:translateY(-50%);
+    height:34px;border-top:1px solid rgba(90,70,54,.26);
+    border-bottom:1px solid rgba(90,70,54,.26);pointer-events:none}
+
   /* ตรวจพบ category chip + เปลี่ยน */
   .cat{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;
     border:1px solid #a7f3d0;border-radius:999px;padding:6px 13px;
@@ -154,14 +165,31 @@
       <div class="pv-svcpr" id="pvSvcPr">฿—</div>
       <div class="pv-btn">จองคิว →</div>
     </div>
-    <!-- §6c · NO fake "หน้าเลือกเวลา" page: the real time picker
-         (TimePickerBottomSheet) is generic BookEase booking chrome —
-         same for every shop & looks nothing like 3 stub chips. Faking
-         it misrepresents the product (no-Potemkin lock). The preview
-         shows only what's genuinely the merchant's shop: cover + their
-         real services. -->
+    <!-- Art 2026-05-17: this is a UI PREVIEW (mock of the customer
+         flow) not a live shop — showing the time step is correct &
+         expected. Built to RESEMBLE the real TimePickerBottomSheet
+         (dual date|time scroll-wheel + centre highlight bar · real
+         copy เลือกวันและเวลาที่ต้องการ / ยืนยันเวลานี้) — not fake chips. -->
+    <div class="pvpage pv-tpage">
+      <div class="pv-ttl">หน้าเลือกเวลา</div>
+      <div class="pv-tphead">เลือกวันและเวลาที่ต้องการ</div>
+      <div class="pv-wheel">
+        <div class="pv-wcol">
+          <div class="pv-wi">พฤ 16</div>
+          <div class="pv-wi on">ศ 17 พ.ค.</div>
+          <div class="pv-wi">ส 18</div>
+        </div>
+        <div class="pv-wcol">
+          <div class="pv-wi">13:30</div>
+          <div class="pv-wi on">14:00</div>
+          <div class="pv-wi">14:30</div>
+        </div>
+        <div class="pv-wbar"></div>
+      </div>
+      <div class="pv-btn">ยืนยันเวลานี้</div>
+    </div>
   </div>
-  <div class="pvdots" id="pvd"><i class="on"></i><i></i></div>
+  <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
 
   <div class="wrap">
 
