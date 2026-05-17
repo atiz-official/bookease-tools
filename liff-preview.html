@@ -53,9 +53,23 @@
   .pvdots i{width:6px;height:6px;border-radius:50%;background:#d8d2c7;transition:all .2s}
   .pvdots i.on{background:var(--head);width:18px;border-radius:99px}
 
+  /* pinned footer ON the preview · ตัวอย่างเพจร้าน (L) + ประเภทร้าน (R)
+     · stays put while the 3 pages swipe under it */
+  .pvwrap{position:relative}
+  .pvfoot{position:absolute;left:0;right:0;bottom:0;z-index:4;
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:8px;padding:10px 12px;pointer-events:none}
+  .pvfoot>*{pointer-events:auto}
+  .pvfoot-l{background:rgba(255,255,255,.82);font-size:11px;font-weight:700;
+    color:#7a6a58;padding:4px 11px;border-radius:999px;white-space:nowrap}
+  .pvfoot .cat{margin:0;font-size:12px;padding:5px 11px;gap:6px;
+    box-shadow:0 4px 12px rgba(0,0,0,.10)}
+  .pvfoot .cat .chg{font-size:12px}
+
   /* page 3 · the USUAL square slot picker (mirrors ServiceDetailPage
-     SlotPickerSection · NOT the advanced wheel) */
-  .pv-tpage{justify-content:center;align-items:stretch;text-align:left;padding:30px 16px 16px}
+     SlotPickerSection · NOT the advanced wheel) · extra bottom pad so
+     content clears the pinned .pvfoot overlay */
+  .pv-tpage{justify-content:center;align-items:stretch;text-align:left;padding:28px 16px 46px}
   .pv-slotbanner{display:flex;align-items:center;gap:7px;background:#f0fdf4;
     color:#16a34a;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:12px}
   .pv-slotlabel{font-size:12px;font-weight:600;color:#737373;margin-bottom:8px}
@@ -181,8 +195,10 @@
 </head>
 <body>
   <!-- §6c · customer preview · FULL-BLEED hero at the very top.
-       No BookEase topbar (Art: not necessary on P2). No wordy hint —
-       the dots self-explain the swipe. -->
+       Art: "ตัวอย่างเพจร้าน" bottom-left + ประเภทร้าน chip bottom-right
+       are pinned INSIDE the preview (over the swipe pager). Moving the
+       chip out of the gap below also tightens the layout. -->
+  <div class="pvwrap">
   <div class="pvpager" id="pvp">
     <div class="pvpage" id="pvCover">
       <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
@@ -216,16 +232,19 @@
       <div class="pv-slotmore">เลือกวันอื่น →</div>
     </div>
   </div>
+    <div class="pvfoot">
+      <span class="pvfoot-l">ตัวอย่างเพจร้าน</span>
+      <span class="cat">
+        <span class="d"></span>
+        <span class="lbl">ประเภทร้าน:</span>
+        <span id="catName">ความงาม</span>
+        <button class="chg" id="catChange" type="button">เปลี่ยน</button>
+      </span>
+    </div>
+  </div>
   <div class="pvdots" id="pvd"><i class="on"></i><i></i><i></i></div>
 
   <div class="wrap">
-
-    <div class="cat">
-      <span class="d"></span>
-      <span class="lbl">ประเภทร้าน:</span>
-      <span id="catName">ความงาม</span>
-      <button class="chg" id="catChange" type="button">เปลี่ยน</button>
-    </div>
 
     <div class="h">ธีมเพจร้าน</div>
     <div class="vrow" id="variantRow">
