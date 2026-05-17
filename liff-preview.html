@@ -55,7 +55,7 @@
 
   /* page 3 · the USUAL square slot picker (mirrors ServiceDetailPage
      SlotPickerSection · NOT the advanced wheel) */
-  .pv-tpage{justify-content:center;align-items:stretch;padding:30px 16px 16px}
+  .pv-tpage{justify-content:center;align-items:stretch;text-align:left;padding:30px 16px 16px}
   .pv-slotbanner{display:flex;align-items:center;gap:7px;background:#f0fdf4;
     color:#16a34a;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:12px}
   .pv-slotlabel{font-size:12px;font-weight:600;color:#737373;margin-bottom:8px}
@@ -105,7 +105,9 @@
   .svc .pr{width:84px;text-align:right;font-size:15px;font-weight:800;color:var(--ink);
     border:none;background:transparent;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
   .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
-  .svc .pen{color:#cbd5e1;font-size:14px;flex:0 0 auto}
+  /* shared pencil-edit affordance · used in service rows AND open-hours
+     (Art: one consistent ✎ icon · no "แตะแก้" text) */
+  .pen{color:#cbd5e1;font-size:14px;flex:0 0 auto}
   .svc .del{color:#cbd5e1;background:none;border:none;cursor:pointer;font-size:15px;
     flex:0 0 auto;padding:2px 4px}
   .svc .del:hover{color:#ef4444}
@@ -114,7 +116,7 @@
   .opent{font-size:13px;color:var(--muted);margin:5px 0 0}
   .opent .ed{color:var(--ink);border:none;background:transparent;font-family:inherit;
     text-decoration:underline dotted;width:130px;outline:none}
-  .opent .chg{color:var(--accent);font-weight:600}
+  .opent .pen{margin-left:5px}
 
   /* deposit segmented */
   .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:4px}
@@ -208,12 +210,12 @@
       <button class="vp" data-v="surprise" type="button">เซอร์ไพรส์</button>
     </div>
 
-    <div class="h">บริการที่ AI อ่านได้ · แตะแก้</div>
+    <div class="h">บริการร้าน</div>
     <div id="svcList"></div>
     <button class="addrow" id="addSvc" type="button">+ เพิ่มบริการ</button>
     <div class="opent">
-      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · ทุกวัน ·
-      <span class="chg">แตะแก้</span>
+      เปิด <input class="ed" id="openEd" value="10:00–21:00" /> · ทุกวัน
+      <span class="pen">✎</span>
     </div>
 
     <div class="h">ลูกค้าจ่าย</div>
