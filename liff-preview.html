@@ -289,11 +289,11 @@
       <button data-c="5plus" type="button">5+</button>
     </div>
     <div class="depval" id="capVal" hidden>
-      <span class="depval-l">ช่าง / พนักงาน</span>
+      <span class="depval-l">พนักงาน</span>
       <input class="depinp" id="capN" inputmode="numeric" />
       <span class="depval-u">คน</span>
     </div>
-    <div class="caphint" id="capHint">ช่าง <b>1</b> คน · ตั้งค่าเพิ่ม/ลด ได้ทีหลังในร้าน</div>
+    <div class="caphint" id="capHint">พนักงาน <b>1</b> คน · ตั้งค่าเพิ่ม/ลด ได้ทีหลังในร้าน</div>
 
     <div class="h">ลูกค้าจ่าย</div>
     <div class="seg" id="depSeg">
@@ -365,10 +365,11 @@
     ? shopData.depositValue
     : (depositType === 'fixed_200' ? 200 : depositType === 'percent' ? 50 : 0);
 
-  // capacity · officer count · default 1 (solo) — §6c · Art lock 2026-05-18
-  // ORDER: รับพร้อมกัน BEFORE ลูกค้าจ่าย (matches legacy shopv3 staff→account).
-  // N → register_index builds officer[]=N (owner + N−1 ช่าง) · edit later in
-  // ตั้งค่าร้าน → เวลาทำการและพนักงาน (verified end-to-end · not Potemkin).
+  // capacity = number of staff (พนักงาน) · default 1 — §6c · Art FINAL
+  // 2026-05-18: "N = numbers of staff · เจ้าของ is a business" (owner is
+  // the shop account, NOT an officer). ORDER: รับพร้อมกัน BEFORE ลูกค้าจ่าย.
+  // N → register_index builds officer[] = N พนักงาน (no owner) · edit
+  // later in ตั้งค่าร้าน → เวลาทำการและพนักงาน.
   var capacity = (typeof shopData.capacity === 'number' && shopData.capacity >= 1)
     ? Math.min(Math.floor(shopData.capacity), 99) : 1;
 
@@ -533,7 +534,7 @@
   // ── capacity · 1-line picker · deposit idiom (.seg/.depval) · ABOVE จ่าย ──
   function capHintText(){
     document.getElementById('capHint').innerHTML =
-      'ช่าง <b>' + capacity + '</b> คน · ตั้งค่าเพิ่ม/ลด ได้ทีหลังในร้าน';
+      'พนักงาน <b>' + capacity + '</b> คน · ตั้งค่าเพิ่ม/ลด ได้ทีหลังในร้าน';
   }
   function renderCap(){
     var is5 = capacity >= 5;
