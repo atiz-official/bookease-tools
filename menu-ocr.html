@@ -811,7 +811,9 @@ Output ONLY valid JSON. No prose. No code fences.`;
       data.services.push({
         serviceName: name,
         durationMin: parseInt(inputs[1].value) || null,
-        price: parseInt(inputs[2].value) || 0,
+        // Art 2026-05-18: ถ้าอ่านราคาไม่ออก ก็เว้นไว้ · null (NOT 0) ·
+        // downstream sends "" → backend keeps the service blank, no fake.
+        price: parseInt(inputs[2].value) || null,
       });
     });
     return data;
