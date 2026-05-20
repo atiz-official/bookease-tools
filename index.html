@@ -737,6 +737,18 @@
   <div class="ocr-overlay-sub">รอแป๊บนึง · ไม่ต้องสมัคร ไม่ต้องลง app</div>
 </div>
 
+<!-- §6c-error · graceful escape when OCR fails (Art 2026-05-20):
+     never trap user in a dead-end alert · always offer manual path. -->
+<div id="ocrErrorDialog" class="ocr-overlay" hidden>
+  <div style="font-size:52px;line-height:1;margin-bottom:4px">🤖</div>
+  <div class="ocr-overlay-title" id="ocrErrorMsg">ระบบขัดข้อง</div>
+  <div class="ocr-overlay-sub" id="ocrErrorSub">ลองอีกครั้ง · หรือกรอกข้อมูลเองได้เลย</div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;width:100%;max-width:280px">
+    <button type="button" id="ocrRetryBtn" style="background:#0a0a0a;color:#fff;border:none;border-radius:999px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">ถ่ายรูปอีกครั้ง</button>
+    <a href="https://shopv3.bookease.co/signup" style="text-align:center;color:#6b7280;font-size:13px;text-decoration:underline;padding:8px;font-family:inherit">หรือข้ามไปกรอกข้อมูลเอง →</a>
+  </div>
+</div>
+
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
   <div>
@@ -886,7 +898,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
       if (!cleaned) {
         hideOverlay();
         ocrFile.value = '';
-        alert('อ่านชื่อร้านไม่ชัด · ลองถ่าย/เลือกรูปที่เห็นชื่อร้านชัดๆ อีกครั้ง');
+        showOcrError('อ่านชื่อร้านไม่ชัด', 'ลองถ่ายรูปที่เห็นชื่อร้านชัด ๆ · หรือข้ามไปกรอกเองได้เลย');
         return;
       }
       const blob = {
@@ -902,8 +914,28 @@ Output ONLY valid JSON. No prose. No code fences.`;
     } catch (err) {
       hideOverlay();
       ocrFile.value = '';
-      alert((err && err.message ? err.message : 'ระบบขัดข้อง') + '\nแตะปุ่มถ่ายรูปลองใหม่อีกครั้ง');
+      showOcrError((err && err.message) ? err.message : 'ระบบขัดข้อง', 'ลองถ่ายรูปอีกครั้ง · หรือข้ามไปกรอกข้อมูลเองได้เลย');
     }
+  });
+
+  // §6c-error · graceful escape dialog handlers (Art 2026-05-20).
+  // showOcrError replaces the dead-end alert(); user gets a real
+  // retry path AND a one-tap fallback to shopv3 signup form. The
+  // skip link is a static <a href> · no JS needed for that path.
+  const ocrErrorDialog = document.getElementById('ocrErrorDialog');
+  const ocrErrorMsg = document.getElementById('ocrErrorMsg');
+  const ocrErrorSub = document.getElementById('ocrErrorSub');
+  const ocrRetryBtn = document.getElementById('ocrRetryBtn');
+  function showOcrError(msg, sub) {
+    if (msg) ocrErrorMsg.textContent = msg;
+    if (sub) ocrErrorSub.textContent = sub;
+    ocrErrorDialog.hidden = false;
+  }
+  function hideOcrError() { ocrErrorDialog.hidden = true; }
+  ocrRetryBtn.addEventListener('click', () => {
+    hideOcrError();
+    ocrFile.value = '';
+    ocrFile.click();
   });
 })();
 </script>
