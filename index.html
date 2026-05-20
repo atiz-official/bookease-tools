@@ -889,7 +889,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const data = extractJsonFromText(text);
       const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '').trim();
       if (!cleaned) {
-        autoSkipToSignup('อ่านชื่อร้านไม่ชัด · พาไปกรอกข้อมูลเอง…');
+        autoFallbackToP2('อ่านชื่อร้านไม่ชัด · พาไปแก้ในตัวอย่างร้าน…');
         return;
       }
       const blob = {
@@ -903,21 +903,27 @@ Output ONLY valid JSON. No prose. No code fences.`;
       // SAME contract as the typed path → P2 (liff-preview), no page hop
       window.location.href = 'liff-preview.html?data=' + encodeURIComponent(enc);
     } catch (err) {
-      autoSkipToSignup('OCR ขัดข้อง · พาไปกรอกข้อมูลเอง…');
+      autoFallbackToP2('OCR ขัดข้อง · พาไปแก้ในตัวอย่างร้าน…');
     }
   });
 
-  // §6c-error v2 · auto-skip on any OCR failure (Art 2026-05-20):
-  // "don't block the process · auto skips to signup". No dialog,
-  // no retry button, no choice. Flash a brief overlay message so
-  // the user knows what happened, then navigate to the canonical
-  // manual-signup entry. Same path for any failure mode (Anthropic
-  // overloaded, rate-limit, unreadable photo, malformed JSON).
-  function autoSkipToSignup(msg) {
-    ocrOverlayMsg.textContent = msg || 'พาไปกรอกข้อมูลเอง…';
-    // Brief pause so the user reads the transition message, then go.
+  // §6c-error v3 · iter13 (Art 2026-05-20): on OCR failure, route through
+  // P2 (liff-preview) with a default editable blob — NOT direct to /signup.
+  // Per "P1 always → P2 always → claim → celebration" canonical lock.
+  // User still lands on the preview-and-tweak page · can edit shop name +
+  // services there before committing.
+  function autoFallbackToP2(msg) {
+    ocrOverlayMsg.textContent = msg || 'พาไปแก้ในตัวอย่างร้าน…';
     setTimeout(() => {
-      window.location.href = 'https://shopv3.bookease.co/signup';
+      const blob = {
+        shopName: 'ร้านของคุณ',
+        shortName: '',
+        openTime: '10:00-21:00',
+        variant: 'airy',
+        services: [],
+      };
+      const enc = btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
+      window.location.href = 'liff-preview.html?data=' + encodeURIComponent(enc);
     }, 1200);
   }
 })();
