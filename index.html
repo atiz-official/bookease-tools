@@ -737,17 +737,10 @@
   <div class="ocr-overlay-sub">รอแป๊บนึง · ไม่ต้องสมัคร ไม่ต้องลง app</div>
 </div>
 
-<!-- §6c-error · graceful escape when OCR fails (Art 2026-05-20):
-     never trap user in a dead-end alert · always offer manual path. -->
-<div id="ocrErrorDialog" class="ocr-overlay" hidden>
-  <div style="font-size:52px;line-height:1;margin-bottom:4px">🤖</div>
-  <div class="ocr-overlay-title" id="ocrErrorMsg">ระบบขัดข้อง</div>
-  <div class="ocr-overlay-sub" id="ocrErrorSub">ลองอีกครั้ง · หรือกรอกข้อมูลเองได้เลย</div>
-  <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;width:100%;max-width:280px">
-    <button type="button" id="ocrRetryBtn" style="background:#0a0a0a;color:#fff;border:none;border-radius:999px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">ถ่ายรูปอีกครั้ง</button>
-    <a href="https://shopv3.bookease.co/signup" style="text-align:center;color:#6b7280;font-size:13px;text-decoration:underline;padding:8px;font-family:inherit">หรือข้ามไปกรอกข้อมูลเอง →</a>
-  </div>
-</div>
+<!-- §6c-error removed (Art 2026-05-20 v2): no retry, no choice dialog.
+     If OCR fails, auto-skip to signup with a brief overlay message.
+     "don't block the process" — never trap the user. -->
+
 
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
@@ -896,9 +889,7 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const data = extractJsonFromText(text);
       const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '').trim();
       if (!cleaned) {
-        hideOverlay();
-        ocrFile.value = '';
-        showOcrError('อ่านชื่อร้านไม่ชัด', 'ลองถ่ายรูปที่เห็นชื่อร้านชัด ๆ · หรือข้ามไปกรอกเองได้เลย');
+        autoSkipToSignup('อ่านชื่อร้านไม่ชัด · พาไปกรอกข้อมูลเอง…');
         return;
       }
       const blob = {
@@ -912,31 +903,23 @@ Output ONLY valid JSON. No prose. No code fences.`;
       // SAME contract as the typed path → P2 (liff-preview), no page hop
       window.location.href = 'liff-preview.html?data=' + encodeURIComponent(enc);
     } catch (err) {
-      hideOverlay();
-      ocrFile.value = '';
-      showOcrError((err && err.message) ? err.message : 'ระบบขัดข้อง', 'ลองถ่ายรูปอีกครั้ง · หรือข้ามไปกรอกข้อมูลเองได้เลย');
+      autoSkipToSignup('OCR ขัดข้อง · พาไปกรอกข้อมูลเอง…');
     }
   });
 
-  // §6c-error · graceful escape dialog handlers (Art 2026-05-20).
-  // showOcrError replaces the dead-end alert(); user gets a real
-  // retry path AND a one-tap fallback to shopv3 signup form. The
-  // skip link is a static <a href> · no JS needed for that path.
-  const ocrErrorDialog = document.getElementById('ocrErrorDialog');
-  const ocrErrorMsg = document.getElementById('ocrErrorMsg');
-  const ocrErrorSub = document.getElementById('ocrErrorSub');
-  const ocrRetryBtn = document.getElementById('ocrRetryBtn');
-  function showOcrError(msg, sub) {
-    if (msg) ocrErrorMsg.textContent = msg;
-    if (sub) ocrErrorSub.textContent = sub;
-    ocrErrorDialog.hidden = false;
+  // §6c-error v2 · auto-skip on any OCR failure (Art 2026-05-20):
+  // "don't block the process · auto skips to signup". No dialog,
+  // no retry button, no choice. Flash a brief overlay message so
+  // the user knows what happened, then navigate to the canonical
+  // manual-signup entry. Same path for any failure mode (Anthropic
+  // overloaded, rate-limit, unreadable photo, malformed JSON).
+  function autoSkipToSignup(msg) {
+    ocrOverlayMsg.textContent = msg || 'พาไปกรอกข้อมูลเอง…';
+    // Brief pause so the user reads the transition message, then go.
+    setTimeout(() => {
+      window.location.href = 'https://shopv3.bookease.co/signup';
+    }, 1200);
   }
-  function hideOcrError() { ocrErrorDialog.hidden = true; }
-  ocrRetryBtn.addEventListener('click', () => {
-    hideOcrError();
-    ocrFile.value = '';
-    ocrFile.click();
-  });
 })();
 </script>
 
