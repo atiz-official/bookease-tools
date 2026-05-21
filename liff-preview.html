@@ -205,95 +205,58 @@
   }
 
   /* ──────────────────────────────────────────────────────────────
-     Inline claim form (Art lock 2026-05-21 · Option B)
-     Trap-buster · เมื่อ data ว่าง (cold landing หรือ blob ขาด
-     shopName/shortName) · แทนที่จะ alert + เด้งกลับ menu-ocr →
-     แสดง modal ให้พิมพ์ชื่อร้าน + slug auto-derive · เสร็จแล้ว
-     ปิด modal · preview กลับมาใช้งานได้ปกติ · save ก็ผ่าน.
-     Mirrors menu-ocr.html #prevShopName UX (one source of truth).
+     Inline brand input · Art lock 2026-05-21 · Option B (rebuild)
+     Replaces the modal claim form · shopName is edited IN-PLACE on
+     the hero · paradigm-consistent with every other field on this
+     page (variant·service·hours·capacity·deposit · all tap-to-edit).
+     Empty state: dashed underline + "BARE NAIL SPA" placeholder ·
+     invites typing · WYSIWYG live update of URL pill + slug · save
+     button stays disabled until input has slug-able content.
+     Supersedes the modal commits df80928 + 2dcbaa5.
      ────────────────────────────────────────────────────────────── */
-  .claim-form{
-    position:fixed; inset:0; z-index:200;
-    background:rgba(15,23,42,.55);
-    display:flex; align-items:flex-start; justify-content:center;
-    padding:max(env(safe-area-inset-top,0px),16px) 14px 14px;
-    overflow-y:auto;
-    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
-    animation:cfFade .18s ease-out;
+  .pv-brand-input{
+    background:transparent; border:none; outline:none;
+    text-align:center; color:inherit;
+    font-family:'Inter',sans-serif; font-weight:300; letter-spacing:.3em;
+    font-size:25px; line-height:1.1;
+    text-transform:uppercase;
+    width:90%; max-width:320px;
+    padding:4px 6px;
+    border-radius:4px;
+    transition:background .15s, border-color .15s;
   }
-  /* Restore native [hidden] behavior · class display:flex above otherwise
-     wins over the browser-default [hidden]{display:none} (same specificity ·
-     last-declared wins). Without this, closeClaimForm()'s hidden=true had
-     no visual effect (caught via live preview test 2026-05-21 by Claude). */
-  .claim-form[hidden]{ display:none; }
-  @keyframes cfFade{from{opacity:0}to{opacity:1}}
-  .cf-card{
-    background:#f5f8fc; width:100%; max-width:440px;
-    border-radius:24px; padding:26px 22px 24px;
-    box-shadow:0 12px 40px rgba(0,0,0,.22);
-    margin-top:max(env(safe-area-inset-top,0px),24px);
-    animation:cfSlide .22s cubic-bezier(.2,.8,.2,1);
+  /* Empty state · dashed underline = "tap & type" affordance */
+  .pv-brand-input:placeholder-shown{
+    border-bottom:1.5px dashed currentColor;
+    opacity:.7;
   }
-  @keyframes cfSlide{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
-  .cf-head{
-    font-size:20px; font-weight:800; color:var(--head);
-    margin-bottom:6px; line-height:1.3;
+  .pv-brand-input::placeholder{
+    color:currentColor; opacity:.5;
+    font-style:italic;
   }
-  .cf-sub{
-    font-size:13px; color:var(--muted); margin-bottom:18px;
-    line-height:1.5;
+  .pv-brand-input:focus{
+    background:rgba(255,255,255,.18);
+    opacity:1;
   }
-  .cf-input{
-    width:100%; height:52px;
-    font-family:inherit; font-size:18px; font-weight:800;
-    color:var(--ink); background:#fff;
-    border:1.5px solid #d8dde6; border-radius:12px;
-    padding:0 14px; outline:none;
-    transition:border-color .15s;
+  .pv-brand-input:focus:placeholder-shown{
+    border-bottom-style:solid;
   }
-  .cf-input:focus{ border-color:var(--accent); }
-  .cf-input::placeholder{ color:#c4cad6; font-weight:700; }
-  .cf-slug{
-    font-family:'Inter',system-ui,monospace;
-    font-size:13px; color:var(--muted);
-    margin-top:10px; margin-bottom:20px;
-    word-break:break-all;
+  @keyframes brandShake{
+    0%,100%{transform:translateX(0)}
+    20%,60%{transform:translateX(-5px)}
+    40%,80%{transform:translateX(5px)}
   }
-  .cf-slug span{ color:var(--accent); font-weight:700; }
-  .cf-cta{
-    width:100%; height:52px;
-    font-family:inherit; font-size:16px; font-weight:700;
-    color:#fff; background:#0a0a0a;
-    border:none; border-radius:999px;
-    cursor:pointer;
-    transition:opacity .15s, transform .12s;
+  .pv-brand-input.is-shake{ animation:brandShake .42s ease-in-out; }
+
+  /* Save bar disabled state · paired with pv-brand-input empty */
+  .viral .save.is-dim{
+    background:#a8a29e !important; cursor:not-allowed;
+    box-shadow:none;
   }
-  .cf-cta:disabled{ background:#a8a29e; cursor:not-allowed; }
-  .cf-cta:not(:disabled):active{ transform:scale(.97); }
-  .cf-err{
-    font-size:12px; color:#dc2626; margin-top:8px; min-height:1em;
-  }
+  .viral .save.is-dim:active{ transform:none; }
 </style>
 </head>
 <body>
-  <!-- Art lock 2026-05-21 · Option B inline claim form · opens when
-       data is empty/missing · replaces the alert+bounce trap.
-       Hidden by default · JS sets hidden=false on cold landing. -->
-  <div id="claimForm" class="claim-form" role="dialog" aria-modal="true" aria-labelledby="cfHead" hidden>
-    <div class="cf-card">
-      <div class="cf-head" id="cfHead">เริ่มจากตั้งชื่อร้านก่อน</div>
-      <div class="cf-sub">พิมพ์ชื่อร้าน (อังกฤษ) · ระบบจะตั้ง URL ให้อัตโนมัติ · เปลี่ยนทีหลังได้</div>
-      <input id="cfShopName" class="cf-input" type="text"
-             placeholder="เช่น Bare Nail Spa"
-             autocapitalize="words" autocomplete="organization"
-             spellcheck="false" maxlength="80"
-             pattern="[a-zA-Z0-9 \-]+" />
-      <div class="cf-slug">bookease.co/<span id="cfSlugLive">your-shop</span></div>
-      <div class="cf-err" id="cfErr"></div>
-      <button id="cfSubmit" class="cf-cta" type="button" disabled>ดำเนินการต่อ</button>
-    </div>
-  </div>
-
   <!-- §6c · customer preview · FULL-BLEED hero at the very top.
        Art: "ตัวอย่างเพจร้าน" bottom-left + ประเภทร้าน chip bottom-right
        are pinned INSIDE the preview (over the swipe pager). Moving the
@@ -303,7 +266,10 @@
     <div class="pvpage" id="pvCover">
       <div class="pv-url">🔒 bookease.co/<span id="pvSlug">shop</span></div>
       <div class="pv-tag" id="pvTag">โปร่ง</div>
-      <div class="pv-brand" id="pvBrand">SHOP</div>
+      <input class="pv-brand pv-brand-input" id="pvBrand" type="text"
+             placeholder="BARE NAIL SPA"
+             autocapitalize="characters" autocomplete="organization"
+             spellcheck="false" maxlength="40" aria-label="ชื่อร้าน" />
       <div class="pv-dv"></div>
       <div class="pv-est">EST. 2026</div>
     </div>
@@ -417,7 +383,8 @@
     catch(e){ return null; }
   }
 
-  // Track whether data was actually passed in URL (drives claim-form trigger)
+  // Track whether data was actually passed (informational · brand input
+  // self-handles cold landing via empty placeholder).
   var hadDataParam = !!params.get('data');
   var shopData = (function(){
     var d = hadDataParam ? decodeData(params.get('data')) : null;
@@ -521,8 +488,15 @@
   }
   function renderPreview(){
     var slug=document.getElementById('pvSlug'); if(!slug)return;
-    slug.textContent = shopData.shortName || 'shop';
-    document.getElementById('pvBrand').textContent = (shopData.shopName||'SHOP').toUpperCase();
+    slug.textContent = shopData.shortName || 'your-shop';
+    // pvBrand is now an <input> (Art lock 2026-05-21 · Option B inline edit).
+    // It self-syncs via its 'input' event handler · we only sync FROM here
+    // on initial load (when input.value is empty but shopData has a name ·
+    // typically from ?data= prefill from menu-ocr). Don't overwrite mid-type.
+    var brand = document.getElementById('pvBrand');
+    if (brand && brand.tagName === 'INPUT' && !brand.value && shopData.shopName){
+      brand.value = shopData.shopName.toUpperCase();
+    }
     document.getElementById('pvTag').textContent = VLABEL[currentVariant] || 'โปร่ง';
     // Art: ALL 3 pager pages carry the picked variant (the shop's page
     // IS variant-skinned · the white slot chips on page 3 keep their
@@ -724,89 +698,86 @@
   }
 
   // ────────────────────────────────────────────────────────────
-  // Claim form · Art lock 2026-05-21 · Option B
-  // Trigger: cold landing or empty shopName/shortName.
-  // Behavior: shows modal · user types shopName · slug auto-derives ·
-  // submit writes back to shopData · re-renders preview · closes modal.
-  // Replaces the prior alert-and-bounce trap.
+  // Inline brand input · Art lock 2026-05-21 · Option B (rebuild)
+  // Replaces the modal claim form (commits df80928 + 2dcbaa5 reverted
+  // in spirit). shopName is edited IN-PLACE on the hero · paradigm-
+  // consistent with every other field on this page (all tap-to-edit).
+  // - Empty state: input shows BARE NAIL SPA placeholder + dashed
+  //   underline · save bar disabled.
+  // - On input: live update of shopData.shopName + shopData.shortName +
+  //   URL pill (pvSlug) + save bar state · re-detect category.
+  // - On blur: title-case cleanup (so "bare nail spa" → "Bare Nail Spa"
+  //   gets stored properly · display stays uppercase via CSS).
+  // - Save tap while empty: focus input + shake (no modal · no alert).
   // ────────────────────────────────────────────────────────────
-  function openClaimForm(){
-    var form = document.getElementById('claimForm');
-    if (!form) return;
-    form.hidden = false;
-    document.body.style.overflow = 'hidden';
-    var input = document.getElementById('cfShopName');
-    if (input && shopData.shopName) input.value = shopData.shopName;
-    cfUpdate();
-    setTimeout(function(){ if (input) input.focus(); }, 60);
+  function updateSaveState(){
+    var btn = document.getElementById('saveBtn');
+    if (!btn) return;
+    var ok = !!(shopData.shopName && shopData.shortName);
+    // Always-tappable per project memory feedback_disabled_state_apple_stripe_pattern.md:
+    // do NOT set btn.disabled · tap must still fire so the handler can focus+shake
+    // the brand input as user feedback. Visual dim alone communicates "not ready".
+    btn.classList.toggle('is-dim', !ok);
   }
-  function closeClaimForm(){
-    var form = document.getElementById('claimForm');
-    if (!form) return;
-    form.hidden = true;
-    document.body.style.overflow = '';
-  }
-  function cfUpdate(){
-    var input = document.getElementById('cfShopName');
-    var slugEl = document.getElementById('cfSlugLive');
-    var cta = document.getElementById('cfSubmit');
-    var err = document.getElementById('cfErr');
-    if (!input || !slugEl || !cta) return;
-    var name = (input.value || '').trim();
-    var s = slugify(name);
-    slugEl.textContent = s || 'your-shop';
-    cta.disabled = !(name && s);
-    if (err){
-      // Soft hint when name has Thai chars only (slug would be empty)
-      if (name && !s){
-        err.textContent = 'ชื่อร้านต้องมีอักษรอังกฤษหรือเลข (เช่น Bare Nail Spa)';
-      } else {
-        err.textContent = '';
-      }
-    }
-  }
-  (function wireClaimForm(){
-    var input = document.getElementById('cfShopName');
-    var cta = document.getElementById('cfSubmit');
-    if (!input || !cta) return;
-    input.addEventListener('input', cfUpdate);
-    input.addEventListener('keydown', function(e){
-      if (e.key === 'Enter' && !cta.disabled){
-        e.preventDefault();
-        cta.click();
-      }
+  function titleCase(s){
+    return (s||'').replace(/\w\S*/g, function(w){
+      return w.charAt(0).toUpperCase() + w.substr(1).toLowerCase();
     });
-    cta.addEventListener('click', function(){
-      var name = (input.value || '').trim();
-      var s = slugify(name);
-      if (!name || !s) return;
-      shopData.shopName = name;
-      shopData.shortName = s;
-      // re-detect category from new shopName (cheap · cycles via catName tap)
-      catName = detectCat(name);
-      renderCat();
-      // ensure at least one editable service row exists
-      if (services.length === 0){
-        services.push({ serviceName:'', durationMin:null, price:null });
-        renderSvc();
-      }
-      renderPreview();
-      closeClaimForm();
-    });
-  })();
+  }
+  (function wireBrandInput(){
+    var input = document.getElementById('pvBrand');
+    if (!input || input.tagName !== 'INPUT') return;
+    // Pre-fill on initial load if shopData came in with a name (from ?data=)
+    if (shopData.shopName) input.value = shopData.shopName.toUpperCase();
 
-  // Open claim form on cold landing or empty/missing shopName
-  if (!shopData.shopName || !shopData.shortName){
-    openClaimForm();
-  }
+    function onInput(){
+      var raw = (input.value || '').trim();
+      shopData.shopName = raw;
+      shopData.shortName = slugify(raw);
+      document.getElementById('pvSlug').textContent = shopData.shortName || 'your-shop';
+      catName = detectCat(raw);
+      renderCat();
+      updateSaveState();
+    }
+    input.addEventListener('input', onInput);
+    input.addEventListener('blur', function(){
+      var v = (input.value || '').trim();
+      if (!v) return;
+      var tc = titleCase(v);
+      if (tc !== v){
+        // Store the title-cased version (clean for shopv3 signup)
+        shopData.shopName = tc;
+        // Display stays uppercase via CSS text-transform · keep input visual
+        // matching: show upper-case in field, but shopData has Title Case.
+        // Re-fire slug derive (unchanged · cosmetic only).
+      }
+    });
+    // Auto-focus on cold landing · keyboard pops on mobile immediately
+    if (!shopData.shopName){
+      setTimeout(function(){
+        try { input.focus({ preventScroll: true }); } catch(e){ input.focus(); }
+      }, 250);
+    }
+    updateSaveState();
+  })();
 
   // SAVE → shopv3 signup prefill (EXACT preserved target · opens claim sheet)
   document.getElementById('saveBtn').addEventListener('click', function(){
     if (!shopData.shopName || !shopData.shortName){
-      // Art lock 2026-05-21 · Option B: was an alert that bounced user
-      // back to make.bookease.co with no recovery. Now opens the inline
-      // claim form so they can type shopName right here and proceed.
-      openClaimForm(); return;
+      // Art lock 2026-05-21 · Option B inline: focus brand input + shake ·
+      // never a modal · never an alert · the user sees exactly which field
+      // needs filling because it visibly animates in the hero.
+      var input = document.getElementById('pvBrand');
+      if (input){
+        input.classList.remove('is-shake');
+        // force reflow so re-adding the class restarts the animation
+        void input.offsetWidth;
+        input.classList.add('is-shake');
+        try { input.focus({ preventScroll: false }); } catch(e){ input.focus(); }
+        // scroll hero into view in case user scrolled past it
+        input.scrollIntoView({ behavior:'smooth', block:'center' });
+      }
+      return;
     }
     var url = 'https://shopv3.bookease.co/signup?prefill=' +
       encodeURIComponent(encodeBlob());
