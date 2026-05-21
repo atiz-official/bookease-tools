@@ -221,6 +221,11 @@
     -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
     animation:cfFade .18s ease-out;
   }
+  /* Restore native [hidden] behavior · class display:flex above otherwise
+     wins over the browser-default [hidden]{display:none} (same specificity ·
+     last-declared wins). Without this, closeClaimForm()'s hidden=true had
+     no visual effect (caught via live preview test 2026-05-21 by Claude). */
+  .claim-form[hidden]{ display:none; }
   @keyframes cfFade{from{opacity:0}to{opacity:1}}
   .cf-card{
     background:#f5f8fc; width:100%; max-width:440px;
