@@ -937,12 +937,12 @@ Rules:
       let services = [];
       try { services = extractJsonFromText(responseText) || []; } catch(e) { services = []; }
       if (!Array.isArray(services)) services = [];
-      if (services.length === 0) services = massageDefaults();
+      if (services.length === 0) services = categoryDefaults();
       renderMenuTable(services);
       showStatus('menuStatus', `✅ ดึงมาได้ ${services.length} บริการ · ตรวจ + แก้ได้เลย`, 'success');
       updateButtonStates();
     } catch (err) {
-      renderMenuTable(massageDefaults());
+      renderMenuTable(categoryDefaults());
       showStatus('menuStatus', `✅ ดึงมาได้ 3 บริการ · ตรวจ + แก้ได้เลย`, 'success');
       updateButtonStates();
     } finally {
@@ -950,12 +950,70 @@ Rules:
     }
   });
 
-  function massageDefaults() {
-    return [
-      { serviceName: 'นวดไทย',    durationMin: 60, price: 200 },
-      { serviceName: 'นวดฝ่าเท้า', durationMin: 60, price: 200 },
-      { serviceName: 'นวดน้ำมัน', durationMin: 60, price: 400 },
-    ];
+  // Category-aware fallback defaults (Art lock 2026-05-22).
+  // Reads shopName from the preview input to detect category,
+  // then returns 3 representative services for that category.
+  // Falls back to massage if no category detected.
+  function detectCategory(shopName) {
+    const s = (shopName || '').toLowerCase();
+    if (/nail|เล็บ|manicure|pedicure|gel nail/.test(s))           return 'nail';
+    if (/lash|eyelash|ขนตา|brow|eyebrow|คิ้ว/.test(s))           return 'lash';
+    if (/hair|salon|ผม|barber|บาร์เบอร์|cut|color|perm/.test(s)) return 'hair';
+    if (/facial|skin|ผิว|whitening|acne|สิว|glow/.test(s))        return 'facial';
+    if (/yoga|fitness|gym|pilates|muay|boxing|dance|มวย/.test(s)) return 'fitness';
+    if (/tattoo|สัก|piercing|microblading/.test(s))                return 'tattoo';
+    if (/massage|spa|นวด|relax|wellness|foot|aroma/.test(s))      return 'massage';
+    return null;
+  }
+
+  function categoryDefaults() {
+    const shopName = (document.getElementById('prevShopName')?.value || '').trim();
+    const cat = detectCategory(shopName);
+    switch (cat) {
+      case 'nail':
+        return [
+          { serviceName: 'เจลเล็บมือ',  durationMin: 60,  price: 400 },
+          { serviceName: 'เจลเล็บเท้า', durationMin: 60,  price: 400 },
+          { serviceName: 'ถอดเจล',       durationMin: 30,  price: 150 },
+        ];
+      case 'lash':
+        return [
+          { serviceName: 'ต่อขนตา Classic', durationMin: 90, price: 600 },
+          { serviceName: 'ต่อขนตา Volume',  durationMin: 90, price: 800 },
+          { serviceName: 'Lash Lifting',     durationMin: 60, price: 500 },
+        ];
+      case 'hair':
+        return [
+          { serviceName: 'ตัดผม',   durationMin: 45,  price: 200 },
+          { serviceName: 'ทำสีผม',  durationMin: 120, price: 800 },
+          { serviceName: 'ดัดผม',   durationMin: 120, price: 1000 },
+        ];
+      case 'facial':
+        return [
+          { serviceName: 'Facial Basic',     durationMin: 60, price: 500 },
+          { serviceName: 'Acne Treatment',   durationMin: 60, price: 600 },
+          { serviceName: 'Brightening Mask', durationMin: 60, price: 700 },
+        ];
+      case 'fitness':
+        return [
+          { serviceName: 'Group Class',       durationMin: 60, price: 300 },
+          { serviceName: 'Personal Training', durationMin: 60, price: 800 },
+          { serviceName: 'Private Class',     durationMin: 60, price: 600 },
+        ];
+      case 'tattoo':
+        return [
+          { serviceName: 'สักลายเล็ก',   durationMin: 60,  price: 1500 },
+          { serviceName: 'สักลายกลาง',   durationMin: 120, price: 3000 },
+          { serviceName: 'Microblading',  durationMin: 90,  price: 2500 },
+        ];
+      default:
+        // massage / spa / no category detected
+        return [
+          { serviceName: 'นวดไทย',    durationMin: 60, price: 400 },
+          { serviceName: 'นวดฝ่าเท้า', durationMin: 60, price: 400 },
+          { serviceName: 'นวดน้ำมัน', durationMin: 60, price: 500 },
+        ];
+    }
   }
 
   function renderMenuTable(services) {
