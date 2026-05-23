@@ -821,6 +821,12 @@ Output ONLY valid JSON. No prose. No code fences.`;
         price: parseInt(inputs[2].value) || null,
       });
     });
+    // Always ensure at least 3 category-aware services in the prefill.
+    // Covers: (1) staff skips OCR tab entirely, (2) OCR succeeds but
+    // returns 0 usable rows, (3) any silent failure path.
+    if (data.services.length === 0) {
+      data.services = categoryDefaults();
+    }
     return data;
   }
 
