@@ -125,8 +125,8 @@
   .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
   /* shared pencil-edit affordance · used in service rows AND open-hours
      (Art: one consistent ✎ icon · no "แตะแก้" text) */
-  .pen{color:#cbd5e1;font-size:14px;flex:0 0 auto}
-  .svc .del{color:#cbd5e1;background:none;border:none;cursor:pointer;font-size:15px;
+  .pen{color:#64748b;font-size:16px;flex:0 0 auto}
+  .svc .del{color:#64748b;background:none;border:none;cursor:pointer;font-size:16px;
     flex:0 0 auto;padding:2px 4px}
   .svc .del:hover{color:#ef4444}
   .addrow{color:var(--accent);font-weight:700;font-size:15px;background:none;border:none;
@@ -421,7 +421,50 @@
       price: (typeof s.price==='number') ? s.price : null,
     };
   }) : [];
-  if (services.length === 0) services.push({ serviceName:'', durationMin:null, price:null });
+  // Remove blank-name entries (OCR sometimes pushes rows with empty serviceName)
+  services = services.filter(function(s){ return (s.serviceName||'').trim() !== ''; });
+  // Fallback: if no valid services in the blob (cold-landing or OCR skip),
+  // seed with category-aware defaults so the preview is never just dashes.
+  function previewCategoryDefaults(shopName){
+    var n = (shopName||'').toLowerCase();
+    if (/nail|เล็บ|manicure|pedicure|gel/.test(n)) return [
+      { serviceName:'เจลเล็บมือ', durationMin:60, price:400 },
+      { serviceName:'เจลเล็บเท้า', durationMin:60, price:400 },
+      { serviceName:'ถอดเจล', durationMin:30, price:150 },
+    ];
+    if (/lash|eyelash|ขนตา|brow|คิ้ว/.test(n)) return [
+      { serviceName:'ต่อขนตา Classic', durationMin:90, price:600 },
+      { serviceName:'ต่อขนตา Volume', durationMin:90, price:800 },
+      { serviceName:'Lash Lifting', durationMin:60, price:500 },
+    ];
+    if (/hair|salon|ผม|barber|cut|color|perm/.test(n)) return [
+      { serviceName:'ตัดผม', durationMin:45, price:200 },
+      { serviceName:'ทำสีผม', durationMin:120, price:800 },
+      { serviceName:'ดัดผม', durationMin:120, price:1000 },
+    ];
+    if (/facial|skin|ผิว|whitening|acne|สิว/.test(n)) return [
+      { serviceName:'Facial Basic', durationMin:60, price:500 },
+      { serviceName:'Acne Treatment', durationMin:60, price:600 },
+      { serviceName:'Brightening Mask', durationMin:60, price:700 },
+    ];
+    if (/yoga|fitness|gym|pilates|มวย|boxing|dance/.test(n)) return [
+      { serviceName:'Group Class', durationMin:60, price:300 },
+      { serviceName:'Personal Training', durationMin:60, price:800 },
+      { serviceName:'Monthly Pass', durationMin:null, price:1500 },
+    ];
+    if (/tattoo|สัก|piercing|microblading/.test(n)) return [
+      { serviceName:'สักลายไทย S', durationMin:60, price:1000 },
+      { serviceName:'สักลายไทย M', durationMin:120, price:2000 },
+      { serviceName:'สักลายไทย L', durationMin:180, price:3500 },
+    ];
+    // default: massage / spa
+    return [
+      { serviceName:'นวดไทย', durationMin:60, price:350 },
+      { serviceName:'อโรมา', durationMin:60, price:400 },
+      { serviceName:'นวดเท้า', durationMin:45, price:250 },
+    ];
+  }
+  if (services.length === 0) services = previewCategoryDefaults(shopData.shopName);
 
   var currentVariant = ['airy','luxury','fun','fresh','surprise']
     .indexOf(shopData.variant) > -1 ? shopData.variant : 'airy';
