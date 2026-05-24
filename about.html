@@ -414,30 +414,37 @@
     .ba-arrow { transform: rotate(90deg); margin: 8px auto; }
   }
 
-  /* ═══════ SECTION: 3-step magic ═══════ */
+  /* ═══════ SECTION: 3-step · Apple-style icon columns ═══════
+     Was 3 CSS-faked mini-phones (menu paper / shop card / LINE bubble).
+     Dropped per Art (Apple/Elon audit 2026-05-24): "not real, not polished".
+     New: icon + number + title + caption · clean · trust the words. */
   .steps-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 36px;
-    margin-top: 32px;
+    gap: 40px;
+    margin-top: 8px;
   }
   .step-vis {
     text-align: center;
   }
+  .step-icon-clean {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 20px;
+    border-radius: 28px;
+    background: #f0f5ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    line-height: 1;
+  }
   .step-num {
     font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 800;
-    letter-spacing: 0.12em;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.14em;
     color: #38BDF8;
-    margin-bottom: 16px;
-  }
-  .step-mini {
-    height: 240px;
-    border-radius: 24px;
-    margin-bottom: 24px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 16px 40px -16px rgba(15,23,42,0.20);
+    margin-bottom: 10px;
   }
   .step-h3 {
     font-size: 20px; font-weight: 800;
@@ -445,136 +452,13 @@
     letter-spacing: -0.015em;
   }
   .step-cap {
-    font-size: 14.5px; color: #525252; line-height: 1.55; margin: 0;
+    font-size: 15px; color: #525252; line-height: 1.55; margin: 0;
+    max-width: 240px; margin-left: auto; margin-right: auto;
   }
 
-  /* Step 1: Menu paper + camera scan */
-  .stp-menu {
-    background:
-      linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0)),
-      linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
-    display: flex; align-items: center; justify-content: center;
-    padding: 28px;
-  }
-  .stp-menu-paper {
-    background: #fff;
-    width: 70%; aspect-ratio: 3/4;
-    border-radius: 8px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-    transform: rotate(-3deg);
-    padding: 14px 10px;
-    display: flex; flex-direction: column; gap: 5px;
-    font-family: 'Sarabun', sans-serif;
-  }
-  .stp-menu-paper .mt {
-    font-size: 11px; font-weight: 800; text-align: center;
-    border-bottom: 1.5px solid #0a0a0a;
-    padding-bottom: 4px; margin-bottom: 2px;
-  }
-  .stp-menu-paper .mrow {
-    display: flex; justify-content: space-between;
-    font-size: 9px; color: #525252; padding: 1px 0;
-  }
-  .stp-menu-scan {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 56px; height: 56px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.20);
-    animation: float 2.6s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translate(-50%, -50%); }
-    50% { transform: translate(-50%, -60%); }
-  }
-
-  /* Step 2: Shop page rendered (mini bookease.co/<slug>) */
-  .stp-shop {
-    background: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
-    padding: 14px 28px;
-    display: flex; align-items: stretch; justify-content: center;
-  }
-  .stp-shop-card {
-    background: #fff;
-    width: 100%;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
-    overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-  .stp-shop-hero {
-    background:
-      linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%),
-      linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-    aspect-ratio: 16/9;
-    position: relative;
-    display: flex; align-items: flex-end;
-    padding: 10px;
-  }
-  .stp-shop-tag {
-    font-family: 'Inter', sans-serif;
-    font-size: 8px; font-weight: 800;
-    color: #fff; letter-spacing: 0.16em;
-    opacity: 0.8;
-  }
-  .stp-shop-name {
-    font-size: 14px; font-weight: 800;
-    color: #fff; letter-spacing: -0.01em;
-    line-height: 1.1;
-  }
-  .stp-shop-svc {
-    padding: 8px 12px;
-    display: flex; justify-content: space-between;
-    font-size: 11px; color: #0a0a0a;
-    border-top: 1px solid #f4f4f5;
-  }
-  .stp-shop-svc:first-of-type { border-top: 0; }
-  .stp-shop-svc b { font-weight: 800; color: #1E40AF; }
-
-  /* Step 3: LINE share */
-  .stp-share {
-    background: linear-gradient(180deg, #d9eafd 0%, #c4ddf2 100%);
-    padding: 14px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .stp-share-mini {
-    background: #fff;
-    width: 100%; max-width: 200px;
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
-    display: flex; flex-direction: column; gap: 6px;
-  }
-  .stp-line-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 6px;
-    background: #f6f9fc; border-radius: 8px;
-  }
-  .stp-line-row .av {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: #06c755; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .stp-line-row .nm { font-size: 10.5px; font-weight: 700; color: #0a0a0a; }
-  .stp-line-bubble {
-    background: #06c755; color: #fff;
-    padding: 7px 10px;
-    border-radius: 10px;
-    font-size: 10px; line-height: 1.3;
-    align-self: flex-end; max-width: 86%;
-  }
-  .stp-line-bubble.link {
-    background: #fff; color: #1E40AF;
-    border: 1px solid #e5e7eb;
-    text-decoration: underline;
-    font-weight: 600;
-  }
+  /* .stp-* · 3-step CSS phone mockup styles REMOVED 2026-05-24
+     (Art Apple/Elon audit: "not real, not polished"). Clean icon
+     columns replace them. */
 
   /* ═══════ SCENE PHOTO (reusable · drops above sections) ═══════
      Real photo establishes emotional tone · mockup below proves product.
@@ -649,100 +533,70 @@
     z-index: 2;
   }
 
-  /* ═══════ SECTION: 5 languages ═══════ */
+  /* ═══════ SECTION: 5 languages · Apple-style flag row ═══════
+     Was 5 fake CSS phones simultaneously (per Art Apple/Elon audit
+     2026-05-24: "not real, not polished, showing 5 simultaneously is
+     not smart"). Apple/Elon way: trust the user · just show the flags. */
   .sec-lang {
     background: linear-gradient(180deg, #f7faff 0%, #fff 100%);
   }
-  /* 5-phones row · grid on desktop, horizontal-scroll on mobile (don't hide!) */
+  .flag-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 28px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .flag-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .flag-emoji {
+    width: 64px;
+    height: 64px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.10), 0 1px 3px rgba(15,23,42,0.06);
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+  .flag-item:hover .flag-emoji { transform: translateY(-2px); }
+  .flag-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0a0a0a;
+    letter-spacing: -0.01em;
+  }
+  .flag-native {
+    font-size: 12px;
+    color: #737373;
+    margin-top: -6px;
+  }
+  /* Old .lang-row · removed (5-phone array deprecated) */
   .lang-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 14px;
     margin-top: 20px;
   }
-  .lang-phone {
-    background: #0a0a0a;
-    border-radius: 22px;
-    padding: 4px 4px 6px;
-    aspect-ratio: 9 / 19;
-    box-shadow: 0 16px 36px -16px rgba(15,23,42,0.30);
-    transition: transform 0.3s;
-  }
-  .lang-phone:hover { transform: translateY(-6px); }
-  .lang-screen {
-    background: #fff;
-    border-radius: 18px;
-    height: 100%;
-    overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-  .lang-flag {
-    height: 38%;
-    background: linear-gradient(135deg, #fed7aa, #fdba74);
-    display: flex; align-items: flex-end;
-    padding: 8px 10px;
-    position: relative;
-  }
-  .lang-flag.l2 { background: linear-gradient(135deg, #c7d2fe, #818cf8); }
-  .lang-flag.l3 { background: linear-gradient(135deg, #fecaca, #f87171); }
-  .lang-flag.l4 { background: linear-gradient(135deg, #bfdbfe, #60a5fa); }
-  .lang-flag.l5 { background: linear-gradient(135deg, #fde68a, #f59e0b); }
-  .lang-flag-emoji {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(255,255,255,0.92);
-    padding: 2px 6px; border-radius: 99px;
-    font-size: 11px;
-  }
-  .lang-name {
-    font-family: 'Sarabun', sans-serif;
-    font-size: 11px; font-weight: 800;
-    color: #fff; letter-spacing: -0.01em;
-  }
-  .lang-body { flex: 1; padding: 8px; }
-  .lang-svc {
-    display: flex; justify-content: space-between;
-    font-size: 9px; color: #0a0a0a;
-    padding: 4px 0;
-    border-bottom: 1px solid #f4f4f5;
-  }
-  .lang-svc:last-child { border-bottom: 0; }
-  .lang-svc b { color: #1E40AF; font-weight: 800; }
-  .lang-cta-mini {
-    margin-top: 6px;
-    padding: 6px;
-    background: #0a0a0a; color: #fff;
-    border-radius: 8px;
-    font-size: 9px; font-weight: 800;
-    text-align: center;
-  }
-  .lang-foot {
-    text-align: center;
-    margin-top: 36px;
-    font-size: 15px; color: #525252;
-  }
-  .lang-foot strong { color: #0a0a0a; }
-  /* Mobile: horizontal scroll · ALL 5 phones stay visible · swipe to see */
-  @media (max-width: 880px) {
-    .lang-row {
-      display: flex;
-      grid-template-columns: none;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      gap: 12px;
-      padding: 4px 24px 16px;
-      margin: 20px -24px 0;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .lang-row::-webkit-scrollbar { display: none; }
-    .lang-phone {
-      flex: 0 0 60%;
-      max-width: 200px;
-      scroll-snap-align: start;
-    }
-  }
+  /* .lang-phone · 5-phone mockup styles REMOVED 2026-05-24 (Art Apple/Elon
+     audit: showing 5 simultaneously is not smart). Flag row replaces them. */
+  /* Lang-row mobile rules removed · flag-row handles itself with flex-wrap */
   @media (max-width: 540px) {
-    .lang-phone { flex: 0 0 70%; }
+    .flag-row { gap: 18px; }
+    .flag-emoji { width: 56px; height: 56px; font-size: 32px; }
+    .flag-name { font-size: 13px; }
   }
 
   /* ═══════ SECTION: Money proof (SMS) ═══════ */
@@ -1123,25 +977,14 @@
     .sec { padding: 40px 20px; }
     .sec-h2 { font-size: 24px; }
     .sec-sub { font-size: 15px; margin-bottom: 24px; }
-    /* 3-step also horizontal-scroll on mobile (was 1-col stacked) */
+    /* 3-step: stack vertically on mobile · clean icon columns are short
+       enough that horizontal scroll isn't needed */
     .steps-3 {
-      display: flex;
-      grid-template-columns: none;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      gap: 14px;
-      padding: 4px 20px 14px;
-      margin: 24px -20px 0;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      grid-template-columns: 1fr;
+      gap: 36px;
+      margin-top: 8px;
     }
-    .steps-3::-webkit-scrollbar { display: none; }
-    .step-vis {
-      flex: 0 0 80%;
-      max-width: 280px;
-      scroll-snap-align: start;
-    }
-    .step-mini { height: 200px; margin-bottom: 16px; }
+    .step-icon-clean { width: 80px; height: 80px; font-size: 36px; margin-bottom: 16px; }
     /* Benefits 2-col → 1-col, tighter */
     .price-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 24px; }
     .price-card { padding: 24px 20px; }
@@ -1316,58 +1159,27 @@
   <h2 class="sec-h2" id="how-h">3 ขั้นตอน · ใช้เวลา <em>60 วินาที</em></h2>
   <p class="sec-sub">ไม่ต้องเขียนข้อมูล · ไม่ต้องตั้งค่า · ถ่ายรูปเมนูแล้วได้เลย</p>
 
+  <!-- Apple-style icon columns · was 3 CSS-faked phone mockups (Art audit) -->
   <div class="steps-3">
     <article class="step-vis">
+      <div class="step-icon-clean" aria-hidden="true">📸</div>
       <div class="step-num">STEP 01</div>
-      <div class="step-mini stp-menu">
-        <div class="stp-menu-paper">
-          <div class="mt">MENU</div>
-          <div class="mrow"><span>Gel manicure</span><b>฿890</b></div>
-          <div class="mrow"><span>Spa pedicure</span><b>฿1,290</b></div>
-          <div class="mrow"><span>Acrylic full set</span><b>฿1,890</b></div>
-          <div class="mrow"><span>Nail art</span><b>฿200</b></div>
-          <div class="mrow"><span>Hand massage</span><b>฿390</b></div>
-        </div>
-        <div class="stp-menu-scan">📸</div>
-      </div>
       <h3 class="step-h3">ถ่ายรูปเมนู</h3>
-      <p class="step-cap">AI อ่านชื่อบริการ + ราคาให้อัตโนมัติ</p>
+      <p class="step-cap">AI อ่านบริการ + ราคาให้อัตโนมัติ</p>
     </article>
 
     <article class="step-vis">
+      <div class="step-icon-clean" aria-hidden="true">🌐</div>
       <div class="step-num">STEP 02</div>
-      <div class="step-mini stp-shop">
-        <div class="stp-shop-card">
-          <div class="stp-shop-hero">
-            <div>
-              <div class="stp-shop-tag">SPA · ทองหล่อ</div>
-              <div class="stp-shop-name">Bare Nail Spa</div>
-            </div>
-          </div>
-          <div class="stp-shop-svc"><span>Gel manicure</span><b>฿890</b></div>
-          <div class="stp-shop-svc"><span>Spa pedicure</span><b>฿1,290</b></div>
-          <div class="stp-shop-svc"><span>Acrylic full set</span><b>฿1,890</b></div>
-          <div class="stp-shop-svc"><span>Hand massage</span><b>฿390</b></div>
-        </div>
-      </div>
-      <h3 class="step-h3">เว็บร้านพร้อมใช้</h3>
-      <p class="step-cap">ได้ลิงก์ bookease.co/ชื่อร้าน · พร้อมโชว์ลูกค้า</p>
+      <h3 class="step-h3">ได้ลิงก์ร้าน</h3>
+      <p class="step-cap">bookease.co/ชื่อร้าน · พร้อมโชว์ลูกค้า</p>
     </article>
 
     <article class="step-vis">
+      <div class="step-icon-clean" aria-hidden="true">💬</div>
       <div class="step-num">STEP 03</div>
-      <div class="step-mini stp-share">
-        <div class="stp-share-mini">
-          <div class="stp-line-row">
-            <div class="av">🌷</div>
-            <div class="nm">Bare Nail Spa</div>
-          </div>
-          <div class="stp-line-bubble">จองและจ่ายมัดจำได้ที่นี่ ↓</div>
-          <div class="stp-line-bubble link">bookease.co/bare-nail</div>
-        </div>
-      </div>
       <h3 class="step-h3">ส่งใน LINE</h3>
-      <p class="step-cap">ลูกค้าคลิก · จองเอง · จ่ายเอง · เงินเข้าบัญชี</p>
+      <p class="step-cap">ลูกค้าจอง + จ่ายเอง · เงินเข้าบัญชี</p>
     </article>
   </div>
 </section>
@@ -1396,80 +1208,29 @@
     </div>
   </div>
 
-  <div class="lang-row">
-    <div class="lang-phone">
-      <div class="lang-screen">
-        <div class="lang-flag">
-          <span class="lang-flag-emoji">🇹🇭</span>
-          <div class="lang-name">Bare Nail Spa</div>
-        </div>
-        <div class="lang-body">
-          <div class="lang-svc"><span>ทาเล็บเจล</span><b>฿890</b></div>
-          <div class="lang-svc"><span>นวดเท้า</span><b>฿390</b></div>
-          <div class="lang-svc"><span>สปาเท้า</span><b>฿1,290</b></div>
-          <div class="lang-cta-mini">จองเลย</div>
-        </div>
-      </div>
+  <!-- Apple/Elon-style flag row · was 5 simultaneous fake phones (Art audit) -->
+  <div class="flag-row">
+    <div class="flag-item">
+      <div class="flag-emoji">🇹🇭</div>
+      <div class="flag-name">ไทย</div>
     </div>
-    <div class="lang-phone">
-      <div class="lang-screen">
-        <div class="lang-flag l2">
-          <span class="lang-flag-emoji">🇬🇧</span>
-          <div class="lang-name">Bare Nail Spa</div>
-        </div>
-        <div class="lang-body">
-          <div class="lang-svc"><span>Gel manicure</span><b>฿890</b></div>
-          <div class="lang-svc"><span>Foot massage</span><b>฿390</b></div>
-          <div class="lang-svc"><span>Spa pedicure</span><b>฿1,290</b></div>
-          <div class="lang-cta-mini">Book Now</div>
-        </div>
-      </div>
+    <div class="flag-item">
+      <div class="flag-emoji">🇬🇧</div>
+      <div class="flag-name">English</div>
     </div>
-    <div class="lang-phone">
-      <div class="lang-screen">
-        <div class="lang-flag l3">
-          <span class="lang-flag-emoji">🇨🇳</span>
-          <div class="lang-name">Bare Nail Spa</div>
-        </div>
-        <div class="lang-body">
-          <div class="lang-svc"><span>凝胶美甲</span><b>฿890</b></div>
-          <div class="lang-svc"><span>足部按摩</span><b>฿390</b></div>
-          <div class="lang-svc"><span>足疗水疗</span><b>฿1,290</b></div>
-          <div class="lang-cta-mini">立即预订</div>
-        </div>
-      </div>
+    <div class="flag-item">
+      <div class="flag-emoji">🇨🇳</div>
+      <div class="flag-name">中文</div>
     </div>
-    <div class="lang-phone">
-      <div class="lang-screen">
-        <div class="lang-flag l4">
-          <span class="lang-flag-emoji">🇷🇺</span>
-          <div class="lang-name">Bare Nail Spa</div>
-        </div>
-        <div class="lang-body">
-          <div class="lang-svc"><span>Гель-маникюр</span><b>฿890</b></div>
-          <div class="lang-svc"><span>Массаж ног</span><b>฿390</b></div>
-          <div class="lang-svc"><span>Спа педикюр</span><b>฿1,290</b></div>
-          <div class="lang-cta-mini">Записаться</div>
-        </div>
-      </div>
+    <div class="flag-item">
+      <div class="flag-emoji">🇷🇺</div>
+      <div class="flag-name">Русский</div>
     </div>
-    <div class="lang-phone">
-      <div class="lang-screen">
-        <div class="lang-flag l5">
-          <span class="lang-flag-emoji">🇮🇳</span>
-          <div class="lang-name">Bare Nail Spa</div>
-        </div>
-        <div class="lang-body">
-          <div class="lang-svc"><span>जेल मैनीक्योर</span><b>฿890</b></div>
-          <div class="lang-svc"><span>पैर मसाज</span><b>฿390</b></div>
-          <div class="lang-svc"><span>स्पा पेडीक्योर</span><b>฿1,290</b></div>
-          <div class="lang-cta-mini">अभी बुक करें</div>
-        </div>
-      </div>
+    <div class="flag-item">
+      <div class="flag-emoji">🇮🇳</div>
+      <div class="flag-name">हिन्दी</div>
     </div>
   </div>
-
-  <p class="lang-foot">ไทย · English · 中文 · Русский · हिन्दी · <strong>5 ภาษา รวมในเว็บเดียว</strong></p>
 </section>
 
 <!-- ═══════ SECTION: Money proof ═══════ -->
