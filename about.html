@@ -575,6 +575,79 @@
     font-weight: 600;
   }
 
+  /* ═══════ SCENE PHOTO (reusable · drops above sections) ═══════
+     Real photo establishes emotional tone · mockup below proves product.
+     Image is foregrounded but darkened with overlay so text remains legible.
+     onerror handler hides <img> · CSS gradient fallback shows underneath. */
+  .scene {
+    position: relative;
+    margin-bottom: 48px;
+    border-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+    box-shadow: 0 24px 60px -24px rgba(15,23,42,0.30);
+    max-width: 1080px;
+    margin-left: auto; margin-right: auto;
+  }
+  .scene img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .scene::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+  }
+  .scene-cap {
+    position: absolute;
+    bottom: 24px; left: 28px; right: 28px;
+    color: #fff;
+    z-index: 2;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+  }
+  .scene-cap-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    opacity: 0.88;
+    margin-bottom: 6px;
+  }
+  .scene-cap-h {
+    font-size: 22px; font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    max-width: 480px;
+  }
+  @media (max-width: 540px) {
+    .scene { aspect-ratio: 4/5; border-radius: 22px; }
+    .scene-cap-h { font-size: 18px; }
+  }
+
+  /* ═══════ HERO PHOTO BACKDROP ═══════ */
+  .hero-photo-side {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.30);
+  }
+  .hero-photo-side img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  /* Phone mockup overlays the photo, sitting on top-right */
+  .hero-photo-side .phone-overlay {
+    position: absolute;
+    right: -12px; bottom: -8px;
+    width: 64%;
+    transform: rotate(-3deg);
+    z-index: 2;
+  }
+
   /* ═══════ SECTION: 5 languages ═══════ */
   .sec-lang {
     background: linear-gradient(180deg, #f7faff 0%, #fff 100%);
@@ -1075,9 +1148,20 @@
     </div>
   </div>
 
-  <!-- Hero visual: LINE chat with payment confirmation rich card -->
-  <div class="hero-vis">
-    <div class="phone">
+  <!-- Hero visual: real-photo backdrop + LINE chat phone mockup overlaid.
+       Photo = "the real merchant moment". Phone = "the product proof".
+       Midjourney brief: "Thai female nail spa owner in 30s, warm authentic
+        salon interior, holding phone with subtle smile, soft natural window
+        light, candid working moment, Bangkok boutique aesthetic, shallow
+        depth of field, shot on 50mm 1.4 lens, --ar 4:5 --v 6" -->
+  <div class="hero-vis hero-photo-side">
+    <img
+      src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=1200&q=80&auto=format&fit=crop"
+      alt="เจ้าของร้านสปาในประเทศไทยใช้โทรศัพท์รับจองจากลูกค้า"
+      loading="eager"
+      onerror="this.style.display='none'"
+    />
+    <div class="phone phone-overlay">
       <div class="phone-notch">9:41</div>
       <div class="phone-screen">
         <div class="line-chat">
@@ -1119,6 +1203,24 @@
   <div class="sec-eyebrow">ก่อน · หลัง</div>
   <h2 class="sec-h2" id="ba-h"><em>หยุดเสียเงิน</em>กับลูกค้าที่ไม่มา</h2>
   <p class="sec-sub">ลูกค้าจ่ายมัดจำก่อน = มาแน่ · ร้านเซ็ตอุปกรณ์ไม่เสียเปล่า</p>
+
+  <!-- SCENE PHOTO · the pain of no-shows.
+       Midjourney brief: "Thai spa or nail salon owner sitting alone on empty
+        chair, looking at phone with worried expression, soft afternoon light
+        streaming through window, empty service chairs visible in background,
+        melancholic but not despairing, shot on 50mm prime lens, --ar 16:9 --v 6" -->
+  <div class="scene">
+    <img
+      src="https://images.unsplash.com/photo-1521751355683-8a06a0e8e5c4?w=1600&q=80&auto=format&fit=crop"
+      alt="ร้านที่ลูกค้าจองแล้วไม่มา · เซ็ตอุปกรณ์รอไว้แล้วไม่มีลูกค้า"
+      loading="lazy"
+      onerror="this.style.display='none'"
+    />
+    <div class="scene-cap">
+      <div class="scene-cap-eyebrow">No-show · ปัญหาที่ร้านบริการทุกร้านเจอ</div>
+      <div class="scene-cap-h">เซ็ตอุปกรณ์รอลูกค้า · นั่งรอ · แล้วไม่มาเลย</div>
+    </div>
+  </div>
 
   <div class="ba-grid">
     <div class="ba-card ba-card--bad">
@@ -1237,6 +1339,26 @@
   <h2 class="sec-h2" id="lang-h">ลูกค้าต่างชาติ <em>30 ล้าน/ปี</em><br/>จองได้เอง</h2>
   <p class="sec-sub">เว็บร้านของคุณสลับภาษาอัตโนมัติ · นักท่องเที่ยวเห็นภาษาตัวเอง · ไม่ต้องคุยภาษา</p>
 
+  <!-- SCENE PHOTO · the moment that proves the language wedge.
+       Midjourney brief to upgrade:
+       "Diverse international tourists (Western, Chinese, Indian) being welcomed
+        by smiling Thai spa staff at a boutique nail/massage shop in Bangkok,
+        warm afternoon light, authentic Thai interior with bamboo + neutral tones,
+        candid moment, shot on 35mm film, photojournalism style, --ar 16:9 --v 6"
+       Current photo: Unsplash royalty-free best-guess. Swap when better photo available. -->
+  <div class="scene">
+    <img
+      src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1600&q=80&auto=format&fit=crop"
+      alt="ลูกค้าต่างชาติเข้ารับบริการที่ร้านสปาในประเทศไทย"
+      loading="lazy"
+      onerror="this.style.display='none'"
+    />
+    <div class="scene-cap">
+      <div class="scene-cap-eyebrow">นักท่องเที่ยว 30 ล้าน/ปี · มาเที่ยวไทย</div>
+      <div class="scene-cap-h">เปิดร้านให้พวกเขา · โดยไม่ต้องพูดภาษาเขา</div>
+    </div>
+  </div>
+
   <div class="lang-row">
     <div class="lang-phone">
       <div class="lang-screen">
@@ -1315,7 +1437,26 @@
 
 <!-- ═══════ SECTION: Money proof ═══════ -->
 <section class="sec sec-money" aria-labelledby="money-h">
-  <div class="money-grid">
+
+  <!-- SCENE PHOTO · the dopamine moment of seeing money arrive.
+       Midjourney brief: "Thai female shop owner in 30s smiling brightly while
+        looking at smartphone showing payment notification, in salon setting
+        with warm lighting, hands gently holding phone, candid joy moment,
+        Thai cultural aesthetic, shot on 35mm prime, soft bokeh, --ar 16:9 --v 6" -->
+  <div class="scene" style="margin-bottom: 0;">
+    <img
+      src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1600&q=80&auto=format&fit=crop"
+      alt="เจ้าของร้านมองโทรศัพท์เห็นเงินมัดจำเข้าบัญชีด้วยความดีใจ"
+      loading="lazy"
+      onerror="this.style.display='none'"
+    />
+    <div class="scene-cap">
+      <div class="scene-cap-eyebrow">ดีใจที่สุดของวัน</div>
+      <div class="scene-cap-h">โทรศัพท์เด้ง · เห็นเงินเข้าบัญชี · ก่อนเริ่มบริการด้วยซ้ำ</div>
+    </div>
+  </div>
+
+  <div class="money-grid" style="margin-top: 64px;">
     <div>
       <div class="sec-eyebrow">เงินเข้าจริง</div>
       <h2 class="sec-h2" id="money-h"><em>วันเดียวกัน</em><br/>เข้าบัญชีร้าน</h2>
