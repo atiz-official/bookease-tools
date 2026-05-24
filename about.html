@@ -481,6 +481,129 @@
     .scene-cap-h { font-size: 18px; }
   }
 
+  /* ═══════ CUSTOMER-VIEW SECTION (Art ask 2026-05-24) ═══════
+     "Show how it will look and function to customers" · the slug URL
+     experience · phone mockup of bookease.co/<slug> · the missing
+     "what does the customer actually see when they tap the link" piece. */
+  .cust-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  @media (min-width: 720px) { .cust-grid { gap: 60px; } }
+  .cust-phone {
+    background: #0a0a0a;
+    padding: 4px 4px 6px;
+    border-radius: 26px;
+    max-width: 240px;
+    margin: 0 auto;
+    box-shadow: 0 20px 40px -16px rgba(15,23,42,0.30);
+  }
+  @media (min-width: 720px) {
+    .cust-phone { max-width: 280px; border-radius: 32px; padding: 6px 6px 8px; }
+  }
+  .cust-screen {
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    aspect-ratio: 9/19;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Hero band · variant color (peach) · matches our shop-variant system */
+  .cust-hero {
+    height: 40%;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%),
+      linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    padding: 8px 10px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: #fff;
+    position: relative;
+  }
+  .cust-lang-chip {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.92);
+    color: #0a0a0a;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+  }
+  .cust-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    opacity: 0.92;
+    margin-bottom: 2px;
+  }
+  .cust-name {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .cust-meta {
+    font-size: 8.5px;
+    opacity: 0.92;
+    margin-top: 2px;
+  }
+  /* Service rows */
+  .cust-body { flex: 1; padding: 6px 10px; overflow: hidden; }
+  .cust-svc-h {
+    font-size: 9px;
+    font-weight: 800;
+    color: #0a0a0a;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 4px 0 4px;
+  }
+  .cust-svc {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 0;
+    border-top: 1px solid #f4f4f5;
+    font-size: 10px;
+  }
+  .cust-svc:first-of-type { border-top: 0; padding-top: 0; }
+  .cust-svc .name { flex: 1; color: #0a0a0a; font-weight: 600; }
+  .cust-svc .min { color: #94a3b8; font-size: 8.5px; }
+  .cust-svc .price { color: #0a0a0a; font-weight: 800; font-family: 'Inter', sans-serif; }
+  /* Time picker mini */
+  .cust-times {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    margin: 6px 0 4px;
+  }
+  .cust-time {
+    padding: 3px 7px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: #0a0a0a;
+  }
+  .cust-time.active {
+    background: #0a0a0a;
+    color: #fff;
+    border-color: #0a0a0a;
+  }
+  /* Book CTA */
+  .cust-cta {
+    margin: 4px 10px 10px;
+    padding: 8px;
+    background: #0a0a0a;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
   /* ═══════ HERO PHOTO BACKDROP ═══════ */
   .hero-photo-side {
     position: relative;
@@ -840,13 +963,12 @@
 <!-- ═══════ HERO ═══════ -->
 <section class="hero">
   <div class="hero-text">
-    <span class="hero-eyebrow">BookEase by Atiz</span>
-    <h1>แชท <em>LINE</em><br/>ของร้านที่<br/>รับเงินได้</h1>
+    <h1>แชท <em>LINE</em> ของร้าน<br/>ที่รับเงินได้</h1>
     <p class="hero-sub">
-      ลูกค้าจองและจ่ายมัดจำใน LINE ของร้านคุณ — ไม่ต้องลง app · ไม่ต้องเรียนใหม่
+      ลูกค้าจอง + จ่ายมัดจำใน LINE
     </p>
     <div class="hero-ctas">
-      <a href="/" class="btn-primary">📸 เริ่มเลย · ฟรี 60 วินาที</a>
+      <a href="/" class="btn-primary">📸 เริ่มเลย · ฟรี</a>
       <a href="#how" class="btn-secondary">↓ ดูตัวอย่าง</a>
     </div>
   </div>
@@ -900,68 +1022,111 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: Before / After · ULTRA compact stat row ═══════ -->
+<!-- ═══════ SECTION: Before / After · ULTRA compact ═══════ -->
 <section class="sec sec-ba sec-center" aria-labelledby="ba-h">
-  <div class="sec-eyebrow">ก่อน · หลัง</div>
-  <h2 class="sec-h2" id="ba-h"><em>หยุดเสียเงิน</em>กับลูกค้าที่ไม่มา</h2>
+  <h2 class="sec-h2" id="ba-h">ลูกค้า<em>ไม่มา = เสียเงิน</em></h2>
 
   <div class="stat-row">
     <div class="stat-block stat-block--bad">
       <div class="stat-label">ก่อน</div>
       <div class="stat-num">30%</div>
-      <div class="stat-cap">no-show</div>
+      <div class="stat-cap">ไม่มาตามนัด</div>
     </div>
     <div class="stat-arrow" aria-hidden="true">→</div>
     <div class="stat-block stat-block--good">
       <div class="stat-label">หลัง</div>
       <div class="stat-num">9%</div>
-      <div class="stat-cap">no-show</div>
+      <div class="stat-cap">ไม่มาตามนัด</div>
     </div>
   </div>
 </section>
 
-<!-- ═══════ SECTION: 3-step magic ═══════ -->
+<!-- ═══════ SECTION: 3-step · ultra compact ═══════ -->
 <section class="sec sec-center" id="how" aria-labelledby="how-h">
-  <div class="sec-eyebrow">วิธีการ</div>
-  <h2 class="sec-h2" id="how-h">3 ขั้นตอน · ใช้เวลา <em>60 วินาที</em></h2>
-  <p class="sec-sub">ไม่ต้องเขียนข้อมูล · ไม่ต้องตั้งค่า · ถ่ายรูปเมนูแล้วได้เลย</p>
+  <h2 class="sec-h2" id="how-h"><em>60 วินาที</em> พร้อมรับจอง</h2>
 
-  <!-- Apple-style icon columns · was 3 CSS-faked phone mockups (Art audit) -->
   <div class="steps-3">
     <article class="step-vis">
       <div class="step-icon-clean" aria-hidden="true">📸</div>
-      <div class="step-num">STEP 01</div>
-      <h3 class="step-h3">ถ่ายรูปเมนู</h3>
-      <p class="step-cap">AI อ่านบริการ + ราคาให้อัตโนมัติ</p>
+      <div class="step-num">01</div>
+      <h3 class="step-h3">ถ่ายเมนู</h3>
+      <p class="step-cap">AI อ่านให้</p>
     </article>
 
     <article class="step-vis">
       <div class="step-icon-clean" aria-hidden="true">🌐</div>
-      <div class="step-num">STEP 02</div>
+      <div class="step-num">02</div>
       <h3 class="step-h3">ได้ลิงก์ร้าน</h3>
-      <p class="step-cap">bookease.co/ชื่อร้าน · พร้อมโชว์ลูกค้า</p>
+      <p class="step-cap">bookease.co/คุณ</p>
     </article>
 
     <article class="step-vis">
       <div class="step-icon-clean" aria-hidden="true">💬</div>
-      <div class="step-num">STEP 03</div>
-      <h3 class="step-h3">ส่งใน LINE</h3>
-      <p class="step-cap">ลูกค้าจอง + จ่ายเอง · เงินเข้าบัญชี</p>
+      <div class="step-num">03</div>
+      <h3 class="step-h3">ส่ง LINE</h3>
+      <p class="step-cap">ลูกค้าจองเอง</p>
     </article>
   </div>
 </section>
 
-<!-- ═══════ SECTION: 5 languages ═══════ -->
-<section class="sec sec-lang sec-center" id="lang" aria-labelledby="lang-h">
-  <div class="sec-eyebrow">เปิดร้านสู่โลก</div>
-  <h2 class="sec-h2" id="lang-h">ลูกค้าต่างชาติ <em>30 ล้าน/ปี</em><br/>จองได้เอง</h2>
-  <p class="sec-sub">เว็บร้านของคุณสลับภาษาอัตโนมัติ · นักท่องเที่ยวเห็นภาษาตัวเอง · ไม่ต้องคุยภาษา</p>
+<!-- ═══════ SECTION: Customer view · what the link looks like (Art ask) ═══════ -->
+<section class="sec" aria-labelledby="cust-h">
+  <div class="cust-grid">
+    <div>
+      <div class="sec-eyebrow">หน้าเว็บร้าน</div>
+      <h2 class="sec-h2" id="cust-h">ลูกค้ากดลิงก์<br/><em>จองเสร็จเลย</em></h2>
+      <p class="sec-sub">
+        bookease.co/ชื่อคุณ · เลือกบริการ · เลือกเวลา · จ่ายมัดจำ · เสร็จ
+      </p>
+    </div>
+    <div>
+      <!-- Phone mockup · what the customer sees · the slug URL view -->
+      <div class="cust-phone">
+        <div class="cust-screen">
+          <div class="cust-hero">
+            <div class="cust-lang-chip">🇹🇭 ไทย ▾</div>
+            <div>
+              <div class="cust-tag">SPA · ทองหล่อ</div>
+              <div class="cust-name">Bare Nail Spa</div>
+              <div class="cust-meta">⭐ 4.8 · เปิด 10:00–21:00</div>
+            </div>
+          </div>
+          <div class="cust-body">
+            <div class="cust-svc-h">บริการ</div>
+            <div class="cust-svc">
+              <span class="name">Gel manicure</span>
+              <span class="min">60นาที</span>
+              <span class="price">฿890</span>
+            </div>
+            <div class="cust-svc">
+              <span class="name">Foot massage</span>
+              <span class="min">30นาที</span>
+              <span class="price">฿390</span>
+            </div>
+            <div class="cust-svc">
+              <span class="name">Spa pedicure</span>
+              <span class="min">90นาที</span>
+              <span class="price">฿1,290</span>
+            </div>
+            <div class="cust-svc-h" style="margin-top:8px">เลือกเวลา</div>
+            <div class="cust-times">
+              <div class="cust-time">10:00</div>
+              <div class="cust-time">11:30</div>
+              <div class="cust-time active">14:30</div>
+              <div class="cust-time">16:00</div>
+            </div>
+          </div>
+          <div class="cust-cta">จ่ายมัดจำ ฿200</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- SCENE PHOTO · the moment that proves the language wedge.
-       Photo VERIFIED (Path B · Art 2026-05-24): tourists in long-tail
-       boats at Maya Bay / Phi Phi · iconic Thailand tourist scene ·
-       limestone mountains backdrop · turquoise water. Carries the
-       "30 ล้านนักท่องเที่ยวมาเที่ยวไทย" message instantly. -->
+<!-- ═══════ SECTION: 5 languages · simpler copy ═══════ -->
+<section class="sec sec-lang sec-center" id="lang" aria-labelledby="lang-h">
+  <h2 class="sec-h2" id="lang-h">ลูกค้าต่างชาติ<br/><em>จองเองได้</em></h2>
+
   <div class="scene">
     <img
       src="https://images.unsplash.com/photo-1596879857570-7b6b9018bcb6?w=1600&q=80&auto=format&fit=crop"
@@ -970,8 +1135,7 @@
       onerror="this.style.display='none'"
     />
     <div class="scene-cap">
-      <div class="scene-cap-eyebrow">นักท่องเที่ยว 30 ล้าน/ปี · มาเที่ยวไทย</div>
-      <div class="scene-cap-h">เปิดร้านให้พวกเขา · โดยไม่ต้องพูดภาษาเขา</div>
+      <div class="scene-cap-h">30 ล้านคน/ปี · มาเที่ยวไทย</div>
     </div>
   </div>
 
@@ -1000,17 +1164,11 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: Money proof · ultra-compact ═══════
-     Dropped: scene photo (Thai woman smiling at phone)
-     Dropped: dashboard section entirely (too much vertical space) -->
+<!-- ═══════ SECTION: Money · drop ALL tech jargon (Art audit) ═══════ -->
 <section class="sec sec-money" aria-labelledby="money-h">
   <div class="money-grid">
     <div>
-      <div class="sec-eyebrow">เงินเข้าจริง</div>
-      <h2 class="sec-h2" id="money-h"><em>วันเดียวกัน</em>เข้าบัญชีร้าน</h2>
-      <p class="sec-sub">
-        PromptPay / บัตร → KBank · SCB · BAY · KTB · TTB · ผ่าน Xendit (BOT-licensed)
-      </p>
+      <h2 class="sec-h2" id="money-h">เงินเข้าบัญชี<br/><em>วันเดียวกัน</em></h2>
     </div>
     <div class="money-vis">
       <div class="sms-card">
@@ -1027,48 +1185,35 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: Pricing ═══════ -->
+<!-- ═══════ SECTION: Pricing · stripped to essentials ═══════ -->
 <section class="sec sec-price sec-center" id="price" aria-labelledby="price-h">
-  <div class="sec-eyebrow">ค่าธรรมเนียม</div>
-  <h2 class="sec-h2" id="price-h">เก็บ<em>เฉพาะ</em>เมื่อมียอด</h2>
-  <p class="sec-sub">ไม่มีค่าสมัคร · ไม่มีค่ารายเดือน · ไม่มีค่าซ่อนเร้น · ไม่มียอด = ไม่จ่าย</p>
+  <h2 class="sec-h2" id="price-h">จ่าย<em>เมื่อมียอด</em></h2>
+  <p class="sec-sub">ไม่มีค่าสมัคร · ไม่มีค่ารายเดือน</p>
 
   <div class="price-grid">
     <div class="price-card">
       <div class="price-emoji">💳</div>
-      <div class="price-method">บัตรเครดิตไทย</div>
+      <div class="price-method">บัตรไทย</div>
       <div class="price-rate">4.9<span class="price-rate-unit">%</span></div>
-      <div class="price-per">ต่อยอดจอง</div>
-      <p class="price-note">Visa · Mastercard · JCB</p>
     </div>
     <div class="price-card price-card--featured">
       <div class="price-emoji">🇹🇭</div>
-      <div class="price-method">PromptPay QR</div>
+      <div class="price-method">PromptPay</div>
       <div class="price-rate">2.9<span class="price-rate-unit">%</span></div>
-      <div class="price-per">ต่อยอดจอง</div>
-      <p class="price-note">ลูกค้าไทยใช้กันเยอะที่สุด · เงินเข้าวันเดียวกัน</p>
     </div>
     <div class="price-card">
       <div class="price-emoji">🌍</div>
-      <div class="price-method">บัตรต่างประเทศ</div>
+      <div class="price-method">บัตรต่างชาติ</div>
       <div class="price-rate">5.9<span class="price-rate-unit">%</span></div>
-      <div class="price-per">ต่อยอดจอง</div>
-      <p class="price-note">นักท่องเที่ยวจ่ายได้ทันที · รวมค่า FX</p>
     </div>
-  </div>
-
-  <div class="price-foot">
-    <strong>เทียบกับ Booking.com / Agoda 15–25%</strong> · BookEase ถูกกว่า 5–7 เท่า เพราะลูกค้าจองตรงกับร้าน
   </div>
 </section>
 
-<!-- ═══════ Final CTA ═══════ -->
+<!-- ═══════ Final CTA · stripped ═══════ -->
 <section class="final">
-  <div class="final-eyebrow">เริ่มได้เลย</div>
-  <h2>ถ่ายรูปเมนูร้าน 1 ครั้ง<br/>เริ่มรับมัดจำได้ทันที</h2>
-  <p class="final-sub">60 วินาที · ไม่ต้องสมัคร · ไม่ต้องลง app · ไม่ต้องใส่บัตรเครดิต</p>
+  <h2>พร้อมเริ่มแล้ว?</h2>
+  <p class="final-sub">ถ่ายรูปเมนูร้าน · 60 วินาที</p>
   <a href="/" class="final-cta">📸 เริ่มเลย — ฟรี</a>
-  <div class="final-note">ฟรีเสมอ · เก็บเฉพาะเมื่อมียอดจอง 2.9%</div>
 </section>
 
 <!-- ─── Footer · compact 1-bar (Art audit) ─── -->
@@ -1076,7 +1221,7 @@
   <div class="foot-bar">
     <div>
       <span class="nav-brand" style="font-size:15px"><span class="book">Book</span><span class="ease">Ease</span></span>
-      <span style="margin-left:8px">by Atiz · © 2026</span>
+      <span style="margin-left:8px">© 2026</span>
     </div>
     <div class="foot-links">
       <a href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
