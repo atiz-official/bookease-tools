@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Primary landing — Thai canonical -->
+  <url>
+    <loc>https://make.bookease.co/</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="th" href="https://make.bookease.co/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://make.bookease.co/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://make.bookease.co/"/>
+  </url>
+
+  <!-- Onboarding tool -->
+  <url>
+    <loc>https://make.bookease.co/menu-ocr.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Customer marketplace (cross-link from this domain) -->
+  <url>
+    <loc>https://bookease.co/</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Merchant dashboard / signup -->
+  <url>
+    <loc>https://shopv3.bookease.co/signup</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>

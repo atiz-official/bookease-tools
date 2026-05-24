@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /_redesign-
+Disallow: /_p2-
+Disallow: /_liff_
+Disallow: /_shop-
+Disallow: /_timeslot
+Disallow: /_variant-
+
+# Hide internal mockups and design iterations from search engines.
+# Production pages (index, menu-ocr, liff-preview, hero-comparison) are crawlable.
+
+Sitemap: https://make.bookease.co/sitemap.xml
