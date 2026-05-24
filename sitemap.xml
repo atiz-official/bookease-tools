@@ -13,6 +13,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://make.bookease.co/"/>
   </url>
 
+  <!-- Fuller marketing landing ("version B") -->
+  <url>
+    <loc>https://make.bookease.co/about</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="th" href="https://make.bookease.co/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://make.bookease.co/about?lang=en"/>
+  </url>
+
   <!-- Onboarding tool -->
   <url>
     <loc>https://make.bookease.co/menu-ocr.html</loc>
