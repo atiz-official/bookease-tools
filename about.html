@@ -115,14 +115,14 @@
   .nav-cta:active { transform: scale(0.96); }
   @media (max-width: 720px) { .nav-link { display: none; } }
 
-  /* ═══════ HERO — visual-first ═══════ */
+  /* ═══════ HERO — visual-first · tightened 2026-05-24 ═══════ */
   .hero {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 56px 28px 80px;
+    padding: 32px 24px 48px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 48px;
     align-items: center;
   }
   .hero-eyebrow {
@@ -313,26 +313,27 @@
     letter-spacing: -0.02em;
   }
 
-  /* ═══════ SECTIONS ═══════ */
+  /* ═══════ SECTIONS · tightened for mobile-first (was 96px) ═══════ */
   .sec {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 96px 28px;
+    padding: 56px 24px;
   }
   .sec-eyebrow {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 12px; font-weight: 800;
+    font-size: 11.5px; font-weight: 800;
     letter-spacing: 0.14em; text-transform: uppercase;
-    color: #1E40AF; margin-bottom: 14px;
+    color: #1E40AF; margin-bottom: 10px;
   }
+  /* Mobile-first H2 (was clamp 28-46px · now 24-40px) */
   .sec-h2 {
     font-weight: 900;
-    font-size: clamp(28px, 4.2vw, 46px);
-    line-height: 1.1;
+    font-size: clamp(24px, 4vw, 40px);
+    line-height: 1.12;
     letter-spacing: -0.03em;
     color: #0a0a0a;
-    margin: 0 0 18px;
-    max-width: 760px;
+    margin: 0 0 12px;
+    max-width: 720px;
   }
   .sec-h2 em {
     font-style: normal;
@@ -340,8 +341,8 @@
     padding: 0 4px;
   }
   .sec-sub {
-    font-size: 18px; line-height: 1.55;
-    color: #525252; margin: 0 0 56px; max-width: 600px;
+    font-size: 16px; line-height: 1.5;
+    color: #525252; margin: 0 0 32px; max-width: 600px;
   }
   .sec-center { text-align: center; }
   .sec-center .sec-h2 { margin-left: auto; margin-right: auto; }
@@ -652,11 +653,12 @@
   .sec-lang {
     background: linear-gradient(180deg, #f7faff 0%, #fff 100%);
   }
+  /* 5-phones row · grid on desktop, horizontal-scroll on mobile (don't hide!) */
   .lang-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 18px;
-    margin-top: 24px;
+    gap: 14px;
+    margin-top: 20px;
   }
   .lang-phone {
     background: #0a0a0a;
@@ -719,13 +721,28 @@
     font-size: 15px; color: #525252;
   }
   .lang-foot strong { color: #0a0a0a; }
+  /* Mobile: horizontal scroll · ALL 5 phones stay visible · swipe to see */
   @media (max-width: 880px) {
-    .lang-row { grid-template-columns: repeat(3, 1fr); }
-    .lang-phone:nth-child(n+4) { display: none; }
+    .lang-row {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 12px;
+      padding: 4px 24px 16px;
+      margin: 20px -24px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .lang-row::-webkit-scrollbar { display: none; }
+    .lang-phone {
+      flex: 0 0 60%;
+      max-width: 200px;
+      scroll-snap-align: start;
+    }
   }
   @media (max-width: 540px) {
-    .lang-row { grid-template-columns: repeat(2, 1fr); }
-    .lang-phone:nth-child(n+3) { display: none; }
+    .lang-phone { flex: 0 0 70%; }
   }
 
   /* ═══════ SECTION: Money proof (SMS) ═══════ */
@@ -805,8 +822,8 @@
     .money-grid { grid-template-columns: 1fr; gap: 40px; }
   }
 
-  /* ═══════ SECTION: Dashboard ═══════ */
-  .sec-dash { padding: 96px 28px 120px; }
+  /* ═══════ SECTION: Dashboard · tightened ═══════ */
+  .sec-dash { padding: 56px 24px 64px; }
   .dash-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1021,11 +1038,11 @@
   }
   .price-foot strong { color: #0a0a0a; }
 
-  /* ═══════ Final CTA ═══════ */
+  /* ═══════ Final CTA · tightened ═══════ */
   .final {
     background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
     color: #fff; text-align: center;
-    padding: 96px 28px;
+    padding: 64px 24px;
   }
   .final-eyebrow {
     display: inline-block;
@@ -1096,25 +1113,59 @@
     flex-wrap: wrap; gap: 12px;
   }
 
-  /* ─── Responsive ─── */
+  /* ─── Responsive · mobile-first tightened 2026-05-24 ─── */
   @media (max-width: 880px) {
-    .hero { grid-template-columns: 1fr; padding: 36px 22px 56px; gap: 36px; }
+    .hero { grid-template-columns: 1fr; padding: 24px 20px 36px; gap: 28px; }
+    .hero h1 { font-size: 34px; }
+    .hero-sub { font-size: 16px; margin-bottom: 24px; }
     .hero-text { order: 0; }
     .hero-vis { order: 1; }
-    .sec { padding: 64px 22px; }
-    .steps-3 { grid-template-columns: 1fr; gap: 32px; }
-    .price-grid { grid-template-columns: 1fr; }
+    .sec { padding: 40px 20px; }
+    .sec-h2 { font-size: 24px; }
+    .sec-sub { font-size: 15px; margin-bottom: 24px; }
+    /* 3-step also horizontal-scroll on mobile (was 1-col stacked) */
+    .steps-3 {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 14px;
+      padding: 4px 20px 14px;
+      margin: 24px -20px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .steps-3::-webkit-scrollbar { display: none; }
+    .step-vis {
+      flex: 0 0 80%;
+      max-width: 280px;
+      scroll-snap-align: start;
+    }
+    .step-mini { height: 200px; margin-bottom: 16px; }
+    /* Benefits 2-col → 1-col, tighter */
+    .price-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 24px; }
+    .price-card { padding: 24px 20px; }
     .price-card--featured { transform: none; }
-    .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+    /* Footer tighter on mobile */
+    .foot { padding: 36px 20px 24px; }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 24px; padding-bottom: 24px; }
+    .scene { aspect-ratio: 3/2; border-radius: 18px; margin-bottom: 28px; }
+    .scene-cap { bottom: 14px; left: 16px; right: 16px; }
+    .scene-cap-h { font-size: 16px; max-width: none; }
+    .scene-cap-eyebrow { font-size: 10px; margin-bottom: 4px; }
+    .ba-card { padding: 20px; }
+    .ba-stat { font-size: 36px; }
+    .final { padding: 56px 20px; }
+    .final h2 { font-size: 28px; }
+    .final-sub { font-size: 15.5px; margin-bottom: 28px; }
   }
   @media (max-width: 540px) {
-    .sec { padding: 56px 20px; }
-    .sec-h2 { font-size: 26px; }
-    .sec-sub { font-size: 15.5px; margin-bottom: 36px; }
-    .ba-stat { font-size: 36px; }
-    .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+    .nav-inner { padding: 12px 20px; }
+    .sec { padding: 36px 20px; }
+    .sec-h2 { font-size: 22px; }
+    .hero h1 { font-size: 30px; }
+    .foot-grid { grid-template-columns: 1fr; gap: 22px; }
     .foot-meta { flex-direction: column; align-items: flex-start; }
-    .final { padding: 64px 22px; }
   }
 </style>
 </head>
@@ -1150,14 +1201,17 @@
 
   <!-- Hero visual: real-photo backdrop + LINE chat phone mockup overlaid.
        Photo = "the real merchant moment". Phone = "the product proof".
-       Midjourney brief: "Thai female nail spa owner in 30s, warm authentic
-        salon interior, holding phone with subtle smile, soft natural window
-        light, candid working moment, Bangkok boutique aesthetic, shallow
-        depth of field, shot on 50mm 1.4 lens, --ar 4:5 --v 6" -->
+       MIDJOURNEY BRIEF (Thai-specific):
+       "Thai woman in late 20s with shoulder-length black hair, Southeast Asian
+        features (NOT Korean/Japanese/Chinese), wearing simple white blouse,
+        smiling gently while holding smartphone, working in her own nail spa
+        in Bangkok soi neighborhood, warm afternoon golden light through window,
+        Thai signage visible blurred in background (LINE rich menu / Thai-script
+        price card), shot on 50mm 1.4 lens, photojournalism, --ar 4:5 --v 6" -->
   <div class="hero-vis hero-photo-side">
     <img
-      src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=1200&q=80&auto=format&fit=crop"
-      alt="เจ้าของร้านสปาในประเทศไทยใช้โทรศัพท์รับจองจากลูกค้า"
+      src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1200&q=80&auto=format&fit=crop"
+      alt="เจ้าของร้านสปาคนไทยใช้โทรศัพท์รับจองจากลูกค้า"
       loading="eager"
       onerror="this.style.display='none'"
     />
@@ -1205,14 +1259,18 @@
   <p class="sec-sub">ลูกค้าจ่ายมัดจำก่อน = มาแน่ · ร้านเซ็ตอุปกรณ์ไม่เสียเปล่า</p>
 
   <!-- SCENE PHOTO · the pain of no-shows.
-       Midjourney brief: "Thai spa or nail salon owner sitting alone on empty
-        chair, looking at phone with worried expression, soft afternoon light
-        streaming through window, empty service chairs visible in background,
-        melancholic but not despairing, shot on 50mm prime lens, --ar 16:9 --v 6" -->
+       MIDJOURNEY BRIEF (Thai-specific):
+       "Empty massage room interior in Thai spa, neat towels and tools laid
+        ready on bed, clock visible showing past appointment time, single
+        Thai female staff member in white traditional Thai uniform sitting
+        quietly on edge of bed, soft afternoon light through bamboo blinds,
+        contemplative empty atmosphere, NO Western/Korean people, only Thai
+        cultural elements (Buddha image small in corner, jasmine garland),
+        shot on 50mm prime lens, --ar 16:9 --v 6" -->
   <div class="scene">
     <img
-      src="https://images.unsplash.com/photo-1521751355683-8a06a0e8e5c4?w=1600&q=80&auto=format&fit=crop"
-      alt="ร้านที่ลูกค้าจองแล้วไม่มา · เซ็ตอุปกรณ์รอไว้แล้วไม่มีลูกค้า"
+      src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1600&q=80&auto=format&fit=crop"
+      alt="ห้องนวดที่จัดเตรียมไว้รอลูกค้าที่ไม่มาตามนัด"
       loading="lazy"
       onerror="this.style.display='none'"
     />
@@ -1340,16 +1398,21 @@
   <p class="sec-sub">เว็บร้านของคุณสลับภาษาอัตโนมัติ · นักท่องเที่ยวเห็นภาษาตัวเอง · ไม่ต้องคุยภาษา</p>
 
   <!-- SCENE PHOTO · the moment that proves the language wedge.
-       Midjourney brief to upgrade:
-       "Diverse international tourists (Western, Chinese, Indian) being welcomed
-        by smiling Thai spa staff at a boutique nail/massage shop in Bangkok,
-        warm afternoon light, authentic Thai interior with bamboo + neutral tones,
-        candid moment, shot on 35mm film, photojournalism style, --ar 16:9 --v 6"
-       Current photo: Unsplash royalty-free best-guess. Swap when better photo available. -->
+       MIDJOURNEY BRIEF (THE KEY PHOTO · Art-specific ask):
+       "Group of 3-4 diverse international tourists (one Caucasian European
+        female, one Chinese female, one Indian male) being warmly welcomed
+        at the entrance of a Thai nail spa in Bangkok by a smiling Thai
+        female receptionist (Southeast Asian features, NOT Korean/Japanese,
+        wearing simple Thai-style uniform with name tag in Thai script),
+        Thai shop signage visible in Thai script + small English subtitle,
+        warm afternoon golden hour light, bamboo and tropical plants in
+        frame, jasmine garland near entrance, candid documentary style,
+        Bangkok soi atmosphere, shot on 35mm film grain, photojournalism,
+        NO stock-photo poses, --ar 16:9 --v 6" -->
   <div class="scene">
     <img
-      src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1600&q=80&auto=format&fit=crop"
-      alt="ลูกค้าต่างชาติเข้ารับบริการที่ร้านสปาในประเทศไทย"
+      src="https://images.unsplash.com/photo-1528181304800-259b08848526?w=1600&q=80&auto=format&fit=crop"
+      alt="นักท่องเที่ยวต่างชาติเข้ารับบริการที่ร้านสปาคนไทยในกรุงเทพ"
       loading="lazy"
       onerror="this.style.display='none'"
     />
@@ -1439,14 +1502,19 @@
 <section class="sec sec-money" aria-labelledby="money-h">
 
   <!-- SCENE PHOTO · the dopamine moment of seeing money arrive.
-       Midjourney brief: "Thai female shop owner in 30s smiling brightly while
-        looking at smartphone showing payment notification, in salon setting
-        with warm lighting, hands gently holding phone, candid joy moment,
-        Thai cultural aesthetic, shot on 35mm prime, soft bokeh, --ar 16:9 --v 6" -->
+       MIDJOURNEY BRIEF (Thai-specific):
+       "Thai woman in early 30s with dark hair tied back, Southeast Asian
+        features (NOT Korean/Japanese/Chinese), wearing white spa uniform,
+        sitting in her own nail/massage shop in Bangkok, looking at smartphone
+        with bright genuine smile and slight surprise reaction (seeing money
+        notification land), Thai shop interior visible (jasmine flowers,
+        Thai cultural elements, Thai-script price card on wall blurred),
+        warm afternoon light, candid joy moment, NOT staged, shot on 35mm
+        prime lens with soft bokeh, --ar 16:9 --v 6" -->
   <div class="scene" style="margin-bottom: 0;">
     <img
-      src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1600&q=80&auto=format&fit=crop"
-      alt="เจ้าของร้านมองโทรศัพท์เห็นเงินมัดจำเข้าบัญชีด้วยความดีใจ"
+      src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600&q=80&auto=format&fit=crop"
+      alt="เจ้าของร้านคนไทยมองโทรศัพท์เห็นเงินมัดจำเข้าบัญชีด้วยความดีใจ"
       loading="lazy"
       onerror="this.style.display='none'"
     />
@@ -1461,11 +1529,10 @@
       <div class="sec-eyebrow">เงินเข้าจริง</div>
       <h2 class="sec-h2" id="money-h"><em>วันเดียวกัน</em><br/>เข้าบัญชีร้าน</h2>
       <p class="sec-sub">
-        ลูกค้าจ่ายผ่าน PromptPay หรือบัตร → เงินเข้าบัญชี KBank / SCB / BAY / KTB / TTB ของร้านในวันเดียวกัน
+        PromptPay / บัตร → KBank · SCB · BAY · KTB · TTB · วันเดียวกัน
       </p>
-      <p style="font-size:14px;color:#737373;margin:0;line-height:1.55">
-        ผ่าน Xendit · ผู้ให้บริการ payment ที่ <strong style="color:#0a0a0a">ธนาคารแห่งประเทศไทย (BOT)</strong> อนุญาต<br/>
-        ข้อมูลธุรกรรมทั้งหมดมี audit log · ตรวจสอบย้อนหลังได้
+      <p style="font-size:13px;color:#737373;margin:0;line-height:1.55">
+        ผ่าน Xendit · <strong style="color:#0a0a0a">BOT-licensed</strong>
       </p>
     </div>
 
@@ -1478,17 +1545,6 @@
             <span class="sms-time">เมื่อสักครู่</span>
           </div>
           <div class="sms-text">ยอดเงินเข้าบัญชี <span class="amt">+฿200.00</span><br/>จาก BookEase · 14:32</div>
-        </div>
-      </div>
-      <div class="money-arrow" aria-hidden="true">↑</div>
-      <div class="sms-card">
-        <div class="sms-icon">฿</div>
-        <div class="sms-body">
-          <div class="sms-head">
-            <span class="sms-app">BookEase</span>
-            <span class="sms-time">14:32</span>
-          </div>
-          <div class="sms-text">คุณนุ่นจ่ายมัดจำ <b>Gel manicure</b> สำเร็จ · เงินกำลังเข้าบัญชีร้าน</div>
         </div>
       </div>
     </div>
@@ -1506,21 +1562,21 @@
           <div class="dp-num">1</div>
           <div>
             <h3 class="dp-h">🟢 สถานะร้าน real-time</h3>
-            <p class="dp-p">เปิด / หยุดชั่วคราว · ลูกค้าเห็นในเว็บร้านทันที</p>
+            <p class="dp-p">เปิด / หยุดชั่วคราว · ลูกค้าเห็นทันที</p>
           </div>
         </li>
         <li>
           <div class="dp-num">2</div>
           <div>
             <h3 class="dp-h">⏰ ว่างครั้งถัดไป</h3>
-            <p class="dp-p">ลูกค้าใน LINE ถาม "ว่างเมื่อไหร่" → กดคัดลอกเวลาตอบใน 1 วินาที</p>
+            <p class="dp-p">กดคัดลอก · ตอบใน LINE ใน 1 วินาที</p>
           </div>
         </li>
         <li>
           <div class="dp-num">3</div>
           <div>
             <h3 class="dp-h">🔗 QR + ลิงก์ร้าน</h3>
-            <p class="dp-p">ปริ้นวางหน้าร้าน · ส่งใน LINE · พิมพ์ลงนามบัตร · ใช้ได้ทุกที่</p>
+            <p class="dp-p">ปริ้น · ส่ง LINE · ใช้ได้ทุกที่</p>
           </div>
         </li>
       </ul>
