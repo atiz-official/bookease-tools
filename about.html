@@ -879,7 +879,139 @@
     .flag-name { font-size: 14px; }
   }
 
-  /* ═══════ SECTION: Money proof (SMS) ═══════ */
+  /* ═══════ SECTION: Money proof · V1 + tight compact (Art lock 2026-05-25)
+     Full-bleed section · blurred shopkeeper hero as bg · H2 + K PLUS card
+     overlaid · padding kept tight per Art "compact short". */
+  .sec-money-hero {
+    position: relative;
+    overflow: hidden;
+    background: #1f1411;  /* dark warm fallback under image */
+  }
+  .sec-money-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1752147535869-b6988d3efa11?w=1200&q=80&auto=format&fit=crop') center/cover;
+    filter: blur(8px) brightness(.85) saturate(1.1);   /* Art lock · less blur than V1 preview's 16px */
+    transform: scale(1.08);                            /* hide blur edges */
+    z-index: 0;
+  }
+  .sec-money-hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(124,45,18,.40) 0%, rgba(0,0,0,.55) 100%);
+    z-index: 1;
+  }
+  .money-hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 22px;     /* tight · Art lock */
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+  }
+  .money-hero-h2 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 6.5vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 6px rgba(0,0,0,.45);
+  }
+  .money-hero-h2 em {
+    font-style: normal;
+    color: #fde68a;
+    font-weight: 900;
+  }
+  /* K PLUS notification card · variant C single-row max */
+  .money-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 32px -6px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.12);
+    font-family: 'Sarabun', sans-serif;
+    border-left: 3px solid #00A04B;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .money-card-logo {
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #00A04B, #008035);
+    color: #fff;
+    display: grid; place-items: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .money-card-mid {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .money-card-top {
+    display: flex; justify-content: space-between;
+    align-items: baseline; gap: 6px;
+  }
+  .money-card-app {
+    font-size: 12.5px; font-weight: 800; color: #0a0a0a;
+  }
+  .money-card-time {
+    font-size: 10.5px; color: #94a3b8;
+    font-family: 'Inter', sans-serif;
+  }
+  .money-card-mid-line {
+    display: flex; justify-content: space-between;
+    align-items: baseline; gap: 6px; margin-top: 1px;
+  }
+  .money-card-from {
+    font-size: 11px; color: #475569;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .money-card-from b { color: #0a0a0a; font-weight: 700; }
+  .money-card-amt {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900; font-size: 19px;
+    color: #16a34a;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1; white-space: nowrap; flex-shrink: 0;
+  }
+  .money-card-bal {
+    font-size: 10.5px; color: #15803d; margin-top: 2px;
+  }
+  .money-card-bal b {
+    font-family: 'Inter', sans-serif;
+    color: #0a0a0a; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Desktop · horizontal layout · H2 left + card right */
+  @media (min-width: 768px) {
+    .money-hero-inner {
+      flex-direction: row;
+      justify-content: center;
+      gap: 36px;
+      padding: 44px 32px;
+    }
+    .money-hero-h2 {
+      text-align: left;
+      flex: 0 1 auto;
+    }
+    .money-card { max-width: 360px; }
+    .money-card-amt { font-size: 22px; }
+    .money-card-app { font-size: 13.5px; }
+  }
+
+  /* DEPRECATED · .sec-money block kept only because legacy CSS may reference
+     it. New section uses .sec-money-hero above. */
   .sec-money {
     background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
     border-top: 1px solid #ececec;
@@ -1411,22 +1543,27 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: Money · drop ALL tech jargon (Art audit) ═══════ -->
-<section class="sec sec-money" aria-labelledby="money-h">
-  <div class="money-grid">
-    <div>
-      <h2 class="sec-h2" id="money-h">เงินเข้าบัญชี<br/><em>วันเดียวกัน</em></h2>
-    </div>
-    <div class="money-vis">
-      <div class="sms-card">
-        <div class="sms-icon kbank">฿</div>
-        <div class="sms-body">
-          <div class="sms-head">
-            <span class="sms-app">K-Mobile Banking</span>
-            <span class="sms-time">เมื่อสักครู่</span>
-          </div>
-          <div class="sms-text">ยอดเงินเข้าบัญชี <span class="amt">+฿200.00</span><br/>จาก BookEase · 14:32</div>
+<!-- ═══════ SECTION: Money proof · V1 K-Bank notif on blurred shopkeeper bg
+     (Art lock 2026-05-25 · "less blur · tight compact").
+     - Full-bleed section with the existing hero shopkeeper photo as bg
+       (8px blur · warm dark overlay) — visual callback to the hero up top
+     - H2 + K PLUS notification card overlaid · card is variant C (single-row
+       compact ~58px tall · logo + 3 stacked text lines · green accents) -->
+<section class="sec-money-hero" aria-labelledby="money-h">
+  <div class="money-hero-inner">
+    <h2 class="money-hero-h2" id="money-h">เงินเข้าบัญชี<br/><em>วันเดียวกัน</em></h2>
+    <div class="money-card">
+      <div class="money-card-logo">K</div>
+      <div class="money-card-mid">
+        <div class="money-card-top">
+          <span class="money-card-app">K PLUS</span>
+          <span class="money-card-time">เมื่อสักครู่</span>
         </div>
+        <div class="money-card-mid-line">
+          <span class="money-card-from">จาก <b>BOOKEASE TH</b></span>
+          <span class="money-card-amt">+฿200.00</span>
+        </div>
+        <div class="money-card-bal">คงเหลือ <b>฿15,847.50</b></div>
       </div>
     </div>
   </div>
