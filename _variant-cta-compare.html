@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant CTA · Black vs Palette · BookEase</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Sarabun', sans-serif;
+  background: #f0f0f0;
+  padding: 32px 16px 80px;
+}
+
+h1 { text-align:center; font-size:13px; font-weight:700; color:#525252; letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+.subtitle { text-align:center; font-size:12px; color:#737373; margin-bottom:40px; line-height:1.6; }
+.subtitle strong { color:#0a0a0a; }
+
+/* ── Industry rows ── */
+.industry-block { max-width:960px; margin:0 auto 56px; }
+.industry-header {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:16px; padding-bottom:10px;
+  border-bottom:2px solid #e5e5e5;
+}
+.industry-name { font-size:16px; font-weight:800; color:#0a0a0a; }
+.industry-tag {
+  font-size:11px; font-weight:700; color:#737373;
+  background:#e5e5e5; border-radius:99px; padding:3px 10px;
+  letter-spacing:.04em;
+}
+.contrast-tag {
+  font-size:11px; font-weight:700; border-radius:99px; padding:3px 10px;
+  letter-spacing:.04em; margin-left:auto;
+}
+.contrast-pass { background:#dcfce7; color:#16a34a; }
+.contrast-fail { background:#fee2e2; color:#dc2626; }
+.contrast-warn { background:#fef9c3; color:#854d0e; }
+
+/* ── Compare pair ── */
+.compare-pair {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+/* ── Phone shell ── */
+.phone {
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 10px 28px rgba(0,0,0,0.08);
+  max-width:360px;
+  margin:0 auto;
+  width:100%;
+}
+.phone-label {
+  display:flex; align-items:center; gap:8px;
+  padding:12px 14px 8px; border-bottom:1px solid #f0f0f0;
+}
+.pill { font-size:10px; font-weight:700; border-radius:99px; padding:2px 9px; letter-spacing:.04em; }
+.pill-black { background:#0a0a0a; color:#fff; }
+.pill-variant { background:#e5e5e5; color:#0a0a0a; } /* will be overridden inline */
+.phone-label-text { font-size:11px; color:#a1a1a1; }
+
+.phone-body { padding:0; }
+
+/* ── Page background uses industry palette ── */
+.page-bg {
+  padding:18px 16px 20px;
+}
+
+/* ── Service header ── */
+.svc-name {
+  font-size:19px; font-weight:800; color:#0a0a0a;
+  line-height:1.15; margin-bottom:3px;
+}
+.svc-meta {
+  font-size:12px; color:#737373;
+  display:flex; align-items:center; gap:5px; margin-bottom:16px;
+}
+.svc-price { font-size:13px; font-weight:700; color:#0a0a0a; }
+.sep { color:#d4d4d4; }
+
+/* ── State banner ── */
+.state-banner {
+  display:flex; align-items:center; gap:7px;
+  padding:9px 12px; border-radius:11px; margin-bottom:14px;
+  font-size:12.5px; font-weight:600;
+}
+
+/* ── Chip row ── */
+.slot-quick-label {
+  font-size:10px; font-weight:700; color:#a1a1a1;
+  text-transform:uppercase; letter-spacing:.07em; margin-bottom:9px;
+}
+.chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+.chip {
+  display:flex; flex-direction:column; align-items:center;
+  padding:8px 13px 7px;
+  border-radius:11px;
+  border:1.5px solid #e5e5e5;
+  background:#fff;
+  font-size:14px; font-weight:700; color:#0a0a0a;
+  min-width:58px; text-align:center;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04), 0 2px 5px rgba(0,0,0,0.04);
+  line-height:1.15;
+}
+.chip-sub { font-size:10px; font-weight:400; color:#a1a1a1; margin-top:1px; }
+.chip.selected { /* overridden per variant */ }
+.chip.black { background:#0a0a0a; border-color:#0a0a0a; color:#fff; }
+.chip.black .chip-sub { color:rgba(255,255,255,0.55); }
+
+/* ── Calendar link ── */
+.cal-link {
+  font-size:12px; font-weight:600; color:#525252;
+  border-bottom:1px solid #d4d4d4; padding-bottom:1px;
+  display:inline-block; margin-bottom:16px; cursor:pointer;
+}
+
+/* ── CTA button ── */
+.cta-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:15px 16px;
+  border:none; border-radius:14px;
+  font-size:15px; font-weight:700; color:#fff;
+  cursor:pointer; text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.10), 0 6px 18px rgba(0,0,0,0.14);
+  margin-bottom:8px;
+}
+.cta-btn.black { background:#0a0a0a; }
+.cta-secondary {
+  display:block; width:100%; padding:12px;
+  font-size:13px; font-weight:500; color:#737373;
+  background:none; border:none; cursor:pointer; text-align:center;
+}
+
+/* ── Annotation ── */
+.annotation {
+  max-width:360px; margin:10px auto 0;
+  background:#fafafa; border:1px solid #e5e5e5; border-radius:11px;
+  padding:11px 14px;
+}
+.annotation ul { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.annotation li { font-size:11.5px; color:#525252; line-height:1.4; padding-left:16px; position:relative; }
+.annotation li::before { content:'·'; position:absolute; left:4px; color:#a1a1a1; }
+.annotation li.good::before { content:'✓'; color:#16a34a; }
+.annotation li.bad::before { content:'✗'; color:#dc2626; }
+.annotation li.warn::before { content:'⚠'; color:#d97706; }
+
+/* ── Verdict box ── */
+.verdict-row { max-width:960px; margin:0 auto 48px; }
+.verdict-box {
+  background:#0a0a0a; border-radius:14px; padding:20px 22px; color:#fff;
+}
+.verdict-box h2 { font-size:13px; font-weight:700; color:#737373; text-transform:uppercase; letter-spacing:.07em; margin-bottom:14px; }
+.verdict-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.verdict-card { background:#1a1a1a; border-radius:10px; padding:12px 14px; }
+.verdict-card-title { font-size:11px; font-weight:700; color:#737373; margin-bottom:5px; letter-spacing:.04em; }
+.verdict-card-body { font-size:12.5px; line-height:1.5; color:#e5e5e5; }
+
+@media (max-width:600px) {
+  .compare-pair { grid-template-columns:1fr; }
+  .verdict-grid { grid-template-columns:1fr; }
+  body { padding:20px 12px 60px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Variant CTA · Black vs Palette Accent</h1>
+<div class="subtitle">
+  5 industries · each shown with <strong>black CTA (current)</strong> vs <strong>palette-accent CTA (proposed)</strong><br>
+  Contrast ratio shown per variant · WCAG AA minimum = 4.5:1 for normal text on colored bg
+</div>
+
+<!-- ══════════════════════════════ BEAUTY ══════════════════════════════ -->
+<div class="industry-block">
+  <div class="industry-header">
+    <span class="industry-name">💆 Beauty / Spa</span>
+    <span class="industry-tag">data-industry="beauty"</span>
+    <span class="contrast-tag contrast-fail">Accent #c98c80 · 2.8:1 FAIL ✗</span>
+  </div>
+  <div class="compare-pair">
+    <!-- BLACK -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill pill-black">BLACK</span>
+          <span class="phone-label-text">current · #0a0a0a</span>
+        </div>
+        <div class="page-bg" style="background:#fff;">
+          <div class="svc-name">นวดหน้า</div>
+          <div class="svc-meta"><span>นวดกดจุด</span><span class="sep">·</span><span>60 นาที</span><span class="sep">·</span><span class="svc-price">฿650</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip black">10:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">13:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">16:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">10:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn black">จองเลย · วันนี้ 10:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">21:1 contrast · WCAG AAA</li>
+        <li class="good">สื่อถึง "commit money" ชัดเจน · premium neutral</li>
+        <li>ไม่ express ว่าเป็น beauty/spa identity</li>
+      </ul></div>
+    </div>
+    <!-- PALETTE ACCENT -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill" style="background:#c98c80;color:#fff;">ACCENT</span>
+          <span class="phone-label-text">proposed · #c98c80</span>
+        </div>
+        <div class="page-bg" style="background:#fef3f2;">
+          <div class="svc-name">นวดหน้า</div>
+          <div class="svc-meta"><span>นวดกดจุด</span><span class="sep">·</span><span>60 นาที</span><span class="sep">·</span><span class="svc-price">฿650</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip" style="background:#c98c80;border-color:#c98c80;color:#fff;">10:00<span class="chip-sub" style="color:rgba(255,255,255,0.6)">วันนี้</span></div>
+            <div class="chip">13:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">16:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">10:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn" style="background:#c98c80;">จองเลย · วันนี้ 10:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="bad">2.8:1 contrast · FAILS WCAG AA · ตัวหนังสือขาวอ่านยาก</li>
+        <li class="bad">สีชมพูอ่อนบน background ชมพู → "ปุ่มหาย" ไม่ pop</li>
+        <li class="warn">ดูเหมือนปุ่มที่ disabled มากกว่า active</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ WELLNESS ══════════════════════════════ -->
+<div class="industry-block">
+  <div class="industry-header">
+    <span class="industry-name">🌿 Wellness / Massage</span>
+    <span class="industry-tag">data-industry="wellness"</span>
+    <span class="contrast-tag contrast-warn">Accent #6b8e7f · 4.7:1 PASS (barely)</span>
+  </div>
+  <div class="compare-pair">
+    <!-- BLACK -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill pill-black">BLACK</span>
+          <span class="phone-label-text">current · #0a0a0a</span>
+        </div>
+        <div class="page-bg" style="background:#fff;">
+          <div class="svc-name">นวดตัวทั้งตัว</div>
+          <div class="svc-meta"><span>Swedish</span><span class="sep">·</span><span>90 นาที</span><span class="sep">·</span><span class="svc-price">฿900</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip black">09:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">11:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">14:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">09:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn black">จองเลย · วันนี้ 09:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">21:1 contrast · สม่ำเสมอทุกร้าน · ไม่ต้องคิด</li>
+        <li class="good">Black + green palette bg → clean contrast</li>
+      </ul></div>
+    </div>
+    <!-- PALETTE ACCENT -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill" style="background:#6b8e7f;color:#fff;">ACCENT</span>
+          <span class="phone-label-text">proposed · #6b8e7f</span>
+        </div>
+        <div class="page-bg" style="background:#f0ebe3;">
+          <div class="svc-name">นวดตัวทั้งตัว</div>
+          <div class="svc-meta"><span>Swedish</span><span class="sep">·</span><span>90 นาที</span><span class="sep">·</span><span class="svc-price">฿900</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip" style="background:#6b8e7f;border-color:#6b8e7f;color:#fff;">09:00<span class="chip-sub" style="color:rgba(255,255,255,0.6)">วันนี้</span></div>
+            <div class="chip">11:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">14:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">09:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn" style="background:#6b8e7f;">จองเลย · วันนี้ 09:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="warn">4.7:1 · ผ่าน AA แต่แทบจะ border-line · ไม่ comfortable</li>
+        <li class="warn">Sage green button บน sage-tinted bg → ปุ่มกลืนกับหน้า</li>
+        <li class="good">Identity ชัด — ดูเป็น wellness จริง</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ NAIL / CAFE ══════════════════════════════ -->
+<div class="industry-block">
+  <div class="industry-header">
+    <span class="industry-name">💅 Nail Studio · ☕ Café</span>
+    <span class="industry-tag">data-industry="nail" / "cafe"</span>
+    <span class="contrast-tag contrast-pass">Accent #7a5c42 · 5.6:1 PASS ✓</span>
+  </div>
+  <div class="compare-pair">
+    <!-- BLACK -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill pill-black">BLACK</span>
+          <span class="phone-label-text">current · #0a0a0a</span>
+        </div>
+        <div class="page-bg" style="background:#fff;">
+          <div class="svc-name">เจลสีธรรมชาติ</div>
+          <div class="svc-meta"><span>เจลครบชุด</span><span class="sep">·</span><span>90 นาที</span><span class="sep">·</span><span class="svc-price">฿450</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip black">10:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">12:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">15:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">10:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn black">จองเลย · วันนี้ 10:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">21:1 · สะอาด · premium neutral</li>
+        <li>Warm brown bg + black CTA → classic · ไม่ขัดกัน</li>
+      </ul></div>
+    </div>
+    <!-- PALETTE ACCENT -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill" style="background:#7a5c42;color:#fff;">ACCENT</span>
+          <span class="phone-label-text">proposed · #7a5c42</span>
+        </div>
+        <div class="page-bg" style="background:#f4e4d4;">
+          <div class="svc-name">เจลสีธรรมชาติ</div>
+          <div class="svc-meta"><span>เจลครบชุด</span><span class="sep">·</span><span>90 นาที</span><span class="sep">·</span><span class="svc-price">฿450</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip" style="background:#7a5c42;border-color:#7a5c42;color:#fff;">10:00<span class="chip-sub" style="color:rgba(255,255,255,0.6)">วันนี้</span></div>
+            <div class="chip">12:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">15:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">10:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn" style="background:#7a5c42;">จองเลย · วันนี้ 10:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">5.6:1 · passes AA</li>
+        <li class="good">Warm brown CTA + warm brown bg → coherent · ดูเป็น identity</li>
+        <li class="warn">แต่ยังไม่ต่างจาก background มากพอ · ปุ่มไม่ "pop"</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ SALON ══════════════════════════════ -->
+<div class="industry-block">
+  <div class="industry-header">
+    <span class="industry-name">✂️ Hair Salon</span>
+    <span class="industry-tag">data-industry="salon"</span>
+    <span class="contrast-tag contrast-pass">Accent #3f3a35 · 11.5:1 PASS ✓</span>
+  </div>
+  <div class="compare-pair">
+    <!-- BLACK -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill pill-black">BLACK</span>
+          <span class="phone-label-text">current · #0a0a0a</span>
+        </div>
+        <div class="page-bg" style="background:#fff;">
+          <div class="svc-name">ตัดผมชาย</div>
+          <div class="svc-meta"><span>Scissor cut</span><span class="sep">·</span><span>45 นาที</span><span class="sep">·</span><span class="svc-price">฿280</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip black">11:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">13:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">16:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">11:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn black">จองเลย · วันนี้ 11:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">21:1 · salon = neutral/minimal industry → black fits perfectly</li>
+      </ul></div>
+    </div>
+    <!-- PALETTE ACCENT -->
+    <div>
+      <div class="phone">
+        <div class="phone-label">
+          <span class="pill" style="background:#3f3a35;color:#fff;">ACCENT</span>
+          <span class="phone-label-text">proposed · #3f3a35</span>
+        </div>
+        <div class="page-bg" style="background:#f5f5f5;">
+          <div class="svc-name">ตัดผมชาย</div>
+          <div class="svc-meta"><span>Scissor cut</span><span class="sep">·</span><span>45 นาที</span><span class="sep">·</span><span class="svc-price">฿280</span></div>
+          <div class="state-banner" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+            <span>🟢</span><span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+          </div>
+          <div class="slot-quick-label">เลือกด่วน</div>
+          <div class="chips">
+            <div class="chip" style="background:#3f3a35;border-color:#3f3a35;color:#fff;">11:00<span class="chip-sub" style="color:rgba(255,255,255,0.6)">วันนี้</span></div>
+            <div class="chip">13:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">16:00<span class="chip-sub">วันนี้</span></div>
+            <div class="chip">11:00<span class="chip-sub">พรุ่งนี้</span></div>
+          </div>
+          <a class="cal-link">ดูทุกวันในปฏิทิน →</a>
+          <button class="cta-btn" style="background:#3f3a35;">จองเลย · วันนี้ 11:00</button>
+          <button class="cta-secondary">ซื้อคูปองเก็บไว้ก็ได้</button>
+        </div>
+      </div>
+      <div class="annotation"><ul>
+        <li class="good">11.5:1 · excellent contrast</li>
+        <li class="good">แทบ identical กับ black · ผู้ใช้ไม่รู้สึกต่างเลย</li>
+        <li>เปลี่ยนแต่ code · ผลลัพธ์ = เหมือนเดิม · ไม่ได้อะไรเพิ่ม</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ VERDICT ══════════════════════════════ -->
+<div class="verdict-row">
+  <div class="verdict-box">
+    <h2>Verdict · ตัดสินใจ</h2>
+    <div class="verdict-grid">
+      <div class="verdict-card">
+        <div class="verdict-card-title">❌ ทำไมไม่ควรใช้ palette-accent บน CTA</div>
+        <div class="verdict-card-body">
+          Beauty = #c98c80 fails contrast (2.8:1)<br>
+          Wellness = #6b8e7f barely passes, gลืนกับ bg<br>
+          Nail/Cafe = pops less than black on warm bg<br>
+          Salon = same as black, ไม่ได้อะไรเพิ่ม<br><br>
+          <strong>Root cause:</strong> palette colors were designed for atmospheric large areas (cover canvas) — not interactive UI chrome. Same color reads differently at 4:5 hero vs 48px button.
+        </div>
+      </div>
+      <div class="verdict-card">
+        <div class="verdict-card-title">✅ ทำอะไรแทน</div>
+        <div class="verdict-card-body">
+          <strong>CTA stays black always</strong> — the commit action must be universal, high-contrast, predictable. Apple Pay button doesn't change color per merchant.<br><br>
+          <strong>Variant expresses on:</strong><br>
+          · Page background color (--pal-bg) ✓<br>
+          · Selected chip border color (subtle tint)<br>
+          · Cover canvas · brand mark colors ✓<br>
+          · Service card border/tint ✓<br>
+          <strong>NOT on:</strong> CTA button fill, /payment chrome
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #2a2a2a;font-size:12px;color:#525252;">
+      Exception: chip selected state can use a very dark (≥7:1) version of --pal-deep. For beauty: use --pal-text (#4a1f1a) not --pal-deep (#c98c80). But at that point it's just "dark" — black is simpler.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

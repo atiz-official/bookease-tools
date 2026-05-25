@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appointments toolbar · OLD vs NEW · Apple/Linear pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    background: #f1f5f9; color: #0f172a; line-height: 1.5;
+    padding: 32px 16px 60px;
+  }
+  .header { max-width: 1480px; margin: 0 auto 24px; text-align: center; }
+  .header h1 {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .header h1 .book { color: #1E40AF; }
+  .header h1 .ease { color: #38BDF8; }
+  .header p { color: #64748b; font-size: 13px; }
+
+  .section-label {
+    max-width: 1480px; margin: 28px auto 16px;
+    font-size: 18px; font-weight: 700; color: #0f172a;
+    padding-left: 8px; border-left: 3px solid #1E40AF;
+  }
+
+  .grid-2 {
+    max-width: 1480px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;
+  }
+  @media (max-width: 920px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .col-label {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;
+  }
+  .col-label .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; margin-right: 8px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .col-label.old .badge { background: #fee2e2; color: #991b1b; }
+  .col-label.new .badge { background: #dcfce7; color: #166534; }
+  .col-label h2 { font-size: 16px; font-weight: 700; display: inline-block; }
+  .col-label .subline { color: #64748b; font-size: 12px; margin-top: 4px; }
+
+  .phone-shell {
+    background: #1a1a1a;
+    border-radius: 38px;
+    padding: 7px;
+    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.18);
+    margin: 0 auto;
+    width: 380px;
+  }
+  .phone-screen {
+    border-radius: 30px; overflow: hidden;
+    height: 700px;
+    background: #ffffff;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .notch-row { height: 28px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+  .notch { width: 90px; height: 22px; background: #1a1a1a; border-radius: 12px; }
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px 4px; font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+
+  /* ========== shared toolbar styles ========== */
+  .toolbar {
+    background: #f8fafc;
+    padding: 12px 14px;
+    flex-shrink: 0;
+  }
+  .toolbar.dim { background: #fef3c7; } /* indicate junior pattern */
+  .toolbar-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .toolbar-row:last-child { margin-bottom: 0; }
+  .date-stepper {
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 700; font-size: 14px; color: #0f172a;
+  }
+  .date-stepper .arrow {
+    color: #94a3b8; font-size: 14px; cursor: pointer;
+    width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .view-toggle {
+    display: inline-flex; gap: 0; border: 1px solid #e2e8f0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .view-toggle button {
+    background: #fff; border: none; padding: 6px 8px;
+    cursor: pointer; color: #94a3b8;
+  }
+  .view-toggle button.active { background: #f1f5f9; color: #0f172a; }
+  .fab-plus {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #38BDF8; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: none; font-size: 20px; font-weight: 600;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+  }
+  .search-bar {
+    flex: 1;
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 999px; padding: 9px 14px;
+    font-size: 12px; color: #94a3b8;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .qr-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #f1f5f9; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #475569;
+  }
+  .filter-dropdown {
+    flex: 1;
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 999px; padding: 9px 14px;
+    font-size: 12px; color: #475569; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: space-between;
+  }
+  .filter-dropdown::after { content: "▾"; color: #94a3b8; }
+  .search-icon-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #475569;
+  }
+
+  /* ========== body ========== */
+  .body { flex: 1; padding: 24px 18px; overflow-y: auto; }
+  .empty {
+    text-align: center; padding-top: 48px;
+  }
+  .empty .icon { color: #cbd5e1; margin: 0 auto 16px; }
+  .empty .title { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  .empty .sub { font-size: 12.5px; color: #64748b; margin-bottom: 22px; }
+  .empty .cta {
+    background: #0a0a0a; color: #fff;
+    padding: 12px 22px; border: none; border-radius: 999px;
+    font-size: 13px; font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .empty .junior-text {
+    font-size: 12.5px; color: #64748b;
+    line-height: 1.6;
+  }
+  .empty .junior-plus {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #38BDF8; color: #fff;
+    font-weight: 700; font-size: 12px;
+  }
+
+  .bottom {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border-top: 1px solid #e2e8f0;
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: #94a3b8;
+  }
+  .tabbar {
+    flex-shrink: 0;
+    border-top: 1px solid #e2e8f0;
+    display: flex; justify-content: space-around;
+    padding: 8px 0;
+    font-size: 10px;
+    color: #94a3b8;
+  }
+  .tabbar .tab { padding: 4px 16px; }
+  .tabbar .tab.active { color: #0f172a; border-top: 2px solid #1E40AF; padding-top: 6px; }
+
+  /* booking row · for populated state */
+  .booking-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; background: #fff;
+    border: 1px solid #e2e8f0; border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .booking-row .time {
+    font-weight: 800; font-size: 14px;
+    color: #0f172a; tabular-nums; min-width: 56px;
+  }
+  .booking-row .info { flex: 1; }
+  .booking-row .name { font-weight: 600; font-size: 13px; color: #1e293b; }
+  .booking-row .svc { font-size: 11px; color: #64748b; }
+  .booking-row .price { font-weight: 700; font-size: 12px; color: #16a34a; }
+
+  /* ========== annotations ========== */
+  .anno {
+    background: #fff; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 14px 16px; margin-top: 12px;
+  }
+  .anno h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .anno ul { list-style: none; padding: 0; }
+  .anno li { font-size: 12px; color: #475569; padding: 3px 0; line-height: 1.6; }
+  .anno li.bad::before { content: "❌ "; }
+  .anno li.good::before { content: "✅ "; }
+  .anno li.cut::before { content: "✂️ "; }
+  .anno li.measure::before { content: "📏 "; }
+
+  .verdict {
+    max-width: 1480px; margin: 28px auto 0;
+    background: #fff; border-radius: 14px; padding: 20px 24px;
+    border: 1px solid #e2e8f0;
+  }
+  .verdict h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .verdict p { font-size: 13px; color: #475569; line-height: 1.65; margin-bottom: 6px; }
+  .verdict code {
+    background: #f1f5f9; padding: 2px 5px; border-radius: 3px;
+    font-family: 'Inter', monospace; font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Appointments · <span class="book">Book</span><span class="ease">Ease</span> · OLD vs NEW</h1>
+  <p>Top toolbar audit · Apple/Linear pattern · empty state vs populated</p>
+</div>
+
+<!-- ============ Empty state comparison ============ -->
+<div class="section-label">1) Empty state · Day-1 spa · ยังไม่มี booking</div>
+
+<div class="grid-2">
+
+  <!-- OLD · empty -->
+  <div>
+    <div class="col-label old">
+      <span class="badge">OLD · LIVE NOW</span>
+      <h2>Junior pattern</h2>
+      <p class="subline">
+        Search + filter + QR ทุกอย่าง always-shown · กิน chrome ~140px · 90%+ users ไม่ใช้.
+      </p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>9:41</span><span>📶</span></div>
+        <div class="toolbar dim">
+          <div class="toolbar-row">
+            <span class="date-stepper">
+              <span class="arrow">‹</span>
+              วันนี้ · ศ · 8 พ.ค.
+              <span class="arrow">›</span>
+            </span>
+            <div style="margin-left:auto"></div>
+            <div class="view-toggle">
+              <button class="active">☰</button>
+              <button>▦</button>
+            </div>
+            <button class="fab-plus">+</button>
+          </div>
+          <div class="toolbar-row">
+            <div class="search-bar">🔍 ค้นหาชื่อ, เบอร์โทร, รหัสการจอง...</div>
+            <button class="qr-btn">📷</button>
+          </div>
+          <div class="toolbar-row">
+            <div class="filter-dropdown">พนักงานทั้งหมด</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            <div class="title">ยังไม่มีนัดวันนี้</div>
+            <div class="sub">แชร์ลิงก์ร้านให้ลูกค้า · เริ่มรับการจอง</div>
+            <button class="cta">แชร์ลิงก์ร้าน</button>
+          </div>
+        </div>
+        <div class="bottom">
+          <span>รวม: 0 การจอง</span>
+          <span>฿0</span>
+        </div>
+        <div class="tabbar">
+          <span class="tab active">📅 นัด</span>
+          <span class="tab">💳 ออเดอร์</span>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>ปัญหา · junior chrome</h3>
+      <ul>
+        <li class="bad">Search bar กิน 1 row เต็ม · 90%+ ไม่ใช้</li>
+        <li class="bad">QR ค้างไว้ next to search · ไม่มี context</li>
+        <li class="bad">Filter "พนักงานทั้งหมด" ลอย · สับสน</li>
+        <li class="bad">Bottom "รวม: 0 · ฿0" waste space</li>
+        <li class="measure">Total chrome ~140 px · กิน 20% viewport</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- NEW · empty -->
+  <div>
+    <div class="col-label new">
+      <span class="badge">⭐ NEW · proposed</span>
+      <h2>Apple Reminders empty</h2>
+      <p class="subline">
+        Search · filter · QR ทั้งหมด hide เมื่อไม่มี data · clean first paint · 1 hero CTA.
+      </p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>9:41</span><span>📶</span></div>
+        <div class="toolbar">
+          <div class="toolbar-row">
+            <span class="date-stepper">
+              <span class="arrow">‹</span>
+              วันนี้ · ศ · 8 พ.ค.
+              <span class="arrow">›</span>
+            </span>
+            <div style="margin-left:auto"></div>
+            <div class="view-toggle">
+              <button class="active">☰</button>
+              <button>▦</button>
+            </div>
+            <button class="fab-plus">+</button>
+          </div>
+          <!-- NO search · NO filter · NO QR row when 0 bookings -->
+        </div>
+        <div class="body">
+          <div class="empty" style="padding-top: 80px">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            <div class="title" style="font-size:17px">ยังไม่มีนัดวันนี้</div>
+            <div class="sub">แชร์ลิงก์ร้านให้ลูกค้า · เริ่มรับการจอง</div>
+            <button class="cta">แชร์ลิงก์ร้าน</button>
+          </div>
+        </div>
+        <!-- NO bottom counter when 0 -->
+        <div class="tabbar">
+          <span class="tab active">📅 นัด</span>
+          <span class="tab">💳 ออเดอร์</span>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>เปลี่ยนอะไร</h3>
+      <ul>
+        <li class="cut">Search bar · hide เมื่อ 0 bookings · Apple Mail/Reminders pattern</li>
+        <li class="cut">"พนักงานทั้งหมด" filter · hide เมื่อ 0 bookings</li>
+        <li class="cut">QR scan icon · move ไป Avatar menu (rare action · power-user)</li>
+        <li class="cut">"รวม: 0 · ฿0" footer · hide เมื่อ 0</li>
+        <li class="good">1 row chrome · clean · whitespace-led</li>
+        <li class="measure">Total chrome ~50 px (saved ~90 px = 13% viewport)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ Populated state comparison ============ -->
+<div class="section-label">2) Populated state · มี bookings · power-user surface</div>
+
+<div class="grid-2">
+
+  <!-- OLD · populated -->
+  <div>
+    <div class="col-label old">
+      <span class="badge">OLD · same chrome</span>
+      <h2>Junior · same heavy chrome</h2>
+      <p class="subline">
+        Search + filter + QR ยังอยู่เต็มเสมอ · เหมือน empty state · ไม่ปรับตาม context.
+      </p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>9:41</span><span>📶</span></div>
+        <div class="toolbar dim">
+          <div class="toolbar-row">
+            <span class="date-stepper">
+              <span class="arrow">‹</span>
+              วันนี้ · ศ · 8 พ.ค.
+              <span class="arrow">›</span>
+            </span>
+            <div style="margin-left:auto"></div>
+            <div class="view-toggle">
+              <button class="active">☰</button>
+              <button>▦</button>
+            </div>
+            <button class="fab-plus">+</button>
+          </div>
+          <div class="toolbar-row">
+            <div class="search-bar">🔍 ค้นหาชื่อ, เบอร์โทร, รหัสการจอง...</div>
+            <button class="qr-btn">📷</button>
+          </div>
+          <div class="toolbar-row">
+            <div class="filter-dropdown">พนักงานทั้งหมด</div>
+          </div>
+        </div>
+        <div class="body" style="padding: 12px">
+          <div class="booking-row">
+            <span class="time">10:00</span>
+            <div class="info">
+              <div class="name">คุณสมหญิง</div>
+              <div class="svc">นวดอโรมา · 60 min</div>
+            </div>
+            <span class="price">฿800</span>
+          </div>
+          <div class="booking-row">
+            <span class="time">14:30</span>
+            <div class="info">
+              <div class="name">คุณวรรณา</div>
+              <div class="svc">Spa pedicure · 90 min</div>
+            </div>
+            <span class="price">฿1,290</span>
+          </div>
+          <div class="booking-row">
+            <span class="time">16:00</span>
+            <div class="info">
+              <div class="name">คุณ Mike</div>
+              <div class="svc">Hair cut · 45 min</div>
+            </div>
+            <span class="price">฿500</span>
+          </div>
+        </div>
+        <div class="bottom">
+          <span>รวม: 3 การจอง</span>
+          <span>฿2,590</span>
+        </div>
+        <div class="tabbar">
+          <span class="tab active">📅 นัด</span>
+          <span class="tab">💳 ออเดอร์</span>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>ปัญหา · same as empty</h3>
+      <ul>
+        <li class="bad">Search ยัง full-width · เหลือบ่อยใช้แต่กิน vertical</li>
+        <li class="bad">Staff filter ยังอยู่ default "ทั้งหมด" · ไม่ active</li>
+        <li class="bad">QR scan ไม่มี context · ลูกค้ามาแล้วถึงใช้</li>
+        <li class="measure">Total chrome ~140 px ทั้ง empty + populated</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- NEW · populated -->
+  <div>
+    <div class="col-label new">
+      <span class="badge">⭐ NEW · context-aware</span>
+      <h2>Search collapses to icon</h2>
+      <p class="subline">
+        Search → magnifier icon (tap reveal) · iOS pattern · staff filter on-demand · QR ใน avatar menu.
+      </p>
+    </div>
+    <div class="phone-shell">
+      <div class="phone-screen">
+        <div class="notch-row"><div class="notch"></div></div>
+        <div class="status-bar"><span>9:41</span><span>📶</span></div>
+        <div class="toolbar">
+          <div class="toolbar-row">
+            <span class="date-stepper">
+              <span class="arrow">‹</span>
+              วันนี้ · ศ · 8 พ.ค.
+              <span class="arrow">›</span>
+            </span>
+            <div style="margin-left:auto"></div>
+            <button class="search-icon-btn">🔍</button>
+            <div class="view-toggle">
+              <button class="active">☰</button>
+              <button>▦</button>
+            </div>
+            <button class="fab-plus">+</button>
+          </div>
+          <!-- staff filter only when needed (e.g. >1 staff working today) · here hidden -->
+        </div>
+        <div class="body" style="padding: 12px">
+          <div class="booking-row">
+            <span class="time">10:00</span>
+            <div class="info">
+              <div class="name">คุณสมหญิง</div>
+              <div class="svc">นวดอโรมา · 60 min</div>
+            </div>
+            <span class="price">฿800</span>
+          </div>
+          <div class="booking-row">
+            <span class="time">14:30</span>
+            <div class="info">
+              <div class="name">คุณวรรณา</div>
+              <div class="svc">Spa pedicure · 90 min</div>
+            </div>
+            <span class="price">฿1,290</span>
+          </div>
+          <div class="booking-row">
+            <span class="time">16:00</span>
+            <div class="info">
+              <div class="name">คุณ Mike</div>
+              <div class="svc">Hair cut · 45 min</div>
+            </div>
+            <span class="price">฿500</span>
+          </div>
+          <div class="booking-row">
+            <span class="time">17:30</span>
+            <div class="info">
+              <div class="name">คุณภัทร</div>
+              <div class="svc">Gel polish · 75 min</div>
+            </div>
+            <span class="price">฿890</span>
+          </div>
+        </div>
+        <div class="bottom">
+          <span>3 นัด · 1 รอชำระ</span>
+          <span>฿3,480</span>
+        </div>
+        <div class="tabbar">
+          <span class="tab active">📅 นัด</span>
+          <span class="tab">💳 ออเดอร์</span>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <h3>เปลี่ยนอะไร</h3>
+      <ul>
+        <li class="cut">Search bar → 🔍 icon · tap reveal sheet · iOS pattern · saves 44px row</li>
+        <li class="cut">Staff filter → on-demand only เมื่อ >1 staff working วันนี้</li>
+        <li class="cut">QR scan → moved to avatar menu (📷 เช็คอิน · ว้อยเชอร์)</li>
+        <li class="good">1 row chrome · same as empty state · consistent</li>
+        <li class="good">Bottom summary "3 นัด · 1 รอชำระ · ฿3,480" · richer info · same height</li>
+        <li class="good">+1 booking row visible (extra ~50 px usable space)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="verdict">
+  <h3>Steve Jobs + Elon · 4 fixes · low-effort high-impact</h3>
+  <p><b>1.</b> Hide search bar เมื่อ 0 bookings · 15 min · Apple Mail pattern</p>
+  <p><b>2.</b> Hide staff filter เมื่อ 0 bookings (or only 1 staff) · 10 min</p>
+  <p><b>3.</b> QR scan → avatar menu "📷 เช็คอิน · ว้อยเชอร์" · 10 min</p>
+  <p><b>4.</b> Search → icon-tap reveal เมื่อ populated · 15 min · iOS pattern</p>
+  <p style="margin-top:10px"><b>Total: ~50 min · ship · context-aware chrome · -90px first paint</b></p>
+  <p style="color:#94a3b8; font-size:11.5px; margin-top:8px">
+    Cross-product: same chrome shared with Ease POS V3/V4 · same TopHeader/DateStepper/ViewToggle/FAB primitives.
+    Apply fixes BookEase first · sync to Ease POS in next iteration.
+  </p>
+</div>
+
+</body>
+</html>

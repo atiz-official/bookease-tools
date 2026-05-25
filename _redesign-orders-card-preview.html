@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orders Card — Before / After</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e5e7eb;min-height:100vh;font-family:'Sarabun',system-ui,sans-serif;padding:40px 16px;display:flex;gap:32px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+
+.col{display:flex;flex-direction:column;align-items:center;gap:12px}
+.col-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:999px}
+.col-label.bug{background:#fee2e2;color:#991b1b}
+.col-label.fix{background:#dcfce7;color:#166534}
+
+/* phone shell */
+.phone{width:340px;background:#f9fafb;border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.topbar{background:#fff;padding:12px 16px 10px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0f172a}
+.topbar-sub{font-family:'Inter',sans-serif;font-size:11px;color:#94a3b8}
+.filter-row{background:#fff;padding:8px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px}
+.filter-chip{font-size:13px;color:#374151;padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;display:inline-flex;align-items:center;gap:4px}
+.cards-area{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* ──────── BEFORE card ──────── */
+.card-before{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.10)}
+.card-before header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 8px}
+.order-id-before{font-size:16px;font-weight:400;color:#757575}
+.price-before{font-size:24px;font-weight:800;color:#101828}
+.card-before-body{padding:0 16px 12px;display:flex;flex-direction:column;gap:2px}
+.customer-before{font-size:20px;font-weight:700;color:#4b5563;line-height:1.3}/* bold 20px — same as real code */
+.meta-before{font-size:16px;color:#4a5565;display:flex;justify-content:space-between}
+.source-walkin-before{font-size:16px;font-weight:500;color:#374151}
+
+/* ──────── AFTER card ──────── */
+.card-after{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.10)}
+.card-after header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 6px}
+.price-after-big{font-size:24px;font-weight:800;color:#101828}
+/* customer name = PRIMARY — bigger, darker */
+.customer-after{font-size:17px;font-weight:700;color:#0f172a;line-height:1.3;padding:0 16px 2px}
+.meta-after{font-size:14px;color:#64748b;padding:0 16px;display:flex;justify-content:space-between;align-items:center;padding-bottom:10px}
+/* booking ID = tiny receipt number */
+.receipt-id{font-family:'Inter',monospace;font-size:10px;color:#94a3b8;font-weight:400}
+.source-pill{font-size:12px;font-weight:600;color:#374151;background:#f1f5f9;padding:2px 8px;border-radius:999px}
+
+/* walk-in ghost avatar */
+.ghost-row{display:flex;align-items:center;gap:8px;padding:4px 16px 0}
+.avatar-ghost{width:28px;height:28px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#94a3b8;flex-shrink:0}
+.customer-after-name{font-size:17px;font-weight:700;color:#0f172a}
+.customer-after-anon{font-size:15px;font-weight:500;color:#94a3b8;font-style:italic}/* muted when fallback */
+
+/* ──────── summary bars ──────── */
+.summary-bar{background:#f9fafb;border-top:1px solid #f1f5f9;padding:12px 20px}
+
+/* BEFORE — 3 cols always */
+.summary-before{display:flex;align-items:center;justify-content:space-between}
+.sum-item{display:flex;align-items:center;gap:6px}
+.sum-label-be{font-size:13px;font-weight:500;color:#5777EF}
+.sum-label-pt{font-size:13px;font-weight:500;color:#16a34a}
+.sum-label-wk{font-size:13px;font-weight:500;color:#374151}
+.sum-price{font-size:13px;font-weight:700;color:#0f172a}
+.sum-divider{width:1px;height:20px;background:#d1d5db}
+
+/* AFTER — single line when all zero */
+.summary-after-zero{text-align:center;font-size:13px;color:#94a3b8;font-weight:500}
+.summary-after-mixed{display:flex;align-items:center;justify-content:space-between}
+
+/* annotation */
+.note{width:340px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.7}
+.note.red{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.note.green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.note b{font-weight:700}
+
+.divider{width:100%;height:1px;background:#e5e7eb;margin:4px 0}
+</style>
+</head>
+<body>
+
+<!-- ══════ BEFORE ══════ -->
+<div class="col">
+  <div class="col-label bug">🐛 ปัจจุบัน</div>
+  <div class="phone">
+    <div class="topbar">
+      <span class="topbar-title">วันนี้ · ส · 23 พ.ค.</span>
+      <span class="topbar-sub">ทุกช่องทาง ↓</span>
+    </div>
+    <div class="cards-area">
+
+      <!-- card 1: walk-in with no customer name -->
+      <div class="card-before">
+        <header>
+          <span class="order-id-before">BEW-6980980</span>
+          <span class="price-before">฿0</span>
+        </header>
+        <div class="card-before-body">
+          <div class="customer-before">-</div><!-- ← bare dash, 20px bold = wasted dominant line -->
+          <div class="meta-before">
+            <span>บริการทั่วไป · 23 พ.ค. 69, 01:00</span>
+            <span class="source-walkin-before">นัดเอง</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- card 2: real customer (for comparison) -->
+      <div class="card-before">
+        <header>
+          <span class="order-id-before">BEW-1234567</span>
+          <span class="price-before">฿500</span>
+        </header>
+        <div class="card-before-body">
+          <div class="customer-before">สมศรี มีนา</div>
+          <div class="meta-before">
+            <span>นวดไทย · 23 พ.ค. 69, 14:00</span>
+            <span class="source-walkin-before" style="color:#5777EF">BookEase</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- summary bar BEFORE: 3 always-visible cols -->
+    <div class="summary-bar">
+      <div class="summary-before">
+        <div class="sum-item">
+          <span class="sum-label-be">BookEase</span>
+          <span class="sum-price">฿500</span>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-item">
+          <span class="sum-label-pt">พาร์ทเนอร์</span>
+          <span class="sum-price">฿0</span><!-- ← always shows even when zero -->
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-item">
+          <span class="sum-label-wk">นัดเอง</span>
+          <span class="sum-price">฿0</span><!-- ← always shows even when zero -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note red">
+    ❌ <b>"-" customer name</b> — 20px bold dash = dominant empty line<br>
+    ❌ <b>พาร์ทเนอร์ ฿0 · นัดเอง ฿0</b> — zero-value channels clutter footer<br>
+    ❌ <b>booking ID กับ customer name ไม่ชัดว่าอะไรสำคัญกว่า</b>
+  </div>
+</div>
+
+<!-- ══════ AFTER ══════ -->
+<div class="col">
+  <div class="col-label fix">✅ หลังแก้ไข</div>
+  <div class="phone">
+    <div class="topbar">
+      <span class="topbar-title">วันนี้ · ส · 23 พ.ค.</span>
+      <span class="topbar-sub">ทุกช่องทาง ↓</span>
+    </div>
+    <div class="cards-area">
+
+      <!-- card 1: walk-in no customer name → ghost avatar + ลูกค้าหน้าร้าน (muted) -->
+      <div class="card-after">
+        <header>
+          <span class="receipt-id">BEW-6980980</span><!-- ← tiny gray, receipt style -->
+          <span class="price-after-big">฿0</span>
+        </header>
+        <div class="ghost-row">
+          <div class="avatar-ghost">ล</div><!-- initial of ลูกค้า -->
+          <span class="customer-after-anon">ลูกค้าหน้าร้าน</span><!-- muted italic = fallback, not real name -->
+        </div>
+        <div class="meta-after" style="margin-top:6px">
+          <span>บริการทั่วไป · 23 พ.ค. 69, 01:00</span>
+          <span class="source-pill">นัดเอง</span>
+        </div>
+      </div>
+
+      <!-- card 2: real customer (for comparison) -->
+      <div class="card-after">
+        <header>
+          <span class="receipt-id">BEW-1234567</span>
+          <span class="price-after-big">฿500</span>
+        </header>
+        <div class="ghost-row">
+          <div class="avatar-ghost" style="background:#eff6ff;color:#3b82f6">ส</div>
+          <span class="customer-after-name">สมศรี มีนา</span><!-- real name = full weight dark -->
+        </div>
+        <div class="meta-after" style="margin-top:6px">
+          <span>นวดไทย · 23 พ.ค. 69, 14:00</span>
+          <span class="source-pill" style="color:#5777EF;background:#eff6ff">BookEase</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- summary bar AFTER: only non-zero channels OR single รวม line -->
+    <div class="summary-bar">
+      <!-- scenario A: only 1 channel has revenue → show only that one + รวม -->
+      <div class="summary-after-mixed">
+        <div class="sum-item">
+          <span class="sum-label-be">BookEase</span>
+          <span class="sum-price">฿500</span>
+        </div>
+        <div style="font-size:13px;color:#94a3b8">รวม <b style="color:#0f172a">฿500</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note green">
+    ✅ <b>Booking ID = receipt 10px gray</b> — ไม่แข่งกับ customer name<br>
+    ✅ <b>Ghost avatar + "ลูกค้าหน้าร้าน" มืด italic</b> — ชัดว่า fallback, ไม่ใช่ชื่อจริง<br>
+    ✅ <b>Summary: only non-zero channels + รวม</b> — สะอาด ไม่โชว์ ฿0 ที่ไม่มีความหมาย
+  </div>
+</div>
+
+<!-- ══════ EDGE CASE: all zero ══════ -->
+<div class="col">
+  <div class="col-label" style="background:#fef9c3;color:#854d0e">edge case · all ฿0</div>
+  <div class="phone">
+    <div class="topbar">
+      <span class="topbar-title">วันนี้ · ส · 23 พ.ค.</span>
+      <span class="topbar-sub">ทุกช่องทาง ↓</span>
+    </div>
+    <div class="cards-area">
+      <div class="card-after">
+        <header>
+          <span class="receipt-id">BEW-6980980</span>
+          <span class="price-after-big">฿0</span>
+        </header>
+        <div class="ghost-row">
+          <div class="avatar-ghost">ล</div>
+          <span class="customer-after-anon">ลูกค้าหน้าร้าน</span>
+        </div>
+        <div class="meta-after" style="margin-top:6px">
+          <span>บริการทั่วไป · 23 พ.ค. 69, 01:00</span>
+          <span class="source-pill">นัดเอง</span>
+        </div>
+      </div>
+    </div>
+    <!-- all zero → collapse to single centered line -->
+    <div class="summary-bar" style="text-align:center">
+      <span class="summary-after-zero">รวมวันนี้ · <b style="color:#0f172a">฿0</b></span>
+    </div>
+  </div>
+  <div class="note" style="background:#fefce8;border:1px solid #fde68a;color:#854d0e">
+    ⚡ เมื่อทุก channel เป็น ฿0 → collapse เหลือแค่ "รวมวันนี้ · ฿0"<br>
+    ไม่โชว์ 3 คอลัมน์ที่ไม่มีข้อมูล
+  </div>
+</div>
+
+</body>
+</html>

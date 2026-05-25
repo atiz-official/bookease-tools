@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop UI · ของเดิม vs เสนอใหม่ (6 tweaks · Elon/Apple)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0a;--head:#134783;--link:#5777EF;--mut:#6b7280;--faint:#9ca3af;
+        --line:#e5e7eb;--warn:#ea580c;--okbg:#ecfdf5;--okbd:#a7f3d0;--okfg:#047857}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Inter',sans-serif;background:#eef0f3;color:var(--ink);
+       padding:24px 14px 70px;-webkit-font-smoothing:antialiased}
+  .hd{max-width:940px;margin:0 auto 22px;text-align:center}
+  .hd h1{font-size:21px;font-weight:800}
+  .hd p{font-size:13px;color:#5b6370;margin-top:6px;line-height:1.55}
+  .row{max-width:940px;margin:0 auto 18px;background:#fff;border:1px solid var(--line);
+       border-radius:18px;overflow:hidden}
+  .row > .t{padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;
+       font-weight:800}
+  .row > .t .n{display:inline-block;width:22px;height:22px;border-radius:50%;
+       background:var(--ink);color:#fff;text-align:center;line-height:22px;font-size:12px;
+       margin-right:9px;font-family:'Inter'}
+  .row > .t .lens{float:right;font-size:11px;font-weight:700;color:var(--mut)}
+  .cmp{display:flex;flex-wrap:wrap}
+  .side{flex:1;min-width:300px;padding:20px 18px}
+  .side.a{background:#fbfbfc;border-right:1px dashed var(--line)}
+  .tag{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+       margin-bottom:12px}
+  .tag.a{color:#b91c1c}.tag.b{color:#047857}
+  .cap{font-size:12px;color:var(--mut);margin-top:12px;line-height:1.5}
+  .cap b{color:var(--ink)}
+
+  /* ---- shared shop-frontend primitives (faithful to screenshots) ---- */
+  .svc{display:flex;align-items:center;gap:13px;padding:11px 2px}
+  .svc + .svc{border-top:1px solid #f1f2f4}
+  .thumb-bad{width:46px;height:46px;border-radius:11px;background:#eef1f4;
+       display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .thumb-bad svg{width:24px;height:24px;color:#c2c8d0}
+  .thumb-mono{width:46px;height:46px;border-radius:11px;flex-shrink:0;display:flex;
+       align-items:center;justify-content:center;font-weight:800;font-size:18px;
+       color:#5a4a8a;background:#efeafc}
+  .svc .nm{font-size:15px;font-weight:700;color:var(--ink)}
+  .svc .sub{font-size:13px;color:var(--mut);margin-top:2px}
+  .svc .sub .pipe{color:#cbd2da}
+
+  .savebtn{display:block;width:100%;text-align:center;padding:15px;border-radius:14px;
+       font-size:15px;font-weight:800;border:none;font-family:inherit}
+  .savebtn.old{background:#8b8bf5;color:#fff}
+  .savebtn.new{background:#0a0a0a;color:#fff}
+
+  .tchip{flex:1;text-align:center;padding:14px 0;border-radius:13px;font-size:18px;
+       font-weight:800;font-variant-numeric:tabular-nums}
+  .tchip.neu{background:#f6f7f9;border:1px solid #e3e6ea;color:var(--ink)}
+  .tchip.grn{background:var(--okbg);border:1px solid var(--okbd);color:var(--okfg)}
+  .trow{display:flex;align-items:center;gap:12px}
+  .trow .arr{color:var(--faint);font-size:18px}
+
+  .shdr{display:flex;align-items:center;gap:10px;padding:14px 4px;border-bottom:1px solid var(--line)}
+  .shdr .bk{font-size:20px;color:var(--ink)}
+  .shdr .ti{font-size:19px;font-weight:800}
+  .shdr .wm{margin-left:auto;font-family:'Inter';font-weight:800;font-size:17px;letter-spacing:-.01em}
+  .shdr .wm .b{color:#1E40AF}.shdr .wm .e{color:#38BDF8}
+
+  .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 0}
+  .empty .ic{width:60px;height:60px;border-radius:16px;border:2px solid #e3e6ea;
+       display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .empty .ic svg{width:26px;height:26px;color:#9aa2ad}
+  .empty .h{font-size:16px;font-weight:800}
+  .empty .s{font-size:12.5px;color:var(--mut);margin-top:5px}
+
+  @media(max-width:680px){.side.a{border-right:none;border-bottom:1px dashed var(--line)}}
+</style>
+</head>
+<body>
+  <div class="hd">
+    <h1>Shop UI · ของเดิม vs เสนอใหม่</h1>
+    <p>6 tweaks เล็ก · CSS/markup ล้วน · ไม่แตะ logic · ทำ batch เดียว.
+    ซ้าย = ของเดิม (ตาม screenshot จริง) · ขวา = เสนอ (consistent กับ design system ที่ล็อก)</p>
+  </div>
+
+  <!-- 1 -->
+  <div class="row">
+    <div class="t"><span class="n">1</span>บริการ · รูป thumbnail<span class="lens">Apple craft · Elon "no part"</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <div class="svc">
+          <div class="thumb-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <div><div class="nm">นวด</div><div class="sub">60 นาที <span class="pipe">|</span> ฿500</div></div>
+        </div>
+        <div class="svc">
+          <div class="thumb-bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <div><div class="nm">นวดเท้า</div><div class="sub">90 นาที <span class="pipe">|</span> ฿800</div></div>
+        </div>
+        <div class="cap">ทุกบริการที่ OCR มา = <b>รูปแตก placeholder ภูเขา</b> · ดูเหมือนยังไม่เสร็จ</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <div class="svc">
+          <div class="thumb-mono">น</div>
+          <div><div class="nm">นวด</div><div class="sub">60 นาที · ฿500</div></div>
+        </div>
+        <div class="svc">
+          <div class="thumb-mono">น</div>
+          <div><div class="nm">นวดเท้า</div><div class="sub">90 นาที · ฿800</div></div>
+        </div>
+        <div class="cap">ไม่มีรูป → <b>monogram ตัวอักษรแรก</b> บนพื้นนุ่ม · ตั้งใจ ไม่แตก · (ถ้า merchant อัปรูปจริงก็ทับ)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="row">
+    <div class="t"><span class="n">2</span>ตัวคั่น duration · price<span class="lens">Apple consistency</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <div class="svc" style="padding-top:4px">
+          <div class="thumb-mono" style="background:#eef1f4;color:#aab2bd">น</div>
+          <div><div class="nm">นวด</div><div class="sub">60 นาที <span class="pipe" style="font-size:15px">|</span> ฿500</div></div>
+        </div>
+        <div class="cap">ใช้ <b>pipe |</b> — ระบบที่อื่นใช้ middle-dot · ทั้งหมด</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <div class="svc" style="padding-top:4px">
+          <div class="thumb-mono">น</div>
+          <div><div class="nm">นวด</div><div class="sub">60 นาที · ฿500</div></div>
+        </div>
+        <div class="cap"><b>· (middle-dot)</b> ชุดเดียวกับทั้งระบบ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="row">
+    <div class="t"><span class="n">3</span>ปุ่ม primary · บันทึกการตั้งค่า<span class="lens">Apple · 3-zone lock</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <button class="savebtn old">บันทึกการตั้งค่า</button>
+        <div class="cap">settings = <b>ม่วง #8b8bf5</b> · แต่ระบบ redesign ใช้ดำ (แชร์ลิงก์ร้าน ฯลฯ) → 2 สี primary</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <button class="savebtn new">บันทึกการตั้งค่า</button>
+        <div class="cap"><b>ดำ #0a0a0a</b> ชุดเดียวทั้งระบบ (commit/primary lock)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="row">
+    <div class="t"><span class="n">4</span>นัดเอง · ช่องเวลาเริ่ม–สิ้นสุด<span class="lens">Apple symmetry</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <div class="trow">
+          <div class="tchip neu">10:00</div><span class="arr">→</span><div class="tchip grn">11:00</div>
+        </div>
+        <div class="cap">เริ่ม=เทา · สิ้นสุด=<b>เขียว</b> ข้างเดียว · เน้นมั่ว (มันคือช่วงเดียวกัน)</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <div class="trow">
+          <div class="tchip neu">10:00</div><span class="arr">→</span><div class="tchip neu">11:00</div>
+        </div>
+        <div class="cap">2 ช่อง <b>สไตล์เดียวกัน</b> · เขียวเก็บไว้ใช้ตอน selected/active เท่านั้น</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="row">
+    <div class="t"><span class="n">5</span>Settings header · wordmark<span class="lens">Elon "ต้องมีไหม"</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <div class="shdr"><span class="bk">‹</span><span class="ti">ตั้งค่าร้าน</span><span class="wm"><span class="b">Book</span><span class="e">Ease</span></span></div>
+        <div class="cap">wordmark ขวาบน <b>ชนกับ title</b> · จอ internal อื่นไม่มี · zone ผิด (internal=POS ไม่ใช่ trust)</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <div class="shdr"><span class="bk">‹</span><span class="ti">ตั้งค่าร้าน</span></div>
+        <div class="cap">ตัด wordmark ออกจาก header internal · <b>title หายใจ</b> · ตรง zone lock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="row">
+    <div class="t"><span class="n">6</span>นัด tab · empty-state icon<span class="lens">Apple craft</span></div>
+    <div class="cmp">
+      <div class="side a">
+        <div class="tag a">เดิม</div>
+        <div class="empty">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></div>
+          <div class="h">ยังไม่มีนัดวันนี้</div>
+          <div class="s">แชร์ลิงก์ร้านให้ลูกค้า · เริ่มรับการจอง</div>
+        </div>
+        <div class="cap">ไอคอน <b>ลูกศร upload/share</b> สื่อ "ไม่มีนัด" ไม่ตรงความหมาย</div>
+      </div>
+      <div class="side b">
+        <div class="tag b">เสนอ</div>
+        <div class="empty">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="M8.5 14.5l2.2 2.2 4.3-4.3" stroke-width="1.9"/></svg></div>
+          <div class="h">ยังไม่มีนัดวันนี้</div>
+          <div class="s">แชร์ลิงก์ร้านให้ลูกค้า · เริ่มรับการจอง</div>
+        </div>
+        <div class="cap">glyph <b>ปฏิทิน</b> · ไอคอนตรงความหมาย (ปุ่มแชร์ทำหน้าที่ share อยู่แล้ว)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hd" style="margin-top:24px">
+    <p>ทั้ง 6 = CSS/markup เล็กๆ · batch เดียว · commit+deploy ได้เลยถ้า Art โอเค ·
+    (ยังไม่แตะจนกว่าจะเช็ค bug "นัดเอง ไม่เห็นบริการ" ตามที่เสนอ — หรือสั่งลุยเลยก็ได้)</p>
+  </div>
+</body>
+</html>

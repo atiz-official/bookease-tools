@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตั้งค่าร้าน · เดิม vs ใหม่ v2 (dense · inline · fewest clicks · no submenu)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0a;--head:#134783;--link:#5777EF;--mut:#6b7280;--faint:#9ca3af;--line:#eceef1;--warn:#ea580c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Inter',sans-serif;background:#e9edf2;color:var(--ink);
+       padding:22px 12px 60px;-webkit-font-smoothing:antialiased}
+  .hd{max-width:880px;margin:0 auto 18px;text-align:center}
+  .hd h1{font-size:20px;font-weight:800}
+  .hd p{font-size:13px;color:#5b6370;margin-top:6px;line-height:1.55}
+  .row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;max-width:880px;margin:0 auto}
+  .col{width:340px}
+  .lab{text-align:center;font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:6px;text-transform:uppercase}
+  .lab.a{color:#b91c1c}.lab.b{color:#047857}
+  .sub{text-align:center;font-size:11px;color:#6b7280;margin-bottom:10px;min-height:42px}
+  .phone{width:340px;height:640px;background:#fff;border:1px solid #dcdfe4;border-radius:26px;
+       overflow:hidden;box-shadow:0 14px 34px -16px rgba(0,0,0,.3);display:flex;flex-direction:column}
+  .nav{flex:0 0 auto;padding:13px 16px;border-bottom:1px solid var(--line);font-size:17px;font-weight:800}
+  .scr{flex:1;overflow-y:auto;padding:14px 15px}
+  .scr::-webkit-scrollbar{width:5px}.scr::-webkit-scrollbar-thumb{background:#d4d8de;border-radius:9px}
+
+  /* OLD primitives */
+  h2{font-size:19px;font-weight:800;color:var(--head);margin:16px 0 9px}
+  .fld{margin-bottom:13px}
+  .fl{font-size:14px;font-weight:600;color:#101828;margin-bottom:5px;display:block}
+  .fi{width:100%;border:1px solid #e3e6ea;background:#f8fafc;border-radius:9px;padding:11px;font-size:14px;color:#0a0a0a}
+  .fa{min-height:50px}
+  .mapO{height:140px;background:linear-gradient(135deg,#dbe7d5,#cfe0ea 60%,#e7e0cf);border-radius:10px;
+       margin-top:8px;position:relative;border:1px solid #e3e6ea}
+  .mapO::after{content:"📍";position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-size:22px}
+  .imgO{height:120px;border:2px dashed #cfd5dd;border-radius:12px;display:flex;flex-direction:column;
+       align-items:center;justify-content:center;color:#9aa2ad;font-size:13px;gap:4px;margin-top:8px}
+  .tgl{width:42px;height:25px;border-radius:99px;background:#4f7bf7;position:relative;flex-shrink:0}
+  .tgl::after{content:"";position:absolute;width:21px;height:21px;border-radius:50%;background:#fff;top:2px;right:2px}
+  .toprow{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+  .greendot{width:14px;height:14px;border-radius:50%;background:#10b981;border:3px solid #fff;
+       box-shadow:0 0 0 1px #d6dbe1;margin:14px auto;display:block}
+  .lrk{display:flex;align-items:center;gap:11px;padding:13px 0;border-top:1px solid var(--line)}
+  .lrk .i{width:32px;height:32px;border-radius:9px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .stf{padding:11px 2px;border-top:1px solid #f1f2f4;font-size:15px;color:#374151;display:flex;align-items:center}
+  .stf .c{margin-left:auto;color:#cbd2da}
+  .pill{font-size:13px;color:#5777EF;font-weight:700}
+  .saveO{margin:14px 0 4px;width:100%;background:#0a0a0a;color:#fff;font-weight:800;padding:14px;border-radius:999px;text-align:center;font-size:15px}
+
+  /* NEW v2 — dense · everything inline · directly editable · no tap-in */
+  .gl{font-size:12px;font-weight:700;color:#9aa2ad;letter-spacing:.03em;margin:14px 2px 6px;text-transform:uppercase}
+  .gl:first-of-type{margin-top:4px}
+  .hero{background:#0a0a0a;color:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .hero .nm{font-size:16px;font-weight:800}.hero .u{font-size:11px;color:#cbd5e1;margin-top:1px}
+  .hero .tgl{margin-left:auto;background:#34d399}
+  .blk{display:flex;gap:8px;margin-top:10px}
+  .blkb{flex:1;border:1px solid #fed7aa;background:#fff7ed;border-radius:11px;padding:9px 8px;text-align:center;
+       font-size:12.5px;font-weight:800;color:#9a3412;line-height:1.3}
+  .blkb .s{display:block;font-size:10px;color:#c2410c;font-weight:700;margin-top:2px}
+  .ndsvc{border:1px dashed #cbd5e1;border-radius:11px;padding:12px;text-align:center;margin-top:6px}
+  .ndsvc .cam{display:inline-flex;align-items:center;gap:7px;background:#0a0a0a;color:#fff;font-weight:800;
+       font-size:13px;padding:9px 16px;border-radius:999px}
+  .ndsvc .or{font-size:11.5px;color:#9ca3af;margin-top:7px}
+  .ii{width:100%;border:1px solid #e3e6ea;background:#fff;border-radius:9px;padding:9px 10px;font-size:14px;color:#0a0a0a}
+  .duo{display:flex;gap:8px}.duo .ii{flex:1}
+  .ig{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px}
+  .ig .k{width:62px;color:var(--mut);font-size:12.5px;flex-shrink:0}
+  .ig .ii{flex:1}
+  .timei{flex:1;text-align:center;border:1px solid #e3e6ea;background:#fff;border-radius:9px;
+       padding:9px;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+  .mapN{height:96px;background:linear-gradient(135deg,#dbe7d5,#cfe0ea 60%,#e7e0cf);border-radius:10px;
+       margin-top:6px;position:relative;border:1px solid #e3e6ea}
+  .mapN::after{content:"📍 แตะแผนที่เพื่อปักหมุด";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+       font-size:11px;color:#5b6b57;background:rgba(255,255,255,.7);padding:3px 8px;border-radius:7px}
+  .thumbs{display:flex;gap:8px;margin-top:6px}
+  .thumb{flex:1;height:62px;border:1.5px dashed #cfd5dd;border-radius:10px;display:flex;flex-direction:column;
+       align-items:center;justify-content:center;color:#9aa2ad;font-size:11px;gap:2px}
+  .staffN{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0}
+  .chip{font-size:12px;background:#f1f3f6;color:#475569;border-radius:999px;padding:5px 11px;font-weight:600}
+  .chip.add{background:#fff;border:1px solid #c7d2fe;color:#4f46e5}
+  .payN{display:flex;align-items:center;gap:10px;border:1px solid #fed7aa;background:#fff7ed;border-radius:11px;padding:11px}
+  .payN .i{width:30px;height:30px;border-radius:8px;background:#fde9d4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .payN .t{font-size:14px;font-weight:800;color:#9a3412}.payN .s{font-size:11.5px;color:#c2410c}
+  .payN .go{margin-left:auto;background:#ea580c;color:#fff;font-size:12px;font-weight:800;padding:7px 12px;border-radius:999px}
+  .autosave{text-align:center;font-size:11px;color:#9ca3af;padding:10px 0 2px}
+  .foot{max-width:880px;margin:20px auto 0;text-align:center;font-size:12px;color:#5b6370;line-height:1.65}
+  .foot b{color:var(--ink)}
+  @media(max-width:740px){.col,.phone{width:340px}}
+</style>
+</head>
+<body>
+  <div class="hd">
+    <h1>ตั้งค่าร้าน · เดิม vs ใหม่ (v2)</h1>
+    <p>v1 (ยุบเป็นแถวแตะเข้า) = ทิ้งแล้ว · v2 = ทุกอย่าง <b>อยู่หน้าเดียว แก้ตรงนั้นเลย ไม่ต้องแตะเข้า submenu</b> · กระชับด้วย density · auto-save (ไม่มีปุ่มเซฟให้เลื่อนหา)</p>
+  </div>
+
+  <div class="row">
+
+    <!-- OLD -->
+    <div class="col">
+      <div class="lab a">เดิม · ~5 จอ</div>
+      <div class="sub">8 บล็อกเปิดค้าง · แผนที่+กล่องรูป 2 อันใหญ่ · หัวข้อใหญ่ · ปุ่มเซฟต้องเลื่อนหา</div>
+      <div class="phone">
+        <div class="nav">‹ ตั้งค่าร้าน</div>
+        <div class="scr">
+          <div class="toprow"><div><b style="font-size:15px">เปิดขายออนไลน์</b><div style="font-size:12px;color:#9ca3af">ลูกค้าจองได้ที่ bookease.co</div></div><div class="tgl"></div></div>
+          <span class="greendot"></span>
+          <h2>ข้อมูลทั่วไป</h2>
+          <div class="fld"><span class="fl">ชื่อร้าน</span><div class="fi">BookEase</div></div>
+          <div class="fld"><span class="fl">เบอร์โทรศัพท์ร้าน</span><div class="fi">092 641 4296</div></div>
+          <div class="fld"><span class="fl">ที่อยู่ร้าน</span><div class="fi fa"></div></div>
+          <div class="fld"><span class="fl">ตำแหน่งร้าน</span><div class="fi" style="margin-bottom:0">ค้นหาสถานที่…</div><div class="mapO"></div></div>
+          <div class="fld"><span class="fl">รูปโลโก้ร้าน (500×500)</span><div class="imgO">＋<span>เพิ่มรูป</span></div></div>
+          <div class="lrk"><div class="i">💳</div><div><b style="font-size:15px">บัญชีรับเงิน</b><div style="font-size:12px;color:#ea580c">ยังไม่ได้ตั้งค่า · กดเพื่อเพิ่ม</div></div><span style="margin-left:auto;color:#cbd2da">›</span></div>
+          <h2>เวลาทำการและพนักงาน</h2>
+          <div class="fld"><span class="fl">เวลาทำการ</span><div class="fi" style="display:flex;justify-content:space-between">ทุกวัน : 10:00-21:00 <span class="pill">แก้ไข</span></div></div>
+          <div class="stf">พนักงาน 1<span class="c">›</span></div>
+          <div class="stf">พนักงาน 2<span class="c">›</span></div>
+          <div class="stf">พนักงาน 3<span class="c">›</span></div>
+          <div style="text-align:center;margin:8px 0"><span class="pill">พนักงานทั้งหมด</span></div>
+          <h2>บริการ</h2>
+          <div style="display:inline-flex;gap:6px;border:1px solid #e3e6ea;border-radius:999px;padding:7px 13px;font-size:13px">📷 ถ่ายรูปเมนู</div>
+          <p style="font-size:13px;color:#94a3b8;padding:12px 2px">ยังไม่มีบริการในระบบ</p>
+          <h2>ภาพหน้าร้าน (1200×600)</h2>
+          <div class="imgO">＋<span>แตะเพื่ออัปโหลดรูปภาพ</span></div>
+          <div class="saveO">บันทึกการตั้งค่า</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW v2 -->
+    <div class="col">
+      <div class="lab b">ใหม่ v2 · ~1.3 จอ · 0 submenu</div>
+      <div class="sub">ทุกอย่างเห็น+แก้ในจอ · บริการ/เวลา/ชื่อ = แก้ตรงนั้น 0 คลิกเข้า · บัญชีรับเงิน = 1 คลิก (KYC ครั้งเดียว) · แผนที่/รูป เล็กลงแต่อยู่ตรงนั้น</div>
+      <div class="phone">
+        <div class="nav">‹ ตั้งค่าร้าน</div>
+        <div class="scr">
+          <div class="hero"><div><div class="nm">BookEase</div><div class="u">bookease.co/bookease</div></div><div class="tgl"></div></div>
+
+          <div class="payN" style="margin-top:11px">
+            <div class="i">💳</div><div><div class="t">บัญชีรับเงิน · ยังไม่ตั้ง</div><div class="s">เงินยังเข้าไม่ได้ · ตั้งครั้งเดียว</div></div><div class="go">ตั้งเลย</div>
+          </div>
+
+          <div class="gl">บริการ — ถ่ายเมนูครั้งเดียว ระบบลงให้</div>
+          <div class="ndsvc">
+            <div class="cam">📷 ถ่ายรูปเมนู</div>
+            <div class="or">ยังไม่มีบริการ · หรือ <b style="color:#5777EF">+ เพิ่มเอง</b></div>
+          </div>
+
+          <div class="gl">เวลาทำการ</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;color:#475569;font-weight:600">ทุกวัน</span>
+            <div class="timei">10:00</div><span style="color:#9ca3af">–</span><div class="timei">21:00</div>
+          </div>
+
+          <div class="gl">ข้อมูลร้าน</div>
+          <div class="ig"><span class="k">ชื่อ</span><div class="ii">BookEase</div></div>
+          <div class="ig"><span class="k">เบอร์</span><div class="ii">092 641 4296</div></div>
+          <div class="ig"><span class="k">ที่อยู่</span><input class="ii" placeholder="พิมพ์ที่อยู่ร้าน…" /></div>
+
+          <div class="gl">พนักงาน</div>
+          <div class="staffN"><span class="chip">พนักงาน 1</span><span class="chip">พนักงาน 2</span><span class="chip">พนักงาน 3</span><span class="chip add">+ เพิ่ม</span></div>
+
+          <div class="gl">ตำแหน่ง &amp; รูปร้าน</div>
+          <input class="ii" placeholder="ค้นหาสถานที่… แล้วแตะแผนที่ปักหมุด" />
+          <div class="mapN"></div>
+          <div class="thumbs">
+            <div class="thumb">＋<span>โลโก้</span></div>
+            <div class="thumb">＋<span>ภาพหน้าร้าน</span></div>
+          </div>
+
+          <div class="autosave">✓ บันทึกอัตโนมัติทุกการแก้ · ไม่มีปุ่มเซฟให้เลื่อนหา</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    หลัก v2 (Elon: fewest clicks · Apple: density ไม่ใช่ซ่อน):
+    ① ไม่มี chevron "›" แตะเข้า submenu เลย — ทุกอย่างแก้ inline ในจอ ·
+    ② งานบล็อก (บัญชีรับเงิน) ดันขึ้นบนเป็นปุ่มตรง 1 คลิก (KYC ครั้งเดียว เลี่ยงไม่ได้) ·
+    ③ บริการ = ปุ่มถ่ายเมนูอยู่ตรงนั้น (0 คลิกเข้า) ·
+    ④ เวลาทำการ = แตะตัวเลขแก้ตรงนั้น (ไม่มี "แก้ไข" ให้กดเข้า) ·
+    ⑤ <b>หัวข้อใหญ่ blue 20px → label เทาเล็ก 12px</b> · ที่อยู่ textarea 2 บรรทัด → 1 บรรทัด ·
+    ⑥ แผนที่ 140→96px · กล่องรูป 2 อันใหญ่ → thumbnail เล็กคู่ (ยังอยู่ตรงนั้น แตะเปลี่ยนได้ ไม่ฝัง) ·
+    ⑦ "พนักงาน 1/2/3" เรียงเป็นแถว → chip เล็กบรรทัดเดียว ·
+    ⑧ auto-save → ตัดปุ่มเซฟยักษ์ทิ้ง.<br>
+    ผล: <b>~5 จอ → ~1.3 จอ · 0 การกดเข้า submenu</b> · ของที่แก้บ่อยกดน้อยสุด · ของ set-once เล็กลงแต่ไม่ถูกซ่อน
+  </div>
+</body>
+</html>

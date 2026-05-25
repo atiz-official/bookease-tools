@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time Slot UX · Old vs New · BookEase</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Sarabun', sans-serif;
+    background: #f0f0f0;
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #525252;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .verdict-bar {
+    text-align: center;
+    font-size: 13px;
+    color: #737373;
+    margin-bottom: 32px;
+  }
+  .verdict-bar strong { color: #0a0a0a; }
+
+  /* Grid of scenarios */
+  .scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .scenario-block {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .scenario-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #737373;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-left: 2px;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* Phone shell */
+  .phone {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.10);
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .phone-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .pill-old {
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 3px 10px;
+    letter-spacing: 0.04em;
+  }
+  .pill-new {
+    background: #dcfce7;
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 3px 10px;
+    letter-spacing: 0.04em;
+  }
+  .phone-label-text {
+    font-size: 12px;
+    color: #737373;
+  }
+
+  .phone-body { padding: 20px 16px 24px; }
+
+  /* ── SERVICE HEADER ── */
+  .svc-header { margin-bottom: 20px; }
+  .svc-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0a0a0a;
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .svc-meta {
+    font-size: 13px;
+    color: #737373;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .svc-meta-sep { color: #d4d4d4; }
+  .svc-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0a0a0a;
+  }
+
+  /* ── OLD: recommended time section ── */
+  .rec-section { margin-bottom: 20px; }
+  .rec-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 12px;
+  }
+  .day-group { margin-bottom: 14px; }
+  .day-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #525252;
+    margin-bottom: 6px;
+  }
+  .empty-state-old {
+    font-size: 13px;
+    color: #a1a1a1;
+    padding: 10px 12px;
+    background: #fafafa;
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+  }
+  .change-time-section { margin-bottom: 16px; }
+  .change-time-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 4px;
+  }
+  .change-time-sub {
+    font-size: 12px;
+    color: #737373;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .btn-outline {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #d4d4d4;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+    text-align: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .btn-voucher-old {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #d4d4d4;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #525252;
+    text-align: center;
+    cursor: pointer;
+  }
+  .divider-or {
+    text-align: center;
+    font-size: 12px;
+    color: #a1a1a1;
+    margin: 8px 0;
+    position: relative;
+  }
+  .divider-or::before, .divider-or::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 38%;
+    height: 1px;
+    background: #e5e5e5;
+  }
+  .divider-or::before { left: 0; }
+  .divider-or::after { right: 0; }
+
+  /* ── NEW: state-aware slot picker ── */
+  .state-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .state-banner.full-today {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+  }
+  .state-banner.full-days {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  .state-banner.available {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+  .state-banner-icon { font-size: 16px; flex-shrink: 0; }
+
+  .slot-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a1a1a1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .slot-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .slot-chip {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e5e5;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+    cursor: pointer;
+    transition: all 0.12s;
+    line-height: 1.2;
+  }
+  .slot-chip.selected {
+    background: #0a0a0a;
+    color: #fff;
+    border-color: #0a0a0a;
+  }
+  .slot-chip-sub {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.6;
+    display: block;
+    margin-top: 1px;
+  }
+  .see-all-link {
+    font-size: 13px;
+    color: #525252;
+    text-decoration: none;
+    border-bottom: 1px solid #d4d4d4;
+    padding-bottom: 1px;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #0a0a0a;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.14);
+  }
+  .btn-primary:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .btn-voucher-new {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    background: #fff;
+    color: #525252;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ── ANNOTATION STRIP ── */
+  .annotation {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .annotation ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .annotation li {
+    font-size: 12px;
+    color: #525252;
+    line-height: 1.4;
+    padding-left: 16px;
+    position: relative;
+  }
+  .annotation li::before { content: '·'; position: absolute; left: 4px; color: #a1a1a1; }
+  .annotation li.bad::before { content: '✗'; color: #dc2626; }
+  .annotation li.good::before { content: '✓'; color: #16a34a; }
+
+  /* ── SCENARIO HEADERS ── */
+  .scenario-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0a0a0a;
+    background: #e5e5e5;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 4px;
+  }
+  .scenario-desc {
+    font-size: 12px;
+    color: #737373;
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .compare-row { grid-template-columns: 1fr; }
+    body { padding: 20px 12px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Time Slot UX · Old vs New</h1>
+<div class="verdict-bar">
+  <strong>Principle:</strong> Never render a section with zero content · Never use "ลอง" · Always show state + resolution in same breath
+</div>
+
+<div class="scenarios">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SCENARIO A: Today full, tomorrow full, next avail Thu  -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="scenario-block">
+    <div class="scenario-title">สถานการณ์ A · วันนี้-พรุ่งนี้เต็ม · มีคิวพฤหัส</div>
+    <div class="scenario-desc">This is the exact state at bookease.co/rakkana-spa/นวดหัว-ว-0001 right now</div>
+    <div class="compare-row">
+
+      <!-- OLD -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-old">OLD</span>
+            <span class="phone-label-text">ปัจจุบัน · existing</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุดระงับคลายเครียด</span>
+              </div>
+            </div>
+
+            <div class="rec-section">
+              <div class="rec-heading">เวลาที่แนะนำ</div>
+              <div class="day-group">
+                <div class="day-label">วันนี้</div>
+                <div class="empty-state-old">ไม่มีเวลาว่างสำหรับวันนี้</div>
+              </div>
+              <div class="day-group">
+                <div class="day-label">พรุ่งนี้</div>
+                <div class="empty-state-old">ไม่มีเวลาว่างสำหรับพรุ่งนี้</div>
+              </div>
+            </div>
+
+            <div class="change-time-section">
+              <div class="change-time-label">เปลี่ยนเวลา</div>
+              <div class="change-time-sub">ลองติดต่อร้านโดยตรงหรือลองเลือกวันอื่นในปฏิทิน</div>
+              <button class="btn-outline">เลือกเวลาจอง</button>
+              <div class="divider-or">หรือ</div>
+              <button class="btn-voucher-old">ซื้อเก็บไว้ใช้ทีหลัง</button>
+            </div>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="bad">"เวลาที่แนะนำ" — header ที่ไม่มีเนื้อหาอยู่ใต้</li>
+            <li class="bad">2 empty states ติดกัน — double failure above fold</li>
+            <li class="bad">"ลอง...หรือลอง..." — ยอมแพ้ต่อหน้าผู้ใช้</li>
+            <li class="bad">Voucher CTA ปรากฏหลัง failure โดยไม่มี setup</li>
+            <li class="bad">ผู้ใช้ไม่รู้ว่าวันพฤหัสมีคิว</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-new">NEW</span>
+            <span class="phone-label-text">เสนอ · proposed</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุด</span>
+                <span class="svc-meta-sep">·</span>
+                <span>60 นาที</span>
+                <span class="svc-meta-sep">·</span>
+                <span class="svc-price">฿350</span>
+              </div>
+            </div>
+
+            <div class="state-banner full-today">
+              <span class="state-banner-icon">🟡</span>
+              <span>วันนี้–พรุ่งนี้เต็มแล้ว · สล็อตถัดไป</span>
+            </div>
+
+            <div class="slot-section-label">เร็วที่สุด · พฤหัส 15 พ.ค.</div>
+            <div class="slot-chips">
+              <button class="slot-chip selected">10:00<span class="slot-chip-sub">พฤหัส</span></button>
+              <button class="slot-chip">13:00<span class="slot-chip-sub">พฤหัส</span></button>
+              <button class="slot-chip">15:00<span class="slot-chip-sub">พฤหัส</span></button>
+              <button class="slot-chip">10:00<span class="slot-chip-sub">ศุกร์</span></button>
+              <button class="slot-chip">14:00<span class="slot-chip-sub">ศุกร์</span></button>
+            </div>
+            <a class="see-all-link">ดูทุกวันในปฏิทิน →</a>
+
+            <button class="btn-primary">จองเลย · พฤหัส 10:00</button>
+            <button class="btn-voucher-new">ซื้อคูปองเก็บไว้ก็ได้</button>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="good">Banner บอก state ทันที ("วันนี้–พรุ่งนี้เต็ม")</li>
+            <li class="good">ข้ามวันว่างไป · แสดงของที่มี · ไม่เสียเวลาผู้ใช้</li>
+            <li class="good">5 chips · เลือกได้ใน 1 tap · ไม่ต้องดูปฏิทิน</li>
+            <li class="good">Primary CTA บอกชัด ว่าจองเวลาอะไร</li>
+            <li class="good">Voucher เป็น secondary ที่มี context แล้ว</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SCENARIO B: Slots available (normal happy path)        -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="scenario-block">
+    <div class="scenario-title">สถานการณ์ B · มีสล็อตว่างวันนี้ (normal happy path)</div>
+    <div class="scenario-desc">ทดสอบว่า quick-pick concept ทำงานถูกต้องในกรณีปกติ</div>
+    <div class="compare-row">
+
+      <!-- OLD -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-old">OLD</span>
+            <span class="phone-label-text">ปัจจุบัน · existing</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุดระงับคลายเครียด</span>
+              </div>
+            </div>
+
+            <div class="rec-section">
+              <div class="rec-heading">เวลาที่แนะนำ</div>
+              <div class="day-group">
+                <div class="day-label">วันนี้</div>
+                <div class="slot-chips" style="margin-bottom:0">
+                  <button class="slot-chip">10:00</button>
+                  <button class="slot-chip">13:00</button>
+                  <button class="slot-chip">16:00</button>
+                </div>
+              </div>
+              <div class="day-group" style="margin-top:12px">
+                <div class="day-label">พรุ่งนี้</div>
+                <div class="slot-chips" style="margin-bottom:0">
+                  <button class="slot-chip">10:00</button>
+                  <button class="slot-chip">14:00</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="change-time-section" style="margin-top:16px">
+              <button class="btn-outline">เลือกเวลาจอง</button>
+              <div class="divider-or">หรือ</div>
+              <button class="btn-voucher-old">ซื้อเก็บไว้ใช้ทีหลัง</button>
+            </div>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="bad">วันนี้ + พรุ่งนี้ แยก group — ผู้ใช้ต้องสแกน 2 sections</li>
+            <li class="bad">"เลือกเวลาจอง" button ทำซ้ำ slot chips ที่อยู่บน</li>
+            <li class="bad">ยังไม่มี primary CTA ที่ชัดว่าจองอะไร</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-new">NEW</span>
+            <span class="phone-label-text">เสนอ · proposed</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุด</span>
+                <span class="svc-meta-sep">·</span>
+                <span>60 นาที</span>
+                <span class="svc-meta-sep">·</span>
+                <span class="svc-price">฿350</span>
+              </div>
+            </div>
+
+            <div class="state-banner available">
+              <span class="state-banner-icon">🟢</span>
+              <span>มีว่าง · เลือกเวลาด้านล่างได้เลย</span>
+            </div>
+
+            <div class="slot-section-label">เลือกด่วน</div>
+            <div class="slot-chips">
+              <button class="slot-chip selected">10:00<span class="slot-chip-sub">วันนี้</span></button>
+              <button class="slot-chip">13:00<span class="slot-chip-sub">วันนี้</span></button>
+              <button class="slot-chip">16:00<span class="slot-chip-sub">วันนี้</span></button>
+              <button class="slot-chip">10:00<span class="slot-chip-sub">พรุ่งนี้</span></button>
+              <button class="slot-chip">14:00<span class="slot-chip-sub">พรุ่งนี้</span></button>
+            </div>
+            <a class="see-all-link">ดูทุกวันในปฏิทิน →</a>
+
+            <button class="btn-primary">จองเลย · วันนี้ 10:00</button>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="good">Banner confirm state ทันที ("มีว่าง")</li>
+            <li class="good">Chips ข้าม group วันนี้/พรุ่งนี้ — flatten · scan เร็ว</li>
+            <li class="good">Tap chip → CTA text เปลี่ยน real-time</li>
+            <li class="good">ดูปฏิทิน = optional · ไม่ force step 2</li>
+            <li class="good">Voucher ไม่แสดง เพราะยังมีสล็อตว่าง</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SCENARIO C: Truly sold out for 30 days                 -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="scenario-block">
+    <div class="scenario-title">สถานการณ์ C · เต็มทุกวันใน 30 วัน</div>
+    <div class="scenario-desc">กรณีร้านดังมากหรือช่วง peak — อย่าให้ผู้ใช้เสียเวลาในระบบ</div>
+    <div class="compare-row">
+
+      <!-- OLD -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-old">OLD</span>
+            <span class="phone-label-text">ปัจจุบัน · existing</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุดระงับคลายเครียด</span>
+              </div>
+            </div>
+            <div class="rec-section">
+              <div class="rec-heading">เวลาที่แนะนำ</div>
+              <div class="day-group">
+                <div class="day-label">วันนี้</div>
+                <div class="empty-state-old">ไม่มีเวลาว่างสำหรับวันนี้</div>
+              </div>
+              <div class="day-group">
+                <div class="day-label">พรุ่งนี้</div>
+                <div class="empty-state-old">ไม่มีเวลาว่างสำหรับพรุ่งนี้</div>
+              </div>
+            </div>
+            <div class="change-time-section">
+              <div class="change-time-label">เปลี่ยนเวลา</div>
+              <div class="change-time-sub">ลองติดต่อร้านโดยตรงหรือลองเลือกวันอื่นในปฏิทิน</div>
+              <button class="btn-outline">เลือกเวลาจอง</button>
+              <div class="divider-or">หรือ</div>
+              <button class="btn-voucher-old">ซื้อเก็บไว้ใช้ทีหลัง</button>
+            </div>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="bad">ผู้ใช้จะเปิดปฏิทินแล้วเลื่อนไป 30 วันจนพบว่าเต็ม</li>
+            <li class="bad">เสียเวลา · เสียความเชื่อใจ · ออกจาก app ไปเลย</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW -->
+      <div>
+        <div class="phone">
+          <div class="phone-label">
+            <span class="pill-new">NEW</span>
+            <span class="phone-label-text">เสนอ · proposed</span>
+          </div>
+          <div class="phone-body">
+            <div class="svc-header">
+              <div class="svc-name">นวดหัว</div>
+              <div class="svc-meta">
+                <span>นวดกดจุด</span>
+                <span class="svc-meta-sep">·</span>
+                <span>60 นาที</span>
+                <span class="svc-meta-sep">·</span>
+                <span class="svc-price">฿350</span>
+              </div>
+            </div>
+
+            <div class="state-banner full-days">
+              <span class="state-banner-icon">🔴</span>
+              <span>เต็มถึง 8 มิ.ย. · ไม่มีคิวว่างใน 30 วัน</span>
+            </div>
+
+            <div style="background:#fafafa; border:1px solid #f0f0f0; border-radius:14px; padding:16px; margin-bottom:16px;">
+              <div style="font-size:14px; font-weight:700; color:#0a0a0a; margin-bottom:4px;">ซื้อคูปองเก็บไว้ก่อนได้</div>
+              <div style="font-size:13px; color:#737373; line-height:1.5; margin-bottom:12px;">ชำระเลย · จองวันทีหลังเมื่อมีว่าง · ราคาล็อคตอนนี้</div>
+              <button class="btn-primary">ซื้อคูปอง ฿350</button>
+            </div>
+
+            <div style="text-align:center; margin-bottom:12px;">
+              <div style="font-size:12px; color:#a1a1a1; margin-bottom:8px;">หรือโทรถามร้านโดยตรง</div>
+              <a style="font-size:15px; font-weight:700; color:#0a0a0a; text-decoration:none; display:block; padding:12px; border:1.5px solid #e5e5e5; border-radius:12px;">
+                📞 &nbsp;โทรหาร้าน
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="annotation">
+          <ul>
+            <li class="good">บอก state ครบ: เต็มถึงวันที่ไหน</li>
+            <li class="good">ไม่ให้ผู้ใช้เปิดปฏิทินเพื่อพบความผิดหวัง</li>
+            <li class="good">Voucher เป็น primary ที่สมเหตุสมผล — ร้านดัง ซื้อล่วงหน้าสมเหตุ</li>
+            <li class="good">โทรตรง = escape hatch ที่ไม่ pretend booking ทำได้</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── DESIGN RULES SUMMARY ── -->
+<div style="max-width:900px; margin:48px auto 0; background:#0a0a0a; border-radius:16px; padding:24px 28px; color:#fff;">
+  <div style="font-size:13px; font-weight:700; color:#a1a1a1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px;">กฎที่ต้องใช้ implement</div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div style="background:#1a1a1a; border-radius:12px; padding:14px 16px;">
+      <div style="font-size:12px; font-weight:700; color:#737373; margin-bottom:6px;">RULE 1</div>
+      <div style="font-size:13px; line-height:1.5;">ห้ามแสดง section "เวลาที่แนะนำ" เมื่อ slots = 0<br><span style="color:#737373;">→ skip วันว่าง · ข้ามไปวันที่มีของ</span></div>
+    </div>
+    <div style="background:#1a1a1a; border-radius:12px; padding:14px 16px;">
+      <div style="font-size:12px; font-weight:700; color:#737373; margin-bottom:6px;">RULE 2</div>
+      <div style="font-size:13px; line-height:1.5;">State banner บังคับทุก case<br><span style="color:#737373;">🟢 มีว่าง · 🟡 วันนี้เต็ม · 🔴 เต็มยาว</span></div>
+    </div>
+    <div style="background:#1a1a1a; border-radius:12px; padding:14px 16px;">
+      <div style="font-size:12px; font-weight:700; color:#737373; margin-bottom:6px;">RULE 3</div>
+      <div style="font-size:13px; line-height:1.5;">Primary CTA ต้อง echo เวลาที่เลือก<br><span style="color:#737373;">"จองเลย · วันนี้ 10:00" ไม่ใช่ "จอง"</span></div>
+    </div>
+    <div style="background:#1a1a1a; border-radius:12px; padding:14px 16px;">
+      <div style="font-size:12px; font-weight:700; color:#737373; margin-bottom:6px;">RULE 4</div>
+      <div style="font-size:13px; line-height:1.5;">Voucher = secondary เสมอ ยกเว้น Scenario C<br><span style="color:#737373;">เต็ม 30 วัน → Voucher กลายเป็น primary</span></div>
+    </div>
+  </div>
+  <div style="margin-top:16px; padding-top:16px; border-top:1px solid #2a2a2a; font-size:12px; color:#525252;">
+    Backend needs: query "first available slot" (not just today/tomorrow) · return date + up to 5 slots · UI handles rendering by state
+  </div>
+</div>
+
+</body>
+</html>

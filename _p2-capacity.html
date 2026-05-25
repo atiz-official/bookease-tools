@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 capacity · 1-บรรทัด (เสนอ) vs silent default 1 (เดิม)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0a;--head:#134783;--accent:#5777EF;--line:#ececec;--muted:#9ca3af;--ok:#10b981}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Inter',sans-serif;background:#e9edf2;color:var(--ink);padding:22px 14px 60px;-webkit-font-smoothing:antialiased}
+  .head{max-width:880px;margin:0 auto 18px;text-align:center}
+  .head h1{font-size:20px;font-weight:800}
+  .head p{font-size:13px;color:#5b6370;margin-top:6px;line-height:1.55}
+  .row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;max-width:880px;margin:0 auto}
+  .col{width:340px}
+  .lab{text-align:center;font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:8px;text-transform:uppercase}
+  .lab.a{color:#b91c1c}.lab.b{color:#047857}
+  .sub{text-align:center;font-size:11px;color:#6b7280;margin-bottom:10px;min-height:30px}
+  .phone{width:340px;background:#fff;border:1px solid #dcdfe4;border-radius:26px;overflow:hidden;box-shadow:0 14px 34px -16px rgba(0,0,0,.3)}
+  .wrap{padding:18px 18px 20px}
+  .h{font-size:17px;font-weight:700;color:var(--head);margin:18px 0 8px}
+  .h:first-child{margin-top:2px}
+
+  /* deposit segmented · VERBATIM idiom from liff-preview.html */
+  .seg{display:flex;border:1.5px solid var(--ink);border-radius:13px;overflow:hidden;margin-top:4px}
+  .seg button{flex:1;text-align:center;padding:12px 4px;font-size:14px;font-weight:700;
+    color:var(--muted);border:none;border-right:1px solid var(--line);background:#fff;
+    cursor:pointer;font-family:inherit}
+  .seg button:last-child{border-right:none}
+  .seg button.on{background:var(--ink);color:#fff}
+  .seg .s{display:block;font-size:11px;font-weight:600;opacity:.72;margin-top:2px}
+  .seg button.on .s{opacity:.85}
+
+  /* settable value · VERBATIM .depval idiom (for "5+" → number) */
+  .depval{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:14px;color:#374151}
+  .depval[hidden]{display:none}
+  .depval-l{font-weight:600;color:#0a0a0a}
+  .depinp{width:80px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px;
+    font-family:inherit;font-size:15px;font-weight:800;color:#0a0a0a;text-align:center;outline:none}
+  .depinp:focus{border-color:#1E40AF;box-shadow:0 0 0 2px rgba(30,64,175,.12)}
+  .depval-u{font-weight:700;color:#0a0a0a}
+
+  .cap{font-size:12px;color:#6b7280;margin-top:9px;line-height:1.5}
+  .cap b{color:var(--ink);font-weight:700}
+  .ghost{opacity:.4;pointer-events:none}
+  .xtag{display:inline-block;font-size:10px;font-weight:800;color:#b91c1c;background:#fee2e2;
+    padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .otag{display:inline-block;font-size:10px;font-weight:800;color:#047857;background:#d1fae5;
+    padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .foot{max-width:880px;margin:22px auto 0;text-align:center;font-size:12px;color:#5b6370;line-height:1.65}
+  .foot b{color:var(--ink)}
+  @media(max-width:760px){.col,.phone{width:340px}}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>P2 · ตัวเลือก “รับพร้อมกัน” (capacity) — 1 บรรทัด</h1>
+    <p>คำถาม: เก็บ capacity เป็น quick-setting 1 บรรทัดใน P2 (idiom เดียวกับ “ลูกค้าจ่าย”) ดีกว่า silent default 1 หรือไม่?
+    ลำดับ (ตาม shopv3 เดิม + ที่ Art lock): <b>รับพร้อมกัน มาก่อน → ลูกค้าจ่าย มาท้ายสุด</b> (ก่อน viral bar / commit).
+    ตั้งค่าแก้ทีหลังใน <b>ตั้งค่าร้าน → เวลาทำการและพนักงาน</b> (verified ต่อ backend จริง).</p>
+  </div>
+
+  <div class="row">
+
+    <!-- CURRENT -->
+    <div class="col">
+      <div class="lab a">เดิม · silent default 1</div>
+      <div class="sub">capacity ไม่โผล่ใน P2 · ทุกร้านถูกตั้งเป็น 1 ช่างเงียบๆ · ร้าน 3 เตียงรู้ทีหลัง (ถ้าหา settings เจอ)</div>
+      <div class="phone">
+        <div class="wrap">
+          <div class="h ghost">รับพร้อมกัน<span class="xtag">ไม่มีในหน้านี้</span></div>
+          <div class="seg ghost">
+            <button class="on" type="button">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+            <button type="button">4</button>
+            <button type="button">5+</button>
+          </div>
+          <div class="cap">ตั้งเป็น <b>1 ช่าง</b> อัตโนมัติ (เงียบ) · ร้านหลายช่าง = slot ถูกบีบเหลือ 1 โดยไม่รู้ตัว</div>
+          <div class="h">ลูกค้าจ่าย</div>
+          <div class="seg">
+            <button type="button">มัดจำ<span class="s">เก็บคงที่</span></button>
+            <button type="button">มัดจำ %<span class="s">ตามราคา</span></button>
+            <button class="on" type="button">จ่ายเต็ม<span class="s">เต็มจำนวน ✓</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPOSED -->
+    <div class="col">
+      <div class="lab b">เสนอ · 1 บรรทัด (เห็น · แตะเปลี่ยนได้)</div>
+      <div class="sub">idiom เดียวกับ “ลูกค้าจ่าย” เป๊ะ · default 1 (90% ร้านเดี่ยวไม่ต้องแตะ) · ร้าน 3 เตียงแตะ “3” = ถูกตั้งแต่วันแรก</div>
+      <div class="phone">
+        <div class="wrap">
+          <div class="h">รับพร้อมกัน<span class="otag">+1 บรรทัด</span></div>
+          <div class="seg" id="capSeg">
+            <button type="button" data-c="1">1</button>
+            <button class="on" type="button" data-c="2">2</button>
+            <button type="button" data-c="3">3</button>
+            <button type="button" data-c="4">4</button>
+            <button type="button" data-c="5plus">5+</button>
+          </div>
+          <div class="depval" id="capVal" hidden>
+            <span class="depval-l">ช่าง / พนักงาน</span>
+            <input class="depinp" id="capN" inputmode="numeric" value="6" />
+            <span class="depval-u">คน</span>
+          </div>
+          <div class="cap">ช่าง <b id="capEcho">2</b> คน · ตั้งค่าเพิ่ม/ลด ได้ทีหลังในร้าน</div>
+          <div class="h">ลูกค้าจ่าย</div>
+          <div class="seg">
+            <button type="button">มัดจำ<span class="s">เก็บคงที่</span></button>
+            <button type="button">มัดจำ %<span class="s">ตามราคา</span></button>
+            <button class="on" type="button">จ่ายเต็ม<span class="s">เต็มจำนวน ✓</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    Wiring (no-Potemkin · เชื่อมต่อจริงทุกข้อ): P2 <code>capacity</code> → blob → <code>register_index</code> decode →
+    <code>registerSubmit</code> สร้าง officer[] = N (เจ้าของ + N−1 ช่าง) → <code>POST /update-shop</code>/<code>create</code> →
+    <code>sendOfficerInfo</code> → <code>atizrail.bookease.co/api/officers/bulk</code> → slot cron สร้าง slot ต่อช่าง.<br>
+    แก้ทีหลัง: <b>ตั้งค่าร้าน → เวลาทำการและพนักงาน → เพิ่มพนักงาน → บันทึก</b> = <code>shopApi.updateShop</code> →
+    <b>เส้นทาง sendOfficerInfo ตัวเดียวกับตอนสมัคร</b> (verified · ไม่ใช่ Potemkin). · caption เป็น dynamic ตาม N.
+  </div>
+
+<script>
+  var seg=document.getElementById('capSeg'),box=document.getElementById('capVal'),
+      echo=document.getElementById('capEcho'),inp=document.getElementById('capN');
+  seg.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    [].forEach.call(seg.children,function(x){x.classList.toggle('on',x===b)});
+    if(b.dataset.c==='5plus'){box.hidden=false;echo.textContent=inp.value||'6';}
+    else{box.hidden=true;echo.textContent=b.dataset.c;}
+  });
+  inp.addEventListener('input',function(){echo.textContent=inp.value||'6';});
+</script>
+</body>
+</html>
