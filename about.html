@@ -879,37 +879,20 @@
     .flag-name { font-size: 14px; }
   }
 
-  /* ═══════ SECTION: Money proof · V1 + tight compact (Art lock 2026-05-25)
-     Full-bleed section · blurred shopkeeper hero as bg · H2 + K PLUS card
-     overlaid · padding kept tight per Art "compact short". */
+  /* ═══════ SECTION: Money proof · Variant A · Clean light card (Art lock 2026-05-25 PM)
+     Light page bg (no photo · no overlay) · breaks full-bleed-on-full-bleed wall
+     after tourist section · K PLUS card with green accents + soft shadow carries
+     visual weight on its own (Apple Settings-page rhythm). */
   .sec-money-hero {
-    position: relative;
-    overflow: hidden;
-    background: #1f1411;  /* dark warm fallback under image */
-  }
-  .sec-money-hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: url('https://images.unsplash.com/photo-1752147535869-b6988d3efa11?w=1200&q=80&auto=format&fit=crop') center/cover;
-    filter: blur(8px) brightness(.85) saturate(1.1);   /* Art lock · less blur than V1 preview's 16px */
-    transform: scale(1.08);                            /* hide blur edges */
-    z-index: 0;
-  }
-  .sec-money-hero::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(124,45,18,.40) 0%, rgba(0,0,0,.55) 100%);
-    z-index: 1;
+    background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
   }
   .money-hero-inner {
-    position: relative;
-    z-index: 2;
     max-width: 720px;
     margin: 0 auto;
-    padding: 28px 22px;     /* tight · Art lock */
+    padding: 32px 22px 36px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     align-items: center;
   }
   .money-hero-h2 {
@@ -919,20 +902,19 @@
     line-height: 1.12;
     letter-spacing: -0.02em;
     margin: 0;
-    color: #fff;
+    color: #0a0a0a;
     text-align: center;
-    text-shadow: 0 1px 6px rgba(0,0,0,.45);
   }
   .money-hero-h2 em {
     font-style: normal;
-    color: #fde68a;
+    color: #1E40AF;   /* BookEase navy · wordmark callback */
     font-weight: 900;
   }
   /* K PLUS notification card · variant C single-row max */
   .money-card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 10px 32px -6px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.12);
+    box-shadow: 0 8px 28px -8px rgba(15,23,42,.18), 0 1px 3px rgba(15,23,42,.06);
     font-family: 'Sarabun', sans-serif;
     border-left: 3px solid #00A04B;
     padding: 10px 12px;
