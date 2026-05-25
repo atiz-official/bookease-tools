@@ -67,7 +67,15 @@
   html, body { margin: 0; padding: 0; }
   body {
     font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
-    background: #ffffff;
+    /* Art lock 2026-05-25 · P1 · soft periwinkle wash.
+       Fixed 1000px gradient layer at the top (so it fades to white by
+       the time the user scrolls into the content-dense sections).
+       Sections lower on the page have their own backgrounds so they
+       cover this gradient — only the hero/above-the-fold area picks
+       up the periwinkle tint. */
+    background:
+      linear-gradient(180deg, #eef2ff 0%, #f5f7ff 35%, #ffffff 100%) top center / 100% 1000px no-repeat,
+      #ffffff;
     color: #0a0a0a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
