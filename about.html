@@ -1074,24 +1074,29 @@
 
   /* .dash-* dashboard styles REMOVED 2026-05-24 (Art audit · section dropped) */
 
-  /* ═══════ SECTION: Pricing · 3-col row EVEN on mobile (Art audit) ═══════ */
-  /* Art lock 2026-05-25 · Option A · headline rate + breakdown.
-     - Hero "2.9%" big · 72-92px responsive · the win at a glance
-     - "เริ่มที่" prefix soft + small (the modifier · doesn't compete)
-     - Breakdown line 15-16px (Art "don't make too small") · uses rail/dot
-       pattern for clean readability · PromptPay first + bold (cheapest +
-       most popular) · slight visual lift via .rail--primary color hint */
+  /* ═══════ SECTION: Pricing · Variant A · hero top + horizontal rate row
+     (Art lock 2026-05-25 PM · supersedes inline-prefix + center-dots version)
+     - "เริ่มที่" as eyebrow ABOVE the hero (not inline-left)
+     - Hero "2.9%" big · 65-92px · the headline · unambiguously dominant
+     - Caption shrunk + muted (13px slate-400) · supporting detail
+     - 3 rates in equal-width row · name above / % below per item · hairline
+       1px column dividers BETWEEN items (NOT a center page divider · just
+       inter-item separators like a price-sheet table) · stays horizontal
+       on all widths · NO vertical stack on mobile.
+     - Hierarchy by type-size ratio (4:1) · no divider needed. */
   .price-hero {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    display: flex; flex-direction: column; align-items: center;
     margin: 6px auto 0; max-width: 640px;
   }
-  .price-hero-line {
-    display: inline-flex; align-items: baseline; gap: 6px;
+  .price-hero-eye {
     font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: #64748b; letter-spacing: 0.02em;
+    margin: 0 0 6px;
   }
-  .price-hero-from {
-    font-size: 17px; font-weight: 600; color: #64748b;
-    margin-right: 8px; align-self: center;
+  .price-hero-line {
+    display: inline-flex; align-items: baseline; gap: 2px;
+    font-family: 'Inter', sans-serif;
   }
   .price-hero-num {
     font-size: clamp(65px, 14vw, 92px); font-weight: 900;
@@ -1102,53 +1107,34 @@
     color: #1E40AF; letter-spacing: -0.02em;
   }
   .price-hero-label {
-    font-size: 15.5px; color: #64748b; margin: 4px 0 14px;
-    text-align: center; max-width: 320px; line-height: 1.5;
+    font-size: 13px; color: #94a3b8;
+    margin: 18px 0 10px;
+    text-align: center; letter-spacing: 0.02em;
   }
   .price-hero-breakdown {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-    gap: 10px 12px;
-    font-size: 16.5px; color: #0f172a; line-height: 1.5;
-    max-width: 560px;
+    display: flex; align-items: stretch;
+    width: 100%; max-width: 480px;
+    margin: 0 auto;
   }
   .price-hero-breakdown .rail {
-    display: inline-flex; align-items: center; gap: 7px;
-    white-space: nowrap;
+    flex: 1; padding: 4px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    text-align: center;
   }
-  .price-hero-breakdown .rail .flag {
-    font-size: 18px; line-height: 1;
+  .price-hero-breakdown .rail + .rail {
+    border-left: 1px solid #f1f5f9;
+  }
+  .price-hero-breakdown .rail .name {
+    font-size: 12.5px; color: #64748b; line-height: 1.2;
   }
   .price-hero-breakdown .rail b {
     font-family: 'Inter', sans-serif; font-weight: 800;
+    font-size: clamp(17px, 4.5vw, 22px);
     color: #0f172a; font-variant-numeric: tabular-nums;
-    margin-left: 4px;
+    letter-spacing: -0.01em;
   }
   .price-hero-breakdown .rail--primary b {
     color: #1E40AF;
-  }
-  .price-hero-breakdown .dot {
-    color: #cbd5e1; font-weight: 700;
-  }
-  /* On narrow mobile, breakdown stacks vertically with rates right-aligned
-     (Art lock 2026-05-25 iter5 · reads like a price sheet · scannable). */
-  @media (max-width: 480px) {
-    .price-hero-breakdown {
-      flex-direction: column;
-      gap: 8px;
-      align-items: stretch;
-      max-width: 280px;
-      margin: 0 auto;
-    }
-    .price-hero-breakdown .rail {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-    .price-hero-breakdown .rail b {
-      margin-left: 0;
-    }
-    .price-hero-breakdown .dot { display: none; }
   }
 
   .sec-price {
@@ -1562,25 +1548,27 @@
   <p class="sec-sub">ไม่มีค่าสมัคร · ไม่มีค่ารายเดือน</p>
 
   <div class="price-hero">
+    <!-- Variant A · eyebrow above hero · hero dominates · 3-col rate row below.
+         Art lock 2026-05-25 PM · supersedes inline-prefix + center-dots version. -->
+    <div class="price-hero-eye">เริ่มที่</div>
     <div class="price-hero-line" aria-label="ค่าธรรมเนียมเริ่มที่ 2.9 เปอร์เซ็นต์">
-      <span class="price-hero-from">เริ่มที่</span>
       <span class="price-hero-num">2.9</span>
       <span class="price-hero-unit">%</span>
     </div>
-    <p class="price-hero-label">ค่าธรรมเนียมตามช่องทางที่ลูกค้าจ่าย</p>
-    <!-- Art lock 2026-05-25 iter5: cleaner / less cognitive load.
-         - Drop all flag/icon emojis (3 emojis + 3 names + 3 rates = 9
-           visual tokens · too noisy). Names + rates is enough info.
-         - PromptPay → QR PromptPay (the "QR" prefix tells the reader
-           which rail this is — replaces what the 🇹🇭 flag was doing).
-         - Mobile (under 480px) stacks vertically with rates right-
-           aligned via space-between — reads like a price sheet. -->
+    <p class="price-hero-label">ตามช่องทางที่ลูกค้าจ่าย</p>
     <div class="price-hero-breakdown">
-      <span class="rail rail--primary">QR PromptPay <b>2.9%</b></span>
-      <span class="dot" aria-hidden="true">·</span>
-      <span class="rail">บัตรไทย <b>4.9%</b></span>
-      <span class="dot" aria-hidden="true">·</span>
-      <span class="rail">บัตรต่างชาติ <b>5.9%</b></span>
+      <div class="rail rail--primary">
+        <span class="name">QR PromptPay</span>
+        <b>2.9%</b>
+      </div>
+      <div class="rail">
+        <span class="name">บัตรไทย</span>
+        <b>4.9%</b>
+      </div>
+      <div class="rail">
+        <span class="name">บัตรต่างชาติ</span>
+        <b>5.9%</b>
+      </div>
     </div>
   </div>
 </section>
