@@ -503,6 +503,114 @@
      Real photo establishes emotional tone · mockup below proves product.
      Image is foregrounded but darkened with overlay so text remains legible.
      onerror handler hides <img> · CSS gradient fallback shows underneath. */
+  /* ═══════ V3-D full-bleed language hero (Art lock 2026-05-25) ═══════
+     Full-bleed image takeover for "ลูกค้าต่างชาติ จองเองได้" section.
+     - 4:5 aspect on mobile (Art's 75%-of-current spec)
+     - 16:9 on desktop (no awkward portrait stretch on wide screens)
+     - All copy overlaid · native script language row replaces flag circles
+     - Font bumps (Art lock): stat +3px (14px) · eyebrow +2px (11.5px) ·
+       lang-line +2px (13px) — all mobile baseline · clamp up on desktop. */
+  .sec-lang-hero {
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .lang-hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    max-height: 720px;
+    background-image: url('img/tourist-poolside.jpg');
+    background-position: center;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .lang-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(0,0,0,.55) 0%,
+      rgba(0,0,0,0) 28%,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,.78) 100%);
+    pointer-events: none;
+  }
+  .lang-hero-top {
+    position: relative;
+    padding: clamp(26px, 6vw, 44px) 22px 0;
+    text-align: center;
+  }
+  .lang-hero-h2 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: clamp(24px, 6.5vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(0,0,0,.4);
+  }
+  .lang-hero-h2 em {
+    font-style: normal;
+    color: #fde68a;
+    font-weight: 900;
+  }
+  .lang-hero-bot {
+    position: relative;
+    padding: 0 18px clamp(22px, 5vw, 36px);
+  }
+  .lang-hero-stat {
+    font-size: 14px;          /* +3 from preview's 11px · Art mandate */
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 10px;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  }
+  .lang-hero-eye {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11.5px;        /* +2 from preview's 9.5px · Art mandate */
+    font-weight: 800;
+    color: #fde68a;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  }
+  .lang-hero-line {
+    font-size: 13px;          /* +2 from preview's 11px · Art mandate */
+    font-weight: 600;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    text-shadow: 0 1px 4px rgba(0,0,0,.7);
+  }
+  .lang-hero-line .sep {
+    opacity: 0.5;
+    margin: 0 5px;
+  }
+  /* Desktop · switch to 16:9 (image source aspect · no stretch + no extreme
+     portrait crop on wide screens). Bump font sizes slightly. */
+  @media (min-width: 768px) {
+    .lang-hero {
+      aspect-ratio: 16/9;
+      max-height: 560px;
+    }
+    .lang-hero-stat { font-size: 16px; }
+    .lang-hero-eye { font-size: 12.5px; }
+    .lang-hero-line { font-size: 15px; }
+  }
+  @media (min-width: 1080px) {
+    .lang-hero { max-width: 1180px; margin: 0 auto; border-radius: 28px; }
+  }
+
   .scene {
     position: relative;
     margin-bottom: 48px;
@@ -1271,43 +1379,24 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: 5 languages · simpler copy ═══════ -->
-<section class="sec sec-lang sec-center" id="lang" aria-labelledby="lang-h">
-  <h2 class="sec-h2" id="lang-h">ลูกค้าต่างชาติ<br/><em>จองเองได้</em></h2>
-
-  <div class="scene">
-    <img
-      src="img/tourist-poolside.jpg"
-      alt="นักท่องเที่ยวต่างชาติกำลังจองบริการผ่านมือถือริมสระว่ายน้ำในรีสอร์ทประเทศไทย"
-      loading="lazy"
-      onerror="this.style.display='none'"
-    />
-    <div class="scene-cap">
-      <div class="scene-cap-h">30 ล้านคน/ปี · มาเที่ยวไทย</div>
+<!-- ═══════ SECTION: 5 languages · V3-D full-bleed hero (Art lock 2026-05-25)
+     Was: small letterbox image (16:9 ~220px tall on mobile) + separate flag-row
+     with 5 large emoji circles below. Beautiful photo wasted in a sliver.
+     Now: full-bleed 4:5 portrait banner (~75% of viewport) · everything
+     overlaid on the image: H2 top + stat + "5 ภาษา" eyebrow + native-script
+     language row at bottom. Replaces ~80px of bloated flag circles with a
+     ~16px native-script text line. -->
+<section class="sec-lang-hero" id="lang" aria-labelledby="lang-h">
+  <div class="lang-hero">
+    <div class="lang-hero-top">
+      <h2 class="lang-hero-h2" id="lang-h">ลูกค้าต่างชาติ<br/><em>จองเองได้</em></h2>
     </div>
-  </div>
-
-  <!-- Apple/Elon-style flag row · was 5 simultaneous fake phones (Art audit) -->
-  <div class="flag-row">
-    <div class="flag-item">
-      <div class="flag-emoji">🇹🇭</div>
-      <div class="flag-name">ไทย</div>
-    </div>
-    <div class="flag-item">
-      <div class="flag-emoji">🇬🇧</div>
-      <div class="flag-name">English</div>
-    </div>
-    <div class="flag-item">
-      <div class="flag-emoji">🇨🇳</div>
-      <div class="flag-name">中文</div>
-    </div>
-    <div class="flag-item">
-      <div class="flag-emoji">🇷🇺</div>
-      <div class="flag-name">Русский</div>
-    </div>
-    <div class="flag-item">
-      <div class="flag-emoji">🇮🇳</div>
-      <div class="flag-name">हिन्दी</div>
+    <div class="lang-hero-bot">
+      <div class="lang-hero-stat">30 ล้านคน/ปี · มาเที่ยวไทย</div>
+      <div class="lang-hero-eye">5 ภาษา</div>
+      <div class="lang-hero-line">
+        ไทย<span class="sep" aria-hidden="true">·</span>English<span class="sep" aria-hidden="true">·</span>中文<span class="sep" aria-hidden="true">·</span>Русский<span class="sep" aria-hidden="true">·</span>हिन्दी
+      </div>
     </div>
   </div>
 </section>
