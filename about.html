@@ -362,6 +362,29 @@
      Apple/Tesla stat-band pattern. */
   .sec-ba { background: linear-gradient(180deg, #fafbfc 0%, #fff 100%); }
 
+  /* Art lock 2026-05-25 iter3 · bilingual eyebrow with emojis.
+     Sits above the "ลูกค้าไม่มา = เสียเงิน" H2 · adds emotional weight via
+     emoji + bilingual labels. Mobile-readable text (13.5px floor). */
+  .ba-eyebrow {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: center; gap: 8px 12px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    color: #64748b; letter-spacing: -0.005em;
+    margin: 0 auto 14px; max-width: 480px; line-height: 1.4;
+  }
+  .ba-eyebrow .ba-pair {
+    display: inline-flex; align-items: center; gap: 7px;
+    white-space: nowrap;
+  }
+  .ba-eyebrow .ba-em {
+    font-size: 18px; line-height: 1;
+  }
+  .ba-eyebrow .ba-dot { color: #cbd5e1; font-weight: 400; }
+  @media (max-width: 480px) {
+    .ba-eyebrow { font-size: 13px; gap: 4px 10px; }
+  }
+
   /* Art lock 2026-05-25: hero-stat-first frame.
      Previous before/after layout was confusing — scanner sees big red 30%
      and big green 9% but has to read the small "ไม่มาตามนัด" label below
@@ -1135,6 +1158,15 @@
      expect to see are growth (higher=better). Now leads with the reduction
      (the actual win) + before/after as supporting detail underneath. -->
 <section class="sec sec-ba sec-center" aria-labelledby="ba-h">
+  <!-- Bilingual eyebrow · adds emotional weight (Art lock 2026-05-25 iter3)
+       👻 = ลูกค้าไม่มา = Ghost bookings · the no-show
+       💸 = เสียรายได้ = Lost revenue · the consequence -->
+  <p class="ba-eyebrow">
+    <span class="ba-pair"><span class="ba-em">👻</span> Ghost bookings</span>
+    <span class="ba-dot" aria-hidden="true">·</span>
+    <span class="ba-pair"><span class="ba-em">💸</span> Lost revenue</span>
+  </p>
+
   <h2 class="sec-h2" id="ba-h">ลูกค้า<em>ไม่มา = เสียเงิน</em></h2>
 
   <!-- Hero stat · THE WIN · single positive number, eye-leading
