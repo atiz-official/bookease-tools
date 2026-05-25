@@ -810,6 +810,69 @@
   /* .dash-* dashboard styles REMOVED 2026-05-24 (Art audit · section dropped) */
 
   /* ═══════ SECTION: Pricing · 3-col row EVEN on mobile (Art audit) ═══════ */
+  /* Art lock 2026-05-25 · Option A · headline rate + breakdown.
+     - Hero "2.9%" big · 72-92px responsive · the win at a glance
+     - "เริ่มที่" prefix soft + small (the modifier · doesn't compete)
+     - Breakdown line 15-16px (Art "don't make too small") · uses rail/dot
+       pattern for clean readability · PromptPay first + bold (cheapest +
+       most popular) · slight visual lift via .rail--primary color hint */
+  .price-hero {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    margin: 6px auto 0; max-width: 640px;
+  }
+  .price-hero-line {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    font-family: 'Inter', sans-serif;
+  }
+  .price-hero-from {
+    font-size: 16px; font-weight: 600; color: #64748b;
+    margin-right: 8px; align-self: center;
+  }
+  .price-hero-num {
+    font-size: clamp(64px, 14vw, 92px); font-weight: 900;
+    color: #1E40AF; letter-spacing: -0.04em; line-height: 1;
+  }
+  .price-hero-unit {
+    font-size: clamp(26px, 5vw, 36px); font-weight: 800;
+    color: #1E40AF; letter-spacing: -0.02em;
+  }
+  .price-hero-label {
+    font-size: 14.5px; color: #64748b; margin: 4px 0 14px;
+    text-align: center; max-width: 320px; line-height: 1.5;
+  }
+  .price-hero-breakdown {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 10px 12px;
+    font-size: 15.5px; color: #0f172a; line-height: 1.5;
+    max-width: 560px;
+  }
+  .price-hero-breakdown .rail {
+    display: inline-flex; align-items: center; gap: 7px;
+    white-space: nowrap;
+  }
+  .price-hero-breakdown .rail .flag {
+    font-size: 17px; line-height: 1;
+  }
+  .price-hero-breakdown .rail b {
+    font-family: 'Inter', sans-serif; font-weight: 800;
+    color: #0f172a; font-variant-numeric: tabular-nums;
+    margin-left: 4px;
+  }
+  .price-hero-breakdown .rail--primary b {
+    color: #1E40AF;
+  }
+  .price-hero-breakdown .dot {
+    color: #cbd5e1; font-weight: 700;
+  }
+  /* On narrow mobile, breakdown wraps cleanly — each rail becomes its own
+     row so the dot separators sit at the end of each line. */
+  @media (max-width: 480px) {
+    .price-hero-breakdown {
+      flex-direction: column; gap: 6px;
+    }
+    .price-hero-breakdown .dot { display: none; }
+  }
+
   .sec-price {
     background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
     border-top: 1px solid #ececec;
@@ -1221,26 +1284,27 @@
   </div>
 </section>
 
-<!-- ═══════ SECTION: Pricing · stripped to essentials ═══════ -->
+<!-- ═══════ SECTION: Pricing · Option A · headline rate + breakdown
+     (Art lock 2026-05-25) — the 3-card "tier" frame was confusing because
+     these aren't plans, they're fees-per-rail. Now leads with hero "2.9%"
+     (the rate ~80% of TH customers will hit) and breakdown shows all rails. -->
 <section class="sec sec-price sec-center" id="price" aria-labelledby="price-h">
   <h2 class="sec-h2" id="price-h">จ่าย<em>เมื่อมียอด</em></h2>
   <p class="sec-sub">ไม่มีค่าสมัคร · ไม่มีค่ารายเดือน</p>
 
-  <div class="price-grid">
-    <div class="price-card">
-      <div class="price-emoji">💳</div>
-      <div class="price-method">บัตรไทย</div>
-      <div class="price-rate">4.9<span class="price-rate-unit">%</span></div>
+  <div class="price-hero">
+    <div class="price-hero-line" aria-label="ค่าธรรมเนียมเริ่มที่ 2.9 เปอร์เซ็นต์">
+      <span class="price-hero-from">เริ่มที่</span>
+      <span class="price-hero-num">2.9</span>
+      <span class="price-hero-unit">%</span>
     </div>
-    <div class="price-card price-card--featured">
-      <div class="price-emoji">🇹🇭</div>
-      <div class="price-method">PromptPay</div>
-      <div class="price-rate">2.9<span class="price-rate-unit">%</span></div>
-    </div>
-    <div class="price-card">
-      <div class="price-emoji">🌍</div>
-      <div class="price-method">บัตรต่างชาติ</div>
-      <div class="price-rate">5.9<span class="price-rate-unit">%</span></div>
+    <p class="price-hero-label">ค่าธรรมเนียมตามช่องทางที่ลูกค้าจ่าย</p>
+    <div class="price-hero-breakdown">
+      <span class="rail rail--primary"><span class="flag">🇹🇭</span> PromptPay <b>2.9%</b></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span class="rail"><span class="flag">💳</span> บัตรไทย <b>4.9%</b></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span class="rail"><span class="flag">🌍</span> บัตรต่างชาติ <b>5.9%</b></span>
     </div>
   </div>
 </section>
