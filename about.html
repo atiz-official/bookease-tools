@@ -895,11 +895,24 @@
   .price-hero-breakdown .dot {
     color: #cbd5e1; font-weight: 700;
   }
-  /* On narrow mobile, breakdown wraps cleanly — each rail becomes its own
-     row so the dot separators sit at the end of each line. */
+  /* On narrow mobile, breakdown stacks vertically with rates right-aligned
+     (Art lock 2026-05-25 iter5 · reads like a price sheet · scannable). */
   @media (max-width: 480px) {
     .price-hero-breakdown {
-      flex-direction: column; gap: 6px;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+    .price-hero-breakdown .rail {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .price-hero-breakdown .rail b {
+      margin-left: 0;
     }
     .price-hero-breakdown .dot { display: none; }
   }
@@ -1335,12 +1348,19 @@
       <span class="price-hero-unit">%</span>
     </div>
     <p class="price-hero-label">ค่าธรรมเนียมตามช่องทางที่ลูกค้าจ่าย</p>
+    <!-- Art lock 2026-05-25 iter5: cleaner / less cognitive load.
+         - Drop all flag/icon emojis (3 emojis + 3 names + 3 rates = 9
+           visual tokens · too noisy). Names + rates is enough info.
+         - PromptPay → QR PromptPay (the "QR" prefix tells the reader
+           which rail this is — replaces what the 🇹🇭 flag was doing).
+         - Mobile (under 480px) stacks vertically with rates right-
+           aligned via space-between — reads like a price sheet. -->
     <div class="price-hero-breakdown">
-      <span class="rail rail--primary"><span class="flag">🇹🇭</span> PromptPay <b>2.9%</b></span>
+      <span class="rail rail--primary">QR PromptPay <b>2.9%</b></span>
       <span class="dot" aria-hidden="true">·</span>
-      <span class="rail"><span class="flag">💳</span> บัตรไทย <b>4.9%</b></span>
+      <span class="rail">บัตรไทย <b>4.9%</b></span>
       <span class="dot" aria-hidden="true">·</span>
-      <span class="rail"><span class="flag">🌍</span> บัตรต่างชาติ <b>5.9%</b></span>
+      <span class="rail">บัตรต่างชาติ <b>5.9%</b></span>
     </div>
   </div>
 </section>
