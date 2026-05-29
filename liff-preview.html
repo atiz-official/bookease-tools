@@ -118,8 +118,12 @@
   .svc .duu{font-size:14px;color:var(--muted);margin-left:-4px}
   /* ฿ glued to the PRICE ("฿500" one unit) · NOT next to นาที.
      pr is left-aligned auto-width so the number sits right after ฿
-     (was 84px right-aligned → huge dead gap between ฿ and the number) */
-  .svc .prc{font-size:15px;font-weight:800;color:var(--ink);margin-left:auto;margin-right:-7px;flex:0 0 auto}
+     (was 84px right-aligned → huge dead gap between ฿ and the number).
+     Art fix 2026-05-29: removed margin-left:auto here. With flex:1 on
+     .nm already pushing everything right, the auto-margin was double-
+     pushing → created an unwanted gap between นาที and ฿. Now the
+     duration + price + pencil + × form ONE tight right-anchored group. */
+  .svc .prc{font-size:15px;font-weight:800;color:var(--ink);margin-right:-7px;flex:0 0 auto}
   .svc .pr{width:auto;min-width:42px;max-width:84px;text-align:left;font-size:15px;font-weight:800;color:var(--ink);
     border:none;background:transparent;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
   .svc .pr:focus{border-bottom:1.5px solid var(--accent)}
