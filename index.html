@@ -864,16 +864,32 @@
     return j.content[0].text;
   }
 
-  const OCR_PROMPT = `This is a screenshot of a Thai service shop's LINE OA (Official Account) page. Extract the following branding info as JSON:
+  // Menu OCR prompt restored 2026-05-29 (Art audit caught the silent contract
+  // break: UI said "📸 ถ่ายรูปเมนู" but prompt was for LINE OA screenshot).
+  // This prompt extracts the full menu: shop name + every service line item
+  // with duration + price · matches what the UI has always promised.
+  const OCR_PROMPT = `This is a photo of a Thai service shop's printed menu (massage / spa / nail / hair / clinic etc.). Extract the shop info and EVERY menu line item as JSON:
 
 {
-  "shopName": "...",
-  "openTime": "HH:MM-HH:MM"
+  "shopName": "the brand or shop name printed on the menu (Thai or English; prefer English when both are shown)",
+  "openTime": "HH:MM-HH:MM if visible on the menu, else null",
+  "services": [
+    {
+      "name": "service name as printed (preserve original language)",
+      "duration": "duration as printed, e.g. '30 mins', '60 นาที', '1 hr', or null if not shown",
+      "durationMinutes": 30,
+      "price": 220
+    }
+  ]
 }
 
-For shopName: Look at the LINE OA green header bar at the top of the screen first — the account display name shown there (e.g. "KOZY Sleep Salon", "Zen Spa Bangkok"). This is always the most reliable source. If not clear from the header, use the bold name shown below the profile avatar. Prefer the English or English-mixed name over a Thai-only name when both are visible.
-
-For openTime: extract opening hours if visible. Format as 24-hour HH:MM-HH:MM (e.g. "10:00-21:00"). If hours are not visible or unclear, set openTime to null.
+Rules:
+- Each menu line item = one service entry. Combo deals (e.g. "BODY SCRUB + AROMATHERAPY OIL MASSAGE") = one entry.
+- Services with multiple durations + prices (e.g. BODY MASSAGE 60/90/120 mins) → output a SEPARATE entry per duration.
+- "price" is a number (integer baht, no currency symbol, no commas, no "."-suffix).
+- "durationMinutes" is an integer extracted from duration: "60 mins"→60, "1 hr"→60, "1.5 hr"→90, "120 นาที"→120. If duration is null, omit durationMinutes.
+- Bilingual menus where each line shows both English and Thai for the same service: keep both joined with " · " (e.g. "BODY MASSAGE · นวดไทย").
+- Read carefully: prices and durations can appear in any order; align them by row.
 
 Output ONLY valid JSON. No prose. No code fences.`;
 
@@ -888,17 +904,38 @@ Output ONLY valid JSON. No prose. No code fences.`;
       const b64 = await fileToBase64(file);
       const text = await callClaudeVision(b64, file.type || 'image/jpeg', OCR_PROMPT);
       const data = extractJsonFromText(text);
-      const cleaned = (data.shopName || '').replace(/[^a-zA-Z0-9 -]/g, '').trim();
+      // Preserve Thai shop names (Art fix 2026-05-29): previous regex
+      // /[^a-zA-Z0-9 -]/g stripped every non-Latin character, so Thai-named
+      // shops like "บ้านสบาย" became "" and silently fell to autoFallbackToP2.
+      // Now: drop only line breaks + control chars + the few punctuation marks
+      // that break slug/JSON; keep Thai, English, digits, spaces, dots, &.
+      const cleaned = (data.shopName || '')
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
       if (!cleaned) {
         autoFallbackToP2('อ่านชื่อร้านไม่ชัด · พาไปแก้ในตัวอย่างร้าน…');
         return;
       }
+      // Pass services through (Art fix 2026-05-29): previously hardcoded to []
+      // which threw away whatever the OCR extracted. Now: accept the array
+      // when present, fall back to [] only if missing/non-array.
+      const services = Array.isArray(data.services)
+        ? data.services
+            .filter(s => s && typeof s.name === 'string' && s.name.trim())
+            .map(s => ({
+              name: s.name.trim(),
+              duration: typeof s.duration === 'string' ? s.duration.trim() : null,
+              durationMinutes: Number.isFinite(s.durationMinutes) ? Math.round(s.durationMinutes) : null,
+              price: Number.isFinite(s.price) ? Math.round(s.price) : null,
+            }))
+        : [];
       const blob = {
         shopName: cleaned,
         shortName: slugify(cleaned),
         openTime: data.openTime || '10:00-21:00',
         variant: 'airy',
-        services: [],
+        services,
       };
       const enc = btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
       // SAME contract as the typed path → P2 (liff-preview), no page hop
