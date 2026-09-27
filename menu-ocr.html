@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>สร้างเว็บร้านพร้อมใช้ใน 60 วินาที · BookEase · ฟรี</title>
 <meta name="description" content="สร้างเว็บร้านพร้อมใช้ใน 60 วินาที · กรอกให้อัตโนมัติ · ฟรี" />
+<meta property="og:image" content="https://make.bookease.co/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@700;800&display=swap" rel="stylesheet" />
@@ -27,19 +33,6 @@
 
   header h1 { margin: 0 0 22px; font-size: 28px; font-weight: 700; }
   header p  { margin: 0 0 24px; color: #64748b; font-size: 15px; }
-  /* Pass 25 v37 (Art's lock 2026-05-07): BookEase wordmark dual-blue
-     · Book navy #1E40AF + Ease sky #38BDF8 · Inter 800
-     · ฿25K ad equity preserved */
-  .brand-wordmark {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-    line-height: 1;
-    margin-bottom: 14px;
-  }
-  .brand-wordmark .book { color: #1E40AF; }
-  .brand-wordmark .ease { color: #38BDF8; }
 
   /* ───── Mode tabs ───── */
   .mode-tabs {
@@ -264,9 +257,9 @@
   .branding-grid { display: block; }
   .hidden-el, #prevUploadZone, #prevExtractBtn { display: none !important; }
 
-  .e-wm { font-family:'Inter',system-ui,sans-serif; font-weight:800;
-    font-size:15px; letter-spacing:-.01em; line-height:1; }
-  .e-wm .book { color:#1E40AF; } .e-wm .ease { color:#38BDF8; }
+  /* 2026-09-28 (Art-approved): NEW bookease logo SVG · never re-typed */
+  .e-wm { line-height:1; }
+  .e-wm img { display:block; height:16px; width:auto; }
   .e-hero { font-family:'Sarabun',system-ui,sans-serif; font-weight:800;
     font-size:19px; letter-spacing:-.01em; color:#134783;
     margin:10px 0 18px; }
@@ -354,7 +347,7 @@
 
 <div class="container">
   <header>
-    <div class="e-wm"><span class="book">Book</span><span class="ease">Ease</span></div>
+    <div class="e-wm"><img src="brand/bookease-logo.svg" alt="bookease" width="98" height="16" /></div>
     <div class="e-hero">สร้างเว็บร้านใน 60 วิ</div>
   </header>
 

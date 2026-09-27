@@ -8,6 +8,12 @@
 <meta name="description" content="ออกแบบเว็บร้านให้ใน 60 วินาที · ฟรี · ลูกค้าจอง+จ่ายล่วงหน้าใน LINE · ล็อกคิวทันที · ไม่ต้องสมัคร" />
 <meta property="og:title" content="ทำเว็บร้าน + รับจองใน LINE · ฟรี" />
 <meta property="og:description" content="ออกแบบเว็บร้านให้ใน 60 วินาที · ฟรี · ลูกค้าจอง+จ่ายล่วงหน้าใน LINE · ล็อกคิวทันที · ไม่ต้องสมัคร" />
+<meta property="og:image" content="https://make.bookease.co/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -34,19 +40,16 @@
     align-items: center;
     justify-content: space-between;
   }
-  /* Pass 25 v37 (Art's lock 2026-05-07): BookEase wordmark dual-blue
-     · "Book" navy #1E40AF + "Ease" sky #38BDF8
-     · preserves ฿25K ad spend brand equity
-     · Inter 800 weight matches official logo · letter-spacing tight */
+  /* 2026-09-28 (Art-approved): NEW bookease logo · brand/bookease-logo.svg
+     (black "book" + blue #2D55EB "ease", lowercase). Always the SVG —
+     never re-typed with a font, never recoloured or stretched. */
   .nav-brand {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
     line-height: 1;
   }
-  .nav-brand .book { color: #1E40AF; }
-  .nav-brand .ease { color: #38BDF8; }
+  .be-logo { display: block; width: auto; height: 20px; }
+  .foot .be-logo { height: 15px; }
   .nav-brand .by {
     font-family: 'Sarabun', system-ui, sans-serif;
     font-weight: 400;
@@ -673,7 +676,7 @@
 
 <!-- ─────────── Top bar ─────────── -->
 <nav class="nav">
-  <div class="nav-brand"><span class="book">Book</span><span class="ease">Ease</span></div>
+  <div class="nav-brand"><img class="be-logo" src="brand/bookease-logo.svg" alt="bookease" width="122" height="20" /></div>
   <a class="nav-login" href="https://shopv3.bookease.co/login">เข้าสู่ระบบ</a>
 </nav>
 
@@ -746,7 +749,7 @@
 <!-- ─────────── Footer ─────────── -->
 <footer class="foot">
   <div>
-    <span class="nav-brand" style="font-size:14px"><span class="book">Book</span><span class="ease">Ease</span></span>
+    <span class="nav-brand" style="vertical-align:middle"><img class="be-logo" src="brand/bookease-logo.svg" alt="bookease" width="92" height="15" /></span>
     <span style="font-weight:400;color:#888;font-size:12px;margin-left:6px">by Atiz · © 2026</span>
   </div>
   <div>
