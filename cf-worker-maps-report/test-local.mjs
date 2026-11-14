@@ -64,7 +64,7 @@ const res = await call('/report', { placeId });
 const rep = await res.json();
 check('report 200', res.status === 200);
 check('9 points', rep.points.length === 9 && rep.keywords[0].points.length === 9);
-check('40 ids + 2 enterprise + 2 names + 1 details calls', calls.ids === 40 && calls.enterprise === 2 && calls.names === 2 && calls.details === 1 && calls.other === 0);
+check('20 ids + 1 enterprise + 1 names + 1 details calls', calls.ids === 20 && calls.enterprise === 1 && calls.names === 1 && calls.details === 1 && calls.other === 0);
 check('area found with volume', rep.area && ['อโศก', 'นานา'].includes(rep.area.name) && rep.volume.total > 0 && rep.volume.area === rep.area.name && rep.area.hub.startsWith('BTS '));
 console.log('calls', calls, '| hubRank', rep.keywords.map((k) => `${k.keyword}:${k.hubRank}`).join(' '), '| top3', rep.keywords.map((k) => k.top3Count).join('/'),
   '| ranks', rep.keywords[0].points.map((p) => p.rank).join(','), '| volume', rep.volume && rep.volume.total, '| ahead', rep.keywords[0].ahead.map((id) => rep.places[id] && rep.places[id].name).join(' · '));

@@ -13,9 +13,9 @@
  *   GET  /view?p=<placeId>            serves a cached report only, never calls Google
  *
  * Google cost per report (pricing page checked 2026-11-14):
- *   40 × Text Search IDs-only      → not billed (9 points + the area landmark, 2 keywords, 2 pages)
- *    2 × Text Search Enterprise    → 1,000 free / month, then $35 per 1,000
- *    2 × Text Search Pro (names)   → 5,000 free / month, then $32 per 1,000
+ *   20 × Text Search IDs-only      → not billed (9 points + the area landmark, 1 keyword, 2 pages)
+ *    1 × Text Search Enterprise    → 1,000 free / month, then $35 per 1,000
+ *    1 × Text Search Pro (names)   → 5,000 free / month, then $32 per 1,000
  *    1 × Place Details Enterprise  → 1,000 free / month, then $20 per 1,000
  *   /find = 1 × Text Search Pro    → 5,000 free / month
  *   ≈ 500 reports / month free, then ≈ $0.09 per report.
@@ -33,7 +33,11 @@ import { AREAS, AREAS_AS_OF } from './areas-data.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://make.bookease.co', 'https://atiz-official.github.io'];
-const KEYWORDS = ['ร้านนวด', 'massage'];
+// Only the Thai keyword for now. Checked against the real Google Maps app on 2026-11-14:
+//   "ร้านนวด"  → API rank matched Maps (1 vs 2, 33 vs 34).
+//   "massage"  → API said "not in top 40" where Maps showed the shop at #6. Not trustworthy → switched off
+//   until the cause is found. Do not re-enable without re-checking against Maps.
+const KEYWORDS = ['ร้านนวด'];
 const SPACING_M = 500;       // distance between check points: the shop's door + 8 points around it
 const AREA_RADIUS_M = 3000;  // a shop belongs to the nearest area whose landmark is within this distance
 const BIAS_RADIUS_M = 300;   // "someone standing here searches"
@@ -248,7 +252,7 @@ async function buildReport(env, placeId) {
   });
 
   return {
-    version: 4,
+    version: 5,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
@@ -261,7 +265,7 @@ async function buildReport(env, placeId) {
 // ── cache + rate limit ──────────────────────────────────────────────
 
 function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v4/${placeId}`);
+  return new Request(`${new URL(url).origin}/__cache/report/v5/${placeId}`);
 }
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */

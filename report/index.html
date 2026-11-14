@@ -371,7 +371,7 @@ function paint() {
     <div class="card">
       <div class="head-row">
         <h2>ค้นจากตรงไหน เจอร้านคุณอันดับที่เท่าไหร่</h2>
-        <div class="seg" role="group" aria-label="คำค้น">${R.keywords.map((x, i) => `<button data-kw="${i}" aria-pressed="${i === KW}">${esc(x.keyword)}</button>`).join('')}</div>
+        ${R.keywords.length > 1 ? `<div class="seg" role="group" aria-label="คำค้น">${R.keywords.map((x, i) => `<button data-kw="${i}" aria-pressed="${i === KW}">${esc(x.keyword)}</button>`).join('')}</div>` : ''}
       </div>
       <div class="map" id="map"></div>
       <div class="legend">
