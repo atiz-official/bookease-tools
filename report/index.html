@@ -93,6 +93,10 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .top3 .pos{color:var(--good)}
 .nm{font-weight:700;font-size:15px;line-height:1.3}
 .meta{font-size:13px;color:var(--ink-3)}
+.nm a{color:inherit;text-decoration:none}
+.nm a:hover{text-decoration:underline}
+a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.top3list{margin:4px 0 0 20px}
 .web{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .web.yes{background:var(--good-bg);color:var(--good)}
 .web.no{background:var(--none-bg);color:var(--ink-3)}
@@ -154,7 +158,7 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 
   <!-- 2 · loading -->
   <section class="card start" id="s-busy" hidden>
-    <div class="busy"><div class="spin" aria-hidden="true"></div><span id="busy-text" role="status">กำลังเช็คอันดับ 9 จุดรอบร้าน</span></div>
+    <div class="busy"><div class="spin" aria-hidden="true"></div><span id="busy-text" role="status">กำลังตรวจ</span></div>
   </section>
 
   <!-- 3 · report -->
@@ -243,7 +247,7 @@ $('again').addEventListener('click', () => {
 async function run(placeId) {
   show('s-busy');
   const t0 = Date.now();
-  const tick = setInterval(() => { $('busy-text').textContent = `กำลังเช็คอันดับ 9 จุดรอบร้าน · ${Math.round((Date.now() - t0) / 1000)} วินาที`; }, 1000);
+  const tick = setInterval(() => { $('busy-text').textContent = `กำลังตรวจ · ${Math.round((Date.now() - t0) / 1000)} วินาที`; }, 1000);
   try {
     const report = await api('/report', { placeId });
     history.replaceState(null, '', `?p=${encodeURIComponent(placeId)}`);
@@ -265,35 +269,36 @@ function render(report) {
   window.scrollTo(0, 0);
 }
 
-function rankText(r) { return r == null ? `${R.maxRank}+` : String(r); }
+const rankText = (r) => (r == null ? `${R.maxRank}+` : String(r));
+const mapsLink = (id) => (R.places[id] && R.places[id].mapsUrl) || `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(id)}`;
+function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return 'เว็บไซต์'; } }
 
 function headline(k) {
-  const v = R.volume;
-  const where = v && (v.scope === 'bangkok' ? 'ทั้งกรุงเทพฯ' : `บริเวณ${esc(v.area)}`);
-  const first = v
-    ? `จำนวนการค้นหาร้านนวด ${where} <span class="num">${fmt(v.total)}</span> ครั้ง/เดือน`
-    : `ลูกค้าค้น "${esc(k.keyword)}" รอบร้านคุณ`;
+  const first = R.volume
+    ? `จำนวนการค้นหาร้านนวด บริเวณ${esc(R.volume.area)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
+    : 'ยังไม่มีจำนวนการค้นหาของย่านนี้';
   const n = k.top3Count, total = k.points.length;
-  if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านคุณปิดอยู่ ต้องตรวจใหม่ตอนร้านเปิด</span>`;
+  if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านปิด ตรวจใหม่ตอนร้านเปิด</span>`;
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
-    : n === total ? '<span class="good">เจอร้านคุณทุกจุดรอบร้าน</span>'
-    : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} จาก ${total} จุดรอบร้าน</span>`;
+    : n === total ? '<span class="good">เจอร้านคุณทุกจุด</span>'
+    : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} จาก ${total} จุด</span>`;
   return `${first}<br>${second}`;
 }
 
 function placeRow(id, pos, cls) {
   const p = R.places[id];
-  if (!p) {
-    return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm"><a href="https://www.google.com/maps/place/?q=place_id:${esc(id)}" target="_blank" rel="noopener">ดูร้านนี้ใน Google Maps ↗</a></div></div><span></span></li>`;
-  }
-  const meta = [p.rating != null ? `<span class="star">★ ${esc(p.rating)}</span>` : '', p.reviews != null ? `<span class="num">${fmt(p.reviews)}</span> รีวิว` : ''].filter(Boolean).join(' · ');
+  const name = p ? esc(p.name) : 'ดูร้านนี้ใน Google Maps';
   const you = id === R.shop.id ? '<span class="you-tag">ร้านคุณ</span>' : '';
-  return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm">${esc(p.name)}${you}</div><div class="meta">${meta}</div></div><span class="web ${p.website ? 'yes' : 'no'}">${p.website ? 'มีเว็บ' : 'ไม่มีเว็บ'}</span></li>`;
+  const meta = p ? [p.rating != null ? `<span class="star">★ ${esc(p.rating)}</span>` : '', p.reviews != null ? `<span class="num">${fmt(p.reviews)}</span> รีวิว` : ''].filter(Boolean).join(' · ') : '';
+  const web = !p || !p.detail ? '<span></span>'
+    : p.website ? `<a class="web yes" href="${esc(p.website)}" target="_blank" rel="noopener nofollow">${esc(host(p.website))}</a>`
+    : '<span class="web no">ไม่มีเว็บ</span>';
+  return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm"><a href="${esc(mapsLink(id))}" target="_blank" rel="noopener">${name}</a>${you}</div><div class="meta">${meta}</div></div>${web}</li>`;
 }
 
 function aheadList(k) {
-  const rank = k.centreRank;
-  if (rank === 1) return `<ol class="rank-list">${placeRow(R.shop.id, 1, 'you ok')}</ol><p class="note">ค้นจากหน้าร้าน ร้านคุณขึ้นเป็นอันดับ 1</p>`;
+  const rank = R.area ? k.hubRank : k.centreRank;
+  if (rank === 1) return `<ol class="rank-list">${placeRow(R.shop.id, 1, 'you ok')}</ol>`;
   const rows = k.ahead.map((id, i) => placeRow(id, i + 1, i < 3 ? 'top3' : ''));
   const between = rank == null ? null : rank - 1 - k.ahead.length;
   if (between === null) rows.push('<li class="gap-row">…</li>');
@@ -310,21 +315,19 @@ function range(vals, f) {
 }
 
 function gapCard(k) {
-  const ahead = k.ahead.map((id) => R.places[id]).filter(Boolean);
+  const ahead = k.ahead.map((id) => R.places[id]).filter((p) => p && p.detail);
   if (!ahead.length) return '';
   const withWeb = ahead.filter((p) => p.website).length;
   const s = R.shop;
-  const missingWeb = !s.website && withWeb > ahead.length / 2;
-  const title = missingWeb ? 'ร้านอันดับบนมีเว็บ ร้านคุณยังไม่มี' : 'ร้านคุณเทียบกับร้านอันดับบน';
+  const title = !s.website && withWeb > ahead.length / 2 ? 'ร้านอันดับบนมีเว็บ ร้านคุณยังไม่มี' : 'ร้านคุณ เทียบกับร้านอันดับบน';
   return `<div class="card">
     <h2>${title}</h2>
     <div class="check">
       <div class="check-row head"><span></span><span class="c">${ahead.length} ร้านแรก</span><span class="c">ร้านคุณ</span></div>
       <div class="check-row"><span>คะแนนรีวิว</span><span class="c">${range(ahead.map((p) => p.rating), (x) => x)}</span><span class="c">${s.rating == null ? '–' : esc(s.rating)}</span></div>
       <div class="check-row"><span>จำนวนรีวิว</span><span class="c num">${range(ahead.map((p) => p.reviews), fmt)}</span><span class="c num">${s.reviews == null ? '–' : fmt(s.reviews)}</span></div>
-      <div class="check-row"><span>เว็บไซต์ให้ลูกค้ากดจอง</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${s.website ? 'ok' : 'x'}">${s.website ? 'มี' : 'ไม่มี'}</span></div>
+      <div class="check-row"><span>มีเว็บไซต์</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${s.website ? 'ok' : 'x'}">${s.website ? 'มี' : 'ไม่มี'}</span></div>
     </div>
-    <div class="flow"><span>ลูกค้าเจอใน Google Maps</span>→<span>เปิดเว็บร้าน</span>→<span>กดจองได้เลย</span></div>
     ${CONFIG.offer ? `<p class="offer">${esc(CONFIG.offer)}</p>` : ''}
     <div class="cta"><a class="btn2" id="share" target="_blank" rel="noopener">ส่งรายงานนี้ทาง LINE</a></div>
   </div>`;
@@ -336,49 +339,40 @@ function volumeCard() {
   const max = Math.max(...v.rows.map((r) => r.v));
   const [y, m] = v.asOf.split('-').map(Number);
   return `<div class="card">
-    <h2>${v.scope === 'bangkok' ? 'คนกรุงเทพฯ พิมพ์ค้นว่าอะไร' : 'คนพิมพ์ค้นว่าอะไร'}</h2>
-    <div class="kw">${v.rows.map((r) => `<div class="kw-row"><span class="k">${esc(r.k)}</span><span class="bar"><i class="${r.en ? 'en' : ''}" style="width:${Math.round(r.v / max * 100)}%"></i></span><span class="v num">${fmt(r.v)}</span></div>`).join('')}</div>
-    <p class="foot">ครั้ง/เดือน · ข้อมูลเดือน ${TH_MONTH[m - 1]} ${y + 543} · สีอ่อน = ภาษาอังกฤษ${v.nearMe ? `<br>ยังไม่นับคนที่พิมพ์แค่ "${esc(v.nearMe.k)}" (${esc(v.nearMe.scope)} <span class="num">${fmt(v.nearMe.v)}</span> ครั้ง/เดือน)` : ''}</p>
+    <h2>คำที่คนค้น บริเวณ${esc(v.area)}</h2>
+    <div class="kw">${v.rows.map((r) => `<div class="kw-row"><span class="k">${esc(r.k)}</span><span class="bar"><i style="width:${Math.round(r.v / max * 100)}%"></i></span><span class="v num">${fmt(r.v)}</span></div>`).join('')}</div>
+    <p class="foot">ครั้ง/เดือน · ${TH_MONTH[m - 1]} ${y + 543}</p>
   </div>`;
 }
 
 function selectedNote(k) {
-  if (SEL == null) return '<p class="note">กดที่จุด เพื่อดูว่าตรงนั้น Google โชว์ร้านไหนก่อน</p>';
+  if (SEL == null) return '';
   const pt = k.points[SEL];
-  const items = pt.top.map((id) => {
-    const p = R.places[id];
-    return `<li>${p ? esc(p.name) + (id === R.shop.id ? ' (ร้านคุณ)' : '') : `<a href="https://www.google.com/maps/place/?q=place_id:${esc(id)}" target="_blank" rel="noopener">ดูใน Google Maps ↗</a>`}</li>`;
-  }).join('');
-  return `<div class="note">ตรงจุดนี้ Google โชว์ 3 ร้านนี้ก่อน · ร้านคุณอันดับ <strong>${rankText(pt.rank)}</strong><ol>${items}</ol></div>`;
+  const items = pt.top.map((id) => `<li><a href="${esc(mapsLink(id))}" target="_blank" rel="noopener">${R.places[id] ? esc(R.places[id].name) : 'ดูใน Google Maps'}</a>${id === R.shop.id ? ' (ร้านคุณ)' : ''}</li>`).join('');
+  return `<div class="note">3 ร้านแรกตรงจุดนี้<ol class="top3list">${items}</ol></div>`;
 }
 
 function paint() {
   const k = R.keywords[KW], s = R.shop;
-  const centre = k.centreRank;
   const checked = new Date(R.checkedAt);
+  const from = R.area ? R.area.hub : 'หน้าร้าน';
   const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(k.keyword)}/@${s.lat},${s.lng},16z?hl=th`;
   const meta = [s.rating != null ? `<span class="star">★ ${esc(s.rating)}</span>` : '', s.reviews != null ? `<span class="num">${fmt(s.reviews)} รีวิว</span>` : ''].join('');
   const bottom = [volumeCard(), gapCard(k)].filter(Boolean);
+  const open = s.openNow === true ? ' · ร้านเปิดอยู่' : s.openNow === false ? ' · ร้านปิดอยู่' : '';
 
   $('s-report').innerHTML = `
   <section class="card">
-    <div class="shop"><strong>${esc(s.name)}</strong>${meta}</div>
+    <div class="shop"><strong><a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(s.name)}</a></strong>${meta}</div>
     <h1>${headline(k)}</h1>
-    ${s.openNow === false ? '<p class="closed">Google โชว์ร้านที่เปิดอยู่ก่อน ร้านที่ปิดอยู่มักหลุดอันดับ ตัวเลขด้านล่างจึงต่ำกว่าช่วงที่ร้านเปิด</p>' : ''}
-    <div class="stats">
-      ${R.volume ? `<div class="stat"><span class="lab">จำนวนการค้นหาร้านนวด ${R.volume.scope === 'bangkok' ? 'ทั้งกรุงเทพฯ' : 'บริเวณ' + esc(R.volume.area)}</span><span class="big num">${fmt(R.volume.total)}</span><span class="sub">${R.volume.scope === 'bangkok' ? 'ครั้ง/เดือน · คำค้น "ร้านนวด" · ยังไม่มีตัวเลขเฉพาะย่านนี้' : `ครั้ง/เดือน · ทุกคำค้นที่มี "${esc(R.volume.area)}"`}</span></div>` : ''}
-      <div class="stat ${centre != null && centre <= 3 ? 'good' : 'bad'}"><span class="lab">ร้านคุณอยู่อันดับ</span><span class="big num">${rankText(centre)}</span><span class="sub">ค้น "${esc(k.keyword)}" จากหน้าร้าน</span></div>
-      <div class="stat ${k.top3Count ? 'good' : 'bad'}"><span class="lab">ติด 3 อันดับแรก</span><span class="big num">${k.top3Count}<small> / ${k.points.length} จุด</small></span><span class="sub">ลูกค้าส่วนใหญ่ดูแค่ 3 ร้านแรก</span></div>
-    </div>
   </section>
 
   <section class="main">
     <div class="card">
       <div class="head-row">
-        <h2>ลูกค้ายืนตรงไหน เห็นร้านคุณอันดับเท่าไหร่</h2>
+        <h2>ค้นจากตรงไหน เจอร้านคุณอันดับที่เท่าไหร่</h2>
         <div class="seg" role="group" aria-label="คำค้น">${R.keywords.map((x, i) => `<button data-kw="${i}" aria-pressed="${i === KW}">${esc(x.keyword)}</button>`).join('')}</div>
       </div>
-      <p class="hint">ตัวเลข = อันดับร้านคุณ เมื่อค้นจากจุดนั้น</p>
       <div class="map" id="map"></div>
       <div class="legend">
         <em style="--c:var(--dot-good)">ติด 3 อันดับแรก</em>
@@ -388,14 +382,13 @@ function paint() {
       ${selectedNote(k)}
     </div>
     <div class="card">
-      <h2>${centre === 1 ? 'ร้านคุณขึ้นเป็นร้านแรก' : 'ร้านที่ Google โชว์ก่อนร้านคุณ'}</h2>
-      <p class="hint">ค้น "${esc(k.keyword)}" จากหน้าร้าน</p>
+      <h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>
       ${aheadList(k)}
     </div>
   </section>
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
-  <p class="source">ข้อมูลจาก Google · ตรวจ ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${s.openNow === true ? ' (ร้านเปิดอยู่)' : s.openNow === false ? ' (ร้านปิดอยู่)' : ''} · อันดับเปลี่ยนตามเวลา จุดที่ค้น และเครื่องที่ค้น</p>`;
+  <p class="source">ข้อมูลจาก Google · ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${open}</p>`;
 
   const share = $('share');
   if (share) {

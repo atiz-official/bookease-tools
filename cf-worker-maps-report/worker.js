@@ -13,8 +13,9 @@
  *   GET  /view?p=<placeId>            serves a cached report only, never calls Google
  *
  * Google cost per report (pricing page checked 2026-11-14):
- *   36 × Text Search IDs-only      → not billed
+ *   40 × Text Search IDs-only      → not billed (9 points + the area landmark, 2 keywords, 2 pages)
  *    2 × Text Search Enterprise    → 1,000 free / month, then $35 per 1,000
+ *    2 × Text Search Pro (names)   → 5,000 free / month, then $32 per 1,000
  *    1 × Place Details Enterprise  → 1,000 free / month, then $20 per 1,000
  *   /find = 1 × Text Search Pro    → 5,000 free / month
  *   ≈ 500 reports / month free, then ≈ $0.09 per report.
@@ -28,44 +29,18 @@
  *   The hard guard is a per-day quota on the key in Google Cloud. Set one.
  */
 
+import { AREAS, AREAS_AS_OF } from './areas-data.js';
+
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://make.bookease.co', 'https://atiz-official.github.io'];
 const KEYWORDS = ['ร้านนวด', 'massage'];
-const SPACING_M = 350;       // distance between check points
+const SPACING_M = 500;       // distance between check points: the shop's door + 8 points around it
+const AREA_RADIUS_M = 3000;  // a shop belongs to the nearest area whose landmark is within this distance
 const BIAS_RADIUS_M = 300;   // "someone standing here searches"
 const PAGES = 2;             // 20 per page → rank up to 40
 const CACHE_SECONDS = 7 * 24 * 3600; // how long a shared link keeps working (/view)
 const FRESH_SECONDS = 3 * 3600;      // a new check re-uses a report younger than this; rank moves with time of day
 const DAILY_CAP = { report: 300, find: 1500 };
-
-// Monthly search volume per area. Source: Google Ads Keyword Planner, location = Bangkok,
-// 12-month average. Updated by hand (no API access yet). A shop outside every area gets no volume line.
-const VOLUME_AREAS = [
-  {
-    id: 'asok', name: 'อโศก', lat: 13.7372, lng: 100.5603, radius_m: 1200, asOf: '2026-11',
-    total: 1060,
-    rows: [
-      { k: 'ร้านนวด อโศก', v: 320, en: false },
-      { k: 'massage asoke', v: 260, en: true },
-      { k: 'asok massage', v: 170, en: true },
-      { k: 'นวด อโศก', v: 140, en: false },
-      { k: 'massage asok', v: 110, en: true },
-    ],
-    nearMe: { k: 'นวดใกล้ฉัน', v: 60500, scope: 'ทั้งกรุงเทพฯ' },
-  },
-];
-
-// Used when the shop is outside every VOLUME_AREAS entry: Bangkok-wide numbers, labelled as such.
-// Same source and period as above (Keyword Planner, location = Bangkok, 12-month average).
-const VOLUME_BANGKOK = {
-  asOf: '2026-11',
-  total: 74000, // keyword "ร้านนวด" alone
-  rows: [
-    { k: 'massage near me', v: 301000, en: true },
-    { k: 'ร้านนวด', v: 74000, en: false },
-    { k: 'นวดใกล้ฉัน', v: 60500, en: false },
-  ],
-};
 
 // ── helpers ─────────────────────────────────────────────────────────
 
@@ -217,23 +192,36 @@ async function buildReport(env, placeId) {
   const shopRaw = await google(env, `places/${placeId}`,
     'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus,currentOpeningHours.openNow', null);
   const shop = slim(shopRaw);
+  shop.detail = true;
   shop.status = shopRaw.businessStatus || '';
   shop.openNow = shopRaw.currentOpeningHours && typeof shopRaw.currentOpeningHours.openNow === 'boolean' ? shopRaw.currentOpeningHours.openNow : null;
   if (shop.lat == null) return { error: 'no_location' };
 
+  // Which neighbourhood is this shop in? Nearest area landmark within AREA_RADIUS_M.
+  const here = { lat: shop.lat, lng: shop.lng };
+  let area = null, areaDist = Infinity;
+  for (const a of AREAS) {
+    const d = metres(here, a);
+    if (d < areaDist && d <= AREA_RADIUS_M) { area = a; areaDist = d; }
+  }
+
   const points = grid(shop.lat, shop.lng);
   const centre = points.find((p) => p.centre);
+  const hub = area ? { lat: area.lat, lng: area.lng } : centre; // where the "shops shown first" list is taken
 
-  // 18 rank checks (IDs only, free) + 2 detail lookups at the shop's own location, all in parallel
+  const DETAIL = 'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.websiteUri';
+  const NAMES = 'places.id,places.displayName,places.googleMapsUri';
   const rankJobs = [];
   for (const kw of KEYWORDS) for (const pt of points) rankJobs.push(rankedIds(env, kw, pt));
-  const detailJobs = KEYWORDS.map((kw) => google(env, 'places:searchText',
-    'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.websiteUri',
-    searchBody(kw, centre.lat, centre.lng, BIAS_RADIUS_M)));
-  const [rankLists, detailLists] = await Promise.all([Promise.all(rankJobs), Promise.all(detailJobs)]);
+  const hubJobs = KEYWORDS.map((kw) => (area ? rankedIds(env, kw, hub) : null));
+  const detailJobs = KEYWORDS.map((kw) => google(env, 'places:searchText', DETAIL, searchBody(kw, hub.lat, hub.lng, BIAS_RADIUS_M)));
+  const nameJobs = KEYWORDS.map((kw) => (area ? google(env, 'places:searchText', NAMES, searchBody(kw, centre.lat, centre.lng, BIAS_RADIUS_M)) : null));
+  const [rankLists, hubLists, detailLists, nameLists] = await Promise.all([
+    Promise.all(rankJobs), Promise.all(hubJobs), Promise.all(detailJobs), Promise.all(nameJobs)]);
 
   const places = {};
-  for (const d of detailLists) for (const p of d.places || []) places[p.id] = slim(p);
+  for (const d of nameLists) for (const p of (d && d.places) || []) places[p.id] = { ...slim(p), detail: false };
+  for (const d of detailLists) for (const p of d.places || []) places[p.id] = { ...slim(p), detail: true };
   places[shop.id] = shop;
 
   const keywords = KEYWORDS.map((kw, ki) => {
@@ -242,9 +230,10 @@ async function buildReport(env, placeId) {
       const at = ids.indexOf(shop.id);
       return { rank: at === -1 ? null : at + 1, top: ids.slice(0, 3), seen: ids.length };
     });
-    const centreIds = rankLists[ki * points.length + points.indexOf(centre)];
+    const hubIds = area ? hubLists[ki] : rankLists[ki * points.length + points.indexOf(centre)];
+    const hubAt = hubIds.indexOf(shop.id);
     const ahead = [];
-    for (const id of centreIds) {
+    for (const id of hubIds) {
       if (id === shop.id || ahead.length >= 5) break;
       ahead.push(id);
     }
@@ -253,29 +242,26 @@ async function buildReport(env, placeId) {
       points: pts,
       top3Count: pts.filter((p) => p.rank != null && p.rank <= 3).length,
       centreRank: pts[points.indexOf(centre)].rank,
+      hubRank: hubAt === -1 ? null : hubAt + 1,
       ahead,
     };
   });
 
-  const here = { lat: shop.lat, lng: shop.lng };
-  const area = VOLUME_AREAS.find((a) => metres(here, a) <= a.radius_m) || null;
-
   return {
-    version: 3,
+    version: 4,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
     shop, points, keywords, places,
-    volume: area
-      ? { scope: 'area', area: area.name, asOf: area.asOf, total: area.total, rows: area.rows, nearMe: area.nearMe }
-      : { scope: 'bangkok', area: 'กรุงเทพฯ', asOf: VOLUME_BANGKOK.asOf, total: VOLUME_BANGKOK.total, rows: VOLUME_BANGKOK.rows, nearMe: null },
+    area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist) },
+    volume: area && { area: area.name, asOf: AREAS_AS_OF, total: area.total, rows: area.rows },
   };
 }
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
 function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v3/${placeId}`);
+  return new Request(`${new URL(url).origin}/__cache/report/v4/${placeId}`);
 }
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */

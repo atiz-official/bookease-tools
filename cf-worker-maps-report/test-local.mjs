@@ -14,7 +14,7 @@ const shopRow = Object.fromEntries(head.map((h, i) => [h, cells[i]]));
 const shop = { lat: +shopRow.lat, lng: +shopRow.lng };
 const pts = grid(shop.lat, shop.lng);
 const order = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
-let calls = { ids: 0, enterprise: 0, details: 0, other: 0 };
+let calls = { ids: 0, enterprise: 0, names: 0, details: 0, other: 0 };
 
 const realFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
@@ -30,12 +30,12 @@ globalThis.fetch = async (url, init = {}) => {
     const b = JSON.parse(init.body);
     const c = b.locationBias.circle.center;
     const i = pts.findIndex((p) => Math.abs(p.lat - c.latitude) < 1e-6 && Math.abs(p.lng - c.longitude) < 1e-6);
-    const ids = rank.ranks[b.textQuery][order[i]];
+    const ids = rank.ranks[b.textQuery][order[i === -1 ? 4 : i]]; // -1 = the area landmark → use the saved centre list
     if (mask === 'places.id,nextPageToken') {
       calls.ids++;
       return b.pageToken ? ok({ places: ids.slice(20, 40).map((id) => ({ id })) }) : ok({ places: ids.slice(0, 20).map((id) => ({ id })), nextPageToken: 't' });
     }
-    calls.enterprise++;
+    if (!mask.includes('websiteUri')) calls.names++; else calls.enterprise++;
     return ok({ places: ids.slice(0, 20).filter((id) => rank.details[id]).map((id) => {
       const d = rank.details[id];
       return { id, displayName: { text: d.name }, formattedAddress: d.address, location: { latitude: d.lat, longitude: d.lng }, googleMapsUri: d.maps_url, rating: d.rating, userRatingCount: d.reviews, websiteUri: d.website || undefined };
@@ -64,7 +64,8 @@ const res = await call('/report', { placeId });
 const rep = await res.json();
 check('report 200', res.status === 200);
 check('9 points', rep.points.length === 9 && rep.keywords[0].points.length === 9);
-check('36 ids + 2 enterprise + 1 details calls', calls.ids === 36 && calls.enterprise === 2 && calls.details === 1 && calls.other === 0);
-console.log('calls', calls, '| centreRank', rep.keywords.map((k) => `${k.keyword}:${k.centreRank}`).join(' '), '| top3', rep.keywords.map((k) => k.top3Count).join('/'),
+check('40 ids + 2 enterprise + 2 names + 1 details calls', calls.ids === 40 && calls.enterprise === 2 && calls.names === 2 && calls.details === 1 && calls.other === 0);
+check('area found with volume', rep.area && ['อโศก', 'นานา'].includes(rep.area.name) && rep.volume.total > 0 && rep.volume.area === rep.area.name && rep.area.hub.startsWith('BTS '));
+console.log('calls', calls, '| hubRank', rep.keywords.map((k) => `${k.keyword}:${k.hubRank}`).join(' '), '| top3', rep.keywords.map((k) => k.top3Count).join('/'),
   '| ranks', rep.keywords[0].points.map((p) => p.rank).join(','), '| volume', rep.volume && rep.volume.total, '| ahead', rep.keywords[0].ahead.map((id) => rep.places[id] && rep.places[id].name).join(' · '));
 fs.writeFileSync(outPath, JSON.stringify(rep, null, 1));
