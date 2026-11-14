@@ -21,7 +21,7 @@ globalThis.fetch = async (url, init = {}) => {
   url = String(url);
   const mask = (init.headers || {})['X-Goog-FieldMask'] || '';
   const ok = (o) => new Response(JSON.stringify(o), { status: 200, headers: { 'Content-Type': 'application/json' } });
-  if (url.endsWith(`/places/${placeId}`)) {
+  if (url.includes(`/places/${placeId}`)) {
     calls.details++;
     return ok({ id: placeId, displayName: { text: shopRow.name }, formattedAddress: shopRow.address, location: { latitude: shop.lat, longitude: shop.lng },
       googleMapsUri: shopRow.maps_url, rating: +shopRow.rating, userRatingCount: +shopRow.reviews, websiteUri: shopRow.website || undefined, businessStatus: shopRow.status });

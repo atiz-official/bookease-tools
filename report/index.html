@@ -273,9 +273,15 @@ const rankText = (r) => (r == null ? `${R.maxRank}+` : String(r));
 const mapsLink = (id) => (R.places[id] && R.places[id].mapsUrl) || `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(id)}`;
 function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return 'เว็บไซต์'; } }
 
+function whereText(v) {
+  if (v.kind === 'district') return `เขต${esc(v.area)}`;
+  if (v.kind === 'nearest') return `บริเวณ${esc(v.area)} (ห่างร้าน ${esc(v.km)} กม.)`;
+  return `บริเวณ${esc(v.area)}`;
+}
+
 function headline(k) {
   const first = R.volume
-    ? `จำนวนการค้นหาร้านนวด บริเวณ${esc(R.volume.area)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
+    ? `จำนวนการค้นหาร้านนวด ${whereText(R.volume)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
     : 'ยังไม่มีจำนวนการค้นหาของย่านนี้';
   const n = k.top3Count, total = k.points.length;
   if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านปิด ตรวจใหม่ตอนร้านเปิด</span>`;
@@ -339,7 +345,7 @@ function volumeCard() {
   const max = Math.max(...v.rows.map((r) => r.v));
   const [y, m] = v.asOf.split('-').map(Number);
   return `<div class="card">
-    <h2>คำที่คนค้น บริเวณ${esc(v.area)}</h2>
+    <h2>คำที่คนค้น ${v.kind === 'district' ? 'เขต' : 'บริเวณ'}${esc(v.area)}</h2>
     <div class="kw">${v.rows.map((r) => `<div class="kw-row"><span class="k">${esc(r.k)}</span><span class="bar"><i style="width:${Math.round(r.v / max * 100)}%"></i></span><span class="v num">${fmt(r.v)}</span></div>`).join('')}</div>
     <p class="foot">ครั้ง/เดือน · ${TH_MONTH[m - 1]} ${y + 543}</p>
   </div>`;

@@ -29,7 +29,7 @@
  *   The hard guard is a per-day quota on the key in Google Cloud. Set one.
  */
 
-import { AREAS, AREAS_AS_OF } from './areas-data.js';
+import { AREAS, AREAS_AS_OF, DISTRICTS } from './areas-data.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://make.bookease.co', 'https://atiz-official.github.io'];
@@ -190,10 +190,35 @@ async function find(env, q) {
 
 // ── /report ─────────────────────────────────────────────────────────
 
+/**
+ * Search volume to show for a shop, most local first:
+ *   1. the area whose landmark is within AREA_RADIUS_M            → "บริเวณอโศก"
+ *   2. the shop's district (เขต) read from its Google address      → "เขตบางบอน"
+ *   3. the nearest area landmark within 8 km                      → "บริเวณ… (ใกล้ที่สุด)" is NOT implied: kind says so
+ * Nothing is invented: if none applies the report says there is no number for this spot.
+ */
+function volumeFor(shop, area, here) {
+  if (area) return { kind: 'area', area: area.name, asOf: AREAS_AS_OF, total: area.total, rows: area.rows };
+  const m = /เขต\s*([ก-๙]+)/.exec(shop.address || '');
+  if (m) {
+    const name = m[1];
+    const same = AREAS.find((a) => a.name === name);
+    const d = same || DISTRICTS[name];
+    if (d) return { kind: 'district', area: name, asOf: AREAS_AS_OF, total: d.total, rows: d.rows };
+  }
+  let near = null, dist = Infinity;
+  for (const a of AREAS) {
+    const x = metres(here, a);
+    if (x < dist) { near = a; dist = x; }
+  }
+  if (near && dist <= 8000) return { kind: 'nearest', area: near.name, km: +(dist / 1000).toFixed(1), asOf: AREAS_AS_OF, total: near.total, rows: near.rows };
+  return null;
+}
+
 async function buildReport(env, placeId) {
   if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: 'bad_place_id' };
 
-  const shopRaw = await google(env, `places/${placeId}`,
+  const shopRaw = await google(env, `places/${placeId}?languageCode=th`,
     'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus,currentOpeningHours.openNow', null);
   const shop = slim(shopRaw);
   shop.detail = true;
@@ -252,20 +277,20 @@ async function buildReport(env, placeId) {
   });
 
   return {
-    version: 5,
+    version: 6,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
     shop, points, keywords, places,
     area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist) },
-    volume: area && { area: area.name, asOf: AREAS_AS_OF, total: area.total, rows: area.rows },
+    volume: volumeFor(shop, area, here),
   };
 }
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
 function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v5/${placeId}`);
+  return new Request(`${new URL(url).origin}/__cache/report/v6/${placeId}`);
 }
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */
