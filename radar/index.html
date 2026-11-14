@@ -60,8 +60,9 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .shop strong{color:var(--ink);font-size:17px}
 .closed-chip{background:var(--none-bg);color:var(--ink-3);border-radius:999px;padding:3px 11px;font-size:13px;font-weight:600;white-space:nowrap}
 .vol-label{font-size:18px;font-weight:700;line-height:1.35;color:var(--ink-2);letter-spacing:0;text-wrap:balance}
-.vol{font-size:22px;font-weight:800;line-height:1;margin-top:-4px;color:var(--ink)}
-.vol .num{font-size:72px;font-weight:800;letter-spacing:-.035em;margin-right:10px}
+.vol{font-size:22px;font-weight:800;line-height:1;margin-top:-4px;color:var(--ink);display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px}
+.vol span,.vol-label span{white-space:nowrap}
+.vol .num{font-size:72px;font-weight:800;letter-spacing:-.035em}
 .found{font-size:22px;font-weight:800;line-height:1.3}
 .found .bad{color:var(--bad)} .found .good{color:var(--good)} .found .wait{color:#B45309}
 .types{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
@@ -306,7 +307,7 @@ function whereText(v) {
 function headline(k) {
   // The search volume is the one big thing on the card: label, then the number.
   const first = R.volume
-    ? `<h1 class="vol-label">จำนวนการค้นหา${esc(cat().label)} ${whereText(R.volume)}</h1><p class="vol"><span class="num">${fmt(R.volume.total)}</span>ครั้ง/เดือน</p>`
+    ? `<h1 class="vol-label">จำนวนการค้นหา<span>${esc(cat().label)}</span> <span>${whereText(R.volume)}</span></h1><p class="vol"><span class="num">${fmt(R.volume.total)}</span><span>ครั้ง/เดือน</span></p>`
     : `<h1 class="vol-label">ยังไม่มีจำนวนการค้นหา${esc(cat().label)}ของย่านนี้</h1>`;
   const n = k.top3Count, total = k.points.length;
   // A closed shop drops down the list, so "found / not found" would mislead: say nothing here.
