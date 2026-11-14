@@ -44,3 +44,19 @@ gitignored because it holds real shop names and ranks).
 - Short links (maps.app.goo.gl) from Cloudflare's network — parser tested on long links only.
 - Google terms on keeping a report for 7 days (`CACHE_SECONDS`); lower it if terms require.
 - Search volume exists for Asok only (`VOLUME_AREAS`); other areas show no volume line.
+
+## What the report can be asked for (2026-11-15)
+
+- **Shop type** is read from the Google listing: massage, salon, barber, nail, beauty clinic, tattoo. Another type
+  is ranked under Google's own Thai name for it and gets no search volume. The page shows the types as chips.
+- **Neighbourhood** (`area`): left out, the nearest landmark within 3 km. The page offers the ten nearest; picking one
+  re-checks the volume and the "searched from <landmark>" list there.
+- **Distance** (`spacing`): 500 m (default), 1 km or 2 km between the 9 points.
+- Links carry all three: `/radar/?p=<place>&c=<type>&a=<area>&s=<metres>`.
+- **Saved reports** live in the Workers KV namespace `RADAR_REPORTS` (binding `REPORTS`, see wrangler.toml) for 7 days;
+  a repeat inside 3 hours is answered from it without calling Google. The edge cache was tried first and answered
+  about one request in six on workers.dev.
+- **Search volume** = searches that name the neighbourhood ("ร้านทำผม ท่าพระ"), Keyword Planner, Bangkok city.
+  Searches without a place name ("ร้านเสริมสวยใกล้ฉัน") are far larger but Keyword Planner only gives them for
+  Bangkok as a whole (it has no district targets except Sathon): see
+  `bookease-official/tools/merchant-discovery/out/generic-volumes-raw-bangkok-2026-11-15.txt`.
