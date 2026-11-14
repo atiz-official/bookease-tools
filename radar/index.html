@@ -55,7 +55,9 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 
 /* report */
-#s-report{display:flex;flex-direction:column;gap:14px}
+#s-report{display:flex;flex-direction:column;gap:14px;transition:opacity .15s}
+#s-report.checking{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion:reduce){#s-report{transition:none}}
 .shop{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:15px;color:var(--ink-2)}
 .shop strong{color:var(--ink);font-size:17px}
 .closed-chip{color:var(--ink-3);font-size:13px;font-weight:500;white-space:nowrap}
@@ -265,9 +267,18 @@ $('again').addEventListener('click', () => {
 });
 
 async function run(placeId, cat, area, spacing) {
-  show('s-busy');
-  const t0 = Date.now();
-  const tick = setInterval(() => { $('busy-text').textContent = `กำลังตรวจ · ${Math.round((Date.now() - t0) / 1000)} วินาที`; }, 1000);
+  // Changing type, neighbourhood or distance on a report that is on screen: keep it in place, dimmed, while
+  // the new check runs, so the page does not jump back to the top.
+  const inPlace = !!R && R.shop.id === placeId && !$('s-report').hidden;
+  let tick = null;
+  if (inPlace) {
+    $('s-report').classList.add('checking');
+    $('s-report').setAttribute('aria-busy', 'true');
+  } else {
+    show('s-busy');
+    const t0 = Date.now();
+    tick = setInterval(() => { $('busy-text').textContent = `กำลังตรวจ · ${Math.round((Date.now() - t0) / 1000)} วินาที`; }, 1000);
+  }
   try {
     const body = { placeId };
     if (cat) body.cat = cat;
@@ -275,11 +286,22 @@ async function run(placeId, cat, area, spacing) {
     if (spacing) body.spacing = Number(spacing);
     const report = await api('/report', body);
     history.replaceState(null, '', link(report));
-    render(report);
+    render(report, inPlace);
   } catch (e) {
-    show('s-find');
-    fail($('find-err'), say(e.message));
-  } finally { clearInterval(tick); }
+    if (inPlace) {
+      paint(); // put the controls back to what the report on screen was checked with
+      const note = document.createElement('p');
+      note.className = 'err'; note.setAttribute('role', 'alert'); note.textContent = say(e.message);
+      $('s-report').prepend(note);
+    } else {
+      show('s-find');
+      fail($('find-err'), say(e.message));
+    }
+  } finally {
+    if (tick) clearInterval(tick);
+    $('s-report').classList.remove('checking');
+    $('s-report').removeAttribute('aria-busy');
+  }
 }
 
 /* ── report ─────────────────────────────────────────────────────── */
@@ -303,12 +325,12 @@ function choices() {
 }
 const kmText = (m) => (m < 1000 ? `${m} ม.` : `${m / 1000} กม.`);
 
-function render(report) {
+function render(report, inPlace) {
   R = report; KW = 0; SEL = null;
   document.title = `${R.shop.name} · Shop Radar`;
   paint();
   show('s-report');
-  window.scrollTo(0, 0);
+  if (!inPlace) window.scrollTo(0, 0);
 }
 
 const rankText = (r) => (r == null ? `${R.maxRank}+` : String(r));
