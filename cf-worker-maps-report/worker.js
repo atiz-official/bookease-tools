@@ -9,8 +9,9 @@
  * Public tool, no login (Art 2026-11-14: "free and quick easy to access").
  * Routes (all JSON):
  *   POST /find    {q}                 Maps link or shop name → up to 5 candidates
- *   POST /report  {placeId}           live 9-point rank check → report (cached 7 days)
- *   GET  /view?p=<placeId>            serves a cached report only, never calls Google
+ *   POST /report  {placeId, cat?}     live 9-point rank check → report (cached 7 days). cat = shop type id;
+ *                                     left out, the type is read from the shop's Google listing
+ *   GET  /view?p=<placeId>&c=<cat>    serves a cached report only, never calls Google
  *
  * Google cost per report (pricing page checked 2026-11-14):
  *   20 × Text Search IDs-only      → not billed (9 points + the area landmark, 1 keyword, 2 pages)
@@ -29,15 +30,39 @@
  *   The hard guard is a per-day quota on the key in Google Cloud. Set one.
  */
 
-import { AREAS, AREAS_AS_OF, DISTRICTS } from './areas-data.js';
+import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://make.bookease.co', 'https://atiz-official.github.io'];
-// Only the Thai keyword for now. Checked against the real Google Maps app on 2026-11-14:
+// Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
+// Checked against the real Google Maps app on 2026-11-14:
 //   "ร้านนวด"  → API rank matched Maps (1 vs 2, 33 vs 34).
-//   "massage"  → API said "not in top 40" where Maps showed the shop at #6. Not trustworthy → switched off
-//   until the cause is found. Do not re-enable without re-checking against Maps.
-const KEYWORDS = ['ร้านนวด'];
+//   "massage"  → API said "not in top 40" where Maps showed the shop at #6. Not trustworthy → English is off
+//   until the cause is found. Do not add English keywords without re-checking against Maps.
+// The other labels have NOT been compared with the Maps app yet.
+// A type is picked in this order: exact Google primary type → a word in the shop name → broad Google types.
+// Google files many nail and hair shops under the broad "beauty_salon", so the name is asked before that.
+export const CATEGORIES = [
+  { id: 'massage', label: 'ร้านนวด', primary: ['massage', 'massage_spa', 'thai_massage'], broad: ['spa', 'sauna', 'wellness_center'], name: /นวด|สปา|massage|\bspa\b/i },
+  { id: 'salon', label: 'ร้านเสริมสวย', primary: ['hair_salon', 'hair_care'], broad: ['beauty_salon', 'beautician', 'makeup_artist'], name: /เสริมสวย|ซาลอน|ทำผม|ร้านผม|salon|hair/i },
+  { id: 'barber', label: 'ร้านตัดผม', primary: ['barber_shop'], broad: [], name: /บาร์เบอร์|ตัดผม|barber/i },
+  { id: 'nail', label: 'ร้านทำเล็บ', primary: ['nail_salon'], broad: [], name: /เล็บ|nail/i },
+  { id: 'clinic', label: 'คลินิกความงาม', primary: ['skin_care_clinic'], broad: [], name: /คลินิก.*(ความงาม|ผิว)|ความงาม.*คลินิก|beauty clinic|aesthetic|skin clinic/i },
+  { id: 'tattoo', label: 'ร้านสัก', primary: ['body_art_service', 'tattoo_shop'], broad: [], name: /ร้านสัก|สักลาย|tattoo/i },
+];
+
+/** Which type is this shop? Returns a CATEGORIES entry, or null when nothing fits. */
+export function detectCategory(shopRaw) {
+  const primary = shopRaw.primaryType || '';
+  const types = shopRaw.types || [];
+  const name = (shopRaw.displayName && shopRaw.displayName.text) || '';
+  return CATEGORIES.find((c) => c.primary.includes(primary))
+    || CATEGORIES.find((c) => c.name.test(name))
+    || CATEGORIES.find((c) => c.broad.includes(primary))
+    || CATEGORIES.find((c) => types.some((t) => c.primary.includes(t)))
+    || CATEGORIES.find((c) => types.some((t) => c.broad.includes(t)))
+    || null;
+}
 const SPACING_M = 500;       // distance between check points: the shop's door + 8 points around it
 const AREA_RADIUS_M = 3000;  // a shop belongs to the nearest area whose landmark is within this distance
 const BIAS_RADIUS_M = 300;   // "someone standing here searches"
@@ -135,16 +160,19 @@ function slim(p) {
 
 // ── /find ───────────────────────────────────────────────────────────
 
-const MAPS_HOSTS = /^(maps\.app\.goo\.gl|goo\.gl|g\.co|(www\.|maps\.)?google\.[a-z.]+|consent\.google\.com)$/;
+const MAPS_HOSTS = /^(maps\.app\.goo\.gl|goo\.gl|g\.co|share\.google|(www\.|maps\.)?google\.[a-z.]+|consent\.google\.com)$/;
+// Links that only forward somewhere else: Maps short links, and the "share" link from Google Search
+// (share.google/<code> → google.com/share.google?q=<code> → google.com/search?q=<shop name>).
+const isShort = (u) => /goo\.gl$|^g\.co$|^share\.google$/.test(u.hostname) || u.pathname === '/share.google';
 
-/** Turn a Maps link into {text, lat, lng}. Only ever fetches Google Maps hosts. */
+/** Turn a Google Maps or Google Search share link into {text, lat, lng}. Only ever fetches Google hosts. */
 export async function parseMapsLink(raw) {
   let url;
   try { url = new URL(raw); } catch { return null; }
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
   if (!MAPS_HOSTS.test(url.hostname)) return null;
 
-  if (/goo\.gl$|^g\.co$/.test(url.hostname)) {
+  if (isShort(url)) {
     // short link → follow redirects by hand so we never leave Google hosts
     for (let hop = 0; hop < 5; hop++) {
       const res = await fetch(url.toString(), { redirect: 'manual' });
@@ -153,8 +181,9 @@ export async function parseMapsLink(raw) {
       const next = new URL(loc, url);
       if (!MAPS_HOSTS.test(next.hostname)) return null;
       url = next;
-      if (!/goo\.gl$|^g\.co$/.test(url.hostname)) break;
+      if (!isShort(url)) break;
     }
+    if (isShort(url)) return null; // never resolved: its ?q= is a share code, not a shop name
   }
   if (url.hostname === 'consent.google.com') {
     const cont = url.searchParams.get('continue');
@@ -176,55 +205,94 @@ async function find(env, q) {
   q = String(q || '').trim().slice(0, 500);
   if (q.length < 2) return { error: 'empty' };
   let text = q, lat = 13.7563, lng = 100.5018, radius = 40000; // default: anywhere in Bangkok
-  if (/^https?:\/\//i.test(q)) {
-    const parsed = await parseMapsLink(q);
-    if (!parsed) return { error: 'bad_link' };
-    text = parsed.text;
-    if (parsed.lat != null) { lat = parsed.lat; lng = parsed.lng; radius = 500; }
+  // The share sheet often pastes "shop name + link" together, so the link may sit anywhere in the text.
+  const link = q.match(/https?:\/\/\S+/i);
+  if (link) {
+    const parsed = await parseMapsLink(link[0]);
+    const typed = q.replace(link[0], '').trim();
+    if (parsed) {
+      text = parsed.text;
+      if (parsed.lat != null) { lat = parsed.lat; lng = parsed.lng; radius = 500; }
+    } else if (typed.length >= 2) {
+      text = typed; // unreadable link, but the shop name came with it
+    } else {
+      return { error: 'bad_link' };
+    }
   }
   const r = await google(env, 'places:searchText',
     'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri',
     { ...searchBody(text, lat, lng, radius), pageSize: 5 });
-  return { candidates: (r.places || []).map(slim) };
+  // A shop whose name is exactly what was typed (or what the link named) goes first.
+  const same = (a) => a.replace(/\s+/g, '').toLowerCase() === text.replace(/\s+/g, '').toLowerCase();
+  const candidates = (r.places || []).map(slim);
+  candidates.sort((a, b) => same(b.name) - same(a.name));
+  return { candidates };
 }
 
 // ── /report ─────────────────────────────────────────────────────────
 
+/** Search volume of one shop type in one area / district, or null when Keyword Planner had no number. */
+function areaVolume(cat, a) {
+  if (cat === 'massage') return { total: a.total, rows: a.rows };
+  return (VOLUMES[cat] && VOLUMES[cat].areas[a.id]) || null;
+}
+function districtVolume(cat, name) {
+  const same = AREAS.find((a) => a.name === name); // a district that shares its name with an area uses the area's numbers
+  if (same) return areaVolume(cat, same);
+  if (cat === 'massage') return DISTRICTS[name] || null;
+  return (VOLUMES[cat] && VOLUMES[cat].districts[name]) || null;
+}
+
 /**
- * Search volume to show for a shop, most local first:
+ * Search volume to show for a shop, for its own shop type, most local first:
  *   1. the area whose landmark is within AREA_RADIUS_M            → "บริเวณอโศก"
  *   2. the shop's district (เขต) read from its Google address      → "เขตบางบอน"
- *   3. the nearest area landmark within 8 km                      → "บริเวณ… (ใกล้ที่สุด)" is NOT implied: kind says so
+ *   3. the nearest area landmark within 8 km that has a number    → kind 'nearest', with the distance
  * Nothing is invented: if none applies the report says there is no number for this spot.
  */
-function volumeFor(shop, area, here) {
-  if (area) return { kind: 'area', area: area.name, asOf: AREAS_AS_OF, total: area.total, rows: area.rows };
+function volumeFor(cat, shop, area, here) {
+  const asOf = cat === 'massage' ? AREAS_AS_OF : (VOLUMES[cat] && VOLUMES[cat].asOf);
+  if (area) {
+    const v = areaVolume(cat, area);
+    if (v) return { kind: 'area', area: area.name, asOf, total: v.total, rows: v.rows };
+  }
   const m = /เขต\s*([ก-๙]+)/.exec(shop.address || '');
   if (m) {
-    const name = m[1];
-    const same = AREAS.find((a) => a.name === name);
-    const d = same || DISTRICTS[name];
-    if (d) return { kind: 'district', area: name, asOf: AREAS_AS_OF, total: d.total, rows: d.rows };
+    const v = districtVolume(cat, m[1]);
+    if (v) return { kind: 'district', area: m[1], asOf, total: v.total, rows: v.rows };
   }
-  let near = null, dist = Infinity;
+  let near = null, dist = Infinity, nearV = null;
   for (const a of AREAS) {
     const x = metres(here, a);
-    if (x < dist) { near = a; dist = x; }
+    if (x >= dist) continue;
+    const v = areaVolume(cat, a);
+    if (v) { near = a; dist = x; nearV = v; }
   }
-  if (near && dist <= 8000) return { kind: 'nearest', area: near.name, km: +(dist / 1000).toFixed(1), asOf: AREAS_AS_OF, total: near.total, rows: near.rows };
+  if (near && dist <= 8000) return { kind: 'nearest', area: near.name, km: +(dist / 1000).toFixed(1), asOf, total: nearV.total, rows: nearV.rows };
   return null;
 }
 
-async function buildReport(env, placeId) {
+async function buildReport(env, placeId, catId) {
   if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: 'bad_place_id' };
 
   const shopRaw = await google(env, `places/${placeId}?languageCode=th`,
-    'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus,currentOpeningHours.openNow', null);
+    'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus,currentOpeningHours.openNow,types,primaryType,primaryTypeDisplayName', null);
   const shop = slim(shopRaw);
   shop.detail = true;
   shop.status = shopRaw.businessStatus || '';
   shop.openNow = shopRaw.currentOpeningHours && typeof shopRaw.currentOpeningHours.openNow === 'boolean' ? shopRaw.currentOpeningHours.openNow : null;
   if (shop.lat == null) return { error: 'no_location' };
+
+  // Shop type: the one asked for, else read from the Google listing. A type we have no keyword list for
+  // (a restaurant, a gym) is still ranked, under Google's own Thai name for it, but gets no search volume.
+  const asked = CATEGORIES.find((c) => c.id === catId) || null;
+  const found = asked || detectCategory(shopRaw);
+  const googleName = (shopRaw.primaryTypeDisplayName && shopRaw.primaryTypeDisplayName.text) || '';
+  if (!found && !googleName) return { error: 'unknown_type' };
+  const category = found
+    ? { id: found.id, label: found.label, auto: !asked }
+    : { id: 'other', label: googleName, auto: true };
+  const KEYWORDS = [category.label];
 
   // Which neighbourhood is this shop in? Nearest area landmark within AREA_RADIUS_M.
   const here = { lat: shop.lat, lng: shop.lng };
@@ -277,21 +345,23 @@ async function buildReport(env, placeId) {
   });
 
   return {
-    version: 6,
+    version: 7,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
-    shop, points, keywords, places,
+    shop, category, categories: CATEGORIES.map((c) => ({ id: c.id, label: c.label })), points, keywords, places,
     area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist) },
-    volume: volumeFor(shop, area, here),
+    volume: category.id === 'other' ? null : volumeFor(category.id, shop, area, here),
   };
 }
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
-function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v6/${placeId}`);
+// One cached report per shop and shop type. 'auto' = "whatever type the shop was detected as".
+function cacheKey(url, placeId, cat) {
+  return new Request(`${new URL(url).origin}/__cache/report/v7/${cat || 'auto'}/${placeId}`);
 }
+const catParam = (v) => (CATEGORIES.some((c) => c.id === v) ? v : '');
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */
 async function underDailyCap(env, url, kind) {
@@ -329,7 +399,7 @@ export default {
       if (request.method === 'GET' && url.pathname === '/view') {
         const placeId = url.searchParams.get('p') || '';
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
-        const hit = hasCache && await caches.default.match(cacheKey(request.url, placeId));
+        const hit = hasCache && await caches.default.match(cacheKey(request.url, placeId, catParam(url.searchParams.get('c'))));
         if (!hit) return json({ error: 'not_found' }, 404, origin);
         return json(await hit.json(), 200, origin);
       }
@@ -346,7 +416,8 @@ export default {
 
       if (url.pathname === '/report') {
         const placeId = String(body.placeId || '');
-        const key = hasCache && cacheKey(request.url, placeId);
+        const cat = catParam(String(body.cat || ''));
+        const key = hasCache && cacheKey(request.url, placeId, cat);
         if (key) {
           const hit = await caches.default.match(key);
           if (hit) {
@@ -356,13 +427,16 @@ export default {
         }
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
-        const report = await buildReport(env, placeId);
+        const report = await buildReport(env, placeId, cat);
         if (report.error) return json(report, 400, origin);
         if (key) {
-          const stored = new Response(JSON.stringify(report), {
+          // Store under the key that was asked for, and under the shop type it resolved to, so a link that
+          // carries &c=<type> and one that does not both open the same report.
+          const keys = [key];
+          if (report.category.id !== 'other' && report.category.id !== cat) keys.push(cacheKey(request.url, placeId, report.category.id));
+          const put = Promise.all(keys.map((k) => caches.default.put(k, new Response(JSON.stringify(report), {
             headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${CACHE_SECONDS}` },
-          });
-          const put = caches.default.put(key, stored);
+          }))));
           if (ctx && ctx.waitUntil) ctx.waitUntil(put); else await put;
         }
         return json(report, 200, origin);

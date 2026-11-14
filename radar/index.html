@@ -58,6 +58,10 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 #s-report{display:flex;flex-direction:column;gap:14px}
 .shop{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:15px;color:var(--ink-2)}
 .shop strong{color:var(--ink);font-size:17px}
+.types{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.types button{border:1.5px solid var(--line,#E3E6EC);border-radius:999px;padding:6px 14px;font:600 14px Sarabun,sans-serif;color:var(--ink-2);background:#fff;cursor:pointer}
+.types button[aria-pressed=true]{background:#0a0a0a;border-color:#0a0a0a;color:#fff;font-weight:700}
+.types button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .stat{background:var(--ground);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
 .stat .lab{font-size:14px;color:var(--ink-3);font-weight:600}
@@ -152,7 +156,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
     <h1>Shop Radar</h1>
     <p style="color:var(--ink-2);font-size:16px;margin-top:-6px">ดูว่าลูกค้าหาร้านคุณเจอไหม</p>
     <form class="field" id="f-find">
-      <input id="q" type="text" autocomplete="off" placeholder="วางลิงก์ Google Maps หรือพิมพ์ชื่อร้าน" aria-label="ลิงก์ Google Maps หรือชื่อร้าน" required>
+      <input id="q" type="text" autocomplete="off" placeholder="วางลิงก์ร้านจาก Google หรือพิมพ์ชื่อร้าน" aria-label="ลิงก์ร้านจาก Google หรือชื่อร้าน" required>
       <button class="btn">ค้นหา</button>
     </form>
     <p class="err" id="find-err" role="alert" hidden></p>
@@ -195,6 +199,7 @@ const MESSAGES = {
   google_quota: 'วันนี้มีคนใช้เต็มแล้ว ลองใหม่พรุ่งนี้',
   full_today: 'วันนี้มีคนใช้เต็มแล้ว ลองใหม่พรุ่งนี้',
   no_location: 'ร้านนี้ไม่มีตำแหน่งบน Google Maps',
+  unknown_type: 'Google ยังไม่ได้บอกว่าร้านนี้เป็นร้านประเภทไหน',
   offline: 'ต่ออินเทอร์เน็ตไม่ได้ ลองใหม่อีกครั้ง',
 };
 const say = (code) => MESSAGES[code] || 'เช็คไม่สำเร็จ ลองใหม่อีกครั้ง';
@@ -247,13 +252,13 @@ $('again').addEventListener('click', () => {
   show('s-find'); $('q').focus();
 });
 
-async function run(placeId) {
+async function run(placeId, cat) {
   show('s-busy');
   const t0 = Date.now();
   const tick = setInterval(() => { $('busy-text').textContent = `กำลังตรวจ · ${Math.round((Date.now() - t0) / 1000)} วินาที`; }, 1000);
   try {
-    const report = await api('/report', { placeId });
-    history.replaceState(null, '', `?p=${encodeURIComponent(placeId)}`);
+    const report = await api('/report', cat ? { placeId, cat } : { placeId });
+    history.replaceState(null, '', link(report));
     render(report);
   } catch (e) {
     show('s-find');
@@ -263,6 +268,13 @@ async function run(placeId) {
 
 /* ── report ─────────────────────────────────────────────────────── */
 let R = null, KW = 0, SEL = null;
+// Shop type of the report on screen. Reports saved before shop types existed were all massage.
+const cat = () => R.category || { id: 'massage', label: 'ร้านนวด' };
+// Address of a report: the shop, plus its shop type when it is one of ours.
+function link(report) {
+  const c = report.category && report.category.id !== 'other' ? `&c=${encodeURIComponent(report.category.id)}` : '';
+  return `?p=${encodeURIComponent(report.shop.id)}${c}`;
+}
 
 function render(report) {
   R = report; KW = 0; SEL = null;
@@ -284,8 +296,8 @@ function whereText(v) {
 
 function headline(k) {
   const first = R.volume
-    ? `จำนวนการค้นหาร้านนวด ${whereText(R.volume)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
-    : 'ยังไม่มีจำนวนการค้นหาของย่านนี้';
+    ? `จำนวนการค้นหา${esc(cat().label)} ${whereText(R.volume)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
+    : `ยังไม่มีจำนวนการค้นหา${esc(cat().label)}ของย่านนี้`;
   const n = k.top3Count, total = k.points.length;
   if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านปิด ตรวจใหม่ตอนร้านเปิด</span>`;
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
@@ -373,6 +385,7 @@ function paint() {
   $('s-report').innerHTML = `
   <section class="card">
     <div class="shop"><strong><a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(s.name)}</a></strong>${meta}</div>
+    ${R.categories ? `<div class="types" role="group" aria-label="ประเภทร้าน">${R.categories.map((c) => `<button data-cat="${esc(c.id)}" aria-pressed="${c.id === cat().id}">${esc(c.label)}</button>`).join('')}</div>` : ''}
     <h1>${headline(k)}</h1>
   </section>
 
@@ -401,13 +414,15 @@ function paint() {
 
   const share = $('share');
   if (share) {
-    const link = `${location.origin}${location.pathname}?p=${encodeURIComponent(s.id)}`;
-    share.href = `https://line.me/R/share?text=${encodeURIComponent(`Shop Radar · ${s.name}\n${link}`)}`;
+    const url = `${location.origin}${location.pathname}${link(R)}`;
+    share.href = `https://line.me/R/share?text=${encodeURIComponent(`Shop Radar · ${s.name}\n${url}`)}`;
   }
   drawMap(k);
 }
 
 $('s-report').addEventListener('click', (ev) => {
+  const type = ev.target.closest('[data-cat]');
+  if (type) { if (type.dataset.cat !== cat().id) run(R.shop.id, type.dataset.cat); return; }
   const kw = ev.target.closest('[data-kw]');
   if (kw) { KW = +kw.dataset.kw; paint(); return; }
   const dot = ev.target.closest('.dot');
@@ -502,14 +517,14 @@ async function drawMap(k) {
     try { render(await (await fetch(qs.get('demo'))).json()); return; }
     catch (e) { console.error('[report] demo load failed', e); }
   }
-  const p = qs.get('p');
+  const p = qs.get('p'), c = qs.get('c') || '';
   if (p) {
     show('s-busy');
     $('busy-text').textContent = 'กำลังเปิดรายงาน';
-    try { render(await api(`/view?p=${encodeURIComponent(p)}`)); return; }
+    try { render(await api(`/view?p=${encodeURIComponent(p)}${c ? `&c=${encodeURIComponent(c)}` : ''}`)); return; }
     catch (e) {
       console.error('[report] cached view unavailable, checking again', e);
-      if (e.message !== 'offline') { run(p); return; } // older than 7 days → check it fresh
+      if (e.message !== 'offline') { run(p, c); return; } // older than 7 days → check it fresh
       show('s-find'); fail($('find-err'), say('offline'));
       return;
     }
