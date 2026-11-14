@@ -27,9 +27,9 @@
  *
  * Cost guards, in place of a login:
  *   - DAILY_CAP: new reports / searches per day, then the tool answers "full for today".
- *     Counted in KV if a namespace is bound as RATE_LIMIT (exact), otherwise in the edge cache
- *     (approximate: per Cloudflare data centre, not atomic).
- *   - a finished report is cached 7 days, so re-opening a shop costs nothing.
+ *     New reports are counted in the REPORTS KV namespace (near-exact). Searches are counted in the edge
+ *     cache unless a namespace is bound as RATE_LIMIT (approximate: it misses most of the time).
+ *   - a finished report is saved 7 days in KV (binding REPORTS), so re-opening a shop costs nothing.
  *   - origin check (stops other websites, not scripts).
  *   The hard guard is a per-day quota on the key in Google Cloud. Set one.
  */
@@ -379,9 +379,33 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
-// One cached report per shop, shop type, neighbourhood and distance. 'auto' = "whatever the tool chose".
-function cacheKey(url, placeId, cat, area, spacing) {
-  return new Request(`${new URL(url).origin}/__cache/report/v8/${cat || 'auto'}/${area || 'auto'}/${spacing || SPACING_M}/${placeId}`);
+// One saved report per shop, shop type, neighbourhood and distance. 'auto' = "whatever the tool chose".
+const reportKey = (placeId, cat, area, spacing) => `report/v8/${cat || 'auto'}/${area || 'auto'}/${spacing || SPACING_M}/${placeId}`;
+
+// Where reports are kept. Workers KV (binding REPORTS) gives the same answer on every request for 7 days.
+// Without the binding they go to the edge cache, which on *.workers.dev answered only about one request in
+// six when measured on 2026-11-15, so shared links kept re-checking Google.
+async function loadReport(env, url, key) {
+  if (env.REPORTS) return env.REPORTS.get(key, 'json');
+  if (typeof caches === 'undefined' || !caches.default) return null;
+  const hit = await caches.default.match(new Request(`${new URL(url).origin}/__cache/${key}`));
+  return hit ? hit.json() : null;
+}
+
+async function saveReport(env, url, keys, report) {
+  const body = JSON.stringify(report);
+  try {
+    if (env.REPORTS) {
+      await Promise.all(keys.map((k) => env.REPORTS.put(k, body, { expirationTtl: CACHE_SECONDS })));
+      return;
+    }
+    if (typeof caches === 'undefined' || !caches.default) return;
+    await Promise.all(keys.map((k) => caches.default.put(new Request(`${new URL(url).origin}/__cache/${k}`), new Response(body, {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${CACHE_SECONDS}` },
+    }))));
+  } catch (e) {
+    console.error('[maps-report] could not save report', keys[0], e); // the person still gets the report; only the saved copy is missing
+  }
 }
 const catParam = (v) => (CATEGORIES.some((c) => c.id === v) ? v : '');
 const areaParam = (v) => (AREAS.some((a) => a.id === v) ? v : '');
@@ -391,11 +415,13 @@ const spacingParam = (v) => (SPACINGS.includes(Number(v)) ? Number(v) : SPACING_
 async function underDailyCap(env, url, kind) {
   const day = new Date().toISOString().slice(0, 10);
   const cap = DAILY_CAP[kind];
-  if (env.RATE_LIMIT) {
+  const kv = env.RATE_LIMIT || (kind === 'report' ? env.REPORTS : null);
+  if (kv) {
     const key = `cap:${kind}:${day}`;
-    const n = parseInt((await env.RATE_LIMIT.get(key)) || '0', 10);
+    const n = parseInt((await kv.get(key)) || '0', 10);
     if (n >= cap) return false;
-    await env.RATE_LIMIT.put(key, String(n + 1), { expirationTtl: 90000 });
+    try { await kv.put(key, String(n + 1), { expirationTtl: 90000 }); }
+    catch (e) { console.error('[maps-report] could not count today\'s use', kind, e); }
     return true;
   }
   if (typeof caches === 'undefined' || !caches.default) return true; // local test: nothing to count in
@@ -413,7 +439,6 @@ export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const url = new URL(request.url);
-    const hasCache = typeof caches !== 'undefined' && caches.default;
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
     if (origin && !ALLOWED_ORIGINS.includes(origin)) return json({ error: 'origin_forbidden' }, 403, origin);
@@ -424,10 +449,10 @@ export default {
         const placeId = url.searchParams.get('p') || '';
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         const q = url.searchParams;
-        const hit = hasCache && await caches.default.match(
-          cacheKey(request.url, placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
-        if (!hit) return json({ error: 'not_found' }, 404, origin);
-        return json(await hit.json(), 200, origin);
+        const saved = await loadReport(env, request.url,
+          reportKey(placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
+        if (!saved) return json({ error: 'not_found' }, 404, origin);
+        return json(saved, 200, origin);
       }
 
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
@@ -445,28 +470,19 @@ export default {
         const cat = catParam(String(body.cat || ''));
         const area = areaParam(String(body.area || ''));
         const spacing = spacingParam(body.spacing);
-        const key = hasCache && cacheKey(request.url, placeId, cat, area, spacing);
-        if (key) {
-          const hit = await caches.default.match(key);
-          if (hit) {
-            const old = await hit.json();
-            if (Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
-          }
-        }
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
+        const key = reportKey(placeId, cat, area, spacing);
+        const old = await loadReport(env, request.url, key);
+        if (old && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
         const report = await buildReport(env, placeId, cat, area, spacing);
         if (report.error) return json(report, 400, origin);
-        if (key) {
-          // Store under the key that was asked for, and under the shop type it resolved to, so a link that
-          // carries &c=<type> and one that does not both open the same report.
-          const keys = [key];
-          if (report.category.id !== 'other' && report.category.id !== cat) keys.push(cacheKey(request.url, placeId, report.category.id, area, spacing));
-          const put = Promise.all(keys.map((k) => caches.default.put(k, new Response(JSON.stringify(report), {
-            headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${CACHE_SECONDS}` },
-          }))));
-          if (ctx && ctx.waitUntil) ctx.waitUntil(put); else await put;
-        }
+        // Save under the key that was asked for, and under the shop type it resolved to, so a link that
+        // carries &c=<type> and one that does not both open the same report.
+        const keys = [key];
+        if (report.category.id !== 'other' && report.category.id !== cat) keys.push(reportKey(placeId, report.category.id, area, spacing));
+        // Saved before answering (about 0.1 s) so the link works the moment the report is on screen.
+        await saveReport(env, request.url, keys, report);
         return json(report, 200, origin);
       }
 

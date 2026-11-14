@@ -5,3 +5,9 @@ main = "worker.js"
 compatibility_date = "2026-05-05"
 account_id = "b8da7782d6a1a500d9789844a4c3ce8a"
 workers_dev = true
+
+# Saved reports (7 days) and the daily count of new reports. Created 2026-11-15:
+#   npx wrangler kv namespace create RADAR_REPORTS
+[[kv_namespaces]]
+binding = "REPORTS"
+id = "c3bb5ce38cea4b68a9b56de03b53a179"
