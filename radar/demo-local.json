@@ -1,0 +1,457 @@
+{
+ "version": 6,
+ "checkedAt": "2026-11-14T09:30:50.024Z",
+ "maxRank": 40,
+ "spacingM": 500,
+ "shop": {
+  "id": "ChIJp8MnznOf4jARFv7b4lhZsv0",
+  "name": "Relaxing Time Massage and Spa Asok",
+  "address": "14/5 ซ. สุขุมวิท 15 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+  "lat": 13.740675099999999,
+  "lng": 100.55904849999999,
+  "rating": 4.9,
+  "reviews": 2039,
+  "website": "",
+  "mapsUrl": "https://maps.google.com/?cid=18280772075748326934&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+  "detail": true,
+  "status": "OPERATIONAL",
+  "openNow": null
+ },
+ "points": [
+  {
+   "lat": 13.745167,
+   "lng": 100.554425,
+   "centre": false
+  },
+  {
+   "lat": 13.745167,
+   "lng": 100.559048,
+   "centre": false
+  },
+  {
+   "lat": 13.745167,
+   "lng": 100.563672,
+   "centre": false
+  },
+  {
+   "lat": 13.740675,
+   "lng": 100.554425,
+   "centre": false
+  },
+  {
+   "lat": 13.740675,
+   "lng": 100.559048,
+   "centre": true
+  },
+  {
+   "lat": 13.740675,
+   "lng": 100.563672,
+   "centre": false
+  },
+  {
+   "lat": 13.736184,
+   "lng": 100.554425,
+   "centre": false
+  },
+  {
+   "lat": 13.736184,
+   "lng": 100.559048,
+   "centre": false
+  },
+  {
+   "lat": 13.736184,
+   "lng": 100.563672,
+   "centre": false
+  }
+ ],
+ "keywords": [
+  {
+   "keyword": "ร้านนวด",
+   "points": [
+    {
+     "rank": 28,
+     "top": [
+      "ChIJQZyoAACf4jARTwVUbpOEQis",
+      "ChIJiY71CgCf4jARuvSpRJ0i7LE",
+      "ChIJiXII4k2f4jAR4uDjYfscRR0"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": 23,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJQZyoAACf4jARTwVUbpOEQis",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": 30,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+      "ChIJmyN6SwCf4jARD_Y4uVPjPxs"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": null,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+      "ChIJZbfjE5Kf4jARrUumZMZSaw0"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": 33,
+     "top": [
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJQZyoAACf4jARTwVUbpOEQis"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": 31,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+      "ChIJoRObaACf4jAR_GdlmAoGHVo"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": null,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+      "ChIJoRObaACf4jAR_GdlmAoGHVo"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": null,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJoRObaACf4jAR_GdlmAoGHVo",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ"
+     ],
+     "seen": 40
+    },
+    {
+     "rank": null,
+     "top": [
+      "ChIJiXII4k2f4jAR4uDjYfscRR0",
+      "ChIJoRObaACf4jAR_GdlmAoGHVo",
+      "ChIJwTy3YZGf4jARDpcJk2I-bkQ"
+     ],
+     "seen": 40
+    }
+   ],
+   "top3Count": 0,
+   "centreRank": 33,
+   "hubRank": 33,
+   "ahead": [
+    "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+    "ChIJiXII4k2f4jAR4uDjYfscRR0",
+    "ChIJQZyoAACf4jARTwVUbpOEQis",
+    "ChIJaaS86M2f4jARl_jNdN3bZH4",
+    "ChIJoRObaACf4jAR_GdlmAoGHVo"
+   ]
+  }
+ ],
+ "places": {
+  "ChIJwTy3YZGf4jARDpcJk2I-bkQ": {
+   "id": "ChIJwTy3YZGf4jARDpcJk2I-bkQ",
+   "name": "HANA THAI MASSAGE & SPA - AT HOME",
+   "address": "88 ซอย สุขุมวิท 19 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10330",
+   "lat": 13.7379219,
+   "lng": 100.5604662,
+   "rating": 4.8,
+   "reviews": 35,
+   "website": "https://www.hanamassge.com/",
+   "mapsUrl": "https://maps.google.com/?cid=4930947235111868174&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJiXII4k2f4jAR4uDjYfscRR0": {
+   "id": "ChIJiXII4k2f4jAR4uDjYfscRR0",
+   "name": "Worrapan Massage ร้านนวดสุขุมวิท23",
+   "address": "12/5 ซ. สุขุมวิท 23 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7375593,
+   "lng": 100.5629867,
+   "rating": 4.6,
+   "reviews": 208,
+   "website": "https://worrapanmassage.my.canva.site/",
+   "mapsUrl": "https://maps.google.com/?cid=2109123866497638626&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJQZyoAACf4jARTwVUbpOEQis": {
+   "id": "ChIJQZyoAACf4jARTwVUbpOEQis",
+   "name": "Alice Massage Soi 4",
+   "address": "21, 6 ซ. สุขุมวิท 4 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.7402068,
+   "lng": 100.553377,
+   "rating": 4.9,
+   "reviews": 108,
+   "website": "https://www.alice-massage.com/",
+   "mapsUrl": "https://maps.google.com/?cid=3117199660839863631&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJaaS86M2f4jARl_jNdN3bZH4": {
+   "id": "ChIJaaS86M2f4jARl_jNdN3bZH4",
+   "name": "Nirvana Thai Massage",
+   "address": "89 ถ. สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10112",
+   "lat": 13.7375089,
+   "lng": 100.56128939999999,
+   "rating": 4.3,
+   "reviews": 46,
+   "website": "https://nirvanathaimassage.com/",
+   "mapsUrl": "https://maps.google.com/?cid=9107646090643896471&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJoRObaACf4jAR_GdlmAoGHVo": {
+   "id": "ChIJoRObaACf4jAR_GdlmAoGHVo",
+   "name": "Venus ThaiMassage Sukhumvit20",
+   "address": "64/23 64, 23 สุขุมวิท 20 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.730607599999999,
+   "lng": 100.56384249999999,
+   "rating": 4.8,
+   "reviews": 95,
+   "website": "http://venusmassagesukhumvit20.com/",
+   "mapsUrl": "https://maps.google.com/?cid=6493352880314345468&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJmyN6SwCf4jARD_Y4uVPjPxs": {
+   "id": "ChIJmyN6SwCf4jARD_Y4uVPjPxs",
+   "name": "ออเรนจ์มาสสาจ นวดเพื่อสุขภาพ สาขากรุงเทพ",
+   "address": "22 6 ถ. สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7394686,
+   "lng": 100.56328049999999,
+   "rating": 5,
+   "reviews": 3,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=1963537911286134287&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJ847DBwCf4jARh3bCwDS08_k": {
+   "id": "ChIJ847DBwCf4jARh3bCwDS08_k",
+   "name": "Nature Thai Massage&Spa S11 BTS Nana",
+   "address": "ห้องOutlet A/2 เลขที่171 ซ. สุขุมวิท 11 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7421742,
+   "lng": 100.5566884,
+   "rating": 4.9,
+   "reviews": 1577,
+   "website": "https://web.facebook.com/naturethaimassage.th",
+   "mapsUrl": "https://maps.google.com/?cid=18010937473450014343&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJiY71CgCf4jARuvSpRJ0i7LE": {
+   "id": "ChIJiY71CgCf4jARuvSpRJ0i7LE",
+   "name": "Rose Thai Massage",
+   "address": "33 26 ซอย สุขุมวิท 11 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7449512,
+   "lng": 100.5563298,
+   "rating": 4.3,
+   "reviews": 105,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=12820660298074158266&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJEREAluae4jARc1Q5LtgSKVs": {
+   "id": "ChIJEREAluae4jARc1Q5LtgSKVs",
+   "name": "Niraon Massage & Spa",
+   "address": "155 ซอย สุขุมวิท 11/1 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7406386,
+   "lng": 100.55677299999999,
+   "rating": 3.7,
+   "reviews": 33,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=6568802251194324083&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJSY4qT3-f4jAR49HoybMW8Dg": {
+   "id": "ChIJSY4qT3-f4jAR49HoybMW8Dg",
+   "name": "Nana Massage",
+   "address": "69 ซ. สุขุมวิท 4 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.7376796,
+   "lng": 100.5532722,
+   "rating": 4.1,
+   "reviews": 17,
+   "website": "http://wa.me/66640944082",
+   "mapsUrl": "https://maps.google.com/?cid=4102804221976957411&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJM7wVs_6f4jAR2lRd9S4pGko": {
+   "id": "ChIJM7wVs_6f4jAR2lRd9S4pGko",
+   "name": "Suk Sarrn Massage & Spa Sukhumvit 28 - Phrom Phong",
+   "address": "8/4 ซ. สุขุมวิท 28 Klongton, เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.7282163,
+   "lng": 100.5721023,
+   "rating": 4.4,
+   "reviews": 671,
+   "website": "https://www.suksarrnspa.com/",
+   "mapsUrl": "https://maps.google.com/?cid=5339625589862913242&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJ29OaZQCf4jARBKOIgj6x70Q": {
+   "id": "ChIJ29OaZQCf4jARBKOIgj6x70Q",
+   "name": "Nice massage",
+   "address": "187 ถ. สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.7309931,
+   "lng": 100.5652042,
+   "rating": 4.3,
+   "reviews": 30,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=4967383796049027844&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJ_1SRcQSf4jARP9DMnGQblEU": {
+   "id": "ChIJ_1SRcQSf4jARP9DMnGQblEU",
+   "name": "ThaiThai Massage BTS Nana (Sukhumvit 4)",
+   "address": "5 8 ซ. สุขุมวิท 4 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.740929800000002,
+   "lng": 100.5530625,
+   "rating": 4.8,
+   "reviews": 3015,
+   "website": "https://bookingservices.thaithaimassage.com/",
+   "mapsUrl": "https://maps.google.com/?cid=5013662404111552575&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJwcSx6baf4jAR1zpLuPWcMUs": {
+   "id": "ChIJwcSx6baf4jAR1zpLuPWcMUs",
+   "name": "เซเว่น สปา",
+   "address": "1/5 ซ. สุขุมวิท 10 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.7383844,
+   "lng": 100.55768959999999,
+   "rating": 4.7,
+   "reviews": 82,
+   "website": "http://bkklady.com/",
+   "mapsUrl": "https://maps.google.com/?cid=5418284405876275927&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJidNcLACf4jARkmwTNUFbbOA": {
+   "id": "ChIJidNcLACf4jARkmwTNUFbbOA",
+   "name": "Massage Khlong Toei Relax",
+   "address": "PHR3+4CW, Khwaeng Khlong Toei, Khet Khlong Toei, Bangkok 10110",
+   "lat": 13.7403283,
+   "lng": 100.553564,
+   "rating": 3,
+   "reviews": 5,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=16171400697602075794&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJiWJ3NWuf4jARLzMHFMAXxAA": {
+   "id": "ChIJiWJ3NWuf4jARLzMHFMAXxAA",
+   "name": "24 Massage by.Fera @สุขุมวิท 22,24",
+   "address": "605/14 Soi 22,24 Sukhumvit khlong Tan Nuea khlong Toey แขวงคลองเตย คลองตัน กรุงเทพมหานคร 10110",
+   "lat": 13.721608699999999,
+   "lng": 100.5648394,
+   "rating": 4.2,
+   "reviews": 50,
+   "website": "https://24massagebyfera.vercel.app/",
+   "mapsUrl": "https://maps.google.com/?cid=55195209172464431&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJJ6aX4zmf4jAR0KNg_GQRboA": {
+   "id": "ChIJJ6aX4zmf4jAR0KNg_GQRboA",
+   "name": "兰亭序",
+   "address": "43/12 สุขุมวิท 31 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.739422699999999,
+   "lng": 100.5664887,
+   "rating": 5,
+   "reviews": 67,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=9254353409721541584&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJhfvJ2uqf4jARtK9rQk7jets": {
+   "id": "ChIJhfvJ2uqf4jARtK9rQk7jets",
+   "name": "UME นวดเพื่อสุขภาพ",
+   "address": "40 ถ.สุขุมวิท 40 ซ. สุขุมวิท 4 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.735985099999999,
+   "lng": 100.5523966,
+   "rating": 5,
+   "reviews": 1,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=15815202966726225844&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJETJ9WgCf4jARa_Q3I3GrqRU": {
+   "id": "ChIJETJ9WgCf4jARa_Q3I3GrqRU",
+   "name": "แองเจิลปาล์ม นวดและสปา",
+   "address": "40, 06 Nana, แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.7460592,
+   "lng": 100.55385009999999,
+   "rating": 4.5,
+   "reviews": 21,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=1560967248271111275&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJKXoi_emf4jARW1XopQfongg": {
+   "id": "ChIJKXoi_emf4jARW1XopQfongg",
+   "name": "Mira Massage",
+   "address": "ซ.สุขุมวิท 24 แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110",
+   "lat": 13.725641999999999,
+   "lng": 100.5676202,
+   "rating": 4.6,
+   "reviews": 5,
+   "website": "https://www.miramassagebkk.com/",
+   "mapsUrl": "https://maps.google.com/?cid=621188918169589083&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true
+  },
+  "ChIJp8MnznOf4jARFv7b4lhZsv0": {
+   "id": "ChIJp8MnznOf4jARFv7b4lhZsv0",
+   "name": "Relaxing Time Massage and Spa Asok",
+   "address": "14/5 ซ. สุขุมวิท 15 แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
+   "lat": 13.740675099999999,
+   "lng": 100.55904849999999,
+   "rating": 4.9,
+   "reviews": 2039,
+   "website": "",
+   "mapsUrl": "https://maps.google.com/?cid=18280772075748326934&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+   "detail": true,
+   "status": "OPERATIONAL",
+   "openNow": null
+  }
+ },
+ "area": {
+  "id": "nana",
+  "name": "นานา",
+  "hub": "BTS นานา",
+  "lat": 13.740523,
+  "lng": 100.555434,
+  "distanceM": 391
+ },
+ "volume": {
+  "kind": "area",
+  "area": "นานา",
+  "asOf": "2026-11",
+  "total": 230,
+  "rows": [
+   {
+    "k": "ร้านนวด นานา",
+    "v": 90,
+    "en": false
+   },
+   {
+    "k": "massage nana",
+    "v": 90,
+    "en": true
+   },
+   {
+    "k": "นวด นานา",
+    "v": 40,
+    "en": false
+   },
+   {
+    "k": "thai massage nana",
+    "v": 10,
+    "en": true
+   }
+  ]
+ }
+}
