@@ -9,9 +9,13 @@
  * Public tool, no login (Art 2026-11-14: "free and quick easy to access").
  * Routes (all JSON):
  *   POST /find    {q}                 Maps link or shop name → up to 5 candidates
- *   POST /report  {placeId, cat?}     live 9-point rank check → report (cached 7 days). cat = shop type id;
- *                                     left out, the type is read from the shop's Google listing
- *   GET  /view?p=<placeId>&c=<cat>    serves a cached report only, never calls Google
+ *   POST /report  {placeId, cat?, area?, spacing?}
+ *                                     live 9-point rank check → report (cached 7 days).
+ *                                     cat = shop type id (left out: read from the shop's Google listing)
+ *                                     area = neighbourhood id to search from (left out: the nearest one)
+ *                                     spacing = metres between the 9 points: 500 (default), 1000 or 2000
+ *   GET  /view?p=<placeId>&c=<cat>&a=<area>&s=<spacing>
+ *                                     serves a cached report only, never calls Google
  *
  * Google cost per report (pricing page checked 2026-11-14):
  *   20 × Text Search IDs-only      → not billed (9 points + the area landmark, 1 keyword, 2 pages)
@@ -63,7 +67,8 @@ export function detectCategory(shopRaw) {
     || CATEGORIES.find((c) => types.some((t) => c.broad.includes(t)))
     || null;
 }
-const SPACING_M = 500;       // distance between check points: the shop's door + 8 points around it
+const SPACING_M = 500;       // default distance between check points: the shop's door + 8 points around it
+const SPACINGS = [500, 1000, 2000]; // distances the page may ask for
 const AREA_RADIUS_M = 3000;  // a shop belongs to the nearest area whose landmark is within this distance
 const BIAS_RADIUS_M = 300;   // "someone standing here searches"
 const PAGES = 2;             // 20 per page → rank up to 40
@@ -97,9 +102,9 @@ function metres(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-export function grid(lat, lng) {
-  const dLat = SPACING_M / 111320;
-  const dLng = SPACING_M / (111320 * Math.cos(lat * Math.PI / 180));
+export function grid(lat, lng, spacing = SPACING_M) {
+  const dLat = spacing / 111320;
+  const dLng = spacing / (111320 * Math.cos(lat * Math.PI / 180));
   const pts = [];
   for (const row of [1, 0, -1]) for (const col of [-1, 0, 1]) {
     pts.push({ lat: +(lat + row * dLat).toFixed(6), lng: +(lng + col * dLng).toFixed(6), centre: row === 0 && col === 0 });
@@ -272,7 +277,13 @@ function volumeFor(cat, shop, area, here) {
   return null;
 }
 
-async function buildReport(env, placeId, catId) {
+function pickedVolume(cat, area) {
+  const v = areaVolume(cat, area);
+  const asOf = cat === 'massage' ? AREAS_AS_OF : (VOLUMES[cat] && VOLUMES[cat].asOf);
+  return v ? { kind: 'area', area: area.name, asOf, total: v.total, rows: v.rows } : null;
+}
+
+async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
   if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: 'bad_place_id' };
 
   const shopRaw = await google(env, `places/${placeId}?languageCode=th`,
@@ -294,15 +305,21 @@ async function buildReport(env, placeId, catId) {
     : { id: 'other', label: googleName, auto: true };
   const KEYWORDS = [category.label];
 
-  // Which neighbourhood is this shop in? Nearest area landmark within AREA_RADIUS_M.
+  // Which neighbourhood? The one the person picked, else the nearest area landmark within AREA_RADIUS_M.
   const here = { lat: shop.lat, lng: shop.lng };
-  let area = null, areaDist = Infinity;
-  for (const a of AREAS) {
-    const d = metres(here, a);
-    if (d < areaDist && d <= AREA_RADIUS_M) { area = a; areaDist = d; }
+  const picked = AREAS.find((a) => a.id === areaId) || null;
+  let area = picked, areaDist = picked ? metres(here, picked) : Infinity;
+  if (!picked) {
+    for (const a of AREAS) {
+      const d = metres(here, a);
+      if (d < areaDist && d <= AREA_RADIUS_M) { area = a; areaDist = d; }
+    }
   }
+  // The ten neighbourhoods nearest the shop, for the picker on the page.
+  const areas = AREAS.map((a) => ({ id: a.id, name: a.name, km: +(metres(here, a) / 1000).toFixed(1) }))
+    .sort((x, y) => x.km - y.km).slice(0, 10);
 
-  const points = grid(shop.lat, shop.lng);
+  const points = grid(shop.lat, shop.lng, spacing);
   const centre = points.find((p) => p.centre);
   const hub = area ? { lat: area.lat, lng: area.lng } : centre; // where the "shops shown first" list is taken
 
@@ -345,23 +362,30 @@ async function buildReport(env, placeId, catId) {
   });
 
   return {
-    version: 7,
+    version: 8,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
-    spacingM: SPACING_M,
+    spacingM: spacing,
+    spacings: SPACINGS,
     shop, category, categories: CATEGORIES.map((c) => ({ id: c.id, label: c.label })), points, keywords, places,
-    area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist) },
-    volume: category.id === 'other' ? null : volumeFor(category.id, shop, area, here),
+    area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist), auto: !picked },
+    areas,
+    // A picked neighbourhood shows its own number or none; it never falls back to another place's number.
+    volume: category.id === 'other' ? null
+      : picked ? pickedVolume(category.id, picked)
+      : volumeFor(category.id, shop, area, here),
   };
 }
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
-// One cached report per shop and shop type. 'auto' = "whatever type the shop was detected as".
-function cacheKey(url, placeId, cat) {
-  return new Request(`${new URL(url).origin}/__cache/report/v7/${cat || 'auto'}/${placeId}`);
+// One cached report per shop, shop type, neighbourhood and distance. 'auto' = "whatever the tool chose".
+function cacheKey(url, placeId, cat, area, spacing) {
+  return new Request(`${new URL(url).origin}/__cache/report/v8/${cat || 'auto'}/${area || 'auto'}/${spacing || SPACING_M}/${placeId}`);
 }
 const catParam = (v) => (CATEGORIES.some((c) => c.id === v) ? v : '');
+const areaParam = (v) => (AREAS.some((a) => a.id === v) ? v : '');
+const spacingParam = (v) => (SPACINGS.includes(Number(v)) ? Number(v) : SPACING_M);
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */
 async function underDailyCap(env, url, kind) {
@@ -399,7 +423,9 @@ export default {
       if (request.method === 'GET' && url.pathname === '/view') {
         const placeId = url.searchParams.get('p') || '';
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
-        const hit = hasCache && await caches.default.match(cacheKey(request.url, placeId, catParam(url.searchParams.get('c'))));
+        const q = url.searchParams;
+        const hit = hasCache && await caches.default.match(
+          cacheKey(request.url, placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
         if (!hit) return json({ error: 'not_found' }, 404, origin);
         return json(await hit.json(), 200, origin);
       }
@@ -417,7 +443,9 @@ export default {
       if (url.pathname === '/report') {
         const placeId = String(body.placeId || '');
         const cat = catParam(String(body.cat || ''));
-        const key = hasCache && cacheKey(request.url, placeId, cat);
+        const area = areaParam(String(body.area || ''));
+        const spacing = spacingParam(body.spacing);
+        const key = hasCache && cacheKey(request.url, placeId, cat, area, spacing);
         if (key) {
           const hit = await caches.default.match(key);
           if (hit) {
@@ -427,13 +455,13 @@ export default {
         }
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
-        const report = await buildReport(env, placeId, cat);
+        const report = await buildReport(env, placeId, cat, area, spacing);
         if (report.error) return json(report, 400, origin);
         if (key) {
           // Store under the key that was asked for, and under the shop type it resolved to, so a link that
           // carries &c=<type> and one that does not both open the same report.
           const keys = [key];
-          if (report.category.id !== 'other' && report.category.id !== cat) keys.push(cacheKey(request.url, placeId, report.category.id));
+          if (report.category.id !== 'other' && report.category.id !== cat) keys.push(cacheKey(request.url, placeId, report.category.id, area, spacing));
           const put = Promise.all(keys.map((k) => caches.default.put(k, new Response(JSON.stringify(report), {
             headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${CACHE_SECONDS}` },
           }))));
