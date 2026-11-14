@@ -28,6 +28,15 @@ Runs the real Worker code in Node with Google mocked from a saved rank check; wr
 Preview: serve the repo root, open `/report/?demo=demo-local.json` (localhost only; the demo file is
 gitignored because it holds real shop names and ranks).
 
+## Found on day one (2026-11-14)
+- **Rank swings with opening hours.** Same shop, same day: Relaxing Time was #33 at 01:30 (closed) and
+  #1 at its own door at 10:40 (open); Worrapan was top-3 at 9/9 points at 01:30 (open) and outside the
+  top 40 everywhere at 10:40 (closed). The report now carries `shop.openNow` and the page says so.
+  Always check a shop during its opening hours before quoting a rank to the owner.
+- Measured on Cloudflare: /find 0.6 s, fresh /report 2.1 s, cached 0.08 s.
+- Status: LIVE at https://make.bookease.co/report/ (Worker deployed via `wrangler login` OAuth as
+  official@atiz.com, account "Atiz Cloudflare Account"; no API token was created).
+
 ## Not verified yet
 - Real seconds per report on Cloudflare (36 parallel Google calls; expected a few seconds).
 - Short links (maps.app.goo.gl) from Cloudflare's network — parser tested on long links only.

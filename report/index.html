@@ -25,7 +25,8 @@ body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-
 .link{border:0;background:none;color:var(--blue);font:700 14px Sarabun,sans-serif;cursor:pointer;padding:6px 4px}
 .card{background:var(--card);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
 h1{font-size:28px;font-weight:800;line-height:1.25;letter-spacing:-.01em;text-wrap:balance}
-h1 .bad{color:var(--bad)} h1 .good{color:var(--good)}
+h1 .bad{color:var(--bad)} h1 .good{color:var(--good)} h1 .wait{color:#B45309}
+.closed{background:#FEF3C7;color:#7C4A03;border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600}
 h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .hint{font-size:14px;color:var(--ink-3);margin-top:-6px}
 .star{color:#B45309;font-weight:700}
@@ -271,6 +272,7 @@ function headline(k) {
     ? `ยอดค้นหาร้านนวด${esc(R.volume.area)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
     : `ลูกค้าค้น "${esc(k.keyword)}" รอบร้านคุณ`;
   const n = k.top3Count, total = k.points.length;
+  if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านคุณปิดอยู่ ต้องตรวจใหม่ตอนร้านเปิด</span>`;
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
     : n === total ? '<span class="good">เจอร้านคุณทุกจุด</span>'
     : `<span class="bad">เจอร้านคุณแค่ ${n} จาก ${total} จุด</span>`;
@@ -360,6 +362,7 @@ function paint() {
   <section class="card">
     <div class="shop"><strong>${esc(s.name)}</strong>${meta}</div>
     <h1>${headline(k)}</h1>
+    ${s.openNow === false ? '<p class="closed">Google โชว์ร้านที่เปิดอยู่ก่อน ร้านที่ปิดอยู่มักหลุดอันดับ ตัวเลขด้านล่างจึงต่ำกว่าช่วงที่ร้านเปิด</p>' : ''}
     <div class="stats">
       ${R.volume ? `<div class="stat"><span class="lab">ยอดค้นหา นวด${esc(R.volume.area)}</span><span class="big num">${fmt(R.volume.total)}</span><span class="sub">ครั้ง/เดือน · ทุกคำค้นที่มี "${esc(R.volume.area)}"</span></div>` : ''}
       <div class="stat ${centre != null && centre <= 3 ? 'good' : 'bad'}"><span class="lab">ร้านคุณอยู่อันดับ</span><span class="big num">${rankText(centre)}</span><span class="sub">ค้น "${esc(k.keyword)}" จากหน้าร้าน</span></div>
@@ -390,7 +393,7 @@ function paint() {
   </section>
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
-  <p class="source">ข้อมูลจาก Google · ตรวจ ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น. · อันดับขยับได้ตามเวลาและเครื่องที่ค้น</p>`;
+  <p class="source">ข้อมูลจาก Google · ตรวจ ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${s.openNow === true ? ' (ร้านเปิดอยู่)' : s.openNow === false ? ' (ร้านปิดอยู่)' : ''} · อันดับเปลี่ยนตามเวลา จุดที่ค้น และเครื่องที่ค้น</p>`;
 
   const share = $('share');
   if (share) {

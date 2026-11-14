@@ -34,7 +34,8 @@ const KEYWORDS = ['ร้านนวด', 'massage'];
 const SPACING_M = 350;       // distance between check points
 const BIAS_RADIUS_M = 300;   // "someone standing here searches"
 const PAGES = 2;             // 20 per page → rank up to 40
-const CACHE_SECONDS = 7 * 24 * 3600;
+const CACHE_SECONDS = 7 * 24 * 3600; // how long a shared link keeps working (/view)
+const FRESH_SECONDS = 3 * 3600;      // a new check re-uses a report younger than this; rank moves with time of day
 const DAILY_CAP = { report: 300, find: 1500 };
 
 // Monthly search volume per area. Source: Google Ads Keyword Planner, location = Bangkok,
@@ -202,9 +203,10 @@ async function buildReport(env, placeId) {
   if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: 'bad_place_id' };
 
   const shopRaw = await google(env, `places/${placeId}`,
-    'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus', null);
+    'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,businessStatus,currentOpeningHours.openNow', null);
   const shop = slim(shopRaw);
   shop.status = shopRaw.businessStatus || '';
+  shop.openNow = shopRaw.currentOpeningHours && typeof shopRaw.currentOpeningHours.openNow === 'boolean' ? shopRaw.currentOpeningHours.openNow : null;
   if (shop.lat == null) return { error: 'no_location' };
 
   const points = grid(shop.lat, shop.lng);
@@ -247,7 +249,7 @@ async function buildReport(env, placeId) {
   const area = VOLUME_AREAS.find((a) => metres(here, a) <= a.radius_m) || null;
 
   return {
-    version: 1,
+    version: 2,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
@@ -259,7 +261,7 @@ async function buildReport(env, placeId) {
 // ── cache + rate limit ──────────────────────────────────────────────
 
 function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v1/${placeId}`);
+  return new Request(`${new URL(url).origin}/__cache/report/v2/${placeId}`);
 }
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */
@@ -318,7 +320,10 @@ export default {
         const key = hasCache && cacheKey(request.url, placeId);
         if (key) {
           const hit = await caches.default.match(key);
-          if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
+          if (hit) {
+            const old = await hit.json();
+            if (Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
+          }
         }
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
