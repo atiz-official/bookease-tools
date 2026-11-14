@@ -268,14 +268,16 @@ function render(report) {
 function rankText(r) { return r == null ? `${R.maxRank}+` : String(r); }
 
 function headline(k) {
-  const first = R.volume
-    ? `ยอดค้นหาร้านนวด${esc(R.volume.area)} <span class="num">${fmt(R.volume.total)}</span> ครั้ง/เดือน`
+  const v = R.volume;
+  const where = v && (v.scope === 'bangkok' ? 'ทั้งกรุงเทพฯ' : `บริเวณ${esc(v.area)}`);
+  const first = v
+    ? `จำนวนการค้นหาร้านนวด ${where} <span class="num">${fmt(v.total)}</span> ครั้ง/เดือน`
     : `ลูกค้าค้น "${esc(k.keyword)}" รอบร้านคุณ`;
   const n = k.top3Count, total = k.points.length;
   if (R.shop.openNow === false) return `${first}<br><span class="wait">ตอนนี้ร้านคุณปิดอยู่ ต้องตรวจใหม่ตอนร้านเปิด</span>`;
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
-    : n === total ? '<span class="good">เจอร้านคุณทุกจุด</span>'
-    : `<span class="bad">เจอร้านคุณแค่ ${n} จาก ${total} จุด</span>`;
+    : n === total ? '<span class="good">เจอร้านคุณทุกจุดรอบร้าน</span>'
+    : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} จาก ${total} จุดรอบร้าน</span>`;
   return `${first}<br>${second}`;
 }
 
@@ -334,7 +336,7 @@ function volumeCard() {
   const max = Math.max(...v.rows.map((r) => r.v));
   const [y, m] = v.asOf.split('-').map(Number);
   return `<div class="card">
-    <h2>คนพิมพ์ค้นว่าอะไร</h2>
+    <h2>${v.scope === 'bangkok' ? 'คนกรุงเทพฯ พิมพ์ค้นว่าอะไร' : 'คนพิมพ์ค้นว่าอะไร'}</h2>
     <div class="kw">${v.rows.map((r) => `<div class="kw-row"><span class="k">${esc(r.k)}</span><span class="bar"><i class="${r.en ? 'en' : ''}" style="width:${Math.round(r.v / max * 100)}%"></i></span><span class="v num">${fmt(r.v)}</span></div>`).join('')}</div>
     <p class="foot">ครั้ง/เดือน · ข้อมูลเดือน ${TH_MONTH[m - 1]} ${y + 543} · สีอ่อน = ภาษาอังกฤษ${v.nearMe ? `<br>ยังไม่นับคนที่พิมพ์แค่ "${esc(v.nearMe.k)}" (${esc(v.nearMe.scope)} <span class="num">${fmt(v.nearMe.v)}</span> ครั้ง/เดือน)` : ''}</p>
   </div>`;
@@ -364,7 +366,7 @@ function paint() {
     <h1>${headline(k)}</h1>
     ${s.openNow === false ? '<p class="closed">Google โชว์ร้านที่เปิดอยู่ก่อน ร้านที่ปิดอยู่มักหลุดอันดับ ตัวเลขด้านล่างจึงต่ำกว่าช่วงที่ร้านเปิด</p>' : ''}
     <div class="stats">
-      ${R.volume ? `<div class="stat"><span class="lab">ยอดค้นหา นวด${esc(R.volume.area)}</span><span class="big num">${fmt(R.volume.total)}</span><span class="sub">ครั้ง/เดือน · ทุกคำค้นที่มี "${esc(R.volume.area)}"</span></div>` : ''}
+      ${R.volume ? `<div class="stat"><span class="lab">จำนวนการค้นหาร้านนวด ${R.volume.scope === 'bangkok' ? 'ทั้งกรุงเทพฯ' : 'บริเวณ' + esc(R.volume.area)}</span><span class="big num">${fmt(R.volume.total)}</span><span class="sub">${R.volume.scope === 'bangkok' ? 'ครั้ง/เดือน · คำค้น "ร้านนวด" · ยังไม่มีตัวเลขเฉพาะย่านนี้' : `ครั้ง/เดือน · ทุกคำค้นที่มี "${esc(R.volume.area)}"`}</span></div>` : ''}
       <div class="stat ${centre != null && centre <= 3 ? 'good' : 'bad'}"><span class="lab">ร้านคุณอยู่อันดับ</span><span class="big num">${rankText(centre)}</span><span class="sub">ค้น "${esc(k.keyword)}" จากหน้าร้าน</span></div>
       <div class="stat ${k.top3Count ? 'good' : 'bad'}"><span class="lab">ติด 3 อันดับแรก</span><span class="big num">${k.top3Count}<small> / ${k.points.length} จุด</small></span><span class="sub">ลูกค้าส่วนใหญ่ดูแค่ 3 ร้านแรก</span></div>
     </div>

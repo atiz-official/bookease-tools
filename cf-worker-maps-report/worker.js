@@ -55,6 +55,18 @@ const VOLUME_AREAS = [
   },
 ];
 
+// Used when the shop is outside every VOLUME_AREAS entry: Bangkok-wide numbers, labelled as such.
+// Same source and period as above (Keyword Planner, location = Bangkok, 12-month average).
+const VOLUME_BANGKOK = {
+  asOf: '2026-11',
+  total: 74000, // keyword "ร้านนวด" alone
+  rows: [
+    { k: 'massage near me', v: 301000, en: true },
+    { k: 'ร้านนวด', v: 74000, en: false },
+    { k: 'นวดใกล้ฉัน', v: 60500, en: false },
+  ],
+};
+
 // ── helpers ─────────────────────────────────────────────────────────
 
 function cors(origin) {
@@ -249,19 +261,21 @@ async function buildReport(env, placeId) {
   const area = VOLUME_AREAS.find((a) => metres(here, a) <= a.radius_m) || null;
 
   return {
-    version: 2,
+    version: 3,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: SPACING_M,
     shop, points, keywords, places,
-    volume: area && { area: area.name, asOf: area.asOf, total: area.total, rows: area.rows, nearMe: area.nearMe },
+    volume: area
+      ? { scope: 'area', area: area.name, asOf: area.asOf, total: area.total, rows: area.rows, nearMe: area.nearMe }
+      : { scope: 'bangkok', area: 'กรุงเทพฯ', asOf: VOLUME_BANGKOK.asOf, total: VOLUME_BANGKOK.total, rows: VOLUME_BANGKOK.rows, nearMe: null },
   };
 }
 
 // ── cache + rate limit ──────────────────────────────────────────────
 
 function cacheKey(url, placeId) {
-  return new Request(`${new URL(url).origin}/__cache/report/v2/${placeId}`);
+  return new Request(`${new URL(url).origin}/__cache/report/v3/${placeId}`);
 }
 
 /** Count one use of `kind` today. Returns false once today's cap is reached. */
