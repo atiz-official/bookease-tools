@@ -1,4 +1,6 @@
-# bookease-maps-report · Worker for make.bookease.co/report
+# Shop Radar · Worker `bookease-maps-report` for make.bookease.co/radar
+
+Product name locked by Art 2026-11-14: **Shop Radar** (tagline: ดูว่าลูกค้าหาร้านคุณเจอไหม). The page lives in `radar/`; `report/` only redirects to it.
 
 Status 2026-11-14: **written and tested locally, NOT deployed.** Branch `feat/maps-report` (worktree
 `C:\Users\saras\Projects\bookease-tools-wt-report`), nothing pushed.
