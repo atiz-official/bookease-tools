@@ -476,6 +476,21 @@ export default {
         return json(out, out.error ? 400 : 200, origin);
       }
 
+      // Shops of one Google type around a point (for a building's service menu). Read-only.
+      if (url.pathname === '/nearby') {
+        const lat = Number(body.lat), lng = Number(body.lng), type = String(body.type || '');
+        const types = type.split(',').map((t) => t.trim()).filter(Boolean);
+        const radius = Math.min(Math.max(Number(body.radius) || 1000, 100), 2000);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng) || !types.length || types.length > 6 || !types.every((t) => /^[a-z_]{3,40}$/.test(t))) return json({ error: 'bad_request' }, 400, origin);
+        if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
+        const r = await google(env, 'places:searchNearby',
+          'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.websiteUri,places.businessStatus,places.primaryType,places.photos',
+          { includedTypes: types, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'th', regionCode: 'TH',
+            locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius } } });
+        return json({ places: (r.places || []).filter((p) => p.businessStatus !== 'CLOSED_PERMANENTLY')
+          .map((p) => ({ ...slim(p), primaryType: p.primaryType || '', photo: ((p.photos || [])[0] || {}).name || '' })) }, 200, origin);
+      }
+
       // One shop's public Google profile, for the free listing and the Google Maps check (read-only).
       if (url.pathname === '/place') {
         const placeId = String(body.placeId || '');

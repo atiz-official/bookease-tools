@@ -89,6 +89,15 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .vol span,.vol-label span{white-space:nowrap}
 .vol-label .where{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap}
 .vol-label h1{display:inline;font:inherit;font-weight:800;letter-spacing:inherit;color:inherit}
+.bld h2{margin-bottom:4px}
+.bld .sub{font-size:13px;color:var(--ink-3);margin-bottom:8px}
+.bld ul{list-style:none;display:flex;flex-direction:column}
+.bld li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.bld li:last-child{border-bottom:0}
+.bld li b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bld li small{color:var(--ink-3);font-size:12.5px}
+.bld .mk{font:700 13.5px Sarabun;color:var(--blue);text-decoration:none;white-space:nowrap}
+.bld .mk:hover{text-decoration:underline;text-underline-offset:3px}
 .vol-note{margin-top:8px;font-size:13.5px;line-height:1.5;color:var(--ink-3);max-width:640px}
 .vol-note b{color:var(--ink-2);font-weight:700}
 .vol .num{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:.95;color:var(--blue)}
@@ -640,6 +649,7 @@ function paint() {
   </section>
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
+  <section class="card bld" id="bld" hidden></section>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${open}</p>`;
 
   const share = $('share');
@@ -665,6 +675,28 @@ ${url}`;
   }
   fitPickers();
   drawMap(k);
+  loadBuildings(s);
+}
+
+// Hotels and condos near the shop (found on Google, not partners). Each can get its own service menu.
+async function loadBuildings(s) {
+  const box = $('bld');
+  if (!box) return;
+  let d;
+  try { d = await api('/nearby', { lat: s.lat, lng: s.lng, type: 'lodging,hotel,apartment_building,apartment_complex,condominium_complex', radius: 800 }); }
+  catch (e) { console.error('[report] buildings', e); return; }
+  const seen = new Set();
+  const list = (d.places || []).filter((p) => (p.reviews || 0) >= 10).filter((p) => {
+    const key = p.name.replace(/[^A-Za-z0-9ก-๙]/g, '').slice(0, 10).toLowerCase();
+    if (seen.has(key)) return false; seen.add(key); return true;
+  }).slice(0, 6);
+  if (!list.length || !$('bld') || box !== $('bld')) return;
+  const m = (p) => Math.round(Math.hypot((p.lng - s.lng) * 111320 * Math.cos(s.lat * Math.PI / 180), (p.lat - s.lat) * 110540));
+  const dist = (x) => (x < 60 ? 'อาคารเดียวกัน / ติดกัน' : `ห่าง ${Math.round(x / 10) * 10} ม.`);
+  box.innerHTML = `<h2>โรงแรมและคอนโดใกล้ร้าน</h2><p class="sub">${list.length} แห่งในระยะ 800 ม. (ข้อมูลจาก Google) · สร้างเมนูบริการให้ลูกบ้านของแต่ละตึกได้</p>
+    <ul>${list.map((p) => `<li><div><b>${esc(p.name)}</b><small>${dist(m(p))} · <a href="${esc(p.mapsUrl || mapsLink(p.id))}" target="_blank" rel="noopener">ดูบนแผนที่</a></small></div>
+      <a class="mk" href="menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a></li>`).join('')}</ul>`;
+  box.hidden = false;
 }
 
 $('s-report').addEventListener('click', (ev) => {
