@@ -245,7 +245,7 @@ h2{font-size:21px}
   <!-- 3 · report -->
   <div id="s-report" hidden></div>
 
-  <p class="contact">โปรโมทร้านฟรี · <a id="contact-line" href="https://line.me/R/ti/p/@easepos" target="_blank" rel="noopener">LINE @easepos</a> · <a href="tel:0926414296">092-641-4296</a></p>
+  <p class="contact">โปรโมทร้านฟรี · <a id="contact-line" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a> · <a href="tel:0926414296">092-641-4296</a></p>
 
 </div>
 
@@ -327,7 +327,7 @@ function newSearch() {
   history.replaceState(null, '', location.pathname);
   $('q').value = ''; $('cands').hidden = true; fail($('find-err'), '');
   show('s-find'); $('q').focus();
-  $('contact-line').href = 'https://line.me/R/ti/p/@easepos';
+  $('contact-line').href = 'https://line.me/R/ti/p/@bookease';
 }
 
 document.addEventListener('click', (ev) => {
@@ -507,7 +507,7 @@ function top10List(k) {
 }
 
 // The one sales link on the page, right under the shop's own row: only when the shop is open and not in the
-// top three. Opens a chat with LINE @easepos, the message already typed (shop, rank, report link).
+// top three. Opens a chat with LINE @bookease, the message already typed (shop, rank, report link).
 // Plain words for where the shop is: the neighbourhood when the shop is within 2 km of it, else the district
 // from the shop's address, else "this area".
 function nearShop() {
@@ -627,7 +627,7 @@ function paint() {
   const cl = $('contact-line');
   if (cl) {
     const url = `${location.origin}${location.pathname}${link(R)}`;
-    cl.href = `https://line.me/R/oaMessage/@easepos/?${encodeURIComponent(`อยากให้โปรโมทร้าน ${s.name} ฟรี
+    cl.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(`อยากให้โปรโมทร้าน ${s.name} ฟรี
 ${url}`)}`;
   }
   const push = $('push');
@@ -638,7 +638,7 @@ ${url}`)}`;
     const msg = `${s.name.startsWith('ร้าน') ? `อยากดัน${s.name}` : `อยากดันร้าน ${s.name}`} ให้สูงขึ้น
 ตอนนี้อันดับ ${rankText(rank)} ค้น "${k.keyword}"${where}
 ${url}`;
-    push.href = `https://line.me/R/oaMessage/@easepos/?${encodeURIComponent(msg)}`;
+    push.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
   }
   fitPickers();
   drawMap(k);
