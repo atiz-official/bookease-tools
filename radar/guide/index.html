@@ -184,7 +184,7 @@ function leaderCard(i) {
 function dotCard(j) {
   const [, , nm, n] = cur_a.dots[j];
   return n ? `<span class="rk">ติด 3 อันดับแรก ${n}/9 จุด</span><b>${esc(nm)}</b>${pips(n)}`
-           : `<span class="rk no">ไม่ติด 3 อันดับแรกเลย</span><b>${esc(nm)}</b>ใน 9 จุดรอบ${esc(cur_a.hub)}`;
+           : `<span class="rk no">ไม่ติด 3 อันดับแรกเลย</span><b>${esc(nm)}</b>ใน 9 จุดรอบ ${esc(cur_a.hub)}`;
 }
 scope.parentElement.addEventListener('click', (e) => {
   const lp = e.target.closest('.lp'), sd = e.target.closest('.sd');
