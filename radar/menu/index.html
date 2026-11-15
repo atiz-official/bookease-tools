@@ -89,7 +89,7 @@ a{color:var(--blue)}
 <script>
 const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 // Building status is set by the team from real evidence, never by the page: survey → sample → approved → live.
-const BUILDING_STATUS = {}; // e.g. { '<placeId>': { step: 'live', since: '2026-12-01' } }
+const BUILDING_STATUS = { 'ChIJ-7PwX7iZ4jARp_rFql-yzO4': { step: 'sample' } }; // Aqua Residences · set from evidence only
 const STEPS = [['survey', 'สำรวจแล้ว'], ['sample', 'มีเมนูตัวอย่าง'], ['approved', 'อนุมัติแล้ว'], ['live', 'แจกจริง']];
 const CATS = [
   { k: 'hair', label: 'ทำผม', types: 'hair_salon,beautician' },
@@ -161,9 +161,14 @@ async function load() {
     }
     try { sessionStorage.setItem(key, JSON.stringify({ building, pool })); } catch (e) { console.error('[menu] cache write', e); }
   }
-  const fromUrl = (qs.get('s') || '').split(',').filter(Boolean);
-  if (fromUrl.length) chosen = fromUrl.filter((id) => pool.some((p) => p.id === id)).slice(0, MAX);
-  else {
+  const fromUrl = (qs.get('s') || '').split(',').filter((id) => /^[A-Za-z0-9_-]{10,200}$/.test(id)).slice(0, MAX);
+  if (qs.has('s')) {
+    const missing = fromUrl.filter((id) => !pool.some((p) => p.id === id));
+    const got = await Promise.all(missing.map((id) => post('/place', { placeId: id }).catch((e) => { console.error('[menu] shop', id, e); return null; })));
+    got.filter(Boolean).forEach((sp) => pool.push({ id: sp.id, name: sp.name, rating: sp.rating, reviews: sp.reviews, lat: sp.lat, lng: sp.lng,
+      photo: (sp.photos && sp.photos[0] && sp.photos[0].name) || '', cat: catOf(sp.types), mapsUrl: sp.mapsUrl, m: metres(building, sp) }));
+    chosen = fromUrl.filter((id) => pool.some((p) => p.id === id));
+  } else {
     // the shop that opened this menu first, then one best shop for each other type (no second shop of a type)
     const pinned = pool.find((p) => p.id === SHOP);
     if (pinned) chosen.push(pinned.id);
@@ -181,7 +186,7 @@ function shareUrl() {
 }
 
 function renderStatus() {
-  const st = (BUILDING_STATUS[B] && BUILDING_STATUS[B].step) || 'sample';
+  const st = (BUILDING_STATUS[B] && BUILDING_STATUS[B].step) || 'survey';
   $('status').innerHTML = STEPS.map(([k, t]) => `<span class="st${k === st ? ' on' : ''}${k === st && k === 'live' ? ' live' : ''}">${t}</span>`).join('<span class="arrow">→</span>');
   return st;
 }
@@ -199,7 +204,7 @@ function render() {
   }).join('');
   const sheet = `<section class="sheet" id="sheet">
     ${isLive ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
-    <header><div><div class="eye">เมนูบริการ · สำหรับลูกบ้านและแขก</div><h1>${esc(building.name)}</h1><p class="tag">ร้านดีใกล้ตัว เดินถึง · สแกน QR เพื่อดูร้านและติดต่อ</p></div>
+    <header><div><div class="eye">เมนูบริการ · สำหรับลูกบ้านและแขก</div><h1>${esc(building.name)}</h1><p class="tag">ร้านดีใกล้ตัว · สแกน QR เพื่อดูร้านและติดต่อ</p></div>
       <div class="brand"><img src="../../brand/bookease-logo.svg" alt="bookease"></div></header>
     <div class="grid">${tiles}<article class="qrtile"><div class="qr" id="qr"></div><b>สแกนดูร้าน<br>และติดต่อจองคิว</b><small>ไม่ต้องโหลดแอป</small></article></div>
     <footer><div>ข้อมูลร้านจาก Google · ฉบับ ${today} · ระยะเป็นระยะทางตรงจากอาคาร</div><div>bookease.co</div></footer>
