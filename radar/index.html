@@ -442,6 +442,22 @@ function placeRow(id, pos, cls) {
   return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm"><a href="${esc(mapsLink(id))}" target="_blank" rel="noopener">${name}</a>${you}</div><div class="meta">${meta}</div></div>${web}</li>`;
 }
 
+// Reports from version 9 carry the first ten shops from the hub. The shop is marked where it sits; below ten,
+// a gap row and the shop's own row follow.
+function top10List(k) {
+  const rank = R.area ? k.hubRank : k.centreRank;
+  const rows = k.top10.map((id, i) => (id === R.shop.id
+    ? placeRow(id, i + 1, i < 3 ? 'you ok' : 'you')
+    : placeRow(id, i + 1, i < 3 ? 'top3' : '')));
+  if (!k.top10.includes(R.shop.id)) {
+    const between = rank == null ? null : rank - 1 - k.top10.length;
+    if (between === null) rows.push('<li class="gap-row">…</li>');
+    else if (between > 0) rows.push(`<li class="gap-row">อีก ${between} ร้าน</li>`);
+    rows.push(placeRow(R.shop.id, rankText(rank), 'you'));
+  }
+  return `<ol class="rank-list">${rows.join('')}</ol>`;
+}
+
 function aheadList(k) {
   const rank = R.area ? k.hubRank : k.centreRank;
   if (rank === 1) return `<ol class="rank-list">${placeRow(R.shop.id, 1, 'you ok')}</ol>`;
@@ -529,8 +545,9 @@ function paint() {
       ${selectedNote(k)}
     </div>
     <div class="card">
-      <h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>
-      ${aheadList(k)}
+      ${k.top10
+        ? `<h2>TOP 10 ร้านในพื้นที่${R.area ? esc(R.area.name) : 'รอบร้านคุณ'}</h2>${top10List(k)}`
+        : `<h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>${aheadList(k)}`}
     </div>
   </section>
 

@@ -358,11 +358,12 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
       centreRank: pts[points.indexOf(centre)].rank,
       hubRank: hubAt === -1 ? null : hubAt + 1,
       ahead,
+      top10: hubIds.slice(0, 10), // the first ten shops Google shows from the hub, the shop included if it is there
     };
   });
 
   return {
-    version: 8,
+    version: 9,
     checkedAt: new Date().toISOString(),
     maxRank: PAGES * 20,
     spacingM: spacing,
@@ -380,7 +381,7 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
 // ── cache + rate limit ──────────────────────────────────────────────
 
 // One saved report per shop, shop type, neighbourhood and distance. 'auto' = "whatever the tool chose".
-const reportKey = (placeId, cat, area, spacing) => `report/v8/${cat || 'auto'}/${area || 'auto'}/${spacing || SPACING_M}/${placeId}`;
+const reportKey = (placeId, cat, area, spacing) => `report/v9/${cat || 'auto'}/${area || 'auto'}/${spacing || SPACING_M}/${placeId}`;
 
 // Where reports are kept. Workers KV (binding REPORTS) gives the same answer on every request for 7 days.
 // Without the binding they go to the edge cache, which on *.workers.dev answered only about one request in
