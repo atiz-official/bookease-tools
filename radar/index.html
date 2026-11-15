@@ -223,7 +223,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
   <!-- 3 · report -->
   <div id="s-report" hidden></div>
 
-  <p class="contact">ปรึกษาฟรี · <a href="https://line.me/R/ti/p/@easepos" target="_blank" rel="noopener">LINE @easepos</a> · <a href="tel:0926414296">092-641-4296</a></p>
+  <p class="contact">ลงร้านใน bookease.co ฟรี · <a id="contact-line" href="https://line.me/R/ti/p/@easepos" target="_blank" rel="noopener">LINE @easepos</a> · <a href="tel:0926414296">092-641-4296</a></p>
 
 </div>
 
@@ -305,6 +305,7 @@ function newSearch() {
   history.replaceState(null, '', location.pathname);
   $('q').value = ''; $('cands').hidden = true; fail($('find-err'), '');
   show('s-find'); $('q').focus();
+  $('contact-line').href = 'https://line.me/R/ti/p/@easepos';
 }
 
 document.addEventListener('click', (ev) => {
@@ -600,6 +601,12 @@ function paint() {
   if (share) {
     const url = `${location.origin}${location.pathname}${link(R)}`;
     share.href = `https://line.me/R/share?text=${encodeURIComponent(`Shop Radar · ${s.name}\n${url}`)}`;
+  }
+  const cl = $('contact-line');
+  if (cl) {
+    const url = `${location.origin}${location.pathname}${link(R)}`;
+    cl.href = `https://line.me/R/oaMessage/@easepos/?${encodeURIComponent(`อยากลงร้าน ${s.name} ใน bookease.co ฟรี
+${url}`)}`;
   }
   const push = $('push');
   if (push) {
