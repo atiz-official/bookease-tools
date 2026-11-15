@@ -431,8 +431,8 @@ function headline(k) {
   // The small "closed" chip sits beside the shop name instead.
   if (R.shop.openNow === false) return first;
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
-    : n === total ? '<span class="good">เจอร้านคุณทุกจุด</span>'
-    : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} จาก ${total} จุด</span>`;
+    : n === total ? '<span class="good">เจอร้านคุณทุกพื้นที่ค้นหา</span>'
+    : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} ใน ${total} พื้นที่ค้นหา</span>`;
   return `${first}<p class="found">${second}</p>`;
 }
 
