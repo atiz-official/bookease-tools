@@ -22,9 +22,9 @@ body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-
 .wrap{max-width:1120px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px}
 .top img{display:block}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
-.brand span{display:flex;align-items:center;gap:7px;white-space:nowrap;font:500 15px Inter,sans-serif;color:var(--ink-3);letter-spacing:0;padding-left:10px;border-left:1.5px solid var(--line);line-height:1.2}
-.brand .mark{position:relative;width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none;padding:0;border:0;background:repeating-radial-gradient(circle,transparent 0 3.5px,rgba(74,222,128,.32) 3.5px 4.3px),radial-gradient(circle,#0E2A1D,#05110B 72%)}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--ink)}
+.brand span{display:inline-block;white-space:nowrap;font:500 15px Inter,sans-serif;color:var(--ink-3);letter-spacing:0;padding-left:10px;border-left:1.5px solid var(--line);line-height:1.2}
+.brand .mark{position:relative;display:inline-block;width:22px;height:22px;margin-right:7px;vertical-align:-5px;border-radius:50%;overflow:hidden;padding:0;border:0;background:repeating-radial-gradient(circle,transparent 0 3.5px,rgba(74,222,128,.32) 3.5px 4.3px),radial-gradient(circle,#0E2A1D,#05110B 72%)}
 .brand .mark::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(transparent 0 280deg,rgba(74,222,128,.75) 359deg,transparent 360deg);animation:mark-spin 3.6s linear infinite}
 @keyframes mark-spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.brand .mark::after{animation:none}}
