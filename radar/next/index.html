@@ -97,6 +97,7 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .bld li b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bld li small{color:var(--ink-3);font-size:12.5px}
 .bld .mk{font:700 13.5px Sarabun;color:var(--blue);text-decoration:none;white-space:nowrap}
+@media (max-width:520px){.bld li{grid-template-columns:1fr;gap:2px}.bld li b{white-space:normal}}
 .bld .mk:hover{text-decoration:underline;text-underline-offset:3px}
 .vol-note{margin-top:8px;font-size:13.5px;line-height:1.5;color:var(--ink-3);max-width:640px}
 .vol-note b{color:var(--ink-2);font-weight:700}
@@ -695,7 +696,7 @@ async function loadBuildings(s) {
   const dist = (x) => (x < 60 ? 'อาคารเดียวกัน / ติดกัน' : `ห่าง ${Math.round(x / 10) * 10} ม.`);
   box.innerHTML = `<h2>โรงแรมและคอนโดใกล้ร้าน</h2><p class="sub">${list.length} แห่งในระยะ 800 ม. (ข้อมูลจาก Google) · สร้างเมนูบริการให้ลูกบ้านของแต่ละตึกได้</p>
     <ul>${list.map((p) => `<li><div><b>${esc(p.name)}</b><small>${dist(m(p))} · <a href="${esc(p.mapsUrl || mapsLink(p.id))}" target="_blank" rel="noopener">ดูบนแผนที่</a></small></div>
-      <a class="mk" href="menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a></li>`).join('')}</ul>`;
+      <a class="mk" href="menu/?b=${encodeURIComponent(p.id)}&shop=${encodeURIComponent(s.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a></li>`).join('')}</ul>`;
   box.hidden = false;
 }
 
