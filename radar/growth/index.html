@@ -71,6 +71,8 @@ const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': 
 const qs = new URLSearchParams(location.search);
 const P = qs.get('p') || '';
 const STAFF = qs.has('staff');
+// A device that opened the team view stops counting its own visits to shop pages and menus.
+if (STAFF) { try { localStorage.setItem('bookease-staff', '1'); } catch (e) { console.error('[growth] storage', e); } }
 const TH_MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const thDate = (iso) => { const [y, m, d] = iso.slice(0, 10).split('-').map(Number); return `${d} ${TH_MONTHS[m - 1]}`; };
 const thDateY = (iso) => `${thDate(iso)} ${(Number(iso.slice(0, 4)) + 543) % 100}`;

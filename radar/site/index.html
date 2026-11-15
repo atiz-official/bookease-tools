@@ -88,6 +88,7 @@ const SRC = (qs.get('src') || 'direct').replace(/[^A-Za-z0-9_:.-]/g, '').slice(0
 const PUBLIC = SRC.startsWith('b:'); // a customer from a building menu: hide the owner-only parts
 /** Count a view or tap for the shop's weekly report (the worker ignores shops that are not tracked). */
 function hit(a) {
+  try { if (localStorage.getItem('bookease-staff') === '1') return; } catch (e) { console.error('[hit] storage', e); } // team devices are not customers
   try {
     const body = JSON.stringify({ p: P, a, src: SRC });
     if (!(navigator.sendBeacon && navigator.sendBeacon(API + '/hit', body))) {

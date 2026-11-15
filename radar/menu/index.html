@@ -113,6 +113,7 @@ const EDIT = qs.get('edit') === '1' || !qs.get('s');
 const VIA = ['qr', 'link'].includes(qs.get('v')) ? qs.get('v') : 'direct';
 /** Count a menu view or a tap on a shop for the weekly report (the worker counts tracked places only). */
 function hit(p, a, src) {
+  try { if (localStorage.getItem('bookease-staff') === '1') return; } catch (e) { console.error('[hit] storage', e); } // team devices are not customers
   try {
     const body = JSON.stringify({ p, a, src });
     if (!(navigator.sendBeacon && navigator.sendBeacon(API + '/hit', body))) {

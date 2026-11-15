@@ -126,6 +126,7 @@ try {
   const P = 'ChIJPxz0o_iZ4jARqOODkDRBYCw';
   const src = (new URLSearchParams(location.search).get('src') || 'lalisa-page').slice(0, 120);
   function hit(a) {
+    try { if (localStorage.getItem('bookease-staff') === '1') return; } catch (e) { console.error('[hit] storage', e); } // team devices are not customers
     try {
       const body = JSON.stringify({ p: P, a, src });
       if (!(navigator.sendBeacon && navigator.sendBeacon(API + '/hit', body))) {
