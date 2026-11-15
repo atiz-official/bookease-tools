@@ -164,6 +164,9 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 .offer{font-size:16px;font-weight:700}
 .cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .source{text-align:center;font-size:13px;color:var(--ink-3)}
+.contact{text-align:center;font-size:13px;color:var(--ink-3);margin-top:8px}
+.contact a{color:var(--ink-2);font-weight:600;text-decoration:none}
+.contact a:hover{text-decoration:underline;text-underline-offset:3px}
 
 @media (max-width:860px){.main,.bottom{grid-template-columns:minmax(0,1fr)}}
 /* narrow phones: the header (logo · radar mark · Shop Radar · เช็คร้านอื่น) must fit without sideways scroll */
@@ -218,6 +221,8 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 
   <!-- 3 · report -->
   <div id="s-report" hidden></div>
+
+  <p class="contact">ปรึกษาฟรี · <a href="https://line.me/R/ti/p/@easepos" target="_blank" rel="noopener">LINE @easepos</a> · <a href="tel:0926414296">092-641-4296</a></p>
 
 </div>
 
@@ -527,7 +532,6 @@ function gapCard(k) {
       <div class="check-row"><span>จำนวนรีวิว</span><span class="c num">${range(ahead.map((p) => p.reviews), fmt)}</span><span class="c num">${s.reviews == null ? '–' : fmt(s.reviews)}</span></div>
       <div class="check-row"><span>มีเว็บไซต์</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${realSite(s.website) ? 'ok' : 'x'}">${realSite(s.website) ? 'มี' : s.website ? 'มีแค่เพจ' : 'ไม่มี'}</span></div>
     </div>
-    ${CONFIG.offer ? `<p class="offer">${esc(CONFIG.offer)}</p>` : ''}
     <div class="cta"><a class="btn2" id="share" target="_blank" rel="noopener">ส่งรายงานนี้ทาง LINE</a></div>
   </div>`;
 }
