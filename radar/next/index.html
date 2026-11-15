@@ -136,8 +136,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 .web{font:600 13px Inter,Sarabun,sans-serif;white-space:nowrap}
 .web.yes{color:var(--blue);text-decoration:underline;text-decoration-color:#C9D3F8;text-underline-offset:3px}
 .web.yes:hover{text-decoration-color:var(--blue)}
-.web.soc{color:var(--ink-3)}
-.web.no{color:#9AA3B2;font-weight:500}
+.web.soc,.web.no{color:#B4BAC5;font-weight:500;font-size:12.5px}
 .rank-list li.gap-row{display:block;color:var(--ink-3);font-size:13px;text-align:center;padding:6px;border-bottom:1px dashed var(--line)}
 .rank-list li.you{background:#FFF1F1;border-radius:12px;border-bottom:0;box-shadow:inset 0 0 0 2px var(--dot-bad)}
 .push{display:inline-block;margin:12px 0 0 46px;color:var(--blue);font:700 16px Sarabun,sans-serif;text-decoration:none}
@@ -478,7 +477,7 @@ function placeRow(id, pos, cls) {
   const you = id === R.shop.id ? '<span class="you-tag">ร้านคุณ</span>' : '';
   const meta = p ? [p.rating != null ? `<span class="star">★ ${esc(p.rating)}</span>` : '', p.reviews != null ? `<span class="num">${fmt(p.reviews)}</span> รีวิว` : ''].filter(Boolean).join(' · ') : '';
   const web = !p || !p.detail ? '<span></span>'
-    : p.website && socialName(p.website) ? `<a class="web soc" href="${esc(p.website)}" target="_blank" rel="noopener nofollow">${socialName(p.website)}</a>`
+    : p.website && socialName(p.website) ? `<span class="web soc">${socialName(p.website)}</span>`
     : p.website ? `<a class="web yes" href="${esc(p.website)}" target="_blank" rel="noopener nofollow">${esc(host(p.website))}</a>`
     : '<span class="web no">ไม่มีเว็บ</span>';
   return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm"><a href="${esc(mapsLink(id))}" target="_blank" rel="noopener">${name}</a>${you}</div><div class="meta">${meta}</div></div>${web}</li>`;
