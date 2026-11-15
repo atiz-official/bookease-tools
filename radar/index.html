@@ -160,6 +160,18 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 .source{text-align:center;font-size:13px;color:var(--ink-3)}
 
 @media (max-width:860px){.main,.bottom{grid-template-columns:1fr}}
+/* narrow phones: the header (logo · radar mark · Shop Radar · เช็คร้านอื่น) must fit without sideways scroll */
+@media (max-width:380px){
+  .brand{gap:8px}
+  .brand img{width:84px;height:auto}
+  .brand span{font-size:13px;padding-left:8px}
+  .brand .mark{width:18px;height:18px;margin-right:5px;vertical-align:-4px}
+  .link{font-size:13px;padding:6px 0}
+}
+@media (max-width:330px){
+  .brand span{font-size:0}
+  .brand .mark{margin-right:0}
+}
 @media (max-width:520px){
   h1{font-size:23px}
   .vol-label{font-size:20px;gap:6px 8px}
