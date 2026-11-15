@@ -133,9 +133,11 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .nm a:hover{text-decoration:underline}
 a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 .top3list{margin:4px 0 0 20px}
-.web{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.web.yes{background:var(--good-bg);color:var(--good)}
-.web.no{background:var(--none-bg);color:var(--ink-3)}
+.web{font:600 13px Inter,Sarabun,sans-serif;white-space:nowrap}
+.web.yes{color:var(--blue);text-decoration:underline;text-decoration-color:#C9D3F8;text-underline-offset:3px}
+.web.yes:hover{text-decoration-color:var(--blue)}
+.web.soc{color:var(--ink-3)}
+.web.no{color:#9AA3B2;font-weight:500}
 .rank-list li.gap-row{display:block;color:var(--ink-3);font-size:13px;text-align:center;padding:6px;border-bottom:1px dashed var(--line)}
 .rank-list li.you{background:#FFF1F1;border-radius:12px;border-bottom:0;box-shadow:inset 0 0 0 2px var(--dot-bad)}
 .push{display:inline-block;margin:12px 0 0 46px;color:var(--blue);font:700 16px Sarabun,sans-serif;text-decoration:none}
@@ -376,6 +378,18 @@ function render(report, inPlace) {
 
 const rankText = (r) => (r == null ? `${R.maxRank}+` : String(r));
 const mapsLink = (id) => (R.places[id] && R.places[id].mapsUrl) || `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(id)}`;
+// Social pages are not a website the shop owns: they show as grey words naming the platform, real sites in blue.
+const SOCIAL = [['facebook.com', 'เพจ Facebook'], ['fb.com', 'เพจ Facebook'], ['instagram.com', 'Instagram'], ['linktr.ee', 'Linktree'],
+  ['line.me', 'LINE'], ['lin.ee', 'LINE'], ['tiktok.com', 'TikTok'], ['youtube.com', 'YouTube'], ['x.com', 'X'], ['twitter.com', 'X']];
+function socialName(url) {
+  if (!url) return null;
+  let h = '';
+  try { h = new URL(url).hostname.replace(/^(www|m)\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return null; }
+  const hit = SOCIAL.find(([d]) => h === d || h.endsWith(`.${d}`));
+  return hit ? hit[1] : null;
+}
+const realSite = (url) => !!url && !socialName(url);
+
 function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return 'เว็บไซต์'; } }
 
 // The headline says "บริเวณ" / "เขต" as plain words; only the place name is the underlined picker.
@@ -442,6 +456,7 @@ function placeRow(id, pos, cls) {
   const you = id === R.shop.id ? '<span class="you-tag">ร้านคุณ</span>' : '';
   const meta = p ? [p.rating != null ? `<span class="star">★ ${esc(p.rating)}</span>` : '', p.reviews != null ? `<span class="num">${fmt(p.reviews)}</span> รีวิว` : ''].filter(Boolean).join(' · ') : '';
   const web = !p || !p.detail ? '<span></span>'
+    : p.website && socialName(p.website) ? `<a class="web soc" href="${esc(p.website)}" target="_blank" rel="noopener nofollow">${socialName(p.website)}</a>`
     : p.website ? `<a class="web yes" href="${esc(p.website)}" target="_blank" rel="noopener nofollow">${esc(host(p.website))}</a>`
     : '<span class="web no">ไม่มีเว็บ</span>';
   return `<li class="${cls}"><span class="pos num">${pos}</span><div><div class="nm"><a href="${esc(mapsLink(id))}" target="_blank" rel="noopener">${name}</a>${you}</div><div class="meta">${meta}</div></div>${web}</li>`;
@@ -502,16 +517,16 @@ function range(vals, f) {
 function gapCard(k) {
   const ahead = k.ahead.map((id) => R.places[id]).filter((p) => p && p.detail);
   if (!ahead.length) return '';
-  const withWeb = ahead.filter((p) => p.website).length;
+  const withWeb = ahead.filter((p) => realSite(p.website)).length;
   const s = R.shop;
-  const title = !s.website && withWeb > ahead.length / 2 ? 'ร้านอันดับบนมีเว็บ ร้านคุณยังไม่มี' : 'ร้านคุณ เทียบกับร้านอันดับบน';
+  const title = !realSite(s.website) && withWeb > ahead.length / 2 ? 'ร้านอันดับบนมีเว็บ ร้านคุณยังไม่มี' : 'ร้านคุณ เทียบกับร้านอันดับบน';
   return `<div class="card">
     <h2>${title}</h2>
     <div class="check">
       <div class="check-row head"><span></span><span class="c">${ahead.length} ร้านแรก</span><span class="c">ร้านคุณ</span></div>
       <div class="check-row"><span>คะแนนรีวิว</span><span class="c">${range(ahead.map((p) => p.rating), (x) => x)}</span><span class="c">${s.rating == null ? '–' : esc(s.rating)}</span></div>
       <div class="check-row"><span>จำนวนรีวิว</span><span class="c num">${range(ahead.map((p) => p.reviews), fmt)}</span><span class="c num">${s.reviews == null ? '–' : fmt(s.reviews)}</span></div>
-      <div class="check-row"><span>มีเว็บไซต์</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${s.website ? 'ok' : 'x'}">${s.website ? 'มี' : 'ไม่มี'}</span></div>
+      <div class="check-row"><span>มีเว็บไซต์</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${realSite(s.website) ? 'ok' : 'x'}">${realSite(s.website) ? 'มี' : s.website ? 'มีแค่เพจ' : 'ไม่มี'}</span></div>
     </div>
     ${CONFIG.offer ? `<p class="offer">${esc(CONFIG.offer)}</p>` : ''}
     <div class="cta"><a class="btn2" id="share" target="_blank" rel="noopener">ส่งรายงานนี้ทาง LINE</a></div>
