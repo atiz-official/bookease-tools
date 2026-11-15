@@ -533,7 +533,7 @@ function paint() {
   <section class="main">
     <div class="card">
       <div class="head-row">
-        <h2>ร้านคุณอยู่อันดับที่เท่าไหร่ ในพื้นที่นี้</h2>
+        <h2>ร้านคุณอยู่อันดับที่เท่าไหร่ ในพื้นที่${R.area ? (/^[A-Za-z]/.test(R.area.hub) ? ' ' : '') + esc(R.area.hub) : 'รอบร้านคุณ'}</h2>
         ${R.spacings ? `<div class="seg" role="group" aria-label="ระยะรอบร้าน">${R.spacings.map((m) => `<button data-sp="${m}" aria-pressed="${m === R.spacingM}">${kmText(m)}</button>`).join('')}</div>` : ''}
       </div>
       <div class="map" id="map"></div>
