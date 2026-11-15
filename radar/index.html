@@ -23,7 +23,11 @@ body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px}
 .top img{display:block}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
-.brand span{white-space:nowrap;font:500 15px Inter,sans-serif;color:var(--ink-3);letter-spacing:0;padding-left:10px;border-left:1.5px solid var(--line);line-height:1.2}
+.brand span{display:flex;align-items:center;gap:7px;white-space:nowrap;font:500 15px Inter,sans-serif;color:var(--ink-3);letter-spacing:0;padding-left:10px;border-left:1.5px solid var(--line);line-height:1.2}
+.brand .mark{position:relative;width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none;padding:0;border:0;background:repeating-radial-gradient(circle,transparent 0 3.5px,rgba(74,222,128,.32) 3.5px 4.3px),radial-gradient(circle,#0E2A1D,#05110B 72%)}
+.brand .mark::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(transparent 0 280deg,rgba(74,222,128,.75) 359deg,transparent 360deg);animation:mark-spin 3.6s linear infinite}
+@keyframes mark-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.brand .mark::after{animation:none}}
 .link{border:0;background:none;color:var(--blue);font:700 14px Sarabun,sans-serif;cursor:pointer;padding:6px 4px;white-space:nowrap;flex:none}
 .card{background:var(--card);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
 h1{font-size:28px;font-weight:800;line-height:1.25;letter-spacing:-.01em;text-wrap:balance}
@@ -75,6 +79,7 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .area-pick:focus-visible{outline:none;border-bottom-color:var(--ink)}
 .vol{font-size:22px;font-weight:700;line-height:1;margin-top:-6px;color:var(--ink-2);display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px}
 .vol span,.vol-label span{white-space:nowrap}
+.vol-label .where{display:inline-flex;align-items:baseline;gap:6px;white-space:nowrap}
 .vol-label h1{display:inline;font:inherit;font-weight:800;letter-spacing:inherit;color:inherit}
 .vol .num{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:.95;color:var(--blue)}
 .found{font-size:22px;font-weight:800;line-height:1.3}
@@ -168,7 +173,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 <div class="wrap">
 
   <div class="top">
-    <a class="brand" href="./"><img src="../brand/bookease-logo.svg" alt="bookease" width="98" height="16"><span>Shop Radar</span></a>
+    <a class="brand" href="./"><img src="../brand/bookease-logo.svg" alt="bookease" width="98" height="16"><span><i class="mark" aria-hidden="true"></i>Shop Radar</span></a>
     <button class="link" id="again" hidden>เช็คร้านอื่น</button>
   </div>
 
@@ -343,20 +348,22 @@ const rankText = (r) => (r == null ? `${R.maxRank}+` : String(r));
 const mapsLink = (id) => (R.places[id] && R.places[id].mapsUrl) || `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(id)}`;
 function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return 'เว็บไซต์'; } }
 
-function whereText(v) {
-  if (v.kind === 'district') return `เขต${esc(v.area)}`;
-  if (v.kind === 'nearest') return `บริเวณ${esc(v.area)} (ห่างร้าน ${esc(v.km)} กม.)`;
-  return `บริเวณ${esc(v.area)}`;
+// The headline says "บริเวณ" / "เขต" as plain words; only the place name is the underlined picker.
+function wherePrefix(v) { return v && v.kind === 'district' ? 'เขต' : 'บริเวณ'; }
+function wherePlace(v) {
+  if (v.kind === 'nearest') return `${esc(v.area)} (ห่างร้าน ${esc(v.km)} กม.)`;
+  return esc(v.area);
 }
 
 // The neighbourhood in the headline is a picker: the ten nearest the shop, the current one selected.
-function areaPicker(current) {
-  if (!R.areas || !R.areas.length) return `<span>${current}</span>`;
+function areaPicker(current, prefix) {
+  const wrap = (inner) => (prefix ? `<span class="where">${prefix}${inner}</span>` : inner);
+  if (!R.areas || !R.areas.length) return wrap(`<span>${current}</span>`);
   const chosen = R.area && R.area.auto === false ? R.area.id : '';
-  const opts = [`<option value=""${chosen ? '' : ' selected'}>${chosen ? 'ย่านใกล้ร้านที่สุด' : current}</option>`]
+  const opts = [`<option value=""${chosen ? '' : ' selected'}>${chosen ? (prefix ? 'ที่ใกล้ร้านที่สุด' : 'ย่านใกล้ร้านที่สุด') : current}</option>`]
     .concat(R.areas.filter((a) => !(R.area && R.area.auto !== false && a.id === R.area.id && R.volume && R.volume.kind === 'area'))
-      .map((a) => `<option value="${esc(a.id)}"${a.id === chosen ? ' selected' : ''}>บริเวณ${esc(a.name)} · ${esc(a.km)} กม.</option>`));
-  return `<select class="area-pick" id="area-pick" aria-label="เปลี่ยนย่าน">${opts.join('')}</select>`;
+      .map((a) => `<option value="${esc(a.id)}"${a.id === chosen ? ' selected' : ''}>${prefix ? '' : 'บริเวณ'}${esc(a.name)} · ${esc(a.km)} กม.</option>`));
+  return wrap(`<select class="area-pick" id="area-pick" aria-label="เปลี่ยนย่าน">${opts.join('')}</select>`);
 }
 
 // The shop type in the headline is a picker too. A shop we could not place in one of our types keeps its
@@ -384,8 +391,8 @@ function fitPickers() {
 function headline(k) {
   // The search volume is the one big thing on the card: label, then the number.
   const first = R.volume
-    ? `<div class="vol-label"><h1>จำนวนการค้นหา</h1>${typePicker()}${areaPicker(whereText(R.volume))}</div><p class="vol"><span class="num">${fmt(R.volume.total)}</span><span>ครั้ง/เดือน</span></p>`
-    : `<div class="vol-label"><h1>ยังไม่มีจำนวนการค้นหา</h1>${typePicker()}${areaPicker(R.area ? `บริเวณ${esc(R.area.name)}` : 'ย่านนี้')}</div>`;
+    ? `<div class="vol-label"><h1>จำนวนการค้นหา</h1>${typePicker()}${areaPicker(wherePlace(R.volume), wherePrefix(R.volume))}</div><p class="vol"><span class="num">${fmt(R.volume.total)}</span><span>ครั้ง/เดือน</span></p>`
+    : `<div class="vol-label"><h1>ยังไม่มีจำนวนการค้นหา</h1>${typePicker()}${R.area ? areaPicker(esc(R.area.name), 'บริเวณ') : areaPicker('ย่านนี้')}</div>`;
   const n = k.top3Count, total = k.points.length;
   // A closed shop drops down the list, so "found / not found" would mislead: say nothing here.
   // The small "closed" chip sits beside the shop name instead.
