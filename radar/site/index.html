@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ตัวอย่างเว็บร้าน · bookease</title>
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--ink:#14110F;--ink-2:#4A4440;--ink-3:#7A726C;--line:#ECE7E2;--ground:#FBF8F5;--card:#FFFFFF;--accent:#2D55EB;--accent-soft:#EEF2FD;--rose:#B65A7B;--star:#C2850C;--good:#15803D;--bad:#B91C1C;--warn:#8A5A00}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Anuphan,Inter,system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{max-width:760px;margin:0 auto;padding:0 0 56px}
+.preview{margin:12px 16px 0;font:600 12.5px Anuphan;color:var(--ink-2);background:#FFF7E6;border:1px solid #F2DDAE;border-radius:12px;padding:7px 12px}
+.hero{position:relative;margin-top:12px;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(135deg,#F3E4E1,#E9D7F1 55%,#DCE4FA)}
+.hero img{width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.62) 100%)}
+.hero .t{position:absolute;left:18px;right:18px;bottom:16px;z-index:1;color:#fff}
+.hero h1{font:700 30px/1.2 Anuphan;letter-spacing:-.01em;text-wrap:balance}
+.hero p{font-size:15px;opacity:.92}
+.body{padding:0 16px;display:flex;flex-direction:column;gap:22px;margin-top:16px}
+.rating{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-2)}
+.rating b{font:800 22px Inter;color:var(--ink)}
+.rating .stars{color:var(--star);letter-spacing:1px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.act{flex:1 1 0;min-width:110px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border-radius:999px;padding:13px 10px;background:var(--accent-soft);color:var(--accent);font:700 15px Anuphan;white-space:nowrap}
+.act.primary{background:var(--accent);color:#fff;flex-grow:1.4}
+.act svg{width:19px;height:19px;flex:none}
+.why{display:flex;flex-wrap:wrap;gap:8px}
+.why span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;color:var(--ink-2)}
+.why span:first-child{color:var(--rose);font-weight:700}
+.src{color:var(--ink-3);font-size:12.5px;margin-top:-14px}
+h2{font:700 21px Anuphan;margin-bottom:10px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#EFE7E1}
+.reviews{display:flex;flex-direction:column;gap:10px}
+.rv{background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--line)}
+.rv p{font-size:15.5px}
+.rv small{display:block;margin-top:6px;color:var(--ink-3);font-size:13px}
+.rv small .stars{color:var(--star)}
+.card{background:var(--card);border-radius:18px;padding:16px;border:1px solid var(--line)}
+.hours{list-style:none}
+.hours li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.hours li:last-child{border-bottom:0}
+.hours .off{color:var(--ink-3)}
+.hours .today{font-weight:700}
+.map{border-radius:14px;overflow:hidden;aspect-ratio:16/10;background:#E8ECF1}
+.map iframe{width:100%;height:100%;border:0}
+.addr{color:var(--ink-2);font-size:15px;margin-top:10px}
+.foot{text-align:center;color:var(--ink-3);font-size:13px;margin-top:8px}
+.foot img{display:inline;height:15px;vertical-align:-3px}
+/* Google Maps check (shown to the owner: what we will fix) */
+.audit{background:var(--card);border-radius:18px;padding:18px 16px;border:2px solid var(--accent-soft)}
+.audit h2{margin-bottom:2px}
+.audit .lead{font-size:14px;color:var(--ink-3);margin-bottom:10px}
+.audit ol{list-style:none;display:flex;flex-direction:column}
+.audit li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.audit li:last-child{border-bottom:0}
+.audit .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:800 13px Inter;color:#fff;margin-top:2px}
+.audit .ok .ic{background:var(--good)}.audit .fix .ic{background:var(--bad)}.audit .look .ic{background:#B4BAC5}
+.audit b{display:block;font-size:15.5px}
+.audit small{display:block;color:var(--ink-2);font-size:14px}
+.audit .rq{display:flex;gap:14px;align-items:center;margin-top:8px}
+.audit .rq .qr{width:96px;height:96px;flex:none}
+.audit .rq .qr img,.audit .rq .qr canvas{width:100%!important;height:100%!important}
+.audit .rq a{font-weight:700;color:var(--accent);word-break:break-all;font-size:13px}
+.busy{padding:60px 16px;text-align:center;color:var(--ink-3)}
+.err{padding:40px 16px;color:var(--bad)}
+@media (min-width:700px){.hero{border-radius:22px;margin:12px 16px 0}.gallery{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"><p class="busy">กำลังสร้างเว็บร้าน…</p></main>
+<script>
+const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const photoUrl = (name, w = 1000) => `${API}/photo?w=${w}&name=${encodeURIComponent(name)}`;
+const qs = new URLSearchParams(location.search);
+const P = qs.get('p') || '';
+
+const SOCIAL = [['facebook.com', 'Facebook'], ['fb.com', 'Facebook'], ['instagram.com', 'Instagram'], ['linktr.ee', 'Linktree'], ['line.me', 'LINE'], ['lin.ee', 'LINE'], ['tiktok.com', 'TikTok']];
+function socialName(url) {
+  try { const h = new URL(url).hostname.replace(/^(www|m)\./, ''); const s = SOCIAL.find(([d]) => h === d || h.endsWith('.' + d)); return s ? s[1] : null; }
+  catch (e) { console.error('[site] bad url', url, e); return null; }
+}
+// Google types that match what customers type ("ร้านเสริมสวย", "ร้านนวด"…); generic ones hide the shop.
+const GOOD_TYPES = { hair_salon: 'ร้านทำผม', beauty_salon: 'ร้านเสริมสวย', nail_salon: 'ร้านทำเล็บ', barber_shop: 'ร้านตัดผม', massage: 'ร้านนวด', spa: 'สปา', massage_spa: 'ร้านนวด', skin_care_clinic: 'คลินิกผิว', dental_clinic: 'คลินิกทันตกรรม', tattoo_shop: 'ร้านสัก', body_art_service: 'ร้านสัก', makeup_artist: 'ช่างแต่งหน้า', hair_care: 'ร้านทำผม' };
+
+// Short, true highlights read from the shop's own Google reviews (a phrase is used only if a review says it).
+function highlights(reviews) {
+  const all = reviews.map((r) => r.text).join(' \n ');
+  const out = [];
+  const yrs = [...all.matchAll(/(?:ประสบการณ์|ตัด|ทำ|เปิด)[^\d]{0,20}(\d{1,2})\s*(?:\+|กว่า)?\s*ปี/g)].map((m) => +m[1]).filter((n) => n >= 3 && n <= 50);
+  if (yrs.length) out.push(`ช่างประสบการณ์ ${Math.max(...yrs)} ปี`);
+  const rules = [[/เจ้าของ(?:ร้าน)?(?:ทำเอง|ตัดเอง|ลงมือ)/, 'เจ้าของร้านทำเอง'], [/ไม่ขายคอร์ส|ไม่ยัดเยียด/, 'ไม่ขายคอร์ส'], [/จอดรถ/, 'จอดรถได้'],
+    [/สะอาด/, 'ร้านสะอาด'], [/ราคา[^ ]{0,12}(?:โอเค|ไม่แพง|ถูก|คุ้ม|เหมาะสม)/, 'ราคาคุ้ม'], [/อัธยาศัยดี|บริการดี|เป็นกันเอง|ใจดี/, 'บริการดี'],
+    [/ผมขาว/, 'ปิดผมขาวได้ดี'], [/ไม่ต้องรอ|ไม่รอนาน/, 'ไม่ต้องรอนาน'], [/นวดหนัก|นวดดี|มือหนัก/, 'นวดดี มือถึง']];
+  for (const [re, label] of rules) if (re.test(all) && !out.includes(label)) out.push(label);
+  return out.slice(0, 6);
+}
+function nearTransit(reviews, address) {
+  const m = /(BTS|MRT|บีทีเอส|เอ็มอาร์ที)\s*([ก-๙A-Za-z]+)/.exec(reviews.map((r) => r.text).join(' ') + ' ' + (address || ''));
+  if (!m) return '';
+  const line = /BTS|บีทีเอส/.test(m[1]) ? 'BTS' : 'MRT';
+  return `ใกล้ ${line} ${m[2].replace(/^สถานี/, '')}`;
+}
+function hoursRows(list) {
+  const map = { 'วันจันทร์': 1, 'วันอังคาร': 2, 'วันพุธ': 3, 'วันพฤหัสบดี': 4, 'วันศุกร์': 5, 'วันเสาร์': 6, 'วันอาทิตย์': 0 };
+  return list.map((s) => {
+    const i = s.indexOf(':'); const day = s.slice(0, i).trim(); const t = s.slice(i + 1).trim();
+    const off = /ปิด/.test(t);
+    return `<li data-d="${map[day] ?? ''}"${off ? ' class="off"' : ''}><span>${esc(day.replace(/^วัน/, ''))}</span><span>${esc(off ? 'ปิด' : t)}</span></li>`;
+  }).join('');
+}
+function shortAddress(a) { return (a || '').replace(/\s*\d{5}\s*$/, '').replace(/กรุงเทพมหานคร/, 'กรุงเทพฯ'); }
+
+function audit(d) {
+  const items = [];
+  const primary = (d.types || []).find((t) => GOOD_TYPES[t]);
+  const generic = !d.types || !d.types.length || !GOOD_TYPES[d.types[0]];
+  items.push(generic
+    ? { s: 'fix', t: 'หมวดร้าน', d: `ตอนนี้เป็น "${esc(d.primaryType || 'ไม่ระบุ')}" ควรเป็นหมวดที่ลูกค้าค้น เช่น "${esc(primary ? GOOD_TYPES[primary] : 'ร้านเสริมสวย')}" เป็นหมวดหลัก` }
+    : { s: 'ok', t: 'หมวดร้าน', d: `"${esc(d.primaryType)}" ตรงกับคำที่ลูกค้าค้น` });
+  const soc = d.website ? socialName(d.website) : null;
+  items.push(!d.website ? { s: 'fix', t: 'เว็บไซต์', d: 'ยังไม่มีเว็บไซต์บน Google · ใส่หน้าเว็บร้านบน bookease.co' }
+    : soc ? { s: 'fix', t: 'เว็บไซต์', d: `ช่องเว็บไซต์เป็นแค่${esc(soc)} · ใส่หน้าเว็บร้านจริงแทน ลูกค้าเห็นเมนู ราคา รูป และกดติดต่อได้` }
+    : { s: 'ok', t: 'เว็บไซต์', d: `มีเว็บไซต์ (${esc(new URL(d.website).hostname.replace(/^www\./, ''))})` });
+  const n = d.reviews || 0;
+  items.push(n >= 50 ? { s: 'ok', t: 'รีวิว', d: `${n} รีวิว · ขอรีวิวต่อเนื่องเพื่อให้อยู่อันดับต้น` }
+    : { s: 'fix', t: 'รีวิว', d: `มี ${n} รีวิว ร้านที่นำในย่านมักมี 50–100+ · วางป้าย QR ขอรีวิวที่เคาน์เตอร์ (ลิงก์ด้านล่าง)`, rq: true });
+  items.push({ s: 'look', t: 'ที่อยู่และจุดสังเกต', d: `ตรวจว่าเลขที่ถูกต้อง และเติมจุดสังเกต เช่น ชื่ออาคาร หรือสถานีรถไฟฟ้า · ตอนนี้: ${esc(shortAddress(d.address))}` });
+  items.push({ s: 'look', t: 'คำอธิบายร้าน', d: 'เขียนคำอธิบาย 2–3 ประโยค: บริการหลัก · ย่าน · จุดเด่น (Google ไม่แสดงช่องนี้ผ่านระบบ ต้องเปิดดูในโปรไฟล์)' });
+  items.push(d.photoCount >= 10 ? { s: 'ok', t: 'รูปภาพ', d: 'มีรูป 10 รูปขึ้นไป · เพิ่มรูปผลงานใหม่ทุกเดือน' }
+    : { s: 'fix', t: 'รูปภาพ', d: `มีรูป ${d.photoCount || 0} รูป · เพิ่มรูปหน้าร้าน บรรยากาศ ผลงาน และเมนูราคา` });
+  return items;
+}
+
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) { $('app').innerHTML = '<p class="err">ไม่พบร้าน · เปิดจากรายงาน Shop Radar แล้วกด "ตัวอย่างเว็บร้าน"</p>'; return; }
+  const r = await fetch(API + '/place', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ placeId: P }) });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || r.status);
+  document.title = `${d.name} · bookease`;
+  const own = (d.photos || []).filter((p) => p.by && p.by === d.name);
+  const photos = (own.length ? own : (d.photos || [])).concat((d.photos || []).filter((p) => !own.includes(p))).slice(0, 10);
+  const reviews = (d.reviewList || []).filter((x) => x.text && x.rating >= 4);
+  const hi = highlights(d.reviewList || []);
+  const near = nearTransit(d.reviewList || [], d.address);
+  const kind = d.primaryType || '';
+  const soc = d.website ? socialName(d.website) : null;
+  const phone = (d.phone || '').replace(/\s+/g, '');
+  const stars = (x) => '★'.repeat(Math.round(x || 0));
+  const items = audit(d);
+  const reviewLink = `https://search.google.com/local/writereview?placeid=${encodeURIComponent(P)}`;
+  $('app').innerHTML = `
+  <p class="preview">ตัวอย่างหน้าเว็บร้าน · ทำให้เจ้าของร้านดูก่อน · ยังไม่เผยแพร่</p>
+  <section class="hero">${photos[0] ? `<img src="${photoUrl(photos[0].name)}" alt="${esc(d.name)}">` : ''}
+    <div class="t"><h1>${esc(d.name)}</h1><p>${esc([kind, near].filter(Boolean).join(' · '))}</p></div></section>
+  <div class="body">
+    ${d.rating ? `<div class="rating"><b>${Number(d.rating).toFixed(1)}</b><span class="stars">${stars(d.rating)}</span><span>${d.reviews || 0} รีวิวบน Google</span></div>` : ''}
+    <div class="actions">
+      ${phone ? `<a class="act primary" href="tel:${esc(phone)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>โทรจองคิว</a>` : ''}
+      <a class="act${phone ? '' : ' primary'}" href="${esc(d.mapsUrl)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>นำทาง</a>
+      ${d.website ? `<a class="act" href="${esc(d.website)}" target="_blank" rel="noopener">${esc(soc || 'เว็บไซต์')}</a>` : ''}
+    </div>
+    ${hi.length ? `<div class="why">${hi.map((h) => `<span>${esc(h)}</span>`).join('')}</div><p class="src">จากรีวิวลูกค้าบน Google</p>` : ''}
+    ${photos.length > 1 ? `<section><h2>ผลงานและบรรยากาศร้าน</h2><div class="gallery">${photos.slice(1).map((p, i) => `<img src="${photoUrl(p.name, 600)}" alt="รูปร้าน ${i + 2}" loading="lazy">`).join('')}</div></section>` : ''}
+    ${reviews.length ? `<section><h2>ลูกค้าพูดถึงร้าน</h2><div class="reviews">${reviews.map((x) => `<div class="rv"><p>“${esc(x.text.trim())}”</p><small><span class="stars">${stars(x.rating)}</span> · ${esc(x.by)} · ${esc(x.when)}</small></div>`).join('')}</div></section>` : ''}
+    ${(d.hours || []).length ? `<section class="card"><h2>เวลาเปิด</h2><ul class="hours" id="hours">${hoursRows(d.hours)}</ul></section>` : ''}
+    <section class="card"><h2>ที่ตั้ง</h2><div class="map"><iframe title="แผนที่ ${esc(d.name)}" src="https://maps.google.com/maps?q=${d.lat},${d.lng}&z=16&t=m&hl=th&output=embed"></iframe></div><p class="addr">${esc(shortAddress(d.address))}</p></section>
+    <section class="audit" id="audit"><h2>6 จุดบน Google Maps ที่เราจะช่วยแก้</h2><p class="lead">ทำให้ลูกค้าแถวร้านค้นเจอและติดต่อร้านได้ง่ายขึ้น</p>
+      <ol>${items.map((it, i) => `<li class="${it.s}"><span class="ic">${it.s === 'ok' ? '✓' : it.s === 'fix' ? '!' : '?'}</span><div><b>${i + 1}. ${it.t}</b><small>${it.d}</small>${it.rq ? `<div class="rq"><div class="qr" id="rq"></div><a href="${reviewLink}" target="_blank" rel="noopener">ลิงก์ขอรีวิวของร้าน</a></div>` : ''}</div></li>`).join('')}</ol>
+    </section>
+    <p class="foot">หน้าร้านบน <img src="../../brand/bookease-logo.svg" alt="bookease"></p>
+  </div>`;
+  try { const day = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })).getDay(); const li = document.querySelector(`#hours li[data-d="${day}"]`); if (li) li.classList.add('today'); }
+  catch (e) { console.error('[site] hours', e); }
+  if ($('rq')) { try { new QRCode($('rq'), { text: reviewLink, width: 300, height: 300, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { console.error('[site] qr', e); } }
+}
+load().catch((e) => { console.error('[site] load', e); $('app').innerHTML = `<p class="err">สร้างเว็บร้านไม่ได้ (${esc(e.message)}) ลองใหม่อีกครั้ง</p>`; });
+</script>
+</body>
+</html>
