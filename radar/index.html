@@ -478,7 +478,7 @@ function top10List(k) {
 }
 
 // The one sales link on the page, right under the shop's own row: only when the shop is open and not in the
-// top three. Opens a chat with LINE @bookease, the message already typed (shop, rank, report link).
+// top three. Opens a chat with LINE @easepos, the message already typed (shop, rank, report link).
 // Plain words for where the shop is: the neighbourhood when the shop is within 2 km of it, else the district
 // from the shop's address, else "this area".
 function nearShop() {
@@ -604,7 +604,7 @@ function paint() {
     const msg = `${s.name.startsWith('ร้าน') ? `อยากดัน${s.name}` : `อยากดันร้าน ${s.name}`} ให้สูงขึ้น
 ตอนนี้อันดับ ${rankText(rank)} ค้น "${k.keyword}"${where}
 ${url}`;
-    push.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
+    push.href = `https://line.me/R/oaMessage/@easepos/?${encodeURIComponent(msg)}`;
   }
   fitPickers();
   drawMap(k);
