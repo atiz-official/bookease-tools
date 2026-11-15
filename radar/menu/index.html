@@ -51,6 +51,8 @@ a{color:var(--blue)}
 .brand img{width:120px;display:block;margin-left:auto}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
 .tile{min-width:0}
+a.tile{display:block;text-decoration:none;color:inherit}
+a.tile:focus-visible{outline:3px solid #2D55EB;outline-offset:3px;border-radius:10px}
 .ph{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#EEF0F4}
 .ph img{width:100%;height:100%;object-fit:cover;display:block}
 .ph .chip{position:absolute;left:8px;top:8px;font:700 11px Sarabun;background:#fff;border-radius:999px;padding:2px 9px}
@@ -107,6 +109,17 @@ const qs = new URLSearchParams(location.search);
 const B = qs.get('b') || '';
 const SHOP = qs.get('shop') || ''; // the shop whose report opened this menu: pinned first
 const EDIT = qs.get('edit') === '1' || !qs.get('s');
+// How the reader arrived: the printed QR carries v=qr, a copied or LINE-shared link v=link.
+const VIA = ['qr', 'link'].includes(qs.get('v')) ? qs.get('v') : 'direct';
+/** Count a menu view or a tap on a shop for the weekly report (the worker counts tracked places only). */
+function hit(p, a, src) {
+  try {
+    const body = JSON.stringify({ p, a, src });
+    if (!(navigator.sendBeacon && navigator.sendBeacon(API + '/hit', body))) {
+      fetch(API + '/hit', { method: 'POST', body, keepalive: true }).catch((e) => console.error('[menu] hit', e));
+    }
+  } catch (e) { console.error('[menu] hit', e); }
+}
 let building = null, pool = [], chosen = [];
 
 async function post(path, body) {
@@ -181,8 +194,8 @@ async function load() {
   render();
 }
 
-function shareUrl() {
-  return `${location.origin}${location.pathname}?b=${encodeURIComponent(B)}${SHOP ? `&shop=${encodeURIComponent(SHOP)}` : ''}&s=${chosen.map(encodeURIComponent).join(',')}`;
+function shareUrl(via) {
+  return `${location.origin}${location.pathname}?b=${encodeURIComponent(B)}${SHOP ? `&shop=${encodeURIComponent(SHOP)}` : ''}&s=${chosen.map(encodeURIComponent).join(',')}${via ? `&v=${via}` : ''}`;
 }
 
 function renderStatus() {
@@ -200,7 +213,10 @@ function render() {
     const c = CATS.find((x) => x.k === p.cat);
     const ph = p.photo ? `<div class="ph"><img src="${photoUrl(p.photo)}" alt="" loading="lazy"><span class="chip">${esc(c.label)}</span></div>`
       : `<div class="ph none"><span class="big">${esc(c.label)}</span><span class="chip">${esc(c.label)}</span></div>`;
-    return `<article class="tile">${ph}<h4>${esc(p.name)}</h4><div class="meta">${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${distText(p.m)}</div></article>`;
+    const inner = `${ph}<h4>${esc(p.name)}</h4><div class="meta">${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${distText(p.m)}</div>`;
+    // Reader view: each shop opens its page (call · directions), tagged with this building for the shop's report.
+    return EDIT ? `<article class="tile">${inner}</article>`
+      : `<a class="tile" data-shop="${esc(p.id)}" href="../site/?p=${encodeURIComponent(p.id)}&src=b:${encodeURIComponent(B)}">${inner}</a>`;
   }).join('');
   const sheet = `<section class="sheet" id="sheet">
     ${isLive ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
@@ -224,14 +240,15 @@ function render() {
   </aside>`;
   $('app').innerHTML = `<div class="cols">${EDIT ? panel : ''}<div>${sheet}${EDIT ? '' : `<p class="no-print" style="margin-top:10px"><a href="${shareUrl()}&edit=1">แก้ไขเมนูนี้</a></p>`}</div></div>`;
   if (!EDIT) $('app').querySelector('.cols').style.gridTemplateColumns = '1fr';
-  try { new QRCode($('qr'), { text: shareUrl(), width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M }); }
+  try { new QRCode($('qr'), { text: shareUrl('qr'), width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M }); }
   catch (e) { console.error('[menu] qr', e); }
   if (EDIT) wire();
+  else $('app').querySelectorAll('a.tile').forEach((a) => a.addEventListener('click', () => hit(a.dataset.shop, 'open', `b:${B}`)));
 }
 
 function wire() {
   const line = $('line');
-  if (line) line.href = `https://line.me/R/share?text=${encodeURIComponent(`เมนูบริการรอบ ${building.name}\n${shareUrl()}`)}`;
+  if (line) line.href = `https://line.me/R/share?text=${encodeURIComponent(`เมนูบริการรอบ ${building.name}\n${shareUrl('link')}`)}`;
   $('app').querySelectorAll('.opt input').forEach((box) => box.addEventListener('change', () => {
     const id = box.dataset.id;
     if (box.checked) { if (chosen.length >= MAX) { box.checked = false; return; } chosen.push(id); }
@@ -240,12 +257,13 @@ function wire() {
     render();
   }));
   $('copy').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(shareUrl()); $('toast').hidden = false; }
-    catch (e) { console.error('[menu] copy', e); prompt('คัดลอกลิงก์นี้', shareUrl()); }
+    try { await navigator.clipboard.writeText(shareUrl('link')); $('toast').hidden = false; }
+    catch (e) { console.error('[menu] copy', e); prompt('คัดลอกลิงก์นี้', shareUrl('link')); }
   });
   $('print').addEventListener('click', () => window.print());
 }
 
+if (B && !EDIT) hit(B, 'view', VIA); // one menu open per page load
 load().catch((e) => { console.error('[menu] load', e); $('app').innerHTML = `<p class="err">โหลดเมนูไม่ได้ (${esc(e.message)}) ลองใหม่อีกครั้ง</p>`; });
 </script>
 </body>

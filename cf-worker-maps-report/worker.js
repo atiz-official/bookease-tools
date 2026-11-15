@@ -434,6 +434,121 @@ async function underDailyCap(env, url, kind) {
   return true;
 }
 
+// ── BookEase Growth: work log, weekly rank history, contact counts (2026-11-16) ──
+// Every paying shop gets a weekly report built only from these records, so nobody has to write one.
+// Rule (Art + Codex 2026-11-16): a number we cannot measure is shown as "ยังวัดไม่ได้"; a measured zero is shown as 0.
+//
+// KV keys (namespace REPORTS), written by the team with growth-admin.mjs (wrangler, needs a Cloudflare login):
+//   g/index            [{id, kind:'shop'|'building'}]   what is tracked; nothing else is counted
+//   g/shop/<id>        {id, kind, name, cat, area, since, buildings[], status, ...}
+//   g/log/<id>         [{at, what, where, minutes, evidence}]   work we did for the shop
+// written by this worker:
+//   g/hist/<id>        [{at, keyword, reviews, rating, spacings:[{m, ranks[9], top3, found}], hub}]
+//   g/counts/<id>      {"2026-11-16": {"call|site": 2, ...}}   Bangkok dates
+//   g/try/<id>         last attempt while the shop was closed (stops retrying every 15 minutes)
+const G_ACTIONS = ['view', 'call', 'map', 'web', 'line', 'book', 'review', 'open'];
+const G_SPACINGS = [500, 2000];          // near the door, and the wider neighbourhood (≈ 4 km across)
+const G_EVERY_MS = 6 * 24 * 3600 * 1000;   // re-check a shop once 6 days have passed
+const G_RETRY_MS = 3 * 3600 * 1000;        // shop closed → try again in 3 hours (Google pushes closed shops down)
+const bkkDay = (t = Date.now()) => new Date(t + 7 * 3600 * 1000).toISOString().slice(0, 10);
+const gid = (v) => (/^[A-Za-z0-9_-]{10,200}$/.test(v || '') ? v : '');
+
+async function gIndex(env) { return (await env.REPORTS.get('g/index', 'json')) || []; }
+
+/**
+ * One weekly rank check for a tracked shop. Rank lists use Text Search IDs-only (not billed);
+ * the shop itself is one Place Details call (reviews, rating, open now). Skips when the shop is closed.
+ * At most 2 × 9 × 2 + 2 + 1 = 39 Google calls, under the 50-subrequest limit of one Worker run.
+ */
+async function growthSnapshot(env, cfg) {
+  const raw = await google(env, `places/${cfg.id}?languageCode=th`, 'id,location,rating,userRatingCount,currentOpeningHours.openNow', null);
+  const open = raw.currentOpeningHours && typeof raw.currentOpeningHours.openNow === 'boolean' ? raw.currentOpeningHours.openNow : null;
+  if (open === false) return { skipped: 'closed' };
+  if (!raw.location) return { skipped: 'no_location' };
+  const cat = CATEGORIES.find((c) => c.id === cfg.cat);
+  if (!cat) return { skipped: 'no_category' };
+  const lat = raw.location.latitude, lng = raw.location.longitude;
+  const spacings = [];
+  for (const m of G_SPACINGS) {
+    const lists = await Promise.all(grid(lat, lng, m).map((pt) => rankedIds(env, cat.label, pt)));
+    const ranks = lists.map((ids) => { const i = ids.indexOf(cfg.id); return i === -1 ? null : i + 1; });
+    spacings.push({ m, ranks, top3: ranks.filter((r) => r && r <= 3).length, found: ranks.filter(Boolean).length });
+  }
+  const area = AREAS.find((a) => a.id === cfg.area) || null;
+  let hub = null;
+  if (area) {
+    const ids = await rankedIds(env, cat.label, area);
+    const i = ids.indexOf(cfg.id);
+    hub = { name: area.hub || area.name, rank: i === -1 ? null : i + 1 };
+  }
+  return { at: new Date().toISOString(), keyword: cat.label, maxRank: PAGES * 20, open,
+    rating: raw.rating == null ? null : raw.rating, reviews: raw.userRatingCount == null ? null : raw.userRatingCount, spacings, hub };
+}
+
+/** Is this tracked shop due a check? Returns the config, or null. */
+async function growthDue(env, id) {
+  const [cfg, hist, tried] = await Promise.all([
+    env.REPORTS.get(`g/shop/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), env.REPORTS.get(`g/try/${id}`)]);
+  if (!cfg || cfg.kind !== 'shop' || cfg.active === false) return null;
+  const last = hist && hist.length ? Date.parse(hist[hist.length - 1].at) : 0;
+  if (Date.now() - last < G_EVERY_MS) return null;
+  if (tried && Date.now() - Number(tried) < G_RETRY_MS) return null;
+  return cfg;
+}
+
+async function growthRun(env, cfg) {
+  const snap = await growthSnapshot(env, cfg);
+  if (snap.skipped) {
+    await env.REPORTS.put(`g/try/${cfg.id}`, String(Date.now()), { expirationTtl: 86400 });
+    return snap;
+  }
+  const hist = (await env.REPORTS.get(`g/hist/${cfg.id}`, 'json')) || [];
+  hist.push(snap);
+  await env.REPORTS.put(`g/hist/${cfg.id}`, JSON.stringify(hist.slice(-104))); // two years of weeks
+  return snap;
+}
+
+/** Cron (every 15 min, 10:00–19:45 Bangkok): check the first due shop, at most one per run. */
+async function growthTick(env) {
+  for (const item of await gIndex(env)) {
+    if (item.kind !== 'shop') continue;
+    const cfg = await growthDue(env, item.id);
+    if (!cfg) continue;
+    const out = await growthRun(env, cfg);
+    console.log('[growth] tick', item.id, out.skipped || 'checked');
+    if (!out.skipped) return;
+  }
+}
+
+/** Count one contact or view, only for tracked shops and buildings (keeps KV writes small). */
+async function growthHit(env, body) {
+  const id = gid(String(body.p || ''));
+  const a = String(body.a || '');
+  const src = String(body.src || 'direct').slice(0, 120);
+  if (!id || !G_ACTIONS.includes(a) || !/^[A-Za-z0-9_:.-]{1,120}$/.test(src)) return { error: 'bad_request' };
+  if (!(await gIndex(env)).some((x) => x.id === id)) return { counted: false };
+  const key = `g/counts/${id}`;
+  const counts = (await env.REPORTS.get(key, 'json')) || {};
+  const day = bkkDay();
+  counts[day] = counts[day] || {};
+  counts[day][`${a}|${src}`] = (counts[day][`${a}|${src}`] || 0) + 1;
+  await env.REPORTS.put(key, JSON.stringify(counts));
+  return { counted: true };
+}
+
+/** Everything the weekly report page needs for one shop, from the records above only. */
+async function growthData(env, id) {
+  const cfg = await env.REPORTS.get(`g/shop/${id}`, 'json');
+  if (!cfg) return null;
+  const [log, hist, counts] = await Promise.all([
+    env.REPORTS.get(`g/log/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), env.REPORTS.get(`g/counts/${id}`, 'json')]);
+  const buildings = await Promise.all((cfg.buildings || []).map(async (b) => {
+    const [bc, bcounts] = await Promise.all([env.REPORTS.get(`g/shop/${b}`, 'json'), env.REPORTS.get(`g/counts/${b}`, 'json')]);
+    return bc && { ...bc, counts: bcounts || {} };
+  }));
+  return { shop: cfg, log: log || [], hist: hist || [], counts: counts || {}, buildings: buildings.filter(Boolean), today: bkkDay() };
+}
+
 // ── handler ─────────────────────────────────────────────────────────
 
 export default {
@@ -466,9 +581,33 @@ export default {
         return new Response(res.body, { headers: { 'Content-Type': res.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
       }
 
+      // BookEase Growth weekly report data for one tracked shop (read-only).
+      if (request.method === 'GET' && url.pathname === '/growth') {
+        const id = gid(url.searchParams.get('p'));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        const data = await growthData(env, id);
+        return data ? json(data, 200, origin) : json({ error: 'not_tracked' }, 404, origin);
+      }
+
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
       let body;
       try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400, origin); }
+
+      // A view or a tap on call / map / web… (sendBeacon from our pages). Counts tracked shops only.
+      if (url.pathname === '/hit') {
+        const out = await growthHit(env, body);
+        return json(out, out.error ? 400 : 200, origin);
+      }
+
+      // Take this week's rank check now. Safe without a login: only tracked shops that are due, once a week.
+      if (url.pathname === '/growth/snap') {
+        const id = gid(String(body.p || ''));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        const cfg = await growthDue(env, id);
+        if (!cfg) return json({ error: 'not_due' }, 409, origin);
+        const snap = await growthRun(env, cfg);
+        return json(snap, snap.skipped ? 409 : 200, origin);
+      }
 
       if (url.pathname === '/find') {
         if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
@@ -546,5 +685,10 @@ export default {
       const quota = err && err.status === 429;
       return json({ error: quota ? 'google_quota' : 'upstream_failed' }, quota ? 429 : 502, origin);
     }
+  },
+
+  async scheduled(event, env, ctx) {
+    if (!env.GOOGLE_PLACES_KEY || !env.REPORTS) { console.error('[growth] tick: missing key or KV'); return; }
+    ctx.waitUntil(growthTick(env).catch((e) => console.error('[growth] tick failed', e && e.stack || e)));
   },
 };

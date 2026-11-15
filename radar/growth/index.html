@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>รายงานโปรโมทร้าน · bookease</title>
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14110F;--ink-2:#4A4440;--ink-3:#7A726C;--line:#ECE7E2;--ground:#FBF8F5;--card:#FFFFFF;--accent:#2D55EB;--accent-soft:#EEF2FD;--good:#15803D;--good-soft:#E8F5EC;--bad:#B91C1C;--muted:#B4BAC5;--na:#F3F0EC}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Anuphan,Inter,system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 56px;display:flex;flex-direction:column;gap:18px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+header.top img{height:20px}
+header.top span{font:600 13px Anuphan;color:var(--ink-3)}
+.title h1{font:700 26px/1.25 Anuphan;letter-spacing:-.01em;text-wrap:balance}
+.title p{color:var(--ink-3);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat small{display:block;color:var(--ink-2);font-size:13.5px;line-height:1.4}
+.stat b{display:block;font:800 28px/1.15 Inter;font-variant-numeric:tabular-nums;margin-top:4px}
+.stat b i{font:600 14px Anuphan;font-style:normal;color:var(--ink-3)}
+.stat .d{font-size:13px;color:var(--ink-3)}
+.stat .d.up{color:var(--good)}.stat .d.down{color:var(--bad)}
+.stat.na b{font:600 15px/1.4 Anuphan;color:var(--ink-3)}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+h2{font:700 19px Anuphan;margin-bottom:8px}
+.lead{color:var(--ink-3);font-size:13.5px;margin:-4px 0 10px}
+.log{list-style:none}
+.log li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.log li:last-child{border-bottom:0}
+.log time{font:600 13px Inter;color:var(--ink-3);font-variant-numeric:tabular-nums;padding-top:2px}
+.log b{display:block;font-weight:600;font-size:15px}
+.log small{color:var(--ink-3);font-size:13px}
+.log a{font-size:13px;font-weight:600;text-decoration:none}
+.chan{display:flex;flex-direction:column}
+.ch{padding:12px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:start}
+.ch:last-child{border-bottom:0}
+.ch b{font-size:15.5px}
+.ch small{grid-column:1/-1;color:var(--ink-2);font-size:14px}
+.pill{font:600 12.5px Anuphan;border-radius:999px;padding:3px 10px;white-space:nowrap;background:var(--na);color:var(--ink-3)}
+.pill.on{background:var(--good-soft);color:var(--good)}
+.grids{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;grid-column:1/-1}
+.g9{display:grid;grid-template-columns:repeat(3,34px);gap:4px}
+.g9 span{height:34px;border-radius:8px;display:grid;place-items:center;font:700 13px Inter;color:#fff;background:var(--muted)}
+.g9 span.t3{background:var(--good)}.g9 span.t10{background:#5B8F6B}.g9 span.far{background:#C9B9A6}.g9 span.no{background:#E4DFD9;color:var(--ink-3)}
+.g9 span.c{outline:2px solid var(--ink);outline-offset:1px}
+.gcap{font-size:12.5px;color:var(--ink-3);margin-top:4px;text-align:center}
+.legend{grid-column:1/-1;font-size:12.5px;color:var(--ink-3)}
+.spark{grid-column:1/-1;margin-top:6px}
+.staff{border:2px dashed var(--line)}
+textarea{width:100%;min-height:230px;font:15px/1.55 Anuphan;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--ground);color:var(--ink);resize:vertical}
+button{font:700 15px Anuphan;border:0;border-radius:999px;padding:11px 18px;background:var(--accent);color:#fff;cursor:pointer;margin-top:10px}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.foot{color:var(--ink-3);font-size:12.5px;text-align:center}
+.busy{padding:60px 0;text-align:center;color:var(--ink-3)}
+.err{padding:40px 0;color:var(--bad)}
+@media (min-width:640px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"><p class="busy">กำลังโหลดรายงาน…</p></main>
+<script>
+const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const qs = new URLSearchParams(location.search);
+const P = qs.get('p') || '';
+const STAFF = qs.has('staff');
+const TH_MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const thDate = (iso) => { const [y, m, d] = iso.slice(0, 10).split('-').map(Number); return `${d} ${TH_MONTHS[m - 1]}`; };
+const thDateY = (iso) => `${thDate(iso)} ${(Number(iso.slice(0, 4)) + 543) % 100}`;
+const bkk = (iso) => new Date(Date.parse(iso) + 7 * 3600e3).toISOString().slice(0, 10);
+const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400e3);
+const ACT = { view: 'เปิดดู', call: 'กดโทร', map: 'กดนำทาง', web: 'กดเว็บ/เพจ', line: 'กด LINE', book: 'กดจอง', review: 'กดรีวิว', open: 'กดดูร้าน' };
+const CONTACT = ['call', 'map', 'web', 'line', 'book'];
+
+/** Sum counts for days in [from, to] (Bangkok dates), optionally only some actions / sources. */
+function sum(counts, from, to, acts, srcTest) {
+  let n = 0;
+  for (const [day, row] of Object.entries(counts || {})) {
+    if (day < from || day > to) continue;
+    for (const [k, v] of Object.entries(row)) {
+      const [a, src] = k.split('|');
+      if (acts && !acts.includes(a)) continue;
+      if (srcTest && !srcTest(src)) continue;
+      n += v;
+    }
+  }
+  return n;
+}
+const addDays = (day, n) => new Date(Date.parse(day) + n * 86400e3).toISOString().slice(0, 10);
+
+function g9(snap, i) {
+  const s = snap.spacings[i];
+  const cells = s.ranks.map((r, k) => {
+    const cls = r == null ? 'no' : r <= 3 ? 't3' : r <= 10 ? 't10' : 'far';
+    return `<span class="${cls}${k === 4 ? ' c' : ''}" title="${r == null ? `ไม่ติด ${snap.maxRank} อันดับแรก` : `อันดับ ${r}`}">${r == null ? '–' : r}</span>`;
+  }).join('');
+  return `<div><div class="g9">${cells}</div><div class="gcap">${s.m >= 1000 ? `จุดห่างกัน ${s.m / 1000} กม.` : `จุดห่างกัน ${s.m} ม.`}</div></div>`;
+}
+
+function spark(hist, i) {
+  if (hist.length < 2) return '';
+  const vals = hist.map((h) => h.spacings[i].top3);
+  const w = 220, h = 46, step = w / (vals.length - 1);
+  const pts = vals.map((v, k) => `${(k * step).toFixed(1)},${(h - 6 - (v / 9) * (h - 12)).toFixed(1)}`).join(' ');
+  const last = pts.split(' ').pop().split(',');
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="จำนวนจุดที่ติด 3 อันดับแรก แต่ละสัปดาห์: ${vals.join(', ')}">
+    <line x1="0" y1="${h - 6}" x2="${w}" y2="${h - 6}" stroke="#ECE7E2"/><polyline points="${pts}" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3.6" fill="#15803D"/></svg>`;
+}
+
+function render(d) {
+  const s = d.shop, today = d.today;
+  const week = Math.max(1, Math.floor(daysBetween(s.since, today) / 7) + 1);
+  const from7 = addDays(today, -6);
+  const hist = d.hist, last = hist[hist.length - 1], prev = hist[hist.length - 2], first = hist[0];
+  document.title = `รายงานโปรโมทร้าน · ${s.name}`;
+
+  // ── headline numbers (measured, or "ยังวัดไม่ได้") ──
+  const delta = (now, before, unit = '') => before == null || now == null ? '' : now > before ? `<span class="d up">↑ ${now - before}${unit} จากสัปดาห์ก่อน</span>` : now < before ? `<span class="d down">↓ ${before - now}${unit} จากสัปดาห์ก่อน</span>` : '<span class="d">เท่าสัปดาห์ก่อน</span>';
+  const stat = (label, value, extra) => `<div class="stat"><small>${label}</small><b>${value}</b>${extra || ''}</div>`;
+  const na = (label, why) => `<div class="stat na"><small>${label}</small><b>ยังวัดไม่ได้</b><span class="d">${why}</span></div>`;
+  const firstCheck = 'ตรวจครั้งแรกวันทำการถัดไป ช่วงร้านเปิด';
+  const views7 = sum(d.counts, from7, today, ['view']);
+  const contacts7 = sum(d.counts, from7, today, CONTACT);
+  const stats = [
+    last ? stat('ติด 3 อันดับแรกใน Google (จุดรอบร้าน)', `${last.spacings[0].top3}<i> / 9</i>`, delta(last.spacings[0].top3, prev && prev.spacings[0].top3)) : na('ติด 3 อันดับแรกใน Google', firstCheck),
+    last ? stat('ติด 3 อันดับแรก (ย่านกว้าง 4 กม.)', `${last.spacings[1].top3}<i> / 9</i>`, delta(last.spacings[1].top3, prev && prev.spacings[1].top3)) : na('ย่านกว้าง 4 กม.', firstCheck),
+    last && last.reviews != null ? stat('รีวิวบน Google', `${last.reviews}`, first && first !== last ? `<span class="d${last.reviews > first.reviews ? ' up' : ''}">${last.reviews > first.reviews ? `↑ ${last.reviews - first.reviews} ตั้งแต่เริ่ม` : 'เท่าวันเริ่ม'}</span>` : '<span class="d">จุดเริ่มต้น</span>') : na('รีวิวบน Google', firstCheck),
+    stat('คนกดติดต่อร้าน 7 วันล่าสุด', `${contacts7}`, `<span class="d">เปิดดูเว็บร้าน ${views7} ครั้ง</span>`),
+  ].join('');
+
+  // ── work log ──
+  const log = [...d.log].sort((a, b) => b.at.localeCompare(a.at));
+  const logHtml = log.length ? `<ul class="log">${log.map((e) => `<li><time>${thDate(e.at)}</time><div><b>${esc(e.what)}</b>
+    <small>${esc([e.where, e.minutes ? `${e.minutes} นาที` : ''].filter(Boolean).join(' · '))}</small>${e.evidence ? ` · <a href="${esc(e.evidence)}" target="_blank" rel="noopener">ดูหลักฐาน</a>` : ''}</div></li>`).join('')}</ul>`
+    : '<p class="lead">ยังไม่มีงานที่บันทึก</p>';
+
+  // ── channels: where the shop was put in front of people ──
+  const ch = [];
+  if (last) {
+    ch.push(`<div class="ch"><b>Google Maps · คำค้น "${esc(last.keyword)}"</b><span class="pill on">วัดทุกสัปดาห์</span>
+      <small>ตรวจล่าสุด ${thDateY(bkk(last.at))} · ติด 3 อันดับแรก ${last.spacings[0].top3} จาก 9 จุดรอบร้าน${last.hub ? ` · ค้นจาก ${esc(last.hub.name)} ${last.hub.rank ? `ร้านอยู่อันดับ ${last.hub.rank}` : `ไม่ติด ${last.maxRank} อันดับแรก`}` : ''}</small>
+      <div class="grids">${g9(last, 0)}${g9(last, 1)}</div>
+      <p class="legend">ตัวเลข = อันดับร้านเมื่อคนยืนค้นตรงจุดนั้น · กรอบดำ = หน้าร้าน · เขียวเข้ม = 3 อันดับแรก · “–” = ไม่ติด ${last.maxRank} อันดับแรก</p>
+      ${spark(hist, 0)}</div>`);
+  } else {
+    ch.push(`<div class="ch"><b>Google Maps</b><span class="pill">ยังวัดไม่ได้</span><small>${firstCheck} (Google ดันร้านที่ปิดอยู่ลง จึงตรวจเฉพาะตอนร้านเปิด)</small></div>`);
+  }
+  const siteViews = sum(d.counts, s.since, today, ['view'], (x) => !x.startsWith('b:'));
+  const siteContacts = sum(d.counts, s.since, today, CONTACT, (x) => !x.startsWith('b:'));
+  ch.push(`<div class="ch"><b>เว็บร้าน</b><span class="pill on">นับตั้งแต่ ${thDate(s.since)}</span>
+    <small>เปิดดู ${siteViews} ครั้ง · กดติดต่อ ${siteContacts} ครั้ง${siteContacts ? ` (${CONTACT.map((a) => [a, sum(d.counts, s.since, today, [a], (x) => !x.startsWith('b:'))]).filter(([, n]) => n).map(([a, n]) => `${ACT[a]} ${n}`).join(' · ')})` : ''}</small></div>`);
+  for (const b of d.buildings) {
+    const live = b.status === 'live';
+    const scans = sum(b.counts, b.liveSince || s.since, today, ['view']);
+    const opens = sum(d.counts, s.since, today, null, (x) => x === `b:${b.id}`);
+    ch.push(`<div class="ch"><b>เมนูบริการ ${esc(b.name)}</b><span class="pill${live ? ' on' : ''}">${live ? 'วางในอาคารแล้ว' : 'ตัวอย่าง · ยังไม่ได้วาง'}</span>
+      <small>${live ? `คนเปิดเมนู ${scans} ครั้ง · กดดูร้านคุณจากเมนู ${opens} ครั้ง` : 'ยังวัดไม่ได้ จนกว่าอาคารอนุมัติและวางเมนูจริง'}</small></div>`);
+  }
+  ch.push(s.bookeaseUrl
+    ? `<div class="ch"><b>หน้าร้านบน bookease.co</b><span class="pill on">เผยแพร่แล้ว</span><small><a href="${esc(s.bookeaseUrl)}" target="_blank" rel="noopener">${esc(s.bookeaseUrl.replace(/^https:\/\//, ''))}</a></small></div>`
+    : `<div class="ch"><b>หน้าร้านบน bookease.co</b><span class="pill">ยังไม่ได้ลง</span><small>ลงเมื่อร้านส่งเมนูและราคา</small></div>`);
+  ch.push(s.gbp
+    ? `<div class="ch"><b>ตัวเลขจาก Google (คนเห็นโปรไฟล์ โทร ขอเส้นทาง)</b><span class="pill on">ได้สิทธิ์แล้ว</span><small>${esc(s.gbp)}</small></div>`
+    : `<div class="ch"><b>ตัวเลขจาก Google (คนเห็นโปรไฟล์ โทร ขอเส้นทาง)</b><span class="pill">ยังวัดไม่ได้</span><small>รอร้านให้สิทธิ์ผู้จัดการ Google Business Profile</small></div>`);
+
+  $('app').innerHTML = `
+    <header class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>รายงานโปรโมทร้าน</span></header>
+    <div class="title"><h1>${esc(s.name)}</h1><p>สัปดาห์ที่ ${week} · เริ่ม ${thDateY(s.since)} · อัปเดต ${thDateY(today)}</p></div>
+    <div class="stats">${stats}</div>
+    <section class="card"><h2>งานที่เราทำให้ร้าน</h2>${logHtml}</section>
+    <section class="card"><h2>ร้านคุณอยู่หน้าคนที่ไหนบ้าง</h2><p class="lead">ตัวเลขทั้งหมดมาจากระบบ ถ้ายังไม่มีข้อมูลจะเขียนว่า “ยังวัดไม่ได้” ถ้าวัดแล้วเป็นศูนย์จะแสดง 0</p><div class="chan">${ch.join('')}</div></section>
+    ${STAFF ? `<section class="card staff"><h2>ข้อความ LINE วันจันทร์ (สำหรับทีม)</h2><textarea id="msg">${esc(lineText(d, week, from7, views7, contacts7))}</textarea><button id="copy">คัดลอกข้อความ</button> <span id="ok" hidden>คัดลอกแล้ว</span></section>` : ''}
+    <p class="foot">อันดับ Google ตรวจด้วยคำค้นเดียว จาก 9 จุดรอบร้าน ช่วงร้านเปิด · ผลในแอปของแต่ละคนอาจต่างเล็กน้อย</p>`;
+  if (STAFF) $('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('msg').value); $('ok').hidden = false; }
+    catch (e) { console.error('[growth] copy', e); $('msg').select(); }
+  });
+}
+
+function lineText(d, week, from7, views7, contacts7) {
+  const s = d.shop, hist = d.hist, last = hist[hist.length - 1], prev = hist[hist.length - 2], first = hist[0];
+  const done = d.log.filter((e) => e.at >= from7);
+  const lines = [`รายงานโปรโมทร้าน ${s.name} · สัปดาห์ที่ ${week}`, '', 'งานที่ทำสัปดาห์นี้'];
+  lines.push(...(done.length ? done.map((e) => `• ${e.what}`) : ['• สัปดาห์นี้ไม่มีงานใหม่ ระบบยังวัดผลต่อทุกวัน']));
+  lines.push('', 'ผลที่วัดได้');
+  if (last) {
+    lines.push(`• ติด 3 อันดับแรกใน Google ${last.spacings[0].top3} จาก 9 จุดรอบร้าน${prev ? ` (สัปดาห์ก่อน ${prev.spacings[0].top3})` : ' (จุดเริ่มต้น)'}`);
+    if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
+  } else lines.push('• อันดับใน Google: ยังวัดไม่ได้ ตรวจครั้งแรกช่วงร้านเปิด');
+  lines.push(`• คนเปิดเว็บร้าน ${views7} ครั้ง · กดติดต่อ ${contacts7} ครั้ง (7 วันล่าสุด)`);
+  const pending = [];
+  if (!s.gbp) pending.push('ตัวเลขจาก Google Business Profile (รอสิทธิ์ผู้จัดการ)');
+  for (const b of d.buildings) if (b.status !== 'live') pending.push(`เมนู ${b.name} (ยังไม่ได้วาง)`);
+  if (pending.length) lines.push('', `ยังวัดไม่ได้: ${pending.join(' · ')}`);
+  lines.push('', `ดูรายละเอียด: ${location.origin}${location.pathname}?p=${s.id}`);
+  return lines.join('\n');
+}
+
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) { $('app').innerHTML = '<p class="err">ไม่พบร้าน</p>'; return; }
+  const r = await fetch(`${API}/growth?p=${encodeURIComponent(P)}`);
+  const d = await r.json();
+  if (r.status === 404) { $('app').innerHTML = '<p class="err">ร้านนี้ยังไม่ได้เริ่มบริการโปรโมทร้าน</p>'; return; }
+  if (!r.ok) throw new Error(d.error || r.status);
+  render(d);
+}
+load().catch((e) => { console.error('[growth] load', e); $('app').innerHTML = `<p class="err">โหลดรายงานไม่ได้ (${esc(e.message)}) ลองใหม่อีกครั้ง</p>`; });
+</script>
+</body>
+</html>

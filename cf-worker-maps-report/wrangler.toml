@@ -8,6 +8,10 @@ workers_dev = true
 
 # Saved reports (7 days) and the daily count of new reports. Created 2026-11-15:
 #   npx wrangler kv namespace create RADAR_REPORTS
+# BookEase Growth weekly rank check: every 15 min, 10:00–19:45 Bangkok (UTC+7), one due shop per run.
+[triggers]
+crons = ["*/15 3-12 * * *"]
+
 [[kv_namespaces]]
 binding = "REPORTS"
 id = "c3bb5ce38cea4b68a9b56de03b53a179"
