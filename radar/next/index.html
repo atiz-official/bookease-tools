@@ -216,7 +216,6 @@ h2{font-size:21px}
 
   <div class="top">
     <a class="brand" href="./"><img src="../../brand/bookease-logo.svg" alt="bookease" width="98" height="16"><span><i class="mark" aria-hidden="true"></i>Shop Radar</span></a>
-    <button class="link" id="again" hidden>เช็คร้านอื่น</button>
   </div>
 
   <!-- 1 · search -->
@@ -257,7 +256,7 @@ const fmt = (n) => Number(n).toLocaleString('en-US');
 const TH_MONTH = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const thDate = (d) => `${d.getDate()} ${TH_MONTH[d.getMonth()]} ${d.getFullYear() + 543}`;
 const SCREENS = ['s-find', 's-busy', 's-report'];
-function show(id) { SCREENS.forEach((s) => { $(s).hidden = s !== id; }); $('again').hidden = id !== 's-report'; }
+function show(id) { SCREENS.forEach((s) => { $(s).hidden = s !== id; }); }
 function fail(el, msg) { el.textContent = msg; el.hidden = !msg; }
 
 const MESSAGES = {
@@ -313,16 +312,17 @@ $('cands').addEventListener('click', (ev) => {
   if (b) run(b.dataset.id);
 });
 
-$('again').addEventListener('click', () => {
+// Back to the search screen (the shop-name pill on the report does this).
+function newSearch() {
   history.replaceState(null, '', location.pathname);
   $('q').value = ''; $('cands').hidden = true; fail($('find-err'), '');
   show('s-find'); $('q').focus();
-});
+}
 
 document.addEventListener('click', (ev) => {
   if (!ev.target.closest('#shop-q')) return;
   const name = R ? R.shop.name : '';
-  $('again').click();
+  newSearch();
   $('q').value = name; $('q').select();
 });
 
