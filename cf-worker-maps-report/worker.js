@@ -456,6 +456,16 @@ export default {
         return json(saved, 200, origin);
       }
 
+      // A shop's Google photo, fetched server-side so the key never reaches the page. Only Places photo names.
+      if (request.method === 'GET' && url.pathname === '/photo') {
+        const name = url.searchParams.get('name') || '';
+        if (!/^places\/[A-Za-z0-9_-]{10,200}\/photos\/[A-Za-z0-9_-]{10,600}$/.test(name)) return json({ error: 'bad_photo' }, 400, origin);
+        const w = Math.min(Math.max(parseInt(url.searchParams.get('w') || '800', 10) || 800, 200), 1600);
+        const res = await fetch(`${PLACES}/${name}/media?maxWidthPx=${w}&key=${env.GOOGLE_PLACES_KEY}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
+        if (!res.ok) { console.error('[maps-report] photo', res.status, name.slice(0, 80)); return json({ error: 'photo_unavailable' }, 502, origin); }
+        return new Response(res.body, { headers: { 'Content-Type': res.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
+      }
+
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
       let body;
       try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400, origin); }
@@ -473,8 +483,16 @@ export default {
         if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
         const p = await google(env, `places/${encodeURIComponent(placeId)}?languageCode=th&regionCode=TH`,
           'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,nationalPhoneNumber,'
-          + 'regularOpeningHours.weekdayDescriptions,types,primaryTypeDisplayName,businessStatus,photos,editorialSummary');
+          + 'regularOpeningHours.weekdayDescriptions,types,primaryTypeDisplayName,businessStatus,photos,editorialSummary,reviews');
         return json({
+          photos: (p.photos || []).slice(0, 10).map((ph) => ({
+            name: ph.name, w: ph.widthPx, h: ph.heightPx,
+            by: ((ph.authorAttributions || [])[0] || {}).displayName || '',
+          })),
+          reviewList: (p.reviews || []).map((r) => ({
+            rating: r.rating, text: (r.text && r.text.text) || (r.originalText && r.originalText.text) || '',
+            by: (r.authorAttribution && r.authorAttribution.displayName) || '', when: r.relativePublishTimeDescription || '',
+          })).filter((r) => r.text),
           ...slim(p),
           phone: p.nationalPhoneNumber || '',
           hours: (p.regularOpeningHours && p.regularOpeningHours.weekdayDescriptions) || [],
