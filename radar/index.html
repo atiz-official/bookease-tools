@@ -462,6 +462,16 @@ function top10List(k) {
 
 // The one sales link on the page, right under the shop's own row: only when the shop is open and not in the
 // top three. Opens a chat with LINE @bookease, the message already typed (shop, rank, report link).
+// Plain words for where the shop is: the neighbourhood when the shop is within 2 km of it, else the district
+// from the shop's address, else "this area".
+function nearShop() {
+  if (R.area && R.area.distanceM <= 2000) return `ในย่าน${esc(R.area.name)}`;
+  const m = /(?:เขต|อำเภอ)\s*([^\s,]+)/.exec(R.shop.address || '');
+  if (m) return `ใน${m[0].startsWith('อำเภอ') ? 'อำเภอ' : 'เขต'}${esc(m[1])}`;
+  return 'ในละแวกนี้';
+}
+const latinGap = (t) => (/^[A-Za-z]/.test(t) ? ' ' : '');
+
 function pushLink(k) {
   const rank = R.area ? k.hubRank : k.centreRank;
   if (R.shop.openNow === false || (rank != null && rank <= 3)) return '';
@@ -543,7 +553,7 @@ function paint() {
   <section class="main">
     <div class="card">
       <div class="head-row">
-        <h2>ร้านคุณอยู่อันดับที่เท่าไหร่ ในพื้นที่${R.area ? (/^[A-Za-z]/.test(R.area.hub) ? ' ' : '') + esc(R.area.hub) : 'รอบร้านคุณ'}</h2>
+        <h2>ร้านคุณอยู่อันดับที่เท่าไหร่ ${nearShop()}</h2>
         ${R.spacings ? `<div class="seg" role="group" aria-label="ระยะรอบร้าน">${R.spacings.map((m) => `<button data-sp="${m}" aria-pressed="${m === R.spacingM}">${kmText(m)}</button>`).join('')}</div>` : ''}
       </div>
       <div class="map" id="map"></div>
@@ -556,7 +566,7 @@ function paint() {
     </div>
     <div class="card">
       ${k.top10
-        ? `<h2>TOP 10 ร้านในพื้นที่${R.area ? esc(R.area.name) : 'รอบร้านคุณ'}</h2>${top10List(k)}${pushLink(k)}`
+        ? `<h2>TOP 10 ร้าน${R.area ? `ในพื้นที่${latinGap(R.area.hub)}${esc(R.area.hub)}` : nearShop()}</h2>${top10List(k)}${pushLink(k)}`
         : `<h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>${aheadList(k)}${pushLink(k)}`}
     </div>
   </section>
