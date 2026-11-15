@@ -459,7 +459,7 @@ export default {
       // A shop's Google photo, fetched server-side so the key never reaches the page. Only Places photo names.
       if (request.method === 'GET' && url.pathname === '/photo') {
         const name = url.searchParams.get('name') || '';
-        if (!/^places\/[A-Za-z0-9_-]{10,200}\/photos\/[A-Za-z0-9_-]{10,600}$/.test(name)) return json({ error: 'bad_photo' }, 400, origin);
+        if (!/^places\/[A-Za-z0-9_-]{10,200}\/photos\/[A-Za-z0-9_-]{10,1500}$/.test(name)) return json({ error: 'bad_photo' }, 400, origin);
         const w = Math.min(Math.max(parseInt(url.searchParams.get('w') || '800', 10) || 800, 200), 1600);
         const res = await fetch(`${PLACES}/${name}/media?maxWidthPx=${w}&key=${env.GOOGLE_PLACES_KEY}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
         if (!res.ok) { console.error('[maps-report] photo', res.status, name.slice(0, 80)); return json({ error: 'photo_unavailable' }, 502, origin); }
