@@ -1,0 +1,8 @@
+# radar.bookease.co — short address for Shop Radar (pages live on GitHub Pages at make.bookease.co/radar/).
+# Deploy: npx wrangler deploy   (creates the radar.bookease.co custom domain + DNS record on the bookease.co zone)
+name = "bookease-radar-proxy"
+main = "worker.js"
+compatibility_date = "2026-05-05"
+account_id = "b8da7782d6a1a500d9789844a4c3ce8a"
+workers_dev = false
+routes = [{ pattern = "radar.bookease.co", custom_domain = true }]

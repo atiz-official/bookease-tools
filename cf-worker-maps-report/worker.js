@@ -37,7 +37,7 @@
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
-const ALLOWED_ORIGINS = ['https://make.bookease.co', 'https://atiz-official.github.io'];
+const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
 // Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
 // Checked against the real Google Maps app on 2026-11-14:
 //   "ร้านนวด"  → API rank matched Maps (1 vs 2, 33 vs 34).
