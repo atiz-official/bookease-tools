@@ -13,7 +13,13 @@ class KV {
   async put(k, v) { this.writes++; this.m.set(k, v); }
 }
 const kv = new KV();
-const env = { GOOGLE_PLACES_KEY: 'test', REPORTS: kv };
+// D1 mock: just the two statements the worker uses
+const rows = new Map();
+const db = { prepare(sql) { return { bind(...v) { return {
+  async run() { assert.match(sql, /ON CONFLICT .* n = n \+ 1/); const k = v.slice(0, 4).join(''); rows.set(k, (rows.get(k) || 0) + 1); return {}; },
+  async all() { const [since, ...ids] = v; return { results: [...rows].map(([k, n]) => { const [id, day, action, src] = k.split(''); return { id, day, action, src, n }; })
+    .filter((r) => r.day >= since && ids.includes(r.id)) }; } }; } }; } };
+const env = { GOOGLE_PLACES_KEY: 'test', REPORTS: kv, GROWTH_DB: db };
 let open = true, calls = 0;
 globalThis.fetch = async (url, init = {}) => {
   calls++;
@@ -54,9 +60,12 @@ let res = await req('/hit', { p: SHOP, a: 'steal', src: 'site' });
 assert.equal(res.status, 400);
 res = await req('/hit', { p: SHOP, a: 'call', src: '<script>' });
 assert.equal(res.status, 400);
-assert.equal(kv.m.has(`g/counts/${OTHER}`), false);
-const counts = JSON.parse(kv.m.get(`g/counts/${SHOP}`));
+assert.equal([...rows.keys()].some((k) => k.startsWith(OTHER)), false);
+// 20 taps at the same moment must all count (KV lost these)
+await Promise.all(Array.from({ length: 20 }, () => req('/hit', { p: SHOP, a: 'map', src: 'b:x' })));
+const counts = (await (await req('/growth?p=' + SHOP)).json()).counts;
 assert.equal(Object.values(counts)[0]['call|site'], 2);
+assert.equal(Object.values(counts)[0]['map|b:x'], 20);
 
 // 2. snapshot: closed shop is skipped and not retried for 3 hours
 open = false;

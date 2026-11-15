@@ -133,7 +133,7 @@ function render(d) {
     last ? stat('ติด 3 อันดับแรกใน Google (จุดรอบร้าน)', `${last.spacings[0].top3}<i> / 9</i>`, delta(last.spacings[0].top3, prev && prev.spacings[0].top3)) : na('ติด 3 อันดับแรกใน Google', firstCheck),
     last ? stat('ติด 3 อันดับแรก (ย่านกว้าง 4 กม.)', `${last.spacings[1].top3}<i> / 9</i>`, delta(last.spacings[1].top3, prev && prev.spacings[1].top3)) : na('ย่านกว้าง 4 กม.', firstCheck),
     last && last.reviews != null ? stat('รีวิวบน Google', `${last.reviews}`, first && first !== last ? `<span class="d${last.reviews > first.reviews ? ' up' : ''}">${last.reviews > first.reviews ? `↑ ${last.reviews - first.reviews} ตั้งแต่เริ่ม` : 'เท่าวันเริ่ม'}</span>` : '<span class="d">จุดเริ่มต้น</span>') : na('รีวิวบน Google', firstCheck),
-    stat('คนกดติดต่อร้าน 7 วันล่าสุด', `${contacts7}`, `<span class="d">เปิดดูเว็บร้าน ${views7} ครั้ง</span>`),
+    stat('คนกดติดต่อร้าน 7 วันล่าสุด', `${contacts7}`, `<span class="d">เปิดดูร้าน ${views7} ครั้ง ทุกช่องทาง</span>`),
   ].join('');
 
   // ── work log ──
@@ -195,7 +195,7 @@ function lineText(d, week, from7, views7, contacts7) {
     lines.push(`• ติด 3 อันดับแรกใน Google ${last.spacings[0].top3} จาก 9 จุดรอบร้าน${prev ? ` (สัปดาห์ก่อน ${prev.spacings[0].top3})` : ' (จุดเริ่มต้น)'}`);
     if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
   } else lines.push('• อันดับใน Google: ยังวัดไม่ได้ ตรวจครั้งแรกช่วงร้านเปิด');
-  lines.push(`• คนเปิดเว็บร้าน ${views7} ครั้ง · กดติดต่อ ${contacts7} ครั้ง (7 วันล่าสุด)`);
+  lines.push(`• คนเปิดดูร้าน ${views7} ครั้ง · กดติดต่อ ${contacts7} ครั้ง (7 วันล่าสุด ทุกช่องทาง)`);
   const pending = [];
   if (!s.gbp) pending.push('ตัวเลขจาก Google Business Profile (รอสิทธิ์ผู้จัดการ)');
   for (const b of d.buildings) if (b.status !== 'live') pending.push(`เมนู ${b.name} (ยังไม่ได้วาง)`);

@@ -15,3 +15,10 @@ crons = ["*/15 3-12 * * *"]
 [[kv_namespaces]]
 binding = "REPORTS"
 id = "c3bb5ce38cea4b68a9b56de03b53a179"
+
+# Contact and view counts for BookEase Growth (atomic +1; KV lost updates under concurrent taps). Created 2026-11-16.
+# Schema: growth-schema.sql  →  npx wrangler d1 execute bookease-growth --remote --file growth-schema.sql
+[[d1_databases]]
+binding = "GROWTH_DB"
+database_name = "bookease-growth"
+database_id = "89fa7df7-e8ff-4eec-b816-66db19942031"

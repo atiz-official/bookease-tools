@@ -444,7 +444,7 @@ async function underDailyCap(env, url, kind) {
 //   g/log/<id>         [{at, what, where, minutes, evidence}]   work we did for the shop
 // written by this worker:
 //   g/hist/<id>        [{at, keyword, reviews, rating, spacings:[{m, ranks[9], top3, found}], hub}]
-//   g/counts/<id>      {"2026-11-16": {"call|site": 2, ...}}   Bangkok dates
+// D1 (binding GROWTH_DB, table hits — growth-schema.sql): one row per place, Bangkok day, action, source; atomic +1
 //   g/try/<id>         last attempt while the shop was closed (stops retrying every 15 minutes)
 const G_ACTIONS = ['view', 'call', 'map', 'web', 'line', 'book', 'review', 'open'];
 const G_SPACINGS = [500, 2000];          // near the door, and the wider neighbourhood (≈ 4 km across)
@@ -527,26 +527,39 @@ async function growthHit(env, body) {
   const src = String(body.src || 'direct').slice(0, 120);
   if (!id || !G_ACTIONS.includes(a) || !/^[A-Za-z0-9_:.-]{1,120}$/.test(src)) return { error: 'bad_request' };
   if (!(await gIndex(env)).some((x) => x.id === id)) return { counted: false };
-  const key = `g/counts/${id}`;
-  const counts = (await env.REPORTS.get(key, 'json')) || {};
-  const day = bkkDay();
-  counts[day] = counts[day] || {};
-  counts[day][`${a}|${src}`] = (counts[day][`${a}|${src}`] || 0) + 1;
-  await env.REPORTS.put(key, JSON.stringify(counts));
+  if (!env.GROWTH_DB) { console.error('[growth] hit: GROWTH_DB not bound'); return { error: 'server_misconfigured' }; }
+  // One atomic +1 in D1. (KV lost taps: two taps in the same second read the same old value.)
+  await env.GROWTH_DB.prepare(
+    'INSERT INTO hits (id, day, action, src, n) VALUES (?1, ?2, ?3, ?4, 1) ON CONFLICT (id, day, action, src) DO UPDATE SET n = n + 1',
+  ).bind(id, bkkDay(), a, src).run();
   return { counted: true };
+}
+
+/** Counts for some places as {id: {"2026-11-16": {"call|site": 2}}}, last 400 days. */
+async function growthCounts(env, ids) {
+  const out = Object.fromEntries(ids.map((i) => [i, {}]));
+  if (!env.GROWTH_DB || !ids.length) return out;
+  const since = bkkDay(Date.now() - 400 * 86400e3);
+  const { results } = await env.GROWTH_DB.prepare(
+    `SELECT id, day, action, src, n FROM hits WHERE day >= ?1 AND id IN (${ids.map((_, i) => `?${i + 2}`).join(',')})`,
+  ).bind(since, ...ids).all();
+  for (const r of results || []) {
+    const day = (out[r.id][r.day] = out[r.id][r.day] || {});
+    day[`${r.action}|${r.src}`] = r.n;
+  }
+  return out;
 }
 
 /** Everything the weekly report page needs for one shop, from the records above only. */
 async function growthData(env, id) {
   const cfg = await env.REPORTS.get(`g/shop/${id}`, 'json');
   if (!cfg) return null;
-  const [log, hist, counts] = await Promise.all([
-    env.REPORTS.get(`g/log/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), env.REPORTS.get(`g/counts/${id}`, 'json')]);
-  const buildings = await Promise.all((cfg.buildings || []).map(async (b) => {
-    const [bc, bcounts] = await Promise.all([env.REPORTS.get(`g/shop/${b}`, 'json'), env.REPORTS.get(`g/counts/${b}`, 'json')]);
-    return bc && { ...bc, counts: bcounts || {} };
-  }));
-  return { shop: cfg, log: log || [], hist: hist || [], counts: counts || {}, buildings: buildings.filter(Boolean), today: bkkDay() };
+  const bIds = cfg.buildings || [];
+  const [log, hist, counts, bcfgs] = await Promise.all([
+    env.REPORTS.get(`g/log/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), growthCounts(env, [id, ...bIds]),
+    Promise.all(bIds.map((b) => env.REPORTS.get(`g/shop/${b}`, 'json')))]);
+  const buildings = bcfgs.map((bc, i) => bc && { ...bc, counts: counts[bIds[i]] || {} }).filter(Boolean);
+  return { shop: cfg, log: log || [], hist: hist || [], counts: counts[id] || {}, buildings, today: bkkDay() };
 }
 
 // ── handler ─────────────────────────────────────────────────────────
