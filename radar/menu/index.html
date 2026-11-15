@@ -207,7 +207,9 @@ function render() {
   const panel = `<aside class="panel">
     <h2>เลือกร้านในเมนู</h2><p class="hint">ติ๊กร้านที่จะแสดง (สูงสุด ${MAX} ร้าน) · ร้านดีที่สุดของแต่ละประเภทถูกเลือกไว้ให้แล้ว</p>
     ${CATS.map((c) => {
-      const list = pool.filter((p) => p.cat === c.k).sort((a, b) => score(b) - score(a)).slice(0, 4);
+      const all = pool.filter((p) => p.cat === c.k).sort((a, b) => score(b) - score(a));
+      const pin = all.find((p) => p.id === SHOP);
+      const list = (pin ? [pin, ...all.filter((p) => p.id !== SHOP)] : all).slice(0, 4);
       if (!list.length) return '';
       return `<div class="cat"><h3>${esc(c.label)}</h3>${list.map((p) => `<label class="opt"><input type="checkbox" data-id="${esc(p.id)}"${chosen.includes(p.id) ? ' checked' : ''}><span><b>${esc(p.name)}</b><small>${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${distText(p.m)}</small></span></label>`).join('')}</div>`;
     }).join('')}
