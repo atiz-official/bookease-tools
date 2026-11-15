@@ -129,7 +129,7 @@ function audit(d) {
     : { s: 'ok', t: 'หมวดร้าน', d: `"${esc(d.primaryType)}" ตรงกับคำที่ลูกค้าค้น` });
   const soc = d.website ? socialName(d.website) : null;
   items.push(!d.website ? { s: 'fix', t: 'เว็บไซต์', d: 'ยังไม่มีเว็บไซต์บน Google · ใส่หน้าเว็บร้านบน bookease.co' }
-    : soc ? { s: 'fix', t: 'เว็บไซต์', d: `ช่องเว็บไซต์เป็นแค่${esc(soc)} · ใส่หน้าเว็บร้านจริงแทน ลูกค้าเห็นเมนู ราคา รูป และกดติดต่อได้` }
+    : soc ? { s: 'fix', t: 'เว็บไซต์', d: `ช่องเว็บไซต์เป็นแค่ ${esc(soc)} · ใส่หน้าเว็บร้านจริงแทน ลูกค้าเห็นเมนู ราคา รูป และกดติดต่อได้` }
     : { s: 'ok', t: 'เว็บไซต์', d: `มีเว็บไซต์ (${esc(new URL(d.website).hostname.replace(/^www\./, ''))})` });
   const n = d.reviews || 0;
   items.push(n >= 50 ? { s: 'ok', t: 'รีวิว', d: `${n} รีวิว · ขอรีวิวต่อเนื่องเพื่อให้อยู่อันดับต้น` }
@@ -152,7 +152,8 @@ async function load() {
   const reviews = (d.reviewList || []).filter((x) => x.text && x.rating >= 4);
   const hi = highlights(d.reviewList || []);
   const near = nearTransit(d.reviewList || [], d.address);
-  const kind = d.primaryType || '';
+  const goodT = (d.types || []).find((t) => GOOD_TYPES[t]);
+  const kind = goodT ? GOOD_TYPES[goodT] : (d.types || []).includes('beautician') ? 'ร้านเสริมสวย' : (d.primaryType || '');
   const soc = d.website ? socialName(d.website) : null;
   const phone = (d.phone || '').replace(/\s+/g, '');
   const stars = (x) => '★'.repeat(Math.round(x || 0));
