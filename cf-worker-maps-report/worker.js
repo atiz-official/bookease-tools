@@ -466,6 +466,26 @@ export default {
         return json(out, out.error ? 400 : 200, origin);
       }
 
+      // One shop's public Google profile, for the free listing and the Google Maps check (read-only).
+      if (url.pathname === '/place') {
+        const placeId = String(body.placeId || '');
+        if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
+        if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
+        const p = await google(env, `places/${encodeURIComponent(placeId)}?languageCode=th&regionCode=TH`,
+          'id,displayName,formattedAddress,location,googleMapsUri,rating,userRatingCount,websiteUri,nationalPhoneNumber,'
+          + 'regularOpeningHours.weekdayDescriptions,types,primaryTypeDisplayName,businessStatus,photos,editorialSummary');
+        return json({
+          ...slim(p),
+          phone: p.nationalPhoneNumber || '',
+          hours: (p.regularOpeningHours && p.regularOpeningHours.weekdayDescriptions) || [],
+          types: p.types || [],
+          primaryType: (p.primaryTypeDisplayName && p.primaryTypeDisplayName.text) || '',
+          status: p.businessStatus || '',
+          photoCount: (p.photos || []).length,
+          summary: (p.editorialSummary && p.editorialSummary.text) || '',
+        }, 200, origin);
+      }
+
       if (url.pathname === '/report') {
         const placeId = String(body.placeId || '');
         const cat = catParam(String(body.cat || ''));
