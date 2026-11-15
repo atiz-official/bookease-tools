@@ -584,7 +584,7 @@ function paint() {
     const url = `${location.origin}${location.pathname}${link(R)}`;
     const rank = R.area ? k.hubRank : k.centreRank;
     const where = R.area ? ` จาก ${R.area.hub}` : '';
-    const msg = `อยากดันร้าน ${s.name} ให้สูงขึ้น
+    const msg = `${s.name.startsWith('ร้าน') ? `อยากดัน${s.name}` : `อยากดันร้าน ${s.name}`} ให้สูงขึ้น
 ตอนนี้อันดับ ${rankText(rank)} ค้น "${k.keyword}"${where}
 ${url}`;
     push.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
