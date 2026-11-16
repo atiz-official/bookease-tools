@@ -68,6 +68,7 @@ h2{font:700 19px Anuphan;margin-bottom:8px}
 .staff{border:2px dashed var(--line)}
 textarea{width:100%;min-height:230px;font:15px/1.55 Anuphan;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--ground);color:var(--ink);resize:vertical}
 button{font:700 15px Anuphan;border:0;border-radius:999px;padding:11px 18px;background:var(--accent);color:#fff;cursor:pointer;margin-top:10px}
+button.soft{background:var(--accent-soft);color:var(--accent)}
 button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .foot{color:var(--ink-3);font-size:12.5px;text-align:center}
 .busy{padding:60px 0;text-align:center;color:var(--ink-3)}
@@ -234,7 +235,7 @@ function render(d) {
     ${STAFF ? `<section class="card staff"><h2>ส่งรายงานวันจันทร์ทาง LINE (สำหรับทีม)</h2>
       <p class="lead">1) ส่งรูปการ์ดนี้ให้ร้าน 2) ส่งลิงก์รายงานตามไป</p>
       <img id="cardimg" alt="การ์ดรายงานประจำสัปดาห์" style="width:100%;max-width:420px;display:block;border-radius:14px">
-      <button id="share">ส่งรูปการ์ดทาง LINE</button> <button id="save" style="background:var(--ink)">บันทึกรูป</button> <button id="copylink" style="background:var(--ink)">คัดลอกลิงก์รายงาน</button> <span id="ok" hidden>คัดลอกแล้ว</span>
+      <button id="share">ส่งรูปการ์ดทาง LINE</button> <button id="save" class="soft">บันทึกรูป</button> <button id="copylink" class="soft">คัดลอกลิงก์รายงาน</button> <span id="ok" hidden>คัดลอกแล้ว</span>
       <details style="margin-top:14px"><summary style="cursor:pointer;color:var(--ink-3);font-size:14px">ข้อความแบบยาว (ถ้าส่งรูปไม่ได้)</summary><textarea id="msg">${esc(lineText(d, week, from7, views7, contacts7))}</textarea><button id="copy">คัดลอกข้อความ</button></details></section>` : ''}
     <p class="foot">เราลองค้นใน Google แทนลูกค้า ตอนร้านเปิด · มือถือแต่ละเครื่องอาจเห็นลำดับต่างกันนิดหน่อย</p>`;
   if (STAFF) {
