@@ -115,19 +115,31 @@ assert.equal(Object.values(data.buildings[0].counts)[0]['view|qr'], 1);
 res = await req('/growth?p=' + OTHER);
 assert.equal(res.status, 404);
 
-// 7. weekly card: two identical checks → "เท่าเดิม"; better wide-area result → "ขึ้น"; flex message is valid-looking
-assert.equal(data.card.tone, 'same');
-assert.equal(data.card.rows.length, 4);
+// 7. weekly card: one piece of news (the hub rank), at most two numbers, bad weeks said plainly
+const cardFor = async (lastRank, prevRank) => {
+  const h = JSON.parse(kv.m.get(`g/hist/${SHOP}`));
+  h[0].hub = { ...h[0].hub, rank: prevRank }; h[1].hub = { ...h[1].hub, rank: lastRank };
+  await kv.put(`g/hist/${SHOP}`, JSON.stringify(h));
+  return (await (await req('/growth?p=' + SHOP)).json()).card;
+};
 assert.match(data.card.url, /growth\/\?p=ChIJ/);
-const h2 = JSON.parse(kv.m.get(`g/hist/${SHOP}`));
-h2[1].spacings[1] = { ...h2[1].spacings[1], top3: h2[0].spacings[1].top3 + 2 };
-h2[1].hub = { ...h2[1].hub, rank: (h2[0].hub.rank || 20) - 3 };
-await kv.put(`g/hist/${SHOP}`, JSON.stringify(h2));
-const card = (await (await req('/growth?p=' + SHOP)).json()).card;
-assert.equal(card.tone, 'up');
-assert.equal(card.headline, 'สัปดาห์นี้ ร้านคุณขึ้น');
-assert.match(card.detail, /เพิ่ม 2 จุด/);
-assert.equal(card.rows[1].note.text, '↑ เพิ่ม 2');
+assert.equal(data.card.second, 'สัปดาห์นี้มีคนกดโทรหาร้าน 2 ครั้ง'); // the two 'call' taps above
+let card = await cardFor(12, 12);
+assert.equal(card.tone, 'same'); assert.equal(card.headline, 'ร้านคุณยังอยู่อันดับ 12');
+card = await cardFor(9, 12);
+assert.equal(card.tone, 'up'); assert.equal(card.headline, 'ร้านคุณขึ้นเป็นอันดับ 9 ↑');
+assert.match(card.sub, /^สัปดาห์ก่อนอันดับ 12 · เมื่อคนค้น “ร้านเสริมสวย” แถว MRT ท่าพระ$/);
+card = await cardFor(15, 12);
+assert.equal(card.tone, 'down'); assert.equal(card.headline, 'ร้านคุณตกลงไปอันดับ 15 ↓');
+card = await cardFor(null, 12);
+assert.equal(card.tone, 'down'); assert.equal(card.headline, 'ยังไม่เจอร้านคุณใน 40 ร้านแรก ↓');
+card = await cardFor(30, null);
+assert.equal(card.tone, 'up'); assert.match(card.sub, /สัปดาห์ก่อนยังไม่เจอร้านคุณ/);
+for (const c of [card]) {
+  const text = [c.headline, c.sub, c.second].join(' ');
+  assert.ok(!/ลูกค้าเพิ่ม|จุด|\/ ?9/.test(text), 'banned words: ' + text);
+  assert.ok((text.match(/\d+/g) || []).filter((x) => x !== '40').length <= 3, 'too many numbers: ' + text);
+}
 const flex = await (await req('/growth/flex?p=' + SHOP)).json();
 assert.equal(flex.type, 'flex');
 assert.equal(flex.contents.type, 'bubble');

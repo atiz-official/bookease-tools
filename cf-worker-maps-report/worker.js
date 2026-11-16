@@ -564,84 +564,69 @@ async function growthData(env, id) {
   return data;
 }
 
-// ── The weekly LINE card: one sentence the owner gets in 5 seconds, four numbers, this week's work ──
-// One source for the image the team sends today and the Flex message the LINE bot will push.
+// ── The weekly LINE card ──
+// Card rules locked by Art 2026-11-16: one card = one piece of news · plain words · at most two numbers ·
+// a bad week is said plainly · every detail sits behind one button · never "ลูกค้าเพิ่มขึ้น" (we measure rank and taps, not customers).
+// The news is always the same thing: the shop's rank when people search the shop type near the area hub
+// (the same rank Shop Radar shows), so the owner watches one number week after week.
+// One source for the picture the team sends today and the Flex message the LINE bot will push.
 const G_REPORT_URL = 'https://radar.bookease.co/growth/?p=';
-const G_CONTACT = ['call', 'map', 'web', 'line', 'book'];
-const G_TONE_COLOR = { up: '#15803D', down: '#B91C1C', mixed: '#14110F', same: '#14110F', start: '#14110F', wait: '#14110F' };
+const G_TONES = {
+  up: { bg: '#E6F4EA', ink: '#0F5F2C' }, down: { bg: '#FDECEA', ink: '#9F1D1D' },
+  same: { bg: '#F1EEEA', ink: '#3F3935' }, start: { bg: '#EEF2FD', ink: '#1E3A8A' }, wait: { bg: '#EEF2FD', ink: '#1E3A8A' },
+};
 
 function growthCard(d) {
   const s = d.shop, hist = d.hist || [], last = hist[hist.length - 1], prev = hist[hist.length - 2];
   const week = Math.max(1, Math.floor((Date.parse(d.today) - Date.parse(s.since)) / (7 * 86400e3)) + 1);
   const from7 = bkkDay(Date.parse(d.today) - 6 * 86400e3 - 7 * 3600e3);
-  let contacts7 = 0;
+  let calls7 = 0;
   for (const [day, row] of Object.entries(d.counts || {})) {
     if (day < from7 || day > d.today) continue;
-    for (const [k, n] of Object.entries(row)) if (G_CONTACT.includes(k.split('|')[0])) contacts7 += n;
+    for (const [k, n] of Object.entries(row)) if (k.split('|')[0] === 'call') calls7 += n;
   }
-  const near = (h) => h.spacings[0].top3, wide = (h) => h.spacings[1].top3;
-  const hubRank = (h) => (h.hub && h.hub.rank) || (h.maxRank || 40) + 1; // not found = just below the list
-  const ch = (now, before) => (before == null || now === before ? null : now > before ? { up: true, n: now - before } : { up: false, n: before - now });
-  const note = (c) => (c ? { text: `${c.up ? '↑ เพิ่ม' : '↓ ลด'} ${c.n}`, tone: c.up ? 'up' : 'down' } : null);
+  const out = (tone, headline, sub) => ({ name: s.name, week, tone, headline, sub, second: `สัปดาห์นี้มีคนกดโทรหาร้าน ${calls7} ครั้ง`, url: G_REPORT_URL + s.id });
+  if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', 'เราจะเริ่มตรวจอันดับร้านคุณใน Google ตอนร้านเปิด');
 
-  let tone, headline, detail;
-  if (!last) {
-    tone = 'wait'; headline = 'เริ่มดูแลร้านคุณแล้ว'; detail = 'เราจะลองค้นร้านคุณใน Google ครั้งแรกตอนร้านเปิด';
-  } else if (!prev) {
-    tone = 'start'; headline = 'สัปดาห์แรก เริ่มนับผลให้ร้านคุณแล้ว'; detail = 'ตัวเลขชุดนี้คือจุดเริ่มต้น สัปดาห์หน้าจะบอกได้ว่าร้านคุณขึ้นหรือลง';
-  } else {
-    const ups = [], downs = [];
-    const say = (c, upText, downText) => { if (c) (c.up ? ups : downs).push((c.up ? upText : downText).replace('{n}', c.n)); };
-    say(ch(wide(last), wide(prev)), 'คนที่อยู่ไกลออกไปเห็นร้านคุณใน 3 ร้านแรกเพิ่ม {n} จุด', 'คนที่อยู่ไกลออกไปเห็นร้านคุณใน 3 ร้านแรกลดลง {n} จุด');
-    say(ch(near(last), near(prev)), 'คนแถวร้านเห็นร้านคุณใน 3 ร้านแรกเพิ่ม {n} จุด', 'คนแถวร้านเห็นร้านคุณใน 3 ร้านแรกลดลง {n} จุด');
-    if (last.hub && prev.hub) say(ch(-hubRank(last), -hubRank(prev)), `คนค้นจาก ${last.hub.name} เห็นร้านคุณขึ้นมา {n} ลำดับ`, `คนค้นจาก ${last.hub.name} เห็นร้านคุณตกลง {n} ลำดับ`);
-    if (last.reviews != null && prev.reviews != null && last.reviews > prev.reviews) ups.push(`รีวิวเพิ่ม ${last.reviews - prev.reviews}`);
-    if (ups.length && !downs.length) { tone = 'up'; headline = 'สัปดาห์นี้ ร้านคุณขึ้น'; detail = ups[0]; }
-    else if (downs.length && !ups.length) { tone = 'down'; headline = 'สัปดาห์นี้ ร้านคุณลงนิดหน่อย'; detail = downs[0]; }
-    else if (ups.length) { tone = 'mixed'; headline = 'สัปดาห์นี้ มีทั้งขึ้นและลง'; detail = `${ups[0]} แต่${downs[0]}`; }
-    else { tone = 'same'; headline = 'สัปดาห์นี้ ร้านคุณเท่าเดิม'; detail = 'ลำดับใน Google มักขยับช้า เรานับให้ทุกสัปดาห์'; }
+  const kw = last.keyword;
+  if (last.hub) {
+    const r = last.hub.rank, where = `เมื่อคนค้น “${kw}” แถว ${last.hub.name}`;
+    const max = last.maxRank || 40, notFound = `ยังไม่เจอร้านคุณใน ${max} ร้านแรก`;
+    if (!prev || !prev.hub) return out('start', r ? `ตอนนี้ร้านคุณอยู่อันดับ ${r}` : notFound, `สัปดาห์แรก ไว้เทียบสัปดาห์หน้า · ${where}`);
+    const p = prev.hub.rank, rank = (x) => x || max + 1; // not found = just below the list
+    const before = p ? `สัปดาห์ก่อนอันดับ ${p}` : 'สัปดาห์ก่อนยังไม่เจอร้านคุณ';
+    if (rank(r) < rank(p)) return out('up', `ร้านคุณขึ้นเป็นอันดับ ${r} ↑`, `${before} · ${where}`);
+    if (rank(r) > rank(p)) return out('down', r ? `ร้านคุณตกลงไปอันดับ ${r} ↓` : `${notFound} ↓`, `${before} · ${where}`);
+    return out('same', r ? `ร้านคุณยังอยู่อันดับ ${r}` : notFound, `เท่ากับสัปดาห์ก่อน · ${where}`);
   }
-  const na = 'ยังวัดไม่ได้';
-  const rows = [
-    { label: 'คนค้นแถวร้าน เห็นร้านคุณใน 3 ร้านแรก', value: last ? `${near(last)} จาก 9 จุด` : na, note: last && prev ? note(ch(near(last), near(prev))) : null },
-    { label: 'คนที่อยู่ไกลออกไป 2 กม. เห็นร้านคุณใน 3 ร้านแรก', value: last ? `${wide(last)} จาก 9 จุด` : na, note: last && prev ? note(ch(wide(last), wide(prev))) : null },
-    { label: 'รีวิวร้านคุณใน Google', value: last && last.reviews != null ? `${last.reviews}` : na, note: last && prev && last.reviews != null && prev.reviews != null ? note(ch(last.reviews, prev.reviews)) : null },
-    { label: 'คนกดโทร นำทาง หรือติดต่อร้าน (7 วัน)', value: `${contacts7} ครั้ง`, note: null },
-  ];
-  const work = (d.log || []).filter((e) => e.at >= from7).sort((a, b) => b.at.localeCompare(a.at)).map((e) => e.what);
-  return { name: s.name, week, tone, headline, detail, rows, work: work.slice(0, 3), moreWork: Math.max(0, work.length - 3), url: G_REPORT_URL + s.id };
+  // No area hub for this shop: the news is the wider ring around the shop instead.
+  const found = (h) => h.spacings[1].top3;
+  const say = (n) => (n === 9 ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : n === 0 ? 'ยังไม่เจอร้านคุณ' : `เจอร้านคุณ ${n} ใน 9 พื้นที่ค้นหา`);
+  const where = `เมื่อคนค้น “${kw}” ไกลออกไป 2 กม. รอบร้าน`;
+  if (!prev) return out('start', say(found(last)), `สัปดาห์แรก ไว้เทียบสัปดาห์หน้า · ${where}`);
+  const n = found(last), b = found(prev);
+  const tone = n > b ? 'up' : n < b ? 'down' : 'same';
+  return out(tone, `${say(n)}${tone === 'up' ? ' ↑' : tone === 'down' ? ' ↓' : ''}`, `สัปดาห์ก่อน ${b} ใน 9 · ${where}`);
 }
 
 /** LINE Messaging API flex message for the card (push it once the bot has the channel token). */
 function growthFlex(c) {
+  const tone = G_TONES[c.tone] || G_TONES.same;
   const t = (text, o = {}) => ({ type: 'text', text, wrap: true, ...o });
-  const rows = c.rows.map((r) => ({
-    type: 'box', layout: 'horizontal', spacing: 'md', margin: 'md', contents: [
-      t(r.label, { size: 'sm', color: '#4A4440', flex: 5 }),
-      { type: 'box', layout: 'vertical', flex: 3, contents: [
-        t(r.value, { size: 'md', weight: 'bold', align: 'end', color: r.value === 'ยังวัดไม่ได้' ? '#7A726C' : '#14110F' }),
-        ...(r.note ? [t(r.note.text, { size: 'xs', align: 'end', color: G_TONE_COLOR[r.note.tone] })] : [])] },
-    ] }));
-  const work = c.work.length
-    ? [...c.work.map((w) => t(`• ${w}`, { size: 'sm', color: '#14110F', margin: 'sm' })), ...(c.moreWork ? [t(`และอีก ${c.moreWork} อย่าง`, { size: 'xs', color: '#7A726C', margin: 'sm' })] : [])]
-    : [t('สัปดาห์นี้ไม่มีงานใหม่ แต่เรายังนับผลให้ทุกวัน', { size: 'sm', color: '#7A726C', margin: 'sm' })];
   return {
     type: 'flex', altText: `${c.headline} · ${c.name}`.slice(0, 400),
     contents: {
       type: 'bubble', size: 'mega',
-      body: { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [
-        t(`รายงานร้าน · สัปดาห์ที่ ${c.week}`, { size: 'xs', color: '#7A726C' }),
-        t(c.name, { size: 'md', weight: 'bold', color: '#14110F', margin: 'xs' }),
-        t(c.headline, { size: 'xl', weight: 'bold', color: G_TONE_COLOR[c.tone], margin: 'lg' }),
-        t(c.detail, { size: 'sm', color: '#4A4440', margin: 'sm' }),
-        { type: 'separator', margin: 'lg', color: '#ECE7E2' },
-        ...rows,
-        { type: 'separator', margin: 'lg', color: '#ECE7E2' },
-        t('สัปดาห์นี้เราทำให้ร้าน', { size: 'sm', weight: 'bold', color: '#14110F', margin: 'lg' }),
-        ...work,
+      body: { type: 'box', layout: 'vertical', paddingAll: '0px', contents: [
+        { type: 'box', layout: 'vertical', backgroundColor: tone.bg, paddingAll: '20px', contents: [
+          t(`${c.name} · สัปดาห์ที่ ${c.week}`, { size: 'xs', color: tone.ink }),
+          t(c.headline, { size: 'xl', weight: 'bold', color: tone.ink, margin: 'md' }),
+          t(c.sub, { size: 'sm', color: tone.ink, margin: 'sm' }),
+        ] },
+        { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [t(c.second, { size: 'md', color: '#14110F' })] },
       ] },
-      footer: { type: 'box', layout: 'vertical', paddingAll: '16px', contents: [
-        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: 'ดูทั้งหมด', uri: c.url } }] },
+      footer: { type: 'box', layout: 'vertical', paddingStart: '20px', paddingEnd: '20px', paddingBottom: '20px', paddingTop: '0px', contents: [
+        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: 'ดูรายละเอียด', uri: c.url } }] },
     },
   };
 }

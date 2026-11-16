@@ -233,7 +233,7 @@ function render(d) {
     <section class="card"><h2>งานที่เราทำให้ร้าน</h2>${logHtml}</section>
     <section class="card"><h2>ลูกค้าเห็นร้านคุณจากที่ไหนบ้าง</h2><p class="lead">ตัวเลขนับจริงทุกครั้ง · ถ้ายังนับไม่ได้ เราจะเขียนว่า “ยังวัดไม่ได้” · ถ้าไม่มีคนเลย จะเขียน 0</p><div class="chan">${ch.join('')}</div></section>
     ${STAFF ? `<section class="card staff"><h2>ส่งรายงานวันจันทร์ทาง LINE (สำหรับทีม)</h2>
-      <p class="lead">1) ส่งรูปการ์ดนี้ให้ร้าน 2) ส่งลิงก์รายงานตามไป</p>
+      <p class="lead">1) ส่งรูปการ์ดนี้ให้ร้าน 2) ส่งลิงก์รายงานตามไป ร้านกดดูรายละเอียดจากลิงก์</p>
       <img id="cardimg" alt="การ์ดรายงานประจำสัปดาห์" style="width:100%;max-width:420px;display:block;border-radius:14px">
       <button id="share">ส่งรูปการ์ดทาง LINE</button> <button id="save" class="soft">บันทึกรูป</button> <button id="copylink" class="soft">คัดลอกลิงก์รายงาน</button> <span id="ok" hidden>คัดลอกแล้ว</span>
       <details style="margin-top:14px"><summary style="cursor:pointer;color:var(--ink-3);font-size:14px">ข้อความแบบยาว (ถ้าส่งรูปไม่ได้)</summary><textarea id="msg">${esc(lineText(d, week, from7, views7, contacts7))}</textarea><button id="copy">คัดลอกข้อความ</button></details></section>` : ''}
@@ -269,49 +269,45 @@ function wrapLines(ctx, text, maxW) {
   return lines;
 }
 async function cardBlob(c) {
-  await Promise.all(['400 28px Anuphan', '600 28px Anuphan', '700 52px Anuphan', '800 40px Inter'].map((f) => document.fonts.load(f)));
-  const W = 1040, P = 56, TONE = { up: '#15803D', down: '#B91C1C' };
-  const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+  // Same layout as the LINE flex card: coloured top with the one piece of news, one more line, one button.
+  await Promise.all(['400 30px Anuphan', '500 30px Anuphan', '700 60px Anuphan', '800 36px Inter'].map((f) => document.fonts.load(f)));
+  const TONES = { up: ['#E6F4EA', '#0F5F2C'], down: ['#FDECEA', '#9F1D1D'], same: ['#F1EEEA', '#3F3935'], start: ['#EEF2FD', '#1E3A8A'], wait: ['#EEF2FD', '#1E3A8A'] };
+  const [bg, ink] = TONES[c.tone] || TONES.same;
+  const W = 1040, P = 56, canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
   const paint = (draw) => {
-    let y = P + 8;
-    const text = (str, font, color, x, maxW, lh, align = 'left') => {
-      ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'top';
-      const lines = wrapLines(ctx, str, maxW);
-      lines.forEach((l, i) => draw && ctx.fillText(l, align === 'right' ? x + maxW : x, y + i * lh));
-      return lines.length * lh;
+    let y = P;
+    const text = (str, font, color, lh) => {
+      ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      const lines = wrapLines(ctx, str, W - 2 * P);
+      lines.forEach((l, i) => draw && ctx.fillText(l, P, y + i * lh));
+      y += lines.length * lh;
     };
-    const rule = () => { y += 30; if (draw) { ctx.fillStyle = '#ECE7E2'; ctx.fillRect(P, y, W - 2 * P, 2); } y += 30; };
-    // wordmark + week
-    if (draw) { ctx.font = '800 40px Inter'; ctx.textBaseline = 'top'; ctx.textAlign = 'left'; ctx.fillStyle = '#0A0A0A'; ctx.fillText('book', P, y); const bw = ctx.measureText('book').width; ctx.fillStyle = '#2D55EB'; ctx.fillText('ease', P + bw, y); }
-    ctx.font = '600 26px Anuphan'; if (draw) { ctx.fillStyle = '#7A726C'; ctx.textAlign = 'right'; ctx.fillText(`รายงานร้าน · สัปดาห์ที่ ${c.week}`, W - P, y + 8); }
-    y += 76;
-    y += text(c.name, '600 32px Anuphan', '#4A4440', P, W - 2 * P, 46);
-    y += 10;
-    y += text(c.headline, '700 56px Anuphan', TONE[c.tone] || '#14110F', P, W - 2 * P, 72);
-    y += 6;
-    y += text(c.detail, '400 30px Anuphan', '#4A4440', P, W - 2 * P, 44);
-    rule();
-    c.rows.forEach((r, i) => {
-      const top = y, valW = 300, labW = W - 2 * P - valW - 24;
-      const hl = text(r.label, '400 28px Anuphan', '#4A4440', P, labW, 40);
-      y = top;
-      const na = r.value === 'ยังวัดไม่ได้';
-      let hv = text(r.value, na ? '600 28px Anuphan' : '700 36px Anuphan', na ? '#7A726C' : '#14110F', W - P - valW, valW, 46, 'right');
-      if (r.note) { y = top + hv; hv += text(r.note.text, '600 24px Anuphan', TONE[r.note.tone], W - P - valW, valW, 34, 'right'); }
-      y = top + Math.max(hl, hv) + (i < c.rows.length - 1 ? 24 : 0);
-    });
-    rule();
-    y += text('สัปดาห์นี้เราทำให้ร้าน', '700 30px Anuphan', '#14110F', P, W - 2 * P, 44) + 6;
-    const work = c.work.length ? c.work.map((w) => `• ${w}`) : ['สัปดาห์นี้ไม่มีงานใหม่ แต่เรายังนับผลให้ทุกวัน'];
-    if (c.moreWork) work.push(`และอีก ${c.moreWork} อย่าง`);
-    for (const w of work) y += text(w, '400 28px Anuphan', c.work.length ? '#14110F' : '#7A726C', P, W - 2 * P, 40) + 8;
-    y += 30;
-    if (draw) { ctx.fillStyle = '#EEF2FD'; ctx.beginPath(); ctx.roundRect(P, y, W - 2 * P, 84, 42); ctx.fill(); }
-    if (draw) { ctx.font = '700 30px Anuphan'; ctx.fillStyle = '#2D55EB'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('ดูทั้งหมดได้ที่ลิงก์ในแชท', W / 2, y + 44); }
-    y += 84 + P;
-    return y;
+    // top: the news, on the tone colour
+    const topStart = 0;
+    if (draw) { ctx.fillStyle = bg; ctx.fillRect(0, topStart, W, topH); }
+    if (draw) { ctx.font = '800 36px Inter'; ctx.textBaseline = 'top'; ctx.textAlign = 'left'; ctx.fillStyle = '#0A0A0A'; ctx.fillText('book', P, y); const bw = ctx.measureText('book').width; ctx.fillStyle = '#2D55EB'; ctx.fillText('ease', P + bw, y); }
+    y += 62;
+    text(`${c.name} · สัปดาห์ที่ ${c.week}`, '500 28px Anuphan', ink, 40);
+    y += 14;
+    text(c.headline, '700 60px Anuphan', ink, 78);
+    y += 8;
+    text(c.sub, '400 30px Anuphan', ink, 44);
+    y += P;
+    const topEnd = y;
+    // one more line, then the button
+    y += 44;
+    text(c.second, '500 34px Anuphan', '#14110F', 50);
+    y += 40;
+    if (draw) {
+      ctx.fillStyle = '#2D55EB'; ctx.beginPath(); ctx.roundRect(P, y, W - 2 * P, 96, 48); ctx.fill();
+      ctx.font = '700 34px Anuphan'; ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('ดูรายละเอียด (ลิงก์ในแชท)', W / 2, y + 50);
+    }
+    y += 96 + P;
+    return [y, topEnd];
   };
-  const H = paint(false);
+  let topH = 0;
+  const [H, top] = paint(false);
+  topH = top;
   canvas.width = W; canvas.height = H;
   ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
   paint(true);
