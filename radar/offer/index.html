@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ผลตรวจร้าน · bookease</title>
+<meta property="og:title" content="ผลตรวจร้านของคุณ · ลูกค้าเจอร้านคุณไหม?">
+<meta property="og:description" content="ผลตรวจจาก Google Maps พร้อมแพ็กเกจที่แนะนำ กดเริ่มได้ทันทีทาง LINE">
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14110F;--ink-2:#4A4440;--ink-3:#7A726C;--line:#E6EAF3;--ground:#F4F6FB;--card:#fff;--blue:#2D55EB;--blue-d:#1C3BB8;--blue-soft:#E7EDFE;--good:#15803D;--good-soft:#E8F5EC;--bad:#B91C1C;--bad-soft:#FDECEC}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Anuphan,Inter,system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+#card{background:var(--card);border-radius:24px;padding:20px 18px 22px;box-shadow:0 1px 3px rgba(20,17,15,.06)}
+.top{display:flex;justify-content:space-between;align-items:center}
+.top img{height:22px;display:block}
+.top span{font:600 13px Anuphan;color:var(--ink-3)}
+h1{font:700 24px/1.25 Anuphan;margin:14px 0 2px;text-wrap:balance}
+.when{color:var(--ink-3);font-size:13.5px}
+.closed{margin-top:8px;background:#FFF7E6;color:#8A5A00;border-radius:10px;padding:8px 10px;font-size:13.5px}
+.q{font:700 17px Anuphan;margin:18px 0 10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{border-radius:16px;padding:12px 12px 10px}
+.st.good{background:var(--good-soft)}.st.bad{background:var(--bad-soft)}.st.mid{background:var(--blue-soft)}
+.st b{display:block;font:800 30px/1.1 Inter;font-variant-numeric:tabular-nums}
+.st b i{font:600 15px Anuphan;font-style:normal}
+.st.good b{color:var(--good)}.st.bad b{color:var(--bad)}.st.mid b{color:var(--blue-d)}
+.st small{display:block;font-size:13.5px;color:var(--ink-2);line-height:1.35;margin-top:4px}
+.ahead{margin-top:10px;font-size:14px;color:var(--ink-2)}
+.ahead b{color:var(--ink)}
+.rec{margin-top:18px;border:2px solid var(--blue);border-radius:20px;overflow:hidden}
+.rec .h{background:var(--blue);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-end}
+.rec .h small{display:block;font:600 13px Anuphan;opacity:.9}
+.rec .h strong{font:700 18px Anuphan}
+.rec .h .p{font:800 34px/1 Inter;text-align:right}
+.rec .h .p i{display:block;font:600 13px Anuphan;font-style:normal;opacity:.9;margin-top:2px}
+.rec .why{background:var(--blue-soft);color:var(--blue-d);font-size:13.5px;padding:8px 14px}
+.rec ul{list-style:none;padding:8px 14px 12px}
+.rec li{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15.5px;font-weight:500}
+.rec li:last-child{border-bottom:0}
+.rec li span{flex:none;width:22px;text-align:center}
+.go{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;height:56px;border-radius:999px;background:var(--blue);color:#fff;font:700 18px Anuphan;text-decoration:none}
+.go:active{background:var(--blue-d)}
+.sub{text-align:center;color:var(--ink-3);font-size:13.5px;margin-top:8px}
+.links{display:flex;gap:10px;margin-top:14px}
+.links a,.links button{flex:1;height:44px;border-radius:999px;border:0;background:var(--blue-soft);color:var(--blue-d);font:600 15px Anuphan;text-decoration:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#all{margin-top:14px}
+#all img{width:100%;display:block;border-radius:16px}
+.foot{text-align:center;color:var(--ink-3);font-size:13px;margin-top:18px}
+.staff{margin-top:16px;border:2px dashed var(--line);border-radius:16px;padding:12px;font-size:14px}
+.staff button{margin-top:8px;height:40px;padding:0 16px;border-radius:999px;border:0;background:var(--ink);color:#fff;font:600 14px Anuphan;cursor:pointer}
+.staff input{width:100%;margin-top:6px;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:14px Inter}
+.msg{text-align:center;padding:40px 10px;color:var(--ink-2)}
+.msg a{display:inline-block;margin-top:12px;color:var(--blue);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="msg">กำลังเปิดผลตรวจ…</p></div>
+<script>
+// One card: the shop's Shop Radar result + the package we recommend + price + "เริ่มเลย" (opens LINE @bookease with the order prefilled).
+// Data = the cached Shop Radar report (/view, 7 days). No new Google calls here.
+const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const LINE_OA = '@bookease';
+const PHONE = '092-641-4296';
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const qs = new URLSearchParams(location.search);
+const P = qs.get('p') || '', C = qs.get('c') || '', STAFF = qs.has('staff');
+if (STAFF) { try { localStorage.setItem('bookease-staff', '1'); } catch (e) { console.error('[offer] storage', e); } }
+const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+function thWhen(iso) {
+  const d = new Date(Date.parse(iso) + 7 * 3600e3);
+  const hh = String(d.getUTCHours()).padStart(2, '0'), mm = String(d.getUTCMinutes()).padStart(2, '0');
+  return `${d.getUTCDate()} ${TH_M[d.getUTCMonth()]} ${(d.getUTCFullYear() + 543) % 100} · ${hh}:${mm} น.`;
+}
+
+const TIERS = {
+  1000: { name: 'เพิ่มการมองเห็นให้ร้าน', items: [['📍', 'ดูแล Google Maps'], ['📱', 'เว็บร้าน กดจอง/โทรได้'], ['📢', 'โปรโมทออนไลน์/ออฟไลน์'], ['📊', 'สรุปทาง LINE ทุกสัปดาห์']] },
+  2000: { name: 'น่าสนใจ น่าเชื่อถือ', items: [['✅', 'ได้ทุกอย่างใน 1,000'], ['⭐', 'ระบบช่วยขอรีวิว'], ['🖼️', 'ลงรูปที่ร้านส่งมาทุกเดือน'], ['🌏', 'เว็บร้าน 8 ภาษา']] },
+  3000: { name: 'โปรโมทเข้มข้น', items: [['✅', 'ได้ทุกอย่างใน 2,000'], ['🏅', 'ป้ายร้านยืนยันแล้ว'], ['👑', 'ตำแหน่งร้านแนะนำ'], ['📣', 'ช่วยตั้งโฆษณาให้ 1 แคมเปญ/เดือน']] },
+};
+
+// Recommend 2,000 when reviews are the gap (fewer than half of the shops customers see first, or under 30); else 1,000.
+function recommend(shop, aheadPlaces) {
+  const lead = aheadPlaces.reduce((m, p) => Math.max(m, p.reviews || 0), 0);
+  const mine = shop.reviews || 0;
+  if (mine < 30 || (lead && mine < lead / 2)) {
+    return { price: 2000, why: lead ? `รีวิวร้านคุณ ${mine} · ร้านที่ลูกค้าเห็นก่อนมี ${lead} → ต้องเพิ่มรีวิว` : `รีวิวร้านคุณยังน้อย (${mine}) → ต้องเพิ่มรีวิว` };
+  }
+  return { price: 1000, why: 'ร้านมีรีวิวดีแล้ว → เพิ่มการมองเห็นก่อน' };
+}
+
+async function load() {
+  if (!P) { fail('ไม่พบร้าน', ''); return; }
+  let r;
+  try {
+    const res = await fetch(`${API}/view?p=${encodeURIComponent(P)}${C ? `&c=${encodeURIComponent(C)}` : ''}`);
+    if (!res.ok) throw new Error(`view ${res.status}`);
+    r = await res.json();
+  } catch (e) {
+    console.error('[offer] view', e);
+    fail('ยังไม่มีผลตรวจของร้านนี้ หรือผลตรวจเกิน 7 วันแล้ว', `../?p=${encodeURIComponent(P)}${C ? `&c=${encodeURIComponent(C)}` : ''}`);
+    return;
+  }
+  render(r);
+}
+
+function fail(text, radarLink) {
+  $('app').innerHTML = `<p class="msg">${esc(text)}${radarLink ? `<br><a href="${radarLink}">ตรวจร้านใน Shop Radar</a>` : ''}</p>`;
+}
+
+function render(r) {
+  const s = r.shop, k = (r.keywords || [])[0] || {}, places = r.places || {};
+  const hub = (r.area && r.area.hub) || 'ย่านนี้';
+  const maxRank = r.maxRank || 40;
+  const top3 = k.top3Count || 0, total = (k.points || []).length || 9;
+  const hubRank = k.hubRank && k.hubRank <= maxRank ? k.hubRank : null;
+  const ahead = (k.ahead || []).map((id) => places[id]).filter((p) => p && p.id !== s.id);
+  const rec = recommend(s, ahead);
+  const t = TIERS[rec.price];
+  const first = ahead[0];
+  const order = `เริ่มเลย · แพ็กเกจ ${rec.price.toLocaleString()} บาท/เดือน\nร้าน: ${s.name}\nรหัสร้าน: ${s.id}`;
+  const lineHref = `https://line.me/R/oaMessage/${LINE_OA}/?${encodeURIComponent(order)}`;
+  const report = `../?p=${encodeURIComponent(s.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
+  const self = `${location.origin}${location.pathname}?p=${encodeURIComponent(s.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
+  document.title = `ผลตรวจร้าน ${s.name} · bookease`;
+
+  $('app').innerHTML = `
+    <div id="card">
+      <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>ผลตรวจร้านฟรี</span></div>
+      <h1>${esc(s.name)}</h1>
+      <p class="when">ตรวจจาก Google Maps · ${esc(thWhen(r.checkedAt))}</p>
+      ${s.openNow === false ? '<p class="closed">ตอนตรวจร้านปิดอยู่ Google จะดันร้านที่ปิดลง ผลจริงตอนร้านเปิดน่าจะดีกว่านี้</p>' : ''}
+      <p class="q">ลูกค้าเจอร้านคุณไหม?</p>
+      <div class="stats">
+        <div class="st ${top3 >= Math.ceil(total * 2 / 3) ? 'good' : top3 >= Math.ceil(total / 3) ? 'mid' : 'bad'}"><b>${top3}<i> / ${total}</i></b><small>จุดรอบร้านที่ติด 3 อันดับแรก</small></div>
+        <div class="st ${hubRank && hubRank <= 3 ? 'good' : hubRank && hubRank <= 10 ? 'mid' : 'bad'}"><b>${hubRank ? `#${hubRank}` : '—'}</b><small>${hubRank ? `อันดับเมื่อค้นจาก ${esc(hub)}` : `ไม่ติด ${maxRank} อันดับเมื่อค้นจาก ${esc(hub)}`}</small></div>
+      </div>
+      ${first ? `<p class="ahead">ร้านที่ลูกค้าเห็นก่อน: <b>${esc(first.name)}</b> · ${first.reviews || 0} รีวิว</p>` : ''}
+      <div class="rec">
+        <div class="h"><div><small>แพ็กเกจที่แนะนำ</small><strong>${esc(t.name)}</strong></div><div class="p">${rec.price.toLocaleString()}<i>บาท/เดือน</i></div></div>
+        <div class="why">${esc(rec.why)}</div>
+        <ul>${t.items.map(([e, x]) => `<li><span>${e}</span>${esc(x)}</li>`).join('')}</ul>
+      </div>
+      <a class="go" id="go" href="${lineHref}">เริ่มเลย ทาง LINE</a>
+      <p class="sub">ไม่ผูกมัด ยกเลิกได้ทุกเดือน · ใช้ได้ทุกร้าน</p>
+    </div>
+    <div class="links"><button id="more">ดูแพ็กเกจอื่น</button><a href="${report}">ดูผลตรวจเต็ม</a></div>
+    <div id="all" hidden><img src="packages.png" alt="แพ็กเกจ 1,000 / 2,000 / 3,000 บาทต่อเดือน"></div>
+    <p class="foot">LINE ${LINE_OA} · ${PHONE}</p>
+    ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วข้อความเข้า ${LINE_OA} พร้อมชื่อร้านและแพ็กเกจ)
+      <input id="link" readonly value="${esc(self)}"><button id="copy">คัดลอกลิงก์</button> <span id="ok" hidden>คัดลอกแล้ว</span></div>` : ''}`;
+  $('more').onclick = () => { $('all').hidden = !$('all').hidden; $('more').textContent = $('all').hidden ? 'ดูแพ็กเกจอื่น' : 'ซ่อนแพ็กเกจ'; };
+  if (STAFF) {
+    $('copy').onclick = async () => {
+      try { await navigator.clipboard.writeText(self); $('ok').hidden = false; }
+      catch (e) { console.error('[offer] copy', e); $('link').select(); }
+    };
+  }
+}
+load();
+</script>
+</body>
+</html>
