@@ -1,2 +1,6 @@
 radar/demo-local.json
 radar/_wrap-local.html
+
+# local Xendit sandbox test state
+cf-worker-maps-report/.sandbox.sqlite
+cf-worker-maps-report/.sandbox-last.json

@@ -69,8 +69,11 @@ export async function checkout(env, { placeId, tier, shopName, returnUrl }) {
   if (already) return { order: pub(already) };
 
   const orderId = newOrderId(placeId, period);
-  const back = (returnUrl && /^https:\/\/(radar|make)\.bookease\.co\//.test(returnUrl) ? returnUrl : 'https://radar.bookease.co/offer/')
-    .replace(/[?#].*$/, '') + `?p=${encodeURIComponent(placeId)}&order=${encodeURIComponent(orderId)}`;
+  const okReturn = returnUrl && /^https:\/\/(radar|make)\.bookease\.co\//.test(returnUrl);
+  let cat = '';
+  try { cat = okReturn ? (new URL(returnUrl).searchParams.get('c') || '') : ''; } catch (e) { console.error('[pay] returnUrl', e); }
+  const back = (okReturn ? returnUrl : 'https://radar.bookease.co/offer/').replace(/[?#].*$/, '')
+    + `?p=${encodeURIComponent(placeId)}${/^[a-z_]{2,30}$/.test(cat) ? `&c=${cat}` : ''}&order=${encodeURIComponent(orderId)}`;
   const th = bkk(now);
   const monthTh = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'][th.getUTCMonth()];
   const body = {

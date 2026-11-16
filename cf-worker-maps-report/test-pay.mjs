@@ -47,11 +47,11 @@ r = await call(on, 'POST', '/growth/checkout', { body: { placeId: SHOP, tier: 1,
 assert.equal(r.data.error, 'bad_tier'); assert.equal(created, 0);
 
 // 3. checkout → one invoice, amount from tier, THB, external_id = order id, auth = collect key
-r = await call(on, 'POST', '/growth/checkout', { body: { placeId: SHOP, tier: 2000, shopName: 'ร้านเสริมสวยลลิศา', returnUrl: 'https://radar.bookease.co/offer/?p=x' } });
+r = await call(on, 'POST', '/growth/checkout', { body: { placeId: SHOP, tier: 2000, shopName: 'ร้านเสริมสวยลลิศา', returnUrl: 'https://radar.bookease.co/offer/?p=x&c=salon' } });
 assert.equal(r.status, 200); const o = r.data.order;
 assert.match(o.orderId, /^growth-[A-Za-z0-9]{10}-\d{6}-[a-z0-9]{6}$/); assert.equal(o.amount, 2000); assert.equal(o.status, 'PENDING');
 const inv = invoices.get('inv_1'); assert.equal(inv._body.amount, 2000); assert.equal(inv._body.currency, 'THB'); assert.equal(inv._body.external_id, o.orderId);
-assert.ok(inv._body.success_redirect_url.startsWith('https://radar.bookease.co/offer/?p=')); assert.ok(inv._body.success_redirect_url.includes(o.orderId));
+assert.ok(inv._body.success_redirect_url.startsWith('https://radar.bookease.co/offer/?p=')); assert.ok(inv._body.success_redirect_url.includes(o.orderId)); assert.ok(inv._body.success_redirect_url.includes('&c=salon'));
 assert.equal(lastAuth, 'Basic ' + btoa('xnd_development_TEST:'));
 
 // 4. second tap same shop/tier/month → same order, no second invoice
