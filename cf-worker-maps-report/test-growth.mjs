@@ -115,4 +115,25 @@ assert.equal(Object.values(data.buildings[0].counts)[0]['view|qr'], 1);
 res = await req('/growth?p=' + OTHER);
 assert.equal(res.status, 404);
 
+// 7. weekly card: two identical checks → "เท่าเดิม"; better wide-area result → "ขึ้น"; flex message is valid-looking
+assert.equal(data.card.tone, 'same');
+assert.equal(data.card.rows.length, 4);
+assert.match(data.card.url, /growth\/\?p=ChIJ/);
+const h2 = JSON.parse(kv.m.get(`g/hist/${SHOP}`));
+h2[1].spacings[1] = { ...h2[1].spacings[1], top3: h2[0].spacings[1].top3 + 2 };
+h2[1].hub = { ...h2[1].hub, rank: (h2[0].hub.rank || 20) - 3 };
+await kv.put(`g/hist/${SHOP}`, JSON.stringify(h2));
+const card = (await (await req('/growth?p=' + SHOP)).json()).card;
+assert.equal(card.tone, 'up');
+assert.equal(card.headline, 'สัปดาห์นี้ ร้านคุณขึ้น');
+assert.match(card.detail, /เพิ่ม 2 จุด/);
+assert.equal(card.rows[1].note.text, '↑ เพิ่ม 2');
+const flex = await (await req('/growth/flex?p=' + SHOP)).json();
+assert.equal(flex.type, 'flex');
+assert.equal(flex.contents.type, 'bubble');
+assert.ok(flex.altText.length <= 400);
+assert.equal(flex.contents.footer.contents[0].action.uri, card.url);
+assert.ok(JSON.stringify(flex).length < 30000, 'flex under LINE size limit');
+assert.equal((await req('/growth/flex?p=' + OTHER)).status, 404);
+
 console.log('all growth tests passed · KV writes', kv.writes);

@@ -559,10 +559,96 @@ async function growthData(env, id) {
     env.REPORTS.get(`g/log/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), growthCounts(env, [id, ...bIds]),
     Promise.all(bIds.map((b) => env.REPORTS.get(`g/shop/${b}`, 'json')))]);
   const buildings = bcfgs.map((bc, i) => bc && { ...bc, counts: counts[bIds[i]] || {} }).filter(Boolean);
-  return { shop: cfg, log: log || [], hist: hist || [], counts: counts[id] || {}, buildings, today: bkkDay() };
+  const data = { shop: cfg, log: log || [], hist: hist || [], counts: counts[id] || {}, buildings, today: bkkDay() };
+  data.card = growthCard(data);
+  return data;
+}
+
+// ── The weekly LINE card: one sentence the owner gets in 5 seconds, four numbers, this week's work ──
+// One source for the image the team sends today and the Flex message the LINE bot will push.
+const G_REPORT_URL = 'https://radar.bookease.co/growth/?p=';
+const G_CONTACT = ['call', 'map', 'web', 'line', 'book'];
+const G_TONE_COLOR = { up: '#15803D', down: '#B91C1C', mixed: '#14110F', same: '#14110F', start: '#14110F', wait: '#14110F' };
+
+function growthCard(d) {
+  const s = d.shop, hist = d.hist || [], last = hist[hist.length - 1], prev = hist[hist.length - 2];
+  const week = Math.max(1, Math.floor((Date.parse(d.today) - Date.parse(s.since)) / (7 * 86400e3)) + 1);
+  const from7 = bkkDay(Date.parse(d.today) - 6 * 86400e3 - 7 * 3600e3);
+  let contacts7 = 0;
+  for (const [day, row] of Object.entries(d.counts || {})) {
+    if (day < from7 || day > d.today) continue;
+    for (const [k, n] of Object.entries(row)) if (G_CONTACT.includes(k.split('|')[0])) contacts7 += n;
+  }
+  const near = (h) => h.spacings[0].top3, wide = (h) => h.spacings[1].top3;
+  const hubRank = (h) => (h.hub && h.hub.rank) || (h.maxRank || 40) + 1; // not found = just below the list
+  const ch = (now, before) => (before == null || now === before ? null : now > before ? { up: true, n: now - before } : { up: false, n: before - now });
+  const note = (c) => (c ? { text: `${c.up ? '↑ เพิ่ม' : '↓ ลด'} ${c.n}`, tone: c.up ? 'up' : 'down' } : null);
+
+  let tone, headline, detail;
+  if (!last) {
+    tone = 'wait'; headline = 'เริ่มดูแลร้านคุณแล้ว'; detail = 'เราจะลองค้นร้านคุณใน Google ครั้งแรกตอนร้านเปิด';
+  } else if (!prev) {
+    tone = 'start'; headline = 'สัปดาห์แรก เริ่มนับผลให้ร้านคุณแล้ว'; detail = 'ตัวเลขชุดนี้คือจุดเริ่มต้น สัปดาห์หน้าจะบอกได้ว่าร้านคุณขึ้นหรือลง';
+  } else {
+    const ups = [], downs = [];
+    const say = (c, upText, downText) => { if (c) (c.up ? ups : downs).push((c.up ? upText : downText).replace('{n}', c.n)); };
+    say(ch(wide(last), wide(prev)), 'คนที่อยู่ไกลออกไปเห็นร้านคุณใน 3 ร้านแรกเพิ่ม {n} จุด', 'คนที่อยู่ไกลออกไปเห็นร้านคุณใน 3 ร้านแรกลดลง {n} จุด');
+    say(ch(near(last), near(prev)), 'คนแถวร้านเห็นร้านคุณใน 3 ร้านแรกเพิ่ม {n} จุด', 'คนแถวร้านเห็นร้านคุณใน 3 ร้านแรกลดลง {n} จุด');
+    if (last.hub && prev.hub) say(ch(-hubRank(last), -hubRank(prev)), `คนค้นจาก ${last.hub.name} เห็นร้านคุณขึ้นมา {n} ลำดับ`, `คนค้นจาก ${last.hub.name} เห็นร้านคุณตกลง {n} ลำดับ`);
+    if (last.reviews != null && prev.reviews != null && last.reviews > prev.reviews) ups.push(`รีวิวเพิ่ม ${last.reviews - prev.reviews}`);
+    if (ups.length && !downs.length) { tone = 'up'; headline = 'สัปดาห์นี้ ร้านคุณขึ้น'; detail = ups[0]; }
+    else if (downs.length && !ups.length) { tone = 'down'; headline = 'สัปดาห์นี้ ร้านคุณลงนิดหน่อย'; detail = downs[0]; }
+    else if (ups.length) { tone = 'mixed'; headline = 'สัปดาห์นี้ มีทั้งขึ้นและลง'; detail = `${ups[0]} แต่${downs[0]}`; }
+    else { tone = 'same'; headline = 'สัปดาห์นี้ ร้านคุณเท่าเดิม'; detail = 'ลำดับใน Google มักขยับช้า เรานับให้ทุกสัปดาห์'; }
+  }
+  const na = 'ยังวัดไม่ได้';
+  const rows = [
+    { label: 'คนค้นแถวร้าน เห็นร้านคุณใน 3 ร้านแรก', value: last ? `${near(last)} จาก 9 จุด` : na, note: last && prev ? note(ch(near(last), near(prev))) : null },
+    { label: 'คนที่อยู่ไกลออกไป 2 กม. เห็นร้านคุณใน 3 ร้านแรก', value: last ? `${wide(last)} จาก 9 จุด` : na, note: last && prev ? note(ch(wide(last), wide(prev))) : null },
+    { label: 'รีวิวร้านคุณใน Google', value: last && last.reviews != null ? `${last.reviews}` : na, note: last && prev && last.reviews != null && prev.reviews != null ? note(ch(last.reviews, prev.reviews)) : null },
+    { label: 'คนกดโทร นำทาง หรือติดต่อร้าน (7 วัน)', value: `${contacts7} ครั้ง`, note: null },
+  ];
+  const work = (d.log || []).filter((e) => e.at >= from7).sort((a, b) => b.at.localeCompare(a.at)).map((e) => e.what);
+  return { name: s.name, week, tone, headline, detail, rows, work: work.slice(0, 3), moreWork: Math.max(0, work.length - 3), url: G_REPORT_URL + s.id };
+}
+
+/** LINE Messaging API flex message for the card (push it once the bot has the channel token). */
+function growthFlex(c) {
+  const t = (text, o = {}) => ({ type: 'text', text, wrap: true, ...o });
+  const rows = c.rows.map((r) => ({
+    type: 'box', layout: 'horizontal', spacing: 'md', margin: 'md', contents: [
+      t(r.label, { size: 'sm', color: '#4A4440', flex: 5 }),
+      { type: 'box', layout: 'vertical', flex: 3, contents: [
+        t(r.value, { size: 'md', weight: 'bold', align: 'end', color: r.value === 'ยังวัดไม่ได้' ? '#7A726C' : '#14110F' }),
+        ...(r.note ? [t(r.note.text, { size: 'xs', align: 'end', color: G_TONE_COLOR[r.note.tone] })] : [])] },
+    ] }));
+  const work = c.work.length
+    ? [...c.work.map((w) => t(`• ${w}`, { size: 'sm', color: '#14110F', margin: 'sm' })), ...(c.moreWork ? [t(`และอีก ${c.moreWork} อย่าง`, { size: 'xs', color: '#7A726C', margin: 'sm' })] : [])]
+    : [t('สัปดาห์นี้ไม่มีงานใหม่ แต่เรายังนับผลให้ทุกวัน', { size: 'sm', color: '#7A726C', margin: 'sm' })];
+  return {
+    type: 'flex', altText: `${c.headline} · ${c.name}`.slice(0, 400),
+    contents: {
+      type: 'bubble', size: 'mega',
+      body: { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [
+        t(`รายงานร้าน · สัปดาห์ที่ ${c.week}`, { size: 'xs', color: '#7A726C' }),
+        t(c.name, { size: 'md', weight: 'bold', color: '#14110F', margin: 'xs' }),
+        t(c.headline, { size: 'xl', weight: 'bold', color: G_TONE_COLOR[c.tone], margin: 'lg' }),
+        t(c.detail, { size: 'sm', color: '#4A4440', margin: 'sm' }),
+        { type: 'separator', margin: 'lg', color: '#ECE7E2' },
+        ...rows,
+        { type: 'separator', margin: 'lg', color: '#ECE7E2' },
+        t('สัปดาห์นี้เราทำให้ร้าน', { size: 'sm', weight: 'bold', color: '#14110F', margin: 'lg' }),
+        ...work,
+      ] },
+      footer: { type: 'box', layout: 'vertical', paddingAll: '16px', contents: [
+        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: 'ดูทั้งหมด', uri: c.url } }] },
+    },
+  };
 }
 
 // ── handler ─────────────────────────────────────────────────────────
+
+export { growthCard, growthFlex };
 
 export default {
   async fetch(request, env, ctx) {
@@ -600,6 +686,14 @@ export default {
         if (!id) return json({ error: 'bad_place_id' }, 400, origin);
         const data = await growthData(env, id);
         return data ? json(data, 200, origin) : json({ error: 'not_tracked' }, 404, origin);
+      }
+
+      // The weekly card as a LINE flex message (what the bot will push; paste into LINE Flex Simulator to preview).
+      if (request.method === 'GET' && url.pathname === '/growth/flex') {
+        const id = gid(url.searchParams.get('p'));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        const data = await growthData(env, id);
+        return data ? json(growthFlex(data.card), 200, origin) : json({ error: 'not_tracked' }, 404, origin);
       }
 
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
