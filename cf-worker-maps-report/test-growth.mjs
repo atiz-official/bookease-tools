@@ -115,40 +115,36 @@ assert.equal(Object.values(data.buildings[0].counts)[0]['view|qr'], 1);
 res = await req('/growth?p=' + OTHER);
 assert.equal(res.status, 404);
 
-// 7. weekly card: one piece of news (the hub rank), at most two numbers, bad weeks said plainly
+// 7. weekly card (approved 2026-11-16): headline · "จากอันดับ p → r" · ค้นหา “…” แถว … · ladder · calls in ครั้ง · one CTA
 const cardFor = async (lastRank, prevRank) => {
   const h = JSON.parse(kv.m.get(`g/hist/${SHOP}`));
   h[0].hub = { ...h[0].hub, rank: prevRank }; h[1].hub = { ...h[1].hub, rank: lastRank };
   await kv.put(`g/hist/${SHOP}`, JSON.stringify(h));
   return (await (await req('/growth?p=' + SHOP)).json()).card;
 };
-assert.match(data.card.url, /growth\/\?p=ChIJ/);
-assert.equal(data.card.second, 'มีคนกดโทรหาร้าน 2 ครั้ง'); // the two 'call' taps above
-// work done this week (log within 7 days + the weekly check) and next (no plan yet → the next check)
-assert.ok(data.card.did.includes('ตรวจอันดับร้านในพื้นที่'));
-assert.deepEqual(data.card.next, ['ตรวจอันดับร้านให้อีกครั้ง']);
+const rungs = (c) => c.ladder.map((x) => (x.kind === 'gap' ? '···' : x.n + (x.kind ? `[${x.kind}]` : ''))).join(' ');
+assert.match(data.card.url, /growth\/\?p=ChIJ.*#work$/);
+assert.equal(data.card.calls, 'กดโทรหาร้าน 2 ครั้ง'); // the two 'call' taps above — taps, not people
+assert.equal(data.card.cta, 'ดูว่าเราทำอะไรให้ร้าน');
+assert.equal(data.card.where, 'ค้นหา “ร้านเสริมสวย” แถว MRT ท่าพระ');
+assert.equal(data.card.did, undefined); // no work checklist on the card
 let card = await cardFor(12, 12);
-assert.equal(card.tone, 'same'); assert.equal(card.headline, 'ร้านคุณยังอยู่อันดับ 12');
-assert.equal(card.sub, 'อันดับยังไม่ขยับจากสัปดาห์ก่อน');
-card = await cardFor(9, 12);
-assert.equal(card.tone, 'up'); assert.equal(card.headline, 'ร้านคุณขึ้นเป็นอันดับ 9!');
-assert.equal(card.sub, 'จากอันดับ 12 เมื่อสัปดาห์ก่อน');
-assert.equal(card.where, 'คำค้น “ร้านเสริมสวย” แถว MRT ท่าพระ');
-card = await cardFor(15, 12);
-assert.equal(card.tone, 'down'); assert.equal(card.headline, 'ร้านคุณตกลงไปอันดับ 15');
+assert.equal(card.tone, 'same'); assert.equal(card.headline, 'ยังอยู่อันดับ 12'); assert.equal(card.from, '');
+assert.equal(rungs(card), '1 ··· 11 12[me] 13');
+card = await cardFor(5, 6);
+assert.equal(card.tone, 'up'); assert.equal(card.headline, 'ขึ้นเป็นอันดับ 5 ↑'); assert.equal(card.from, 'จากอันดับ 6 → 5');
+assert.equal(rungs(card), '1 ··· 4 5[me] 6[was]');
+card = await cardFor(8, 6);
+assert.equal(card.tone, 'down'); assert.equal(card.headline, 'ตกไปอันดับ 8 ↓'); assert.equal(card.from, 'จากอันดับ 6 → 8');
+assert.equal(rungs(card), '1 ··· 6[was] 7 8[me]');
 card = await cardFor(null, 12);
-assert.equal(card.tone, 'down'); assert.equal(card.headline, 'ยังไม่เจอร้านคุณใน 40 ร้านแรก');
-// planned work shows as "next", short wording first, never mixed into "did"
-await kv.put(`g/plan/${SHOP}`, JSON.stringify([{ what: 'แก้ประเภทร้านบน Google ให้ตรงกับบริการ', short: 'แก้ประเภทร้านบน Google' }, { what: 'ขอรีวิวจากลูกค้าประจำ' }, { what: 'ข้อที่สาม' }]));
+assert.equal(card.tone, 'down'); assert.equal(card.headline, 'หลุด 40 ร้านแรก ↓'); assert.equal(card.from, 'จากอันดับ 12 → 40+');
 card = await cardFor(30, null);
-assert.equal(card.tone, 'up'); assert.match(card.sub, /สัปดาห์ก่อนยังไม่เจอร้านคุณ/);
-assert.deepEqual(card.next, ['แก้ประเภทร้านบน Google', 'ขอรีวิวจากลูกค้าประจำ']);
-assert.ok(!card.did.includes('แก้ประเภทร้านบน Google'));
-assert.ok(card.did.length <= 3);
-for (const c of [card]) {
-  const text = [c.headline, c.sub, c.second].join(' ');
-  assert.ok(!/ลูกค้าเพิ่ม|จุด|\/ ?9/.test(text), 'banned words: ' + text);
-  assert.ok((text.match(/\d+/g) || []).filter((x) => x !== '40').length <= 3, 'too many numbers: ' + text);
+assert.equal(card.tone, 'up'); assert.equal(card.from, 'จากอันดับ 40+ → 30');
+for (const r of [[5, 6], [8, 6], [12, 12], [null, 12]]) {
+  const c = await cardFor(...r);
+  const text = [c.headline, c.from, c.where, c.calls, c.cta].join(' ');
+  assert.ok(!/ลูกค้าเพิ่ม|จุด|\/ ?9|คนกดโทร/.test(text), 'banned words: ' + text);
 }
 const flex = await (await req('/growth/flex?p=' + SHOP)).json();
 assert.equal(flex.type, 'flex');

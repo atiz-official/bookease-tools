@@ -461,7 +461,7 @@ async function gIndex(env) { return (await env.REPORTS.get('g/index', 'json')) |
  * At most 2 × 9 × 2 + 2 + 1 = 39 Google calls, under the 50-subrequest limit of one Worker run.
  */
 async function growthSnapshot(env, cfg) {
-  const raw = await google(env, `places/${cfg.id}?languageCode=th`, 'id,location,rating,userRatingCount,currentOpeningHours.openNow', null);
+  const raw = await google(env, `places/${cfg.id}?languageCode=th`, 'id,displayName,location,rating,userRatingCount,currentOpeningHours.openNow,photos', null);
   const open = raw.currentOpeningHours && typeof raw.currentOpeningHours.openNow === 'boolean' ? raw.currentOpeningHours.openNow : null;
   if (open === false) return { skipped: 'closed' };
   if (!raw.location) return { skipped: 'no_location' };
@@ -481,8 +481,12 @@ async function growthSnapshot(env, cfg) {
     const i = ids.indexOf(cfg.id);
     hub = { name: area.hub || area.name, rank: i === -1 ? null : i + 1 };
   }
+  const name = raw.displayName && raw.displayName.text;
+  const photos = raw.photos || [];
+  const own = photos.find((ph) => (ph.authorAttributions || []).some((a) => a.displayName === name)) || photos[0];
   return { at: new Date().toISOString(), keyword: cat.label, maxRank: PAGES * 20, open,
-    rating: raw.rating == null ? null : raw.rating, reviews: raw.userRatingCount == null ? null : raw.userRatingCount, spacings, hub };
+    rating: raw.rating == null ? null : raw.rating, reviews: raw.userRatingCount == null ? null : raw.userRatingCount, spacings, hub,
+    photo: own ? own.name : null };
 }
 
 /** Is this tracked shop due a check? Returns the config, or null. */
@@ -565,19 +569,33 @@ async function growthData(env, id) {
 }
 
 // ── The weekly LINE card ──
-// Card rules locked by Art 2026-11-16: plain words · at most two numbers · a bad week is said plainly ·
-// details behind one button · never "ลูกค้าเพิ่มขึ้น" (we measure rank and taps, not customers).
-// Three parts only: the result → what BookEase did for the shop this week → what we do next.
-// Work and result sit side by side and are never linked ("ขึ้นเพราะเราโพสต์" is not something we can prove);
-// done work comes from the log, planned work from the plan list, and the two are never mixed.
-// The result is always the same number: the shop's rank when people search the shop type near the area hub.
+// Approved by Art 2026-11-16 (9.2/10, "do not redesign further"): a picture, not text.
+//   headline (3–4 words) · "จากอันดับ 6 → 8" · ค้นหา “<type>” แถว <hub> · rank ladder with the shop's own photo ·
+//   📞 กดโทรหาร้าน N ครั้ง · one button "ดูว่าเราทำอะไรให้ร้าน" (work done, plans and every other number live behind it).
+// Rules: plain words · ≤ 2 numbers · a bad week is said plainly (red) · never "ลูกค้าเพิ่มขึ้น" · calls are counted as taps (ครั้ง),
+// not people · the work list is never on the card and never linked to the result.
 // One source for the picture the team sends today and the Flex message the LINE bot will push.
 const G_REPORT_URL = 'https://radar.bookease.co/growth/?p=';
-const G_TONES = {
-  up: { bg: '#E6F4EA', ink: '#0F5F2C' }, down: { bg: '#FDECEA', ink: '#9F1D1D' },
-  same: { bg: '#F1EEEA', ink: '#3F3935' }, start: { bg: '#EEF2FD', ink: '#1E3A8A' }, wait: { bg: '#EEF2FD', ink: '#1E3A8A' },
-};
-const G_CHECK_DONE = 'ตรวจอันดับร้านในพื้นที่', G_CHECK_NEXT = 'ตรวจอันดับร้านให้อีกครั้ง';
+const G_WORKER_URL = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const G_TONE = { up: '#15803D', down: '#B42318', same: '#2D55EB', start: '#2D55EB', wait: '#2D55EB' };
+
+/** Rows of the rank ladder: the top spot, the shop, the row above it, last week's spot; "gap" where numbers jump. */
+function growthLadder(r, p, max, kind) {
+  const pos = (x) => (x == null ? max + 1 : x);           // not found = just below the list
+  const lab = (x) => (x == null ? `${max}+` : String(x));
+  const me = pos(r), was = p === undefined ? null : pos(p);
+  const nums = new Set([1, me, Math.max(1, me - 1)]);
+  if (was != null && was !== me) nums.add(was);
+  if (kind === 'down' && was != null) for (let x = was + 1; x < me && x <= was + 1; x++) nums.add(x);
+  if (kind === 'start' || kind === 'same') nums.add(me + 1 <= max ? me + 1 : me);
+  const sorted = [...nums].filter((x) => x >= 1 && x <= max + 1).sort((a, b) => a - b);
+  const rows = [];
+  sorted.forEach((x, i) => {
+    if (i && x - sorted[i - 1] > 1) rows.push({ kind: 'gap' });
+    rows.push({ n: x === me ? lab(r) : x === was ? lab(p) : String(x), kind: x === me ? 'me' : x === was && kind !== 'same' ? 'was' : '' });
+  });
+  return rows;
+}
 
 function growthCard(d) {
   const s = d.shop, hist = d.hist || [], last = hist[hist.length - 1], prev = hist[hist.length - 2];
@@ -588,74 +606,75 @@ function growthCard(d) {
     if (day < from7 || day > d.today) continue;
     for (const [k, n] of Object.entries(row)) if (k.split('|')[0] === 'call') calls7 += n;
   }
-  // what we did (log, last 7 days) and what we do next (plan) — short card wording when the team gave one
-  const label = (e) => e.short || e.what;
-  const did = (d.log || []).filter((e) => e.at >= from7 && e.at <= d.today).sort((a, b) => b.at.localeCompare(a.at)).map(label);
-  if (last && bkkDay(Date.parse(last.at)) >= from7 && !did.includes(G_CHECK_DONE)) did.push(G_CHECK_DONE); // the weekly check itself is real work
-  const next = (d.plan || []).map(label).slice(0, 2);
-  if (next.length < 2) next.push(G_CHECK_NEXT);
-
-  const out = (tone, headline, sub, where) => ({
-    name: s.name, week, tone, headline, sub, where: where || '', second: `มีคนกดโทรหาร้าน ${calls7} ครั้ง`,
-    did: did.slice(0, 3), moreDid: Math.max(0, did.length - 3), next, url: G_REPORT_URL + s.id,
+  const photoName = (last && last.photo) || s.photo || '';
+  const out = (tone, headline, from, where, ladder) => ({
+    name: s.name, week, tone, color: G_TONE[tone], headline, from: from || '', where: where || '', ladder: ladder || [],
+    calls: `กดโทรหาร้าน ${calls7} ครั้ง`, cta: 'ดูว่าเราทำอะไรให้ร้าน', url: `${G_REPORT_URL}${s.id}#work`,
+    photo: photoName ? `${G_WORKER_URL}/photo?w=200&name=${encodeURIComponent(photoName)}` : '',
   });
-  if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', 'เราจะตรวจอันดับร้านคุณใน Google ครั้งแรกตอนร้านเปิด');
+  if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', '', 'เราจะตรวจอันดับร้านคุณครั้งแรกตอนร้านเปิด');
 
-  const kw = last.keyword;
+  const kw = last.keyword, max = last.maxRank || 40;
   if (last.hub) {
-    const r = last.hub.rank, where = `คำค้น “${kw}” แถว ${last.hub.name}`;
-    const max = last.maxRank || 40, notFound = `ยังไม่เจอร้านคุณใน ${max} ร้านแรก`;
-    if (!prev || !prev.hub) return out('start', r ? `ตอนนี้ร้านคุณอยู่อันดับ ${r}` : notFound, 'สัปดาห์แรก ไว้เทียบสัปดาห์หน้า', where);
-    const p = prev.hub.rank, rank = (x) => x || max + 1; // not found = just below the list
-    const before = p ? `จากอันดับ ${p} เมื่อสัปดาห์ก่อน` : 'สัปดาห์ก่อนยังไม่เจอร้านคุณ';
-    if (rank(r) < rank(p)) return out('up', `ร้านคุณขึ้นเป็นอันดับ ${r}!`, before, where);
-    if (rank(r) > rank(p)) return out('down', r ? `ร้านคุณตกลงไปอันดับ ${r}` : notFound, before, where);
-    return out('same', r ? `ร้านคุณยังอยู่อันดับ ${r}` : notFound, 'อันดับยังไม่ขยับจากสัปดาห์ก่อน', where);
+    const where = `ค้นหา “${kw}” แถว ${last.hub.name}`;
+    const r = last.hub.rank, lab = (x) => (x == null ? `${max}+` : x);
+    if (!prev || !prev.hub) return out('start', r ? `ตอนนี้อยู่อันดับ ${r}` : `ยังไม่ติด ${max} ร้านแรก`, '', where, growthLadder(r, undefined, max, 'start'));
+    const p = prev.hub.rank, pos = (x) => (x == null ? max + 1 : x);
+    const from = `จากอันดับ ${lab(p)} → ${lab(r)}`;
+    if (pos(r) < pos(p)) return out('up', `ขึ้นเป็นอันดับ ${r} ↑`, from, where, growthLadder(r, p, max, 'up'));
+    if (pos(r) > pos(p)) return out('down', r ? `ตกไปอันดับ ${r} ↓` : `หลุด ${max} ร้านแรก ↓`, from, where, growthLadder(r, p, max, 'down'));
+    return out('same', r ? `ยังอยู่อันดับ ${r}` : `ยังไม่ติด ${max} ร้านแรก`, '', where, growthLadder(r, p, max, 'same'));
   }
-  // No area hub for this shop: the result is the wider ring around the shop instead.
+  // No area hub for this shop: no ladder; the result is the wider ring around the shop (Art's locked wording).
   const found = (h) => h.spacings[1].top3;
   const say = (n) => (n === 9 ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : n === 0 ? 'ยังไม่เจอร้านคุณ' : `เจอร้านคุณ ${n} ใน 9 พื้นที่ค้นหา`);
-  const where = `คำค้น “${kw}” ไกลออกไป 2 กม. รอบร้าน`;
-  if (!prev) return out('start', say(found(last)), 'สัปดาห์แรก ไว้เทียบสัปดาห์หน้า', where);
+  const where = `ค้นหา “${kw}” รอบร้าน 2 กม.`;
+  if (!prev) return out('start', say(found(last)), '', where);
   const n = found(last), b = found(prev);
-  return out(n > b ? 'up' : n < b ? 'down' : 'same', say(n), n === b ? 'ยังไม่ขยับจากสัปดาห์ก่อน' : `จาก ${b} ใน 9 เมื่อสัปดาห์ก่อน`, where);
+  return out(n > b ? 'up' : n < b ? 'down' : 'same', say(n), n === b ? '' : `จาก ${b} → ${n} ใน 9`, where);
 }
 
 /** LINE Messaging API flex message for the card (push it once the bot has the channel token). */
 function growthFlex(c) {
-  const tone = G_TONES[c.tone] || G_TONES.same;
   const t = (text, o = {}) => ({ type: 'text', text, wrap: true, ...o });
-  const list = (title, items, mark, color) => [
-    t(title, { size: 'sm', weight: 'bold', color: '#14110F', margin: 'lg' }),
-    ...items.map((x) => t(`${mark} ${x}`, { size: 'sm', color, margin: 'sm' })),
-  ];
+  const rung = (row) => {
+    if (row.kind === 'gap') return t('···', { size: 'sm', color: '#8A827B', align: 'center', margin: 'xs' });
+    const num = t(row.n, { size: 'sm', weight: 'bold', align: 'end', gravity: 'center', flex: 0, color: row.kind === 'me' ? c.color : '#8A827B' });
+    let bar;
+    if (row.kind === 'me') {
+      bar = { type: 'box', layout: 'horizontal', flex: 1, height: '36px', cornerRadius: '10px', backgroundColor: c.color, paddingStart: '6px', spacing: 'sm', alignItems: 'center', contents: [
+        ...(c.photo ? [{ type: 'box', layout: 'vertical', width: '26px', height: '26px', cornerRadius: '13px', flex: 0, contents: [{ type: 'image', url: c.photo, size: 'full', aspectMode: 'cover', aspectRatio: '1:1' }] }] : []),
+        t('ร้านคุณ', { size: 'sm', weight: 'bold', color: '#FFFFFF', gravity: 'center', paddingStart: c.photo ? '0px' : '8px' })] };
+    } else if (row.kind === 'was') {
+      bar = { type: 'box', layout: 'horizontal', flex: 1, height: '36px', cornerRadius: '10px', borderWidth: '2px', borderColor: '#D9D2CB', paddingStart: '10px', alignItems: 'center', contents: [t('สัปดาห์ก่อน', { size: 'xs', color: '#8A827B', gravity: 'center' })] };
+    } else {
+      bar = { type: 'box', layout: 'vertical', flex: 1, height: '36px', cornerRadius: '10px', backgroundColor: '#EFEBE7', contents: [] };
+    }
+    return { type: 'box', layout: 'horizontal', spacing: 'md', margin: 'sm', alignItems: 'center', contents: [{ type: 'box', layout: 'vertical', width: '30px', flex: 0, contents: [num] }, bar] };
+  };
   return {
     type: 'flex', altText: `${c.headline} · ${c.name}`.slice(0, 400),
     contents: {
-      type: 'bubble', size: 'mega',
-      body: { type: 'box', layout: 'vertical', paddingAll: '0px', contents: [
-        { type: 'box', layout: 'vertical', backgroundColor: tone.bg, paddingAll: '20px', contents: [
-          t(`${c.name} · สัปดาห์ที่ ${c.week}`, { size: 'xs', color: tone.ink }),
-          t(c.headline, { size: 'xl', weight: 'bold', color: tone.ink, margin: 'md' }),
-          t(c.sub, { size: 'sm', color: tone.ink, margin: 'sm' }),
-          ...(c.where ? [t(c.where, { size: 'xs', color: tone.ink, margin: 'xs' })] : []),
-        ] },
-        { type: 'box', layout: 'vertical', paddingAll: '20px', paddingTop: '16px', contents: [
-          t(c.second, { size: 'md', weight: 'bold', color: '#14110F' }),
-          ...(c.did.length ? list('สัปดาห์นี้ BookEase ช่วยร้านคุณ', c.did, '✓', '#14110F') : []),
-          ...(c.moreDid ? [t(`และอีก ${c.moreDid} งาน ดูในรายละเอียด`, { size: 'xs', color: '#6F6761', margin: 'sm' })] : []),
-          ...list('สัปดาห์หน้า BookEase จะทำต่อ', c.next, '→', '#4A4440'),
-        ] },
+      type: 'bubble', size: 'kilo',
+      body: { type: 'box', layout: 'vertical', paddingAll: '18px', contents: [
+        { type: 'box', layout: 'horizontal', contents: [
+          { type: 'text', contents: [{ type: 'span', text: 'book', color: '#0A0A0A', weight: 'bold' }, { type: 'span', text: 'ease', color: '#2D55EB', weight: 'bold' }], size: 'sm' },
+          t(`สัปดาห์ที่ ${c.week}`, { size: 'xs', color: '#8A827B', align: 'end' })] },
+        t(c.headline, { size: 'xl', weight: 'bold', color: c.color, margin: 'md' }),
+        ...(c.from ? [t(c.from, { size: 'sm', weight: 'bold', color: c.color, margin: 'xs' })] : []),
+        ...(c.where ? [t(c.where, { size: 'xs', color: '#8A827B', margin: 'xs' })] : []),
+        ...(c.ladder.length ? [{ type: 'box', layout: 'vertical', margin: 'md', contents: c.ladder.map(rung) }] : []),
+        { type: 'box', layout: 'horizontal', margin: 'lg', paddingAll: '12px', cornerRadius: '12px', backgroundColor: '#F7F5F2', contents: [t(`📞 ${c.calls}`, { size: 'md', weight: 'bold', color: '#14110F' })] },
       ] },
-      footer: { type: 'box', layout: 'vertical', paddingStart: '20px', paddingEnd: '20px', paddingBottom: '20px', paddingTop: '0px', contents: [
-        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: 'ดูรายละเอียด', uri: c.url } }] },
+      footer: { type: 'box', layout: 'vertical', paddingStart: '18px', paddingEnd: '18px', paddingBottom: '18px', paddingTop: '0px', contents: [
+        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: c.cta, uri: c.url } }] },
     },
   };
 }
 
 // ── handler ─────────────────────────────────────────────────────────
 
-export { growthCard, growthFlex };
+export { growthCard, growthFlex, growthLadder };
 
 export default {
   async fetch(request, env, ctx) {
@@ -684,7 +703,7 @@ export default {
         const w = Math.min(Math.max(parseInt(url.searchParams.get('w') || '800', 10) || 800, 200), 1600);
         const res = await fetch(`${PLACES}/${name}/media?maxWidthPx=${w}&key=${env.GOOGLE_PLACES_KEY}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
         if (!res.ok) { console.error('[maps-report] photo', res.status, name.slice(0, 80)); return json({ error: 'photo_unavailable' }, 502, origin); }
-        return new Response(res.body, { headers: { 'Content-Type': res.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
+        return new Response(res.body, { headers: { ...cors(origin), 'Content-Type': res.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
       }
 
       // BookEase Growth weekly report data for one tracked shop (read-only).
