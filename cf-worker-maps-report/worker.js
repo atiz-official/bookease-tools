@@ -35,8 +35,10 @@
  */
 
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
+import * as pay from './growth-pay.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
+const PAY_CRON = '*/10 * * * *'; // payment re-check (must match wrangler.toml)
 const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
 // Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
 // Checked against the real Google Maps app on 2026-11-14:
@@ -686,6 +688,26 @@ export default {
     if (!env.GOOGLE_PLACES_KEY) return json({ error: 'server_misconfigured' }, 500, origin);
 
     try {
+      // BookEase Growth payments (growth-pay.js). Off unless GROWTH_PAY=on and the Xendit collect key is set.
+      if (request.method === 'POST' && url.pathname === '/growth/checkout') {
+        let b = {};
+        try { b = await request.json(); } catch (e) { console.error('[pay] checkout body', e); return json({ error: 'bad_body' }, 400, origin); }
+        const r = await pay.checkout(env, { placeId: b.placeId, tier: b.tier, shopName: b.shopName, returnUrl: b.returnUrl });
+        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
+      }
+      if (request.method === 'GET' && url.pathname === '/growth/order') {
+        const r = await pay.orderStatus(env, url.searchParams.get('id') || '');
+        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
+      }
+      if (request.method === 'POST' && url.pathname === '/growth/xendit-webhook') {
+        const r = await pay.webhook(env, request);
+        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
+      }
+      if (request.method === 'GET' && url.pathname === '/growth/orders') {
+        const r = await pay.listOrders(env, request);
+        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
+      }
+
       if (request.method === 'GET' && url.pathname === '/view') {
         const placeId = url.searchParams.get('p') || '';
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
@@ -821,6 +843,10 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
+    if (event.cron === PAY_CRON) {
+      if (pay.payEnabled(env)) ctx.waitUntil(pay.sweep(env).catch((e) => console.error('[pay] sweep failed', e && e.stack || e)));
+      return;
+    }
     if (!env.GOOGLE_PLACES_KEY || !env.REPORTS) { console.error('[growth] tick: missing key or KV'); return; }
     ctx.waitUntil(growthTick(env).catch((e) => console.error('[growth] tick failed', e && e.stack || e)));
   },
