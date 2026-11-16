@@ -79,19 +79,20 @@ function thWhen(iso) {
 }
 
 const TIERS = {
-  1000: { name: 'เพิ่มการมองเห็นให้ร้าน', items: [['📍', 'ดูแล Google Maps'], ['📱', 'เว็บร้าน กดจอง/โทรได้'], ['📢', 'โปรโมทออนไลน์/ออฟไลน์'], ['📊', 'สรุปทาง LINE ทุกสัปดาห์']] },
-  2000: { name: 'น่าสนใจ น่าเชื่อถือ', items: [['✅', 'ได้ทุกอย่างใน 1,000'], ['⭐', 'ระบบช่วยขอรีวิว'], ['🖼️', 'ลงรูปที่ร้านส่งมาทุกเดือน'], ['🌏', 'เว็บร้าน 8 ภาษา']] },
-  3000: { name: 'โปรโมทเข้มข้น', items: [['✅', 'ได้ทุกอย่างใน 2,000'], ['🏅', 'ป้ายร้านยืนยันแล้ว'], ['👑', 'ตำแหน่งร้านแนะนำ'], ['📣', 'ช่วยตั้งโฆษณาให้ 1 แคมเปญ/เดือน']] },
+  1000: { name: 'ให้ลูกค้าแถวร้านเจอคุณก่อน', items: [['📍', 'ลูกค้าเจอร้านบน Google ง่ายขึ้น'], ['📱', 'มีเว็บร้าน กดโทร/จองได้ทันที'], ['📊', 'เราโปรโมทให้ สรุปผลทุกสัปดาห์']] },
+  2000: { name: 'ให้ลูกค้าเลือกร้านคุณ', items: [['✅', 'ได้ทุกอย่างใน 1,000'], ['⭐', 'รีวิวและรูปเพิ่ม ร้านน่าเลือกขึ้น'], ['🌏', 'ลูกค้าต่างชาติอ่านหน้าร้านได้']] },
+  3000: { name: 'ให้ร้านเด่นกว่าร้านอื่น', items: [['✅', 'ได้ทุกอย่างใน 2,000'], ['🏅', 'ป้ายร้านยืนยันแล้ว + ร้านแนะนำ'], ['📣', 'เราตั้งโฆษณาให้ 1 แคมเปญ/เดือน']] },
 };
 
-// Recommend 2,000 when reviews are the gap (fewer than half of the shops customers see first, or under 30); else 1,000.
-function recommend(shop, aheadPlaces) {
-  const lead = aheadPlaces.reduce((m, p) => Math.max(m, p.reviews || 0), 0);
-  const mine = shop.reviews || 0;
-  if (mine < 30 || (lead && mine < lead / 2)) {
-    return { price: 2000, why: lead ? `รีวิวร้านคุณ ${mine} · ร้านที่ลูกค้าเห็นก่อนมี ${lead} → ต้องเพิ่มรีวิว` : `รีวิวร้านคุณยังน้อย (${mine}) → ต้องเพิ่มรีวิว` };
+// Recommend by the shop's real problem:
+// customers don't find the shop yet (rank from the area hub worse than 3, or top-3 in under 2/3 of the points) → 1,000 (be found first);
+// customers already find it → 2,000 (be chosen: reviews, photos, other languages).
+function recommend(top3, total, hubRank, hub) {
+  const found = hubRank && hubRank <= 3 && top3 >= Math.ceil(total * 2 / 3);
+  if (!found) {
+    return { price: 1000, why: hubRank ? `คนที่ค้นจาก ${hub} ยังเห็นร้านคุณอันดับ ${hubRank} → ทำให้ลูกค้าเจอร้านก่อน` : `คนที่ค้นจาก ${hub} ยังไม่เห็นร้านคุณ → ทำให้ลูกค้าเจอร้านก่อน` };
   }
-  return { price: 1000, why: 'ร้านมีรีวิวดีแล้ว → เพิ่มการมองเห็นก่อน' };
+  return { price: 2000, why: 'ลูกค้าเจอร้านคุณแล้ว → ทำให้ลูกค้าเลือกร้านคุณ' };
 }
 
 async function load() {
@@ -120,7 +121,7 @@ function render(r) {
   const top3 = k.top3Count || 0, total = (k.points || []).length || 9;
   const hubRank = k.hubRank && k.hubRank <= maxRank ? k.hubRank : null;
   const ahead = (k.ahead || []).map((id) => places[id]).filter((p) => p && p.id !== s.id);
-  const rec = recommend(s, ahead);
+  const rec = recommend(top3, total, hubRank, hub);
   const t = TIERS[rec.price];
   const first = ahead[0];
   const order = `เริ่มเลย · แพ็กเกจ ${rec.price.toLocaleString()} บาท/เดือน\nร้าน: ${s.name}\nรหัสร้าน: ${s.id}`;
