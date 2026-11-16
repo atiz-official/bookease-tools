@@ -5,7 +5,12 @@
 //
 //   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --cat salon --area thaphra [--buildings <id>,<id>] [--since 2026-11-16]
 //   node growth-admin.mjs track-building <placeId> --name "Aqua Residences" --status sample|approved|live
-//   node growth-admin.mjs log <placeId> --at 2026-11-15 --what "…" [--where "…"] [--minutes 5] [--evidence https://…]
+//   node growth-admin.mjs log <placeId> --at 2026-11-15 --what "…" [--short "…"] [--where "…"] [--minutes 5] [--evidence https://…]
+//   node growth-admin.mjs plan <placeId> --what "…" [--short "…"]        (next week's work, shown on the card as planned)
+//   node growth-admin.mjs plan-done <placeId> <n> [--evidence https://…]   (planned item n is done → moves to the log today)
+//   node growth-admin.mjs plan-clear <placeId>
+//
+// --short = the few words shown on the weekly LINE card (e.g. "โพสต์โปรโมตร้าน 1 ครั้ง"); --what = the full line on the report page.
 //   node growth-admin.mjs show <placeId>
 //   node growth-admin.mjs untrack <placeId>
 //
@@ -95,18 +100,41 @@ try {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(at)) throw new Error('--at must be YYYY-MM-DD');
     if (f.evidence && !/^https:\/\//.test(f.evidence)) throw new Error('--evidence must be an https link');
     const log = kvGet(`g/log/${id}`) || [];
-    log.push({ at, what: f.what, where: f.where || '', minutes: f.minutes ? Number(f.minutes) : null, evidence: f.evidence || '' });
+    log.push({ at, what: f.what, short: f.short || '', where: f.where || '', minutes: f.minutes ? Number(f.minutes) : null, evidence: f.evidence || '' });
     log.sort((a, b) => a.at.localeCompare(b.at));
     kvPut(`g/log/${id}`, log);
     console.log(`logged (${log.length} entries)`, log[log.length - 1]);
+  } else if (cmd === 'plan') {
+    const id = placeId(rawId);
+    if (!f.what) throw new Error('--what is required');
+    if (!kvGet(`g/shop/${id}`)) throw new Error('track the shop first');
+    const plan = kvGet(`g/plan/${id}`) || [];
+    plan.push({ what: f.what, short: f.short || '', added: today() });
+    kvPut(`g/plan/${id}`, plan);
+    console.log('planned:', plan.map((x, i) => `${i + 1}. ${x.short || x.what}`).join(' | '));
+  } else if (cmd === 'plan-done') {
+    const id = placeId(rawId);
+    const n = Number(rest[0]);
+    const plan = kvGet(`g/plan/${id}`) || [];
+    if (!(n >= 1 && n <= plan.length)) throw new Error(`n must be 1…${plan.length}`);
+    if (f.evidence && !/^https:\/\//.test(f.evidence)) throw new Error('--evidence must be an https link');
+    const [item] = plan.splice(n - 1, 1);
+    const log = kvGet(`g/log/${id}`) || [];
+    log.push({ at: today(), what: item.what, short: item.short, where: '', minutes: null, evidence: f.evidence || '' });
+    kvPut(`g/log/${id}`, log); kvPut(`g/plan/${id}`, plan);
+    console.log('done → log:', item.short || item.what);
+  } else if (cmd === 'plan-clear') {
+    const id = placeId(rawId);
+    kvPut(`g/plan/${id}`, []);
+    console.log('plan cleared');
   } else if (cmd === 'show') {
     const id = placeId(rawId);
-    for (const k of ['shop', 'log', 'hist', 'counts']) console.log(`── g/${k}/${id}\n`, JSON.stringify(kvGet(`g/${k}/${id}`), null, 1));
+    for (const k of ['shop', 'log', 'plan', 'hist']) console.log(`── g/${k}/${id}\n`, JSON.stringify(kvGet(`g/${k}/${id}`), null, 1));
   } else if (cmd === 'untrack') {
     const id = placeId(rawId);
     console.log('index size', setIndex(id, '', true), '(records kept; re-track to resume)');
   } else {
-    console.log('commands: track-shop | track-building | log | show | untrack  (see the top of this file)');
+    console.log('commands: track-shop | track-building | log | plan | plan-done | plan-clear | show | untrack  (see the top of this file)');
     process.exitCode = 1;
   }
 } catch (e) {

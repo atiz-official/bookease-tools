@@ -117,7 +117,7 @@ function g9(snap, i, cap) {
     const cls = r == null ? 'no' : r <= 3 ? 't3' : r <= 10 ? 't10' : 'far';
     return `<span class="${cls}${k === 4 ? ' c' : ''}" title="${r == null ? `ไม่ติด ${snap.maxRank} อันดับแรก` : `อันดับ ${r}`}">${r == null ? '–' : r}</span>`;
   }).join('');
-  return `<div><div class="g9">${cells}</div><div class="gcap">${cap || (s.m >= 1000 ? `จุดห่างกัน ${s.m / 1000} กม.` : `จุดห่างกัน ${s.m} ม.`)}</div></div>`;
+  return `<div><div class="g9">${cells}</div><div class="gcap">${cap || (s.m >= 1000 ? `ห่างกัน ${s.m / 1000} กม.` : `ห่างกัน ${s.m} ม.`)}</div></div>`;
 }
 
 function spark(hist, i) {
@@ -126,7 +126,7 @@ function spark(hist, i) {
   const w = 220, h = 46, step = w / (vals.length - 1);
   const pts = vals.map((v, k) => `${(k * step).toFixed(1)},${(h - 6 - (v / 9) * (h - 12)).toFixed(1)}`).join(' ');
   const last = pts.split(' ').pop().split(',');
-  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="จำนวนจุดที่ติด 3 อันดับแรก แต่ละสัปดาห์: ${vals.join(', ')}">
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="จำนวนพื้นที่ค้นหาที่เจอร้านคุณ แต่ละสัปดาห์: ${vals.join(', ')}">
     <line x1="0" y1="${h - 6}" x2="${w}" y2="${h - 6}" stroke="#ECE7E2"/><polyline points="${pts}" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linejoin="round"/>
     <circle cx="${last[0]}" cy="${last[1]}" r="3.6" fill="#15803D"/></svg>`;
 }
@@ -152,21 +152,21 @@ function progress(hist) {
     return `<tr><td>${label}</td><td>${fmt(a)}</td><td><b>${fmt(b)}</b>${chg}</td></tr>`;
   };
   const of9 = (v) => `${v}`;
-  const rk = (v) => (v == null ? `ไม่อยู่ใน ${last.maxRank} ร้านแรก` : `ร้านที่ ${v}`);
+  const rk = (v) => (v == null ? `ไม่อยู่ใน ${last.maxRank} ร้านแรก` : `อันดับ ${v}`);
   const n = (v) => (v == null ? '–' : `${v}`);
   const rows = [
-    row('คนค้นแถวร้าน เห็นร้านคุณใน 3 ร้านแรก (กี่จุด จาก 9 จุด)', first.spacings[0].top3, last.spacings[0].top3, of9, 'count'),
-    row('คนที่อยู่ไกลออกไป 2 กม. เห็นร้านคุณใน 3 ร้านแรก (กี่จุด จาก 9 จุด)', first.spacings[1].top3, last.spacings[1].top3, of9, 'count'),
+    row('ใกล้ร้าน เจอร้านคุณ (ใน 9 พื้นที่ค้นหา)', first.spacings[0].top3, last.spacings[0].top3, of9, 'count'),
+    row('ไกลออกไป 2 กม. เจอร้านคุณ (ใน 9 พื้นที่ค้นหา)', first.spacings[1].top3, last.spacings[1].top3, of9, 'count'),
   ];
-  if (first.hub && last.hub) rows.push(row(`คนค้นจาก ${esc(last.hub.name)} เห็นร้านคุณเป็น`, hub(first), hub(last), rk, 'rank'));
+  if (first.hub && last.hub) rows.push(row(`ค้นแถว ${esc(last.hub.name)} ร้านคุณอยู่`, hub(first), hub(last), rk, 'rank'));
   if (first.reviews != null && last.reviews != null) rows.push(row('รีวิวร้านคุณใน Google', first.reviews, last.reviews, n, 'count'));
   const weeks = Math.max(1, Math.round(daysBetween(bkk(first.at), bkk(last.at)) / 7));
   const wideVals = hist.map((h) => h.spacings[1].top3);
   return `<section class="card"><h2>ร้านคุณดีขึ้นไหม</h2><p class="lead">เทียบครั้งแรกที่เราลองค้น กับครั้งล่าสุด (ห่างกัน ${weeks} สัปดาห์)</p>
     <table class="prog"><thead><tr><th></th><th>ครั้งแรก<br>${thDate(bkk(first.at))}</th><th>ล่าสุด<br>${thDate(bkk(last.at))}</th></tr></thead><tbody>${rows.join('')}</tbody></table>
     <div class="vs">${g9(first, 1, `ครั้งแรก ${thDate(bkk(first.at))}`)}<span class="arrow" aria-hidden="true">→</span>${g9(last, 1, `ล่าสุด ${thDate(bkk(last.at))}`)}</div>
-    <p class="legend" style="margin-top:6px">9 ช่อง คือ 9 จุดที่เราลองค้น ห่างกันจุดละ 2 กม. · ช่องกลางกรอบดำคือร้านคุณ · ตัวเลขคือร้านคุณขึ้นเป็นร้านที่เท่าไร · สีเขียวเข้มคือขึ้นใน 3 ร้านแรก</p>
-    <div class="trend">${spark(hist, 1)}<small>แต่ละสัปดาห์ ร้านคุณขึ้นใน 3 ร้านแรกกี่จุด (คนที่อยู่ไกลออกไป 2 กม.): ${wideVals.join(' → ')}</small></div></section>`;
+    <p class="legend" style="margin-top:6px">9 ช่อง คือ 9 พื้นที่ค้นหา ห่างกัน 2 กม. · ช่องกลางกรอบดำคือร้านคุณ · ตัวเลขคืออันดับร้านคุณ · สีเขียวเข้มคือเจอร้านคุณใน 3 ร้านแรก</p>
+    <div class="trend">${spark(hist, 1)}<small>แต่ละสัปดาห์ เจอร้านคุณกี่พื้นที่ค้นหา (ไกลออกไป 2 กม.): ${wideVals.join(' → ')}</small></div></section>`;
 }
 
 function render(d) {
@@ -183,10 +183,10 @@ function render(d) {
   const firstCheck = 'เราจะลองค้นครั้งแรกตอนร้านเปิด';
   const views7 = sum(d.counts, from7, today, ['view']);
   const contacts7 = sum(d.counts, from7, today, CONTACT);
-  const L1 = 'คนค้นหาแถวร้าน เห็นร้านคุณใน 3 ร้านแรก', L2 = 'คนที่อยู่ไกลออกไป 2 กม. เห็นร้านคุณใน 3 ร้านแรก';
+  const L1 = 'ใกล้ร้าน เจอร้านคุณ', L2 = 'ไกลออกไป 2 กม. เจอร้านคุณ';
   const stats = [
-    last ? stat(L1, `${last.spacings[0].top3}<i> จาก 9 จุด</i>`, delta(last.spacings[0].top3, prev && prev.spacings[0].top3)) : na(L1, firstCheck),
-    last ? stat(L2, `${last.spacings[1].top3}<i> จาก 9 จุด</i>`, delta(last.spacings[1].top3, prev && prev.spacings[1].top3)) : na(L2, firstCheck),
+    last ? stat(L1, `${last.spacings[0].top3}<i> ใน 9 พื้นที่ค้นหา</i>`, delta(last.spacings[0].top3, prev && prev.spacings[0].top3)) : na(L1, firstCheck),
+    last ? stat(L2, `${last.spacings[1].top3}<i> ใน 9 พื้นที่ค้นหา</i>`, delta(last.spacings[1].top3, prev && prev.spacings[1].top3)) : na(L2, firstCheck),
     last && last.reviews != null ? stat('รีวิวร้านคุณใน Google', `${last.reviews}`, first && first !== last ? `<span class="d${last.reviews > first.reviews ? ' up' : ''}">${last.reviews > first.reviews ? `↑ เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม` : 'เท่ากับวันเริ่ม'}</span>` : '<span class="d">สัปดาห์แรก ไว้เทียบครั้งต่อไป</span>') : na('รีวิวร้านคุณใน Google', firstCheck),
     stat('คนกดโทร กดนำทาง หรือติดต่อร้าน (7 วันล่าสุด)', `${contacts7}`, `<span class="d">คนเปิดดูหน้าร้าน ${views7} ครั้ง</span>`),
   ].join('');
@@ -201,9 +201,9 @@ function render(d) {
   const ch = [];
   if (last) {
     ch.push(`<div class="ch"><b>Google Maps · เมื่อคนค้นคำว่า "${esc(last.keyword)}"</b><span class="pill on">ลองค้นทุกสัปดาห์</span>
-      <small>ลองค้นล่าสุด ${thDateY(bkk(last.at))} · คนค้นแถวร้าน เห็นร้านคุณใน 3 ร้านแรก ${last.spacings[0].top3} จาก 9 จุด${last.hub ? ` · คนค้นจาก ${esc(last.hub.name)} ${last.hub.rank ? `เห็นร้านคุณเป็นร้านที่ ${last.hub.rank}` : `ไม่เห็นร้านคุณใน ${last.maxRank} ร้านแรก`}` : ''}</small>
-      <div class="grids">${g9(last, 0, 'แถวร้าน (ห่างกันจุดละ 500 ม.)')}${g9(last, 1, 'ไกลออกไป (ห่างกันจุดละ 2 กม.)')}</div>
-      <p class="legend">9 ช่อง คือ 9 จุดที่เราลองค้น · ช่องกลางกรอบดำคือร้านคุณ · ตัวเลขคือร้านคุณขึ้นเป็นร้านที่เท่าไร · สีเขียวเข้มคือขึ้นใน 3 ร้านแรก · ขีด (–) คือไม่เจอร้านคุณใน ${last.maxRank} ร้านแรก</p></div>`);
+      <small>ลองค้นล่าสุด ${thDateY(bkk(last.at))} · ใกล้ร้าน ${last.spacings[0].top3 === 9 ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : `เจอร้านคุณ ${last.spacings[0].top3} ใน 9 พื้นที่ค้นหา`}${last.hub ? ` · ค้นแถว ${esc(last.hub.name)} ${last.hub.rank ? `ร้านคุณอยู่อันดับ ${last.hub.rank}` : `ยังไม่เจอร้านคุณใน ${last.maxRank} ร้านแรก`}` : ''}</small>
+      <div class="grids">${g9(last, 0, 'ใกล้ร้าน (ห่างกัน 500 ม.)')}${g9(last, 1, 'ไกลออกไป (ห่างกัน 2 กม.)')}</div>
+      <p class="legend">9 ช่อง คือ 9 พื้นที่ค้นหา · ช่องกลางกรอบดำคือร้านคุณ · ตัวเลขคืออันดับร้านคุณ · สีเขียวเข้มคือเจอร้านคุณใน 3 ร้านแรก · ขีด (–) คือไม่เจอร้านคุณใน ${last.maxRank} ร้านแรก</p></div>`);
   } else {
     ch.push(`<div class="ch"><b>Google Maps</b><span class="pill">ยังวัดไม่ได้</span><small>${firstCheck} (ตอนร้านปิด Google จะดันร้านลง ผลจะไม่ตรง)</small></div>`);
   }
@@ -269,43 +269,54 @@ function wrapLines(ctx, text, maxW) {
   return lines;
 }
 async function cardBlob(c) {
-  // Same layout as the LINE flex card: coloured top with the one piece of news, one more line, one button.
+  // Same layout as the LINE flex card: result on the tone colour → what BookEase did → what we do next → one button.
   await Promise.all(['400 30px Anuphan', '500 30px Anuphan', '700 60px Anuphan', '800 36px Inter'].map((f) => document.fonts.load(f)));
   const TONES = { up: ['#E6F4EA', '#0F5F2C'], down: ['#FDECEA', '#9F1D1D'], same: ['#F1EEEA', '#3F3935'], start: ['#EEF2FD', '#1E3A8A'], wait: ['#EEF2FD', '#1E3A8A'] };
   const [bg, ink] = TONES[c.tone] || TONES.same;
   const W = 1040, P = 56, canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+  let topH = 0;
   const paint = (draw) => {
     let y = P;
-    const text = (str, font, color, lh) => {
+    const text = (str, font, color, lh, x = P) => {
       ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      const lines = wrapLines(ctx, str, W - 2 * P);
-      lines.forEach((l, i) => draw && ctx.fillText(l, P, y + i * lh));
+      const lines = wrapLines(ctx, str, W - P - x);
+      lines.forEach((l, i) => draw && ctx.fillText(l, x, y + i * lh));
       y += lines.length * lh;
     };
-    // top: the news, on the tone colour
-    const topStart = 0;
-    if (draw) { ctx.fillStyle = bg; ctx.fillRect(0, topStart, W, topH); }
+    const item = (mark, markColor, str, color) => {
+      const top = y;
+      if (draw) { ctx.font = '700 30px Anuphan'; ctx.fillStyle = markColor; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(mark, P, y); }
+      text(str, '400 30px Anuphan', color, 44, P + 44);
+      y = Math.max(y, top + 44) + 8;
+    };
+    if (draw) { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, topH); }
     if (draw) { ctx.font = '800 36px Inter'; ctx.textBaseline = 'top'; ctx.textAlign = 'left'; ctx.fillStyle = '#0A0A0A'; ctx.fillText('book', P, y); const bw = ctx.measureText('book').width; ctx.fillStyle = '#2D55EB'; ctx.fillText('ease', P + bw, y); }
     y += 62;
     text(`${c.name} · สัปดาห์ที่ ${c.week}`, '500 28px Anuphan', ink, 40);
     y += 14;
     text(c.headline, '700 60px Anuphan', ink, 78);
     y += 8;
-    text(c.sub, '400 30px Anuphan', ink, 44);
-    y += P;
-    const topEnd = y;
-    // one more line, then the button
+    text(c.sub, '500 32px Anuphan', ink, 46);
+    if (c.where) text(c.where, '400 28px Anuphan', ink, 42);
+    y += P - 8;
+    const top = y;
     y += 44;
-    text(c.second, '500 34px Anuphan', '#14110F', 50);
-    y += 40;
+    text(c.second, '700 36px Anuphan', '#14110F', 50);
+    if (c.did.length) {
+      y += 36; text('สัปดาห์นี้ BookEase ช่วยร้านคุณ', '700 30px Anuphan', '#14110F', 44); y += 8;
+      for (const x of c.did) item('✓', '#15803D', x, '#14110F');
+      if (c.moreDid) text(`และอีก ${c.moreDid} งาน ดูในรายละเอียด`, '400 26px Anuphan', '#6F6761', 38, P + 44);
+    }
+    y += 28; text('สัปดาห์หน้า BookEase จะทำต่อ', '700 30px Anuphan', '#14110F', 44); y += 8;
+    for (const x of c.next) item('→', '#6F6761', x, '#3F3935');
+    y += 32;
     if (draw) {
       ctx.fillStyle = '#2D55EB'; ctx.beginPath(); ctx.roundRect(P, y, W - 2 * P, 96, 48); ctx.fill();
       ctx.font = '700 34px Anuphan'; ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('ดูรายละเอียด (ลิงก์ในแชท)', W / 2, y + 50);
     }
     y += 96 + P;
-    return [y, topEnd];
+    return [y, top];
   };
-  let topH = 0;
   const [H, top] = paint(false);
   topH = top;
   canvas.width = W; canvas.height = H;
@@ -322,8 +333,8 @@ function lineText(d, week, from7, views7, contacts7) {
   lines.push('', 'ผลที่นับได้');
   const was = (now, before) => (before == null ? ' (สัปดาห์แรก ไว้เทียบครั้งต่อไป)' : ` (สัปดาห์ก่อน ${before})`);
   if (last) {
-    lines.push(`• คนค้นหาแถวร้าน เห็นร้านคุณใน 3 ร้านแรก ${last.spacings[0].top3} จาก 9 จุด${was(last.spacings[0].top3, prev && prev.spacings[0].top3)}`);
-    lines.push(`• คนที่อยู่ไกลออกไป 2 กม. เห็นร้านคุณใน 3 ร้านแรก ${last.spacings[1].top3} จาก 9 จุด${was(last.spacings[1].top3, prev && prev.spacings[1].top3)}`);
+    lines.push(`• ใกล้ร้าน เจอร้านคุณ ${last.spacings[0].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[0].top3, prev && prev.spacings[0].top3)}`);
+    lines.push(`• ไกลออกไป 2 กม. เจอร้านคุณ ${last.spacings[1].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[1].top3, prev && prev.spacings[1].top3)}`);
     if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
   } else lines.push('• ลำดับร้านใน Google: ยังวัดไม่ได้ เราจะลองค้นครั้งแรกตอนร้านเปิด');
   lines.push(`• คนเปิดดูหน้าร้าน ${views7} ครั้ง · กดโทร นำทาง หรือติดต่อร้าน ${contacts7} ครั้ง (7 วันล่าสุด)`);
