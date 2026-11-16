@@ -52,6 +52,17 @@ h2{font:700 19px Anuphan;margin-bottom:8px}
 .gcap{font-size:12.5px;color:var(--ink-3);margin-top:4px;text-align:center}
 .legend{grid-column:1/-1;font-size:12.5px;color:var(--ink-3)}
 .spark{grid-column:1/-1;margin-top:6px}
+.prog{width:100%;border-collapse:collapse;font-size:14.5px}
+.prog th{font:600 12.5px Anuphan;color:var(--ink-3);text-align:right;padding:0 0 6px}
+.prog th:first-child,.prog td:first-child{text-align:left}
+.prog td{padding:9px 0;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+.prog td b{font:700 15px Inter}
+.prog .chg{display:block;font-size:12.5px;color:var(--ink-3)}
+.prog .chg.up{color:var(--good)}.prog .chg.down{color:var(--bad)}
+.vs{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.vs .arrow{font:700 20px Inter;color:var(--ink-3)}
+.trend{margin-top:12px}
+.trend small{display:block;font-size:12.5px;color:var(--ink-3)}
 .staff{border:2px dashed var(--line)}
 textarea{width:100%;min-height:230px;font:15px/1.55 Anuphan;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--ground);color:var(--ink);resize:vertical}
 button{font:700 15px Anuphan;border:0;border-radius:999px;padding:11px 18px;background:var(--accent);color:#fff;cursor:pointer;margin-top:10px}
@@ -97,13 +108,13 @@ function sum(counts, from, to, acts, srcTest) {
 }
 const addDays = (day, n) => new Date(Date.parse(day) + n * 86400e3).toISOString().slice(0, 10);
 
-function g9(snap, i) {
+function g9(snap, i, cap) {
   const s = snap.spacings[i];
   const cells = s.ranks.map((r, k) => {
     const cls = r == null ? 'no' : r <= 3 ? 't3' : r <= 10 ? 't10' : 'far';
     return `<span class="${cls}${k === 4 ? ' c' : ''}" title="${r == null ? `ไม่ติด ${snap.maxRank} อันดับแรก` : `อันดับ ${r}`}">${r == null ? '–' : r}</span>`;
   }).join('');
-  return `<div><div class="g9">${cells}</div><div class="gcap">${s.m >= 1000 ? `จุดห่างกัน ${s.m / 1000} กม.` : `จุดห่างกัน ${s.m} ม.`}</div></div>`;
+  return `<div><div class="g9">${cells}</div><div class="gcap">${cap || (s.m >= 1000 ? `จุดห่างกัน ${s.m / 1000} กม.` : `จุดห่างกัน ${s.m} ม.`)}</div></div>`;
 }
 
 function spark(hist, i) {
@@ -115,6 +126,43 @@ function spark(hist, i) {
   return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="จำนวนจุดที่ติด 3 อันดับแรก แต่ละสัปดาห์: ${vals.join(', ')}">
     <line x1="0" y1="${h - 6}" x2="${w}" y2="${h - 6}" stroke="#ECE7E2"/><polyline points="${pts}" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linejoin="round"/>
     <circle cx="${last[0]}" cy="${last[1]}" r="3.6" fill="#15803D"/></svg>`;
+}
+
+/** "Since we started": first check vs latest, so the owner sees whether the shop moved up. */
+function progress(hist) {
+  const first = hist[0], last = hist[hist.length - 1];
+  if (!first) return '';
+  if (hist.length < 2) {
+    return `<section class="card"><h2>ผลตั้งแต่เริ่ม</h2><p class="lead" style="margin:0">ตรวจครั้งแรก ${thDateY(bkk(first.at))} เป็นจุดเริ่มต้น · ตรวจครั้งต่อไปประมาณ ${thDateY(addDays(bkk(first.at), 7))} แล้วจะเห็นว่าร้านขึ้นหรือลง</p></section>`;
+  }
+  const hub = (snap) => (snap.hub ? snap.hub.rank : undefined);
+  // higher = better for "points in top 3" and reviews; lower = better for a rank
+  const row = (label, a, b, fmt, higherIsBetter) => {
+    let chg = '<span class="chg">เท่าเดิม</span>';
+    if (a == null && b != null) chg = '<span class="chg up">เริ่มติดอันดับ</span>';
+    else if (a != null && b == null) chg = '<span class="chg down">หลุดอันดับ</span>';
+    else if (a != null && b != null && a !== b) {
+      const better = higherIsBetter ? b > a : b < a;
+      chg = `<span class="chg ${better ? 'up' : 'down'}">${better ? '↑ ดีขึ้น' : '↓ ลดลง'} ${Math.abs(b - a)}</span>`;
+    }
+    return `<tr><td>${label}</td><td>${fmt(a)}</td><td><b>${fmt(b)}</b>${chg}</td></tr>`;
+  };
+  const of9 = (v) => `${v} / 9`;
+  const rk = (v) => (v == null ? `ไม่ติด ${last.maxRank}` : `อันดับ ${v}`);
+  const n = (v) => (v == null ? '–' : `${v}`);
+  const rows = [
+    row('ติด 3 อันดับแรก จุดรอบร้าน', first.spacings[0].top3, last.spacings[0].top3, of9, true),
+    row('ติด 3 อันดับแรก ย่านกว้าง 4 กม.', first.spacings[1].top3, last.spacings[1].top3, of9, true),
+  ];
+  if (first.hub && last.hub) rows.push(row(`ค้นจาก ${esc(last.hub.name)}`, hub(first), hub(last), rk, false));
+  if (first.reviews != null && last.reviews != null) rows.push(row('รีวิวบน Google', first.reviews, last.reviews, n, true));
+  const weeks = Math.max(1, Math.round(daysBetween(bkk(first.at), bkk(last.at)) / 7));
+  const wideVals = hist.map((h) => h.spacings[1].top3);
+  return `<section class="card"><h2>ผลตั้งแต่เริ่ม</h2><p class="lead">เทียบการตรวจครั้งแรกกับครั้งล่าสุด (${weeks} สัปดาห์)</p>
+    <table class="prog"><thead><tr><th></th><th>${thDate(bkk(first.at))}</th><th>${thDate(bkk(last.at))}</th></tr></thead><tbody>${rows.join('')}</tbody></table>
+    <div class="vs">${g9(first, 1, `ครั้งแรก ${thDate(bkk(first.at))}`)}<span class="arrow" aria-hidden="true">→</span>${g9(last, 1, `ล่าสุด ${thDate(bkk(last.at))}`)}</div>
+    <p class="legend" style="margin-top:6px">ย่านกว้าง 4 กม. · ตัวเลข = อันดับร้านเมื่อคนยืนค้นตรงจุดนั้น · เขียวเข้ม = 3 อันดับแรก</p>
+    <div class="trend">${spark(hist, 1)}<small>จำนวนจุดที่ติด 3 อันดับแรกในย่านกว้าง แต่ละสัปดาห์: ${wideVals.join(' → ')}</small></div></section>`;
 }
 
 function render(d) {
@@ -150,8 +198,7 @@ function render(d) {
     ch.push(`<div class="ch"><b>Google Maps · คำค้น "${esc(last.keyword)}"</b><span class="pill on">วัดทุกสัปดาห์</span>
       <small>ตรวจล่าสุด ${thDateY(bkk(last.at))} · ติด 3 อันดับแรก ${last.spacings[0].top3} จาก 9 จุดรอบร้าน${last.hub ? ` · ค้นจาก ${esc(last.hub.name)} ${last.hub.rank ? `ร้านอยู่อันดับ ${last.hub.rank}` : `ไม่ติด ${last.maxRank} อันดับแรก`}` : ''}</small>
       <div class="grids">${g9(last, 0)}${g9(last, 1)}</div>
-      <p class="legend">ตัวเลข = อันดับร้านเมื่อคนยืนค้นตรงจุดนั้น · กรอบดำ = หน้าร้าน · เขียวเข้ม = 3 อันดับแรก · “–” = ไม่ติด ${last.maxRank} อันดับแรก</p>
-      ${spark(hist, 0)}</div>`);
+      <p class="legend">ตัวเลข = อันดับร้านเมื่อคนยืนค้นตรงจุดนั้น · กรอบดำ = หน้าร้าน · เขียวเข้ม = 3 อันดับแรก · “–” = ไม่ติด ${last.maxRank} อันดับแรก</p></div>`);
   } else {
     ch.push(`<div class="ch"><b>Google Maps</b><span class="pill">ยังวัดไม่ได้</span><small>${firstCheck} (Google ดันร้านที่ปิดอยู่ลง จึงตรวจเฉพาะตอนร้านเปิด)</small></div>`);
   }
@@ -177,6 +224,7 @@ function render(d) {
     <header class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>รายงานโปรโมทร้าน</span></header>
     <div class="title"><h1>${esc(s.name)}</h1><p>สัปดาห์ที่ ${week} · เริ่ม ${thDateY(s.since)} · อัปเดต ${thDateY(today)}</p></div>
     <div class="stats">${stats}</div>
+    ${progress(hist)}
     <section class="card"><h2>งานที่เราทำให้ร้าน</h2>${logHtml}</section>
     <section class="card"><h2>ร้านคุณอยู่หน้าคนที่ไหนบ้าง</h2><p class="lead">ตัวเลขทั้งหมดมาจากระบบ ถ้ายังไม่มีข้อมูลจะเขียนว่า “ยังวัดไม่ได้” ถ้าวัดแล้วเป็นศูนย์จะแสดง 0</p><div class="chan">${ch.join('')}</div></section>
     ${STAFF ? `<section class="card staff"><h2>ข้อความ LINE วันจันทร์ (สำหรับทีม)</h2><textarea id="msg">${esc(lineText(d, week, from7, views7, contacts7))}</textarea><button id="copy">คัดลอกข้อความ</button> <span id="ok" hidden>คัดลอกแล้ว</span></section>` : ''}
