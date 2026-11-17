@@ -8,19 +8,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Anuphan:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-@page{size:A4;margin:0}
+@page{size:A5;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#E9E5E1;font-family:Anuphan,Inter,sans-serif;color:#14110F;-webkit-font-smoothing:antialiased}
-.sheet{width:210mm;height:297mm;margin:0 auto;background:#fff;padding:18mm 16mm;display:flex;flex-direction:column;align-items:center;text-align:center}
-.logo{height:11mm}
-.photo{width:100%;height:62mm;border-radius:6mm;background:#F3F0EC center/cover;margin-top:10mm}
-h1{font:800 13mm/1.15 Anuphan;margin-top:8mm;text-wrap:balance}
-.sub{font:600 6mm/1.4 Anuphan;color:#4A4440;margin-top:3mm}
-#qr{margin-top:9mm;padding:5mm;border:1.2mm solid #2D55EB;border-radius:6mm;background:#fff}
-#qr img,#qr canvas{display:block;width:62mm!important;height:62mm!important}
-.scan{font:800 7.5mm/1.3 Anuphan;margin-top:6mm;text-wrap:balance}
-.url{font:700 5.2mm Inter;color:#2D55EB;margin-top:2mm;letter-spacing:.02em}
-.foot{margin-top:auto;font:600 4.4mm/1.5 Anuphan;color:#7A726C}
+body{background:#E9E5E1;font-family:Anuphan,Inter,sans-serif;color:#14110F;-webkit-font-smoothing:antialiased;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.sheet{width:148mm;height:210mm;margin:0 auto;background:#fff;padding:10mm 10mm 8mm;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center}
+.top img{height:7mm}
+.top small{font:600 3.3mm Anuphan;color:#7A726C;text-align:right}
+h1{font:800 8.6mm/1.15 Anuphan;margin-top:5mm;text-wrap:balance}
+.sub{font:600 4.1mm/1.45 Anuphan;color:#4A4440;margin-top:1.5mm}
+.photo{width:100%;height:44mm;border-radius:4mm;background:#F3F0EC center/cover;margin-top:4.5mm}
+.free{font:800 5.6mm/1.3 Anuphan;margin-top:4.5mm}
+.free span{display:block;font:500 3.7mm/1.45 Anuphan;color:#4A4440;margin-top:1mm}
+.offer{background:#EEF2FD;border-radius:3.5mm;padding:3.2mm 4mm;margin-top:3.5mm}
+.offer b{font:800 5.6mm Inter;color:#2D55EB}.offer b small{font:700 3.6mm Anuphan;color:#2D55EB}
+.offer p{font:500 3.6mm/1.45 Anuphan;color:#14110F;margin-top:.8mm}
+.offer em{display:block;font:700 3.4mm Anuphan;color:#4A4440;font-style:normal;margin-top:.8mm}
+.scan{display:grid;grid-template-columns:1fr 40mm;gap:4mm;align-items:center;margin-top:auto;border-top:.3mm solid #ECE7E2;padding-top:4mm}
+.scan strong{display:block;font:800 5mm/1.3 Anuphan;text-wrap:balance}
+.scan p{font:500 3.4mm/1.45 Anuphan;color:#4A4440;margin-top:1mm}
+.scan .url{font:700 3.6mm Inter;color:#2D55EB;margin-top:1.5mm}
+#qr{width:40mm;height:40mm;padding:2mm;border:.6mm solid #2D55EB;border-radius:3mm;background:#fff}
+#qr img,#qr canvas{display:block;width:100%!important;height:100%!important}
+.foot{font:600 3.1mm Anuphan;color:#7A726C;margin-top:3mm;text-align:center}
 .err{padding:30px;color:#B91C1C}
 @media print{body{background:#fff}.sheet{margin:0}}
 </style>
@@ -28,30 +38,48 @@ h1{font:800 13mm/1.15 Anuphan;margin-top:8mm;text-wrap:balance}
 <body>
 <div class="sheet" id="sheet"><p>กำลังเตรียมใบฝากร้าน…</p></div>
 <script>
-// One A4 sheet left at the shop: its own QR opens its sales kit. Print from the browser (A4, no margins).
+// A5 sheet left at the shop: its own QR opens its sales kit. Print from the browser at 100% (A5, no margins).
+// Wording: "โปรโมทร้านให้ฟรี" to open, "ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้" to close; no promise of more customers.
 const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 const qs = new URLSearchParams(location.search);
 const P = qs.get('p') || '', CAT = qs.get('c') || '', AREA = qs.get('a') || '';
 const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-async function load() {
-  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) throw new Error('bad_place');
-  const r = await fetch(API + '/place', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ placeId: P }) });
+const BUILDING = { ChIJPxz0o_iZ4jARqOODkDRBYCw: 'Aqua Residences' }; // same choice as the kit page
+const post = async (path, body) => {
+  const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const d = await r.json();
   if (!r.ok) throw new Error(d.error || r.status);
+  return d;
+};
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) throw new Error('bad_place');
+  const d = await post('/place', { placeId: P });
+  let building = BUILDING[P] || '';
+  if (!building && d.lat != null) {
+    const near = await post('/nearby', { lat: d.lat, lng: d.lng, type: 'lodging,hotel,apartment_building,apartment_complex,condominium_complex', radius: 800 })
+      .catch((e) => { console.error('[leave] nearby', e); return null; });
+    const m = (p) => Math.hypot((p.lng - d.lng) * 111320 * Math.cos(d.lat * Math.PI / 180), (p.lat - d.lat) * 110540);
+    const list = ((near && near.places) || []).filter((p) => (p.reviews || 0) >= 10).sort((x, y) => m(x) - m(y));
+    if (list[0]) building = list[0].name;
+  }
   const own = (d.photos || []).find((ph) => ph.by === d.name) || (d.photos || [])[0];
   const kit = new URL('https://radar.bookease.co/kit/');
   kit.searchParams.set('p', P); if (CAT) kit.searchParams.set('c', CAT); if (AREA) kit.searchParams.set('a', AREA);
   kit.searchParams.set('v', 'qr');
+  const name = esc(d.name), shopWord = /^ร้าน/.test(d.name) ? '' : 'ร้าน';
+  const inside = ['ผลตรวจการค้นหา', 'หน้าร้านตัวอย่าง', building ? `ตัวอย่างเมนู ${esc(building)}` : '', 'ตัวอย่างรายงานทาง LINE'].filter(Boolean).join(' · ');
   document.title = `ใบฝากร้าน · ${d.name}`;
   document.getElementById('sheet').innerHTML = `
-    <img class="logo" src="../../brand/bookease-logo.svg" alt="bookease">
-    <div class="photo" style="${own ? `background-image:url('${API}/photo?w=1200&name=${encodeURIComponent(own.name)}')` : ''}"></div>
-    <h1>${esc(d.name)}</h1>
+    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>สำหรับ${shopWord}${name}</small></div>
+    <h1>${shopWord}${name}</h1>
     <p class="sub">เราทำตัวอย่างหน้าร้านและการโปรโมตของร้านพี่มาให้ดูแล้ว</p>
-    <div id="qr" role="img" aria-label="QR เปิดชุดโปรโมตร้าน"></div>
-    <p class="scan">สแกนดูชุดโปรโมต${/^ร้าน/.test(d.name) ? "" : "ร้าน"}${esc(d.name)}</p>
-    <p class="url">radar.bookease.co</p>
-    <p class="foot">bookease · โปรโมทร้านให้ฟรี · 092-641-4296</p>`;
+    <div class="photo" style="${own ? `background-image:url('${API}/photo?w=1200&name=${encodeURIComponent(own.name)}')` : ''}"></div>
+    <p class="free">โปรโมทร้านให้ฟรี<span>ลงหน้าร้านในสมุดร้านของ bookease ให้ลูกค้าค้นเจอ กดโทร นำทางได้</span></p>
+    <div class="offer"><b>฿1,000 <small>/ เดือน · ถ้าอยากให้ทีมช่วยดูแลต่อ</small></b>
+      <p>ดูแล Google Maps · เว็บร้านพร้อมใช้ · เมนูคอนโดและโรงแรมใกล้ร้าน · รายงานทาง LINE ทุกสัปดาห์</p>
+      <em>ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้</em></div>
+    <div class="scan"><div><strong>สแกนดูชุดโปรโมต${shopWord}${name}</strong><p>${inside}</p><p class="url">radar.bookease.co</p></div><div id="qr" role="img" aria-label="QR เปิดชุดโปรโมตร้าน"></div></div>
+    <p class="foot">bookease · LINE @bookease · 092-641-4296</p>`;
   new QRCode(document.getElementById('qr'), { text: kit.toString(), width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
 }
 load().catch((e) => { console.error('[leave] load', e); document.getElementById('sheet').innerHTML = '<p class="err">เตรียมใบฝากร้านไม่ได้ ลองเปิดลิงก์ใหม่อีกครั้ง</p>'; });
