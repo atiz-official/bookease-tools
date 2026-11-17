@@ -101,8 +101,9 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .bld .mk:hover{text-decoration:underline;text-underline-offset:3px}
 .vol-note{margin-top:8px;font-size:13.5px;line-height:1.5;color:var(--ink-3);max-width:640px}
 .vol-note b{color:var(--ink-2);font-weight:700}
-.vol-out{list-style:none;padding-left:2px}
-.vol-out li::before{content:"· "}
+.vol-parts{max-width:320px;line-height:1.7;margin-bottom:4px}
+.vol-parts div{display:flex;justify-content:space-between;gap:12px}
+.vol-parts b{color:var(--ink-2);font-weight:700}
 .vol .num{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:.95;color:var(--blue)}
 .found{font-size:22px;font-weight:800;line-height:1.3}
 .found .bad{color:var(--bad)} .found .good{color:var(--good)} .found .wait{color:#B45309}
@@ -474,21 +475,33 @@ const NEAR_ME_BKK = {
   clinic: { k: 'คลินิกความงามใกล้ฉัน', v: 7300 }, // คลินิกความงาม/คลินิกเสริมความงาม ใกล้ฉัน
   tattoo: { k: 'ร้านสักใกล้ฉัน', v: 8100 },
 };
+// Art 2026-11-17: count "near me" too. Google has it for all of Bangkok only, so each area gets a share in
+// proportion to its own area-name searches: near-me ≈ area searches × (Bangkok near-me ÷ all area-name
+// searches we hold for that type, every area + district in areas-data.js, pulled 2026-11-14).
+// Shown with "≈" and split from the measured part. Denominators (sum of `total` per type):
+// massage 57,070 + 5,210 · salon 3,900 + 620 · barber 19,030 + 1,460 · nail 5,280 + 230 · clinic 2,550 + 300 · tattoo 1,450 + 40.
+// Our areas do not cover all of Bangkok, so this leans high; it is an estimate, never a measurement.
+const NAMED_BKK = { massage: 62280, salon: 4520, barber: 20490, nail: 5510, clinic: 2850, tattoo: 1490 };
+function nearMeShare(v) {
+  const nm = NEAR_ME_BKK[cat().id], all = NAMED_BKK[cat().id];
+  if (!v || !nm || !all) return 0;
+  return Math.round((v.total * nm.v / all) / 10) * 10;
+}
+function volTotal(v) { return v.total + nearMeShare(v); }
 function volNote(v) {
   const rows = (v.rows || []).filter((r) => r && r.k);
   if (!rows.length) return '';
-  // Art 2026-11-17: shortest words, one idea per line, matching how each number is got:
-  // area searches = Keyword Planner (this number) · "near me" = Bangkok only, never per area ·
-  // the shop's own name = only from the shop's Google Business Profile, once the shop links it.
-  const nm = NEAR_ME_BKK[cat().id];
-  return `<div class="vol-note"><p>นับเฉพาะคนพิมพ์ "${esc(rows[0].k)}" และคำคล้ายกัน</p>
-    <p>ยังไม่รวม</p><ul class="vol-out"><li>"${esc(nm ? nm.k : 'ใกล้ฉัน')}"</li><li>คนค้นชื่อร้านคุณ · ดูได้เมื่อเชื่อม Google ร้าน</li></ul></div>`;
+  // shortest words, one idea per line: measured area searches · estimated near me · what is still out
+  const nm = NEAR_ME_BKK[cat().id], near = nearMeShare(v);
+  const nearRow = nm && near ? `<div><span>ค้น "${esc(nm.k)}" แถวนี้</span><b class="num">≈${fmt(near)}</b></div>` : '';
+  return `<div class="vol-note"><div class="vol-parts"><div><span>พิมพ์ "${esc(rows[0].k)}"</span><b class="num">${fmt(v.total)}</b></div>${nearRow}</div>
+    <p>ยังไม่รวม · คนค้นชื่อร้านคุณ</p></div>`;
 }
 
 function headline(k) {
   // The search volume is the one big thing on the card: label, then the number.
   const first = R.volume
-    ? `<div class="vol-label"><h1>จำนวนการค้นหา</h1>${typePicker()}${areaPicker(wherePlace(R.volume), wherePrefix(R.volume))}</div><p class="vol"><span class="num">${fmt(R.volume.total)}</span><span>ครั้ง/เดือน</span></p>${volNote(R.volume)}`
+    ? `<div class="vol-label"><h1>จำนวนการค้นหา</h1>${typePicker()}${areaPicker(wherePlace(R.volume), wherePrefix(R.volume))}</div><p class="vol"><span class="num">${nearMeShare(R.volume) ? '≈' : ''}${fmt(volTotal(R.volume))}</span><span>ครั้ง/เดือน</span></p>${volNote(R.volume)}`
     : `<div class="vol-label"><h1>ยังไม่มีจำนวนการค้นหา</h1>${typePicker()}${R.area ? areaPicker(esc(R.area.name), 'บริเวณ') : areaPicker('ย่านนี้')}</div>`;
   const n = k.top3Count, total = k.points.length;
   // A closed shop drops down the list, so "found / not found" would mislead: say nothing here.
