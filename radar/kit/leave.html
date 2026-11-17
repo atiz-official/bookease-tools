@@ -49,7 +49,7 @@ async function load() {
     <h1>${esc(d.name)}</h1>
     <p class="sub">เราทำตัวอย่างหน้าร้านและการโปรโมตของร้านพี่มาให้ดูแล้ว</p>
     <div id="qr" role="img" aria-label="QR เปิดชุดโปรโมตร้าน"></div>
-    <p class="scan">สแกนดูชุดโปรโมตร้าน${esc(d.name)}</p>
+    <p class="scan">สแกนดูชุดโปรโมต${/^ร้าน/.test(d.name) ? "" : "ร้าน"}${esc(d.name)}</p>
     <p class="url">radar.bookease.co</p>
     <p class="foot">bookease · โปรโมทร้านให้ฟรี · 092-641-4296</p>`;
   new QRCode(document.getElementById('qr'), { text: kit.toString(), width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
