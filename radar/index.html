@@ -282,7 +282,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 
 </div>
 
-<script src="volume.js"></script>
+<script src="volume.js?v=20261117c"></script>
 <script>
 /* ── config ─────────────────────────────────────────────────────── */
 const CONFIG = {
@@ -843,7 +843,7 @@ function exploreLoad() {
   if (exploreLoad.started) return;
   exploreLoad.started = true;
   const sc = document.createElement('script');
-  sc.src = 'guide/data.js';
+  sc.src = 'guide/data.js?v=20261117c'; // bump when the data changes (browsers cache it ~10 min)
   sc.onload = exploreInit;
   sc.onerror = (e) => console.error('[explore] guide data failed to load', e);
   document.head.appendChild(sc);
