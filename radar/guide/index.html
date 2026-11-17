@@ -111,8 +111,8 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .lp.sel{background:var(--blue);transform:scale(1.4);z-index:30 !important}
 .row.sel{background:#EEF2FE}.row.sel .i{color:var(--blue)}.row.sel .nm{color:var(--blue)}
 .mapbld{position:absolute;right:10px;bottom:10px;z-index:35;border:0;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(16,24,40,.18);padding:7px 12px;font:700 13px Sarabun;color:var(--blue);cursor:pointer}
-.bldpanel .sample{margin-top:10px;font:600 13px Sarabun;color:var(--ink-3)}
-.bldpanel .sample a{color:var(--blue);font-weight:700;text-decoration:none}
+.bldpanel .sample{margin-top:10px;font:500 12.5px Sarabun;color:var(--ink-3);line-height:1.5}
+.bldpanel .sample a{color:var(--blue);font:700 14px Sarabun;text-decoration:none}
 @media (max-width:620px){
   .nums{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
   .num.main{grid-column:1 / -1}
@@ -131,10 +131,13 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .bldpanel h3{font:800 18px Sarabun}
 .bldpanel .x{border:0;background:none;font:600 14px Sarabun;color:var(--ink-3);cursor:pointer}
 .bldpanel .sub{font-size:13px;color:var(--ink-3);margin:2px 0 8px}
-.bldpanel ul{list-style:none}
-.bldpanel li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #EEF0F3}
+.bldpanel ul{list-style:none;padding:0;margin:0}
+.bldpanel li{display:block;padding:9px 0;border-bottom:1px solid #EEF0F3}
 .bldpanel li:last-child{border-bottom:0}
-.bldpanel li b{display:block;font:600 15px Sarabun}
+.bldpanel li b{font:600 15px Sarabun;margin-right:6px}
+.bldpanel li small{display:block;margin-top:1px}
+.bldpanel li small a{color:var(--ink-2);text-decoration:none;font-weight:600}
+.bldpanel li small a.go{color:var(--blue);font-weight:700}
 .bldpanel li small{font-size:12.5px;color:var(--ink-3)}
 .bldpanel .stp{display:inline-block;font:600 11.5px Sarabun;border-radius:999px;padding:1px 8px;margin-right:6px;background:#EEF0F3;color:var(--ink-3)}
 .bldpanel .stp.sample{background:#FFF4D6;color:#8A5A00}
@@ -311,20 +314,28 @@ async function openBuildings(lat, lng, title) {
     const k = p.name.replace(/[^A-Za-z0-9ก-๙]/g, '').slice(0, 10).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true;
   }).slice(0, 8);
   const m = (p) => Math.round(Math.hypot((p.lng - lng) * 111320 * Math.cos(lat * Math.PI / 180), (p.lat - lat) * 110540));
-  panel.querySelector('.sub').textContent = list.length ? `${list.length} แห่งในระยะ 800 ม. · ข้อมูลจาก Google · ระยะทางตรง` : 'ไม่พบโรงแรมหรือคอนโดในระยะ 800 ม.';
+  // two lines per building: name, then distance · map · menu. A status chip only when it is past "surveyed";
+  // when every building is just surveyed, say it once under the title (Codex/Art 2026-11-17).
+  const st = (p) => BUILDING_STATUS[p.id] || { step: 'survey' };
+  const allSurvey = list.every((p) => st(p).step === 'survey');
+  panel.querySelector('.sub').textContent = list.length
+    ? `แสดง ${list.length} แห่งในรัศมี 800 ม. · ระยะทางตรงจากจุดสำรวจ · Google Maps${allSurvey ? ' · ทุกแห่งยังเป็น "สำรวจแล้ว"' : ''}`
+    : 'ไม่พบโรงแรมหรือคอนโดในรัศมี 800 ม.';
   panel.insertAdjacentHTML('beforeend', `<ul>${list.map((p) => {
-    const st = BUILDING_STATUS[p.id] || { step: 'survey' };
-    const go = st.menu ? `<a class="go" href="${st.menu}" target="_blank" rel="noopener">ดูเมนูตัวอย่าง →</a>`
-      : `<a class="go" href="../menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a>`;
-    return `<li><div><b>${esc(p.name)}</b><small><span class="stp ${st.step}">${STEP_TH[st.step]}</span>ห่าง ${Math.round(m(p) / 10) * 10} ม. · <a href="${esc(p.mapsUrl)}" target="_blank" rel="noopener">ดูบนแผนที่</a></small></div>${go}</li>`;
-  }).join('')}</ul><p class="sample">ดูตัวอย่างเมนูที่ทำแล้ว: <a href="../menu/?b=ChIJ-7PwX7iZ4jARp_rFql-yzO4&shop=ChIJPxz0o_iZ4jARqOODkDRBYCw&view=1" target="_blank" rel="noopener">Aqua Residences (จอมทอง) →</a> · เมนูตัวอย่าง · ยังไม่ได้แจกจริง</p>`);
+    const s0 = st(p);
+    const go = s0.menu ? `<a class="go" href="${s0.menu}" target="_blank" rel="noopener">ดูเมนู →</a>`
+      : `<a class="go" href="../menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนู →</a>`;
+    const chip = s0.step === 'survey' ? '' : `<span class="stp ${s0.step}">${STEP_TH[s0.step]}</span>`;
+    return `<li><b>${esc(p.name)}</b>${chip}<small>${Math.round(m(p) / 10) * 10} ม. · <a href="${esc(p.mapsUrl)}" target="_blank" rel="noopener">ดูแผนที่</a> · ${go}</small></li>`;
+  }).join('')}</ul><p class="sample"><a href="../menu/?b=ChIJ-7PwX7iZ4jARp_rFql-yzO4&shop=ChIJPxz0o_iZ4jARqOODkDRBYCw&view=1" target="_blank" rel="noopener">ดูเมนูตัวอย่าง Aqua Residences (จอมทอง) →</a><br>ยังไม่ได้แจกจริง</p>`);
+  const sr = document.querySelector('.sample-row'); if (sr) sr.hidden = true; // Aqua once, inside the list
 }
 document.getElementById('bldpanel').addEventListener('click', (e) => {
-  if (e.target.closest('.x')) { document.getElementById('bldpanel').hidden = true; held = false; }
+  if (e.target.closest('.x')) { document.getElementById('bldpanel').hidden = true; held = false; const sr = document.querySelector('.sample-row'); if (sr) sr.hidden = false; }
 });
 document.getElementById('bldlink').addEventListener('click', () => {
   const a = D.areas[cur];
-  openBuildings(a.lat, a.lng, `โรงแรมและคอนโดในย่าน${a.name}`);
+  openBuildings(a.lat, a.lng, `โรงแรมและคอนโดใกล้จุดสำรวจ${a.name}`);
 });
 scope.parentElement.addEventListener('click', (e) => {
   const b = e.target.closest('.pbld'); if (!b) return;
@@ -337,8 +348,8 @@ scope.parentElement.addEventListener('click', (e) => {
 function show(i) {
   cur = i;
   closeCard(); // a card from the previous area must not stay on the new map
-  const bp = document.getElementById('bldpanel'); if (bp && !bp.hidden) { bp.hidden = true; held = false; }
-  document.getElementById('bldlink').textContent = `โรงแรมและคอนโดในย่าน${D.areas[i].name} · ดูรายการ →`;
+  const bp = document.getElementById('bldpanel'); if (bp && !bp.hidden) { bp.hidden = true; held = false; const sr = document.querySelector('.sample-row'); if (sr) sr.hidden = false; }
+  document.getElementById('bldlink').textContent = 'ดูโรงแรมและคอนโดใกล้จุดสำรวจ →';
   const a = D.areas[i];
   [...tabs.children].forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', j === i); });
   const on = tabs.children[i]; void on.offsetWidth;
@@ -418,7 +429,7 @@ document.getElementById('howbtn').addEventListener('click', () => {
 document.getElementById('mapbld').addEventListener('click', (e) => {
   e.stopPropagation();
   const a = D.areas[cur];
-  openBuildings(a.lat, a.lng, `โรงแรมและคอนโดในย่าน${a.name}`);
+  openBuildings(a.lat, a.lng, `โรงแรมและคอนโดใกล้จุดสำรวจ${a.name}`);
   document.getElementById('bldpanel').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
 });
 if (location.hash === '#how') setTimeout(() => openHow(true), reduce ? 0 : 500);
