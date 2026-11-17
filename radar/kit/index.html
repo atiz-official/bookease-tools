@@ -276,36 +276,6 @@ async function cardBlob(c) {
   return new Promise((ok, no) => canvas.toBlob((b) => (b ? ok(b) : no(new Error('toBlob failed'))), 'image/png'));
 }
 
-function lineText(d, week, from7, views7, contacts7) {
-  const s = d.shop, hist = d.hist, last = hist[hist.length - 1], prev = hist[hist.length - 2], first = hist[0];
-  const done = d.log.filter((e) => e.at >= from7);
-  const lines = [`รายงานร้าน ${s.name} · สัปดาห์ที่ ${week}`, '', 'สัปดาห์นี้เราทำอะไรให้ร้าน'];
-  lines.push(...(done.length ? done.map((e) => `• ${e.what}`) : ['• สัปดาห์นี้ไม่มีงานใหม่ แต่เรายังนับผลให้ทุกวัน']));
-  lines.push('', 'ผลที่นับได้');
-  const was = (now, before) => (before == null ? ' (สัปดาห์แรก ไว้เทียบครั้งต่อไป)' : ` (สัปดาห์ก่อน ${before})`);
-  if (last) {
-    lines.push(`• ใกล้ร้าน เจอร้านคุณ ${last.spacings[0].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[0].top3, prev && prev.spacings[0].top3)}`);
-    lines.push(`• ไกลออกไป 2 กม. เจอร้านคุณ ${last.spacings[1].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[1].top3, prev && prev.spacings[1].top3)}`);
-    if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
-  } else lines.push('• ลำดับร้านใน Google: ยังวัดไม่ได้ เราจะลองค้นครั้งแรกตอนร้านเปิด');
-  lines.push(`• คนเปิดดูหน้าร้าน ${views7} ครั้ง · กดโทร นำทาง หรือติดต่อร้าน ${contacts7} ครั้ง (7 วันล่าสุด)`);
-  const pending = [];
-  if (!s.gbp) pending.push('ตัวเลขจาก Google (รอเจ้าของร้านเพิ่มเราเป็นผู้จัดการร้าน)');
-  for (const b of d.buildings) if (b.status !== 'live') pending.push(`เมนูที่ ${b.name} (ยังไม่ได้วาง)`);
-  if (pending.length) lines.push('', `ยังวัดไม่ได้: ${pending.join(' · ')}`);
-  lines.push('', `ดูทั้งหมด: ${location.origin}${location.pathname}?p=${s.id}`);
-  return lines.join('\n');
-}
-
-async function load() {
-  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) { $('app').innerHTML = '<p class="err">ไม่พบร้าน</p>'; return; }
-  const r = await fetch(`${API}/growth?p=${encodeURIComponent(P)}`);
-  const d = await r.json();
-  if (r.status === 404) { $('app').innerHTML = '<p class="err">ร้านนี้ยังไม่ได้เริ่มบริการโปรโมทร้าน</p>'; return; }
-  if (!r.ok) throw new Error(d.error || r.status);
-  render(d);
-}
-load().catch((e) => { console.error('[growth] load', e); $('app').innerHTML = '<p class="err">เปิดรายงานไม่ได้ ลองกดเปิดลิงก์ใหม่อีกครั้ง</p>'; });
 
 load().catch((e) => { console.error('[kit] load', e); $('app').innerHTML = '<p class="err">เปิดชุดของร้านไม่ได้ ลองกดเปิดลิงก์ใหม่อีกครั้ง</p>'; });
 </script>
