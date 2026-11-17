@@ -62,7 +62,10 @@ async function load() {
     const list = ((near && near.places) || []).filter((p) => (p.reviews || 0) >= 10).sort((x, y) => m(x) - m(y));
     if (list[0]) building = list[0].name;
   }
-  const own = (d.photos || []).find((ph) => ph.by === d.name) || (d.photos || [])[0];
+  const photos = d.photos || [];
+  const own = photos.find((ph) => ph.by === d.name) || photos[0];
+  // if Google won't serve a photo, try the shop's next ones, then drop the box
+  const others = photos.filter((ph) => ph !== own).slice(0, 3).map((ph) => `${API}/photo?w=1000&name=${encodeURIComponent(ph.name)}`);
   const kit = new URL('https://radar.bookease.co/kit/');
   kit.searchParams.set('p', P); if (CAT) kit.searchParams.set('c', CAT); if (AREA) kit.searchParams.set('a', AREA);
   kit.searchParams.set('v', 'qr');
@@ -74,13 +77,15 @@ async function load() {
     <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>สำหรับ ${name}</small></div>
     <h1>${name}</h1>
     <p class="sub">เราทำตัวอย่างหน้าร้านและการโปรโมตของร้านพี่มาให้ดูแล้ว</p>
-    ${own ? `<img class="photo" src="${API}/photo?w=1000&name=${encodeURIComponent(own.name)}" alt="รูปร้าน ${name}">` : ''}
+    ${own ? `<img class="photo" id="photo" src="${API}/photo?w=1000&name=${encodeURIComponent(own.name)}" alt="รูปร้าน ${name}">` : ''}
     <p class="free">โปรโมทร้านให้ฟรี<span>ลงหน้าร้านในสมุดร้านของ bookease ให้ลูกค้าค้นเจอ กดโทร นำทางได้</span></p>
     <div class="offer"><b>฿1,000 <small>/ เดือน · ถ้าอยากให้ทีมช่วยดูแลต่อ</small></b>
       <p>ดูแล Google Maps · เว็บร้านพร้อมใช้ · เมนูคอนโดและโรงแรมใกล้ร้าน · รายงานทาง LINE ทุกสัปดาห์</p>
       <em>ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้</em></div>
     <div class="scan"><div><strong>สแกนดูชุดโปรโมต${shopWord}${name}</strong><p>${inside}</p><p class="url">radar.bookease.co</p></div><div id="qr" role="img" aria-label="QR เปิดชุดโปรโมตร้าน"></div></div>
     <p class="foot">bookease · LINE @bookease · 092-641-4296</p>`;
+  const img = document.getElementById('photo');
+  if (img) img.addEventListener('error', () => { const next = others.shift(); console.error('[leave] photo failed, trying next', !!next); if (next) img.src = next; else img.remove(); });
   new QRCode(document.getElementById('qr'), { text: kit.toString(), width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
 }
 load().catch((e) => { console.error('[leave] load', e); document.getElementById('sheet').innerHTML = '<p class="err">เตรียมใบฝากร้านไม่ได้ ลองเปิดลิงก์ใหม่อีกครั้ง</p>'; });
