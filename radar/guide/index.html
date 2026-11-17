@@ -165,9 +165,9 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .sample-row .stp{display:inline-block;font:600 11.5px Sarabun;border-radius:999px;padding:1px 8px;background:#FFF4D6;color:#8A5A00}
 .guide.pinned .tab .prog{display:none}
 /* shop type: a row of chips above the area tabs, selected = light blue (Art 2026-11-17: the map picker was not noticed) */
-.cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 8px}
+.cats{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 8px}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:700 14.5px Sarabun;color:var(--ink-2);cursor:pointer}
+.cats button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font:700 14px Sarabun;color:var(--ink-2);cursor:pointer}
 .cats button[aria-selected=true]{background:#EAF0FE;border-color:#EAF0FE;color:var(--blue)}
 /* embedded under the Radar home search (?embed=1): no header, search or footer of its own */
 .embed .top,.embed .find,.embed .contact{display:none}
@@ -215,7 +215,7 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
   </section>
 </div>
 <script src="../volume.js?v=20261117c"></script>
-<script src="data.js?v=20261117d"></script>
+<script src="data.js?v=20261117e"></script>
 <script>
 // one shop type at a time (?c=); the area tabs and the picked area stay when the type changes
 const EMBED = new URLSearchParams(location.search).get('embed') === '1' && window.parent !== window;
@@ -234,9 +234,11 @@ if (EMBED) {
 const GD = window.GUIDE;
 function view(c) {
   const t = (GD.cats || {})[c] || {};
-  return { cat: c, label: t.label || 'ร้านนวด', asOf: t.asOf || GD.asOf, areas: t.areas || GD.areas, dlat: GD.dlat, dlng: GD.dlng };
+  const label = t.label || 'ร้านนวด';
+  // vlabel = the word the search numbers were measured on (barber numbers are for 'ร้านตัดผม' searches)
+  return { cat: c, label, vlabel: t.vlabel || label, asOf: t.asOf || GD.asOf, areas: t.areas || GD.areas, dlat: GD.dlat, dlng: GD.dlng };
 }
-const CATS = Object.keys(GD.cats || { massage: 1 });
+const CATS = Object.keys(GD.cats || { massage: 1 }).filter((c) => !(GD.cats && GD.cats[c] && GD.cats[c].hidden));
 let D = view(CATS.includes(new URLSearchParams(location.search).get('c')) ? new URLSearchParams(location.search).get('c') : 'massage');
 const fmt = (n) => n.toLocaleString('en-US');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -422,7 +424,7 @@ function show(i) {
       r.addEventListener('click', (e) => { if (e.target.closest('a')) return; pickLeader(k, true); });
     });
     $('.lead h2').textContent = `TOP 5 ร้านในย่าน${a.name}`;
-    document.getElementById('num-k').textContent = `ประมาณการค้นหา${D.label}ในย่าน${a.name}`;
+    document.getElementById('num-k').textContent = `ประมาณการค้นหา${D.vlabel}ในย่าน${a.name}`;
     document.getElementById('src').textContent = `ข้อมูลจาก Google · ${D.asOf}`;
     // วิธีนับ (Home links here with #how): the measured part and the estimated part, for this area
     const V = window.RadarVolume, nm = V.NEAR_ME_BKK[D.cat], near = V.nearShare(D.cat, a.searches);
