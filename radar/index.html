@@ -151,8 +151,11 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 .web.soc,.web.no{color:#B4BAC5;font-weight:500;font-size:12.5px}
 .rank-list li.gap-row{display:block;color:var(--ink-3);font-size:13px;text-align:center;padding:6px;border-bottom:1px dashed var(--line)}
 .rank-list li.you{background:#FFF1F1;border-radius:12px;border-bottom:0;box-shadow:inset 0 0 0 2px var(--dot-bad)}
-.push{display:inline-block;margin:12px 0 0 46px;color:var(--blue);font:700 16px Sarabun,sans-serif;text-decoration:none}
-.push:hover{text-decoration:underline;text-underline-offset:3px}
+.rank-list li.you.has-push{grid-template-columns:32px minmax(0,1fr) auto auto}
+/* the one sales button, inside the shop's own row: full black pill (primary CTA), not blue — blue is the shop tag and links */
+.push{display:inline-flex;align-items:center;gap:4px;height:40px;padding:0 14px 0 10px;border-radius:999px;background:var(--ink);color:#fff;font:700 15px Sarabun,sans-serif;text-decoration:none;white-space:nowrap}
+.push svg{width:18px;height:18px;flex:none}
+.push:hover{background:#262A31}
 .rank-list li.you.ok{background:#F0FDF4;box-shadow:inset 0 0 0 2px var(--dot-good)}
 .you .pos{color:var(--bad)} .you.ok .pos{color:var(--good)}
 .you-tag{display:inline-block;white-space:nowrap;font-size:12px;background:var(--blue);color:#fff;padding:1px 7px;border-radius:6px;margin-left:6px;font-weight:700}
@@ -532,7 +535,13 @@ const latinGap = (t) => (/^[A-Za-z]/.test(t) ? ' ' : '');
 function pushLink(k) {
   const rank = R.area ? k.hubRank : k.centreRank;
   if (R.shop.openNow === false || (rank != null && rank <= 3)) return '';
-  return '<a class="push" id="push" target="_blank" rel="noopener">ดันร้านให้สูงขึ้น ↑</a>';
+  return '<a class="push" id="push" target="_blank" rel="noopener" aria-label="ดันร้านให้สูงขึ้น"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>ดันร้าน</a>';
+}
+// Put the button at the end of the shop's own row (Art 2026-11-17: an icon in that line, variant B).
+function withPush(list, k) {
+  const btn = pushLink(k);
+  if (!btn) return list;
+  return list.replace(/<li class="you">([\s\S]*?)<\/li>/, (m, inner) => `<li class="you has-push">${inner}${btn}</li>`);
 }
 
 function aheadList(k) {
@@ -622,8 +631,8 @@ function paint() {
     </div>
     <div class="card">
       ${k.top10
-        ? `<h2>TOP 10 ร้าน${R.area ? `ในพื้นที่${latinGap(R.area.hub)}${esc(R.area.hub)}` : nearShop()}</h2>${top10List(k)}${pushLink(k)}`
-        : `<h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>${aheadList(k)}${pushLink(k)}`}
+        ? `<h2>TOP 10 ร้าน${R.area ? `ในพื้นที่${latinGap(R.area.hub)}${esc(R.area.hub)}` : nearShop()}</h2>${withPush(top10List(k), k)}`
+        : `<h2>ค้น "${esc(k.keyword)}" จาก${/^[A-Za-z]/.test(from) ? ' ' : ''}${esc(from)}</h2>${withPush(aheadList(k), k)}`}
     </div>
   </section>
 
