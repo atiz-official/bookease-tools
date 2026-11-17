@@ -474,7 +474,10 @@ function volNote(v) {
   const what = rows.length === 1 ? `นับเฉพาะคนที่พิมพ์ชื่อย่าน เช่น "${esc(rows[0].k)}"` : `นับเฉพาะคนที่พิมพ์ชื่อย่าน (${rows.length} คำ เช่น "${esc(rows[0].k)}")`;
   const nm = NEAR_ME_BKK[cat().id];
   const more = nm ? ` · <b>ยังไม่รวมคนที่ค้นว่า "${nm.k}"</b> ซึ่งทั้งกรุงเทพฯ ค้น ${fmt(nm.v)} ครั้ง/เดือน (Google ไม่แยกตัวเลขนี้ตามย่าน)` : ' · ยังไม่รวมคนที่ค้นว่า "ใกล้ฉัน"';
-  return `<p class="vol-note">${what}${more}</p>`;
+  // Art 2026-11-17: say what is NOT in the number. Searches for the shop's own name only come from the
+  // shop's Google Business Profile (needs manager access), so they are never in this figure.
+  const own = ` · ยังไม่รวมคนที่ค้นชื่อ${esc(R.shop.name.startsWith('ร้าน') ? R.shop.name : `ร้าน ${R.shop.name}`)}โดยตรง`;
+  return `<p class="vol-note">${what}${more}${own}</p>`;
 }
 
 function headline(k) {
