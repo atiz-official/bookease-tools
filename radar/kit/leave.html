@@ -66,12 +66,13 @@ async function load() {
   const kit = new URL('https://radar.bookease.co/kit/');
   kit.searchParams.set('p', P); if (CAT) kit.searchParams.set('c', CAT); if (AREA) kit.searchParams.set('a', AREA);
   kit.searchParams.set('v', 'qr');
-  const name = esc(d.name), shopWord = /^ร้าน/.test(d.name) ? '' : 'ร้าน';
+  // "ร้าน" goes in front of a Thai name only once, and with a space before a Latin name ("ร้าน PHOMHOM…")
+  const name = esc(d.name), shopWord = /^ร้าน/.test(d.name) ? '' : /^[A-Za-z0-9]/.test(d.name) ? 'ร้าน ' : 'ร้าน';
   const inside = ['ผลตรวจการค้นหา', 'หน้าร้านตัวอย่าง', building ? `ตัวอย่างเมนู ${esc(building)}` : '', 'ตัวอย่างรายงานทาง LINE'].filter(Boolean).join(' · ');
   document.title = `ใบฝากร้าน · ${d.name}`;
   document.getElementById('sheet').innerHTML = `
-    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>สำหรับ${shopWord}${name}</small></div>
-    <h1>${shopWord}${name}</h1>
+    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>สำหรับ ${name}</small></div>
+    <h1>${name}</h1>
     <p class="sub">เราทำตัวอย่างหน้าร้านและการโปรโมตของร้านพี่มาให้ดูแล้ว</p>
     <div class="photo" style="${own ? `background-image:url('${API}/photo?w=1200&name=${encodeURIComponent(own.name)}')` : ''}"></div>
     <p class="free">โปรโมทร้านให้ฟรี<span>ลงหน้าร้านในสมุดร้านของ bookease ให้ลูกค้าค้นเจอ กดโทร นำทางได้</span></p>
