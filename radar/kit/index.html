@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ชุดของร้าน · bookease</title>
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Anuphan:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14110F;--ink-2:#4A4440;--ink-3:#7A726C;--line:#ECE7E2;--ground:#FBF8F5;--card:#FFFFFF;--accent:#2D55EB;--accent-soft:#EEF2FD;--good:#15803D;--good-soft:#E8F5EC;--warn:#8A6A00;--warn-soft:#FFF4D6;--na:#F3F0EC}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Anuphan,Inter,system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 64px;display:flex;flex-direction:column;gap:16px}
+header.top{display:flex;align-items:center;justify-content:space-between}
+header.top img{height:20px}
+header.top span{font:600 13px Anuphan;color:var(--ink-3)}
+.title h1{font:800 28px/1.2 Anuphan;text-wrap:balance}
+.title p{color:var(--ink-3);font-size:14px}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+.step{font:700 12.5px Anuphan;color:var(--accent);letter-spacing:.02em}
+h2{font:800 21px/1.3 Anuphan;margin:2px 0 6px;text-wrap:balance}
+.lead{color:var(--ink-2);font-size:15px}
+.big{font:800 34px/1.15 Anuphan;color:var(--ink);margin:6px 0 2px}
+.big em{font-style:normal;color:var(--accent)}
+.where{font:600 14px Anuphan;color:var(--ink-3)}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.fact{background:#F7F5F2;border-radius:14px;padding:12px}
+.fact b{display:block;font:800 22px/1.2 Anuphan}
+.fact span{font-size:13.5px;color:var(--ink-2)}
+.pill{display:inline-block;font:700 12.5px Anuphan;border-radius:999px;padding:3px 10px;background:var(--na);color:var(--ink-3)}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.wait{background:var(--warn-soft);color:var(--warn)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.mode{border:1px solid var(--line);border-radius:14px;padding:12px}
+.mode b{display:block;font:800 16px Anuphan}
+.mode span{display:block;font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.mode.paid{border-color:var(--accent);background:var(--accent-soft)}
+.frame{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;margin-top:12px}
+.frame iframe{display:block;width:100%;height:620px;border:0}
+.open{display:inline-block;margin-top:10px;font:700 14.5px Anuphan;text-decoration:none}
+.cardimg{display:block;width:100%;max-width:360px;margin:12px auto 0;border-radius:18px;box-shadow:0 6px 20px rgba(20,17,15,.08)}
+.offer li{list-style:none;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;display:flex;gap:10px}
+.offer li:last-child{border-bottom:0}
+.offer li i{font-style:normal;color:var(--good);font-weight:800}
+.price{font:800 30px Inter;margin:8px 0 2px}.price small{font:600 15px Anuphan;color:var(--ink-3)}
+.ask{font:800 20px/1.4 Anuphan;margin:14px 0 4px;text-wrap:balance}
+.btn{display:block;text-align:center;background:var(--accent);color:#fff;font:700 17px Anuphan;border-radius:999px;padding:14px;text-decoration:none;margin-top:12px}
+.btn.soft{background:var(--accent-soft);color:var(--accent)}
+.foot{color:var(--ink-3);font-size:12.5px;text-align:center}
+.busy{padding:60px 0;text-align:center;color:var(--ink-3)}
+.err{padding:40px 0;color:#B91C1C}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:420px){.two,.facts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"><p class="busy">กำลังเปิดชุดของร้าน…</p></main>
+<script>
+// Sales kit: one link per shop for the field visit (iPad) and for the owner afterwards (phone). No login.
+// Order agreed with Art + Codex 2026-11-17: finding → one page two modes → building menu → LINE card sample → one offer.
+const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const qs = new URLSearchParams(location.search);
+const P = qs.get('p') || '', CAT = qs.get('c') || '', AREA = qs.get('a') || '';
+// This page shows the shop its own pages inside frames: the people looking (our team, the owner) are not customers.
+try { localStorage.setItem('bookease-staff', '1'); } catch (e) { console.error('[kit] storage', e); }
+// Shops with a hand-made preview instead of the automatic one; buildings already chosen for a shop.
+const SITE = { ChIJPxz0o_iZ4jARqOODkDRBYCw: 'https://make.bookease.co/lalisa/' };
+const BUILDING = { ChIJPxz0o_iZ4jARqOODkDRBYCw: { id: 'ChIJ-7PwX7iZ4jARp_rFql-yzO4', name: 'Aqua Residences' } };
+const photoUrl = (name, w = 200) => `${API}/photo?w=${w}&name=${encodeURIComponent(name)}`;
+const post = async (path, body) => {
+  const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const d = await r.json().catch((e) => { console.error('[kit] json', path, e); return null; });
+  if (!r.ok) throw new Error((d && d.error) || r.status);
+  return d;
+};
+
+/** Same rows as the worker's growthLadder: the top spot, the shop, the row above it, "gap" where numbers jump. */
+function ladder(r, max) {
+  const me = r == null ? max + 1 : r;
+  const nums = [...new Set([1, Math.max(1, me - 1), me, me + 1 <= max ? me + 1 : me])].sort((a, b) => a - b);
+  const rows = [];
+  nums.forEach((x, i) => { if (i && x - nums[i - 1] > 1) rows.push({ kind: 'gap' }); rows.push({ n: x === me ? (r == null ? `${max}+` : String(r)) : String(x), kind: x === me ? 'me' : '' }); });
+  return rows;
+}
+
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) { $('app').innerHTML = '<p class="err">ไม่พบร้าน</p>'; return; }
+  const q = new URLSearchParams({ p: P }); if (CAT) q.set('c', CAT); if (AREA) q.set('a', AREA);
+  let R = null;
+  const v = await fetch(`${API}/view?${q}`);
+  if (v.ok) R = await v.json();
+  else { const body = { placeId: P }; if (CAT) body.cat = CAT; if (AREA) body.area = AREA; R = await post('/report', body); }
+  const [place, near] = await Promise.all([
+    post('/place', { placeId: P }).catch((e) => { console.error('[kit] place', e); return null; }),
+    post('/nearby', { lat: R.shop.lat, lng: R.shop.lng, type: 'lodging,hotel,apartment_building,apartment_complex,condominium_complex', radius: 800 }).catch((e) => { console.error('[kit] nearby', e); return null; }),
+  ]);
+  render(R, place, near);
+}
+
+function render(R, place, near) {
+  const s = R.shop, k = R.keywords[0], kw = k.keyword, max = R.maxRank || 40;
+  const hub = R.area ? R.area.hub || R.area.name : '';
+  const hubRank = k.hubRank === undefined ? null : k.hubRank;
+  const top3 = k.top3Count, total = k.points.length;
+  const found = top3 === total ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : top3 === 0 ? 'ยังไม่เจอร้านคุณใน 3 ร้านแรก' : `เจอร้านคุณ ${top3} ใน ${total} พื้นที่ค้นหา`;
+  const own = place && (place.photos || []).find((ph) => ph.by === place.name) || (place && (place.photos || [])[0]);
+  const site = SITE[s.id] || `../site/?p=${encodeURIComponent(s.id)}`;
+  const kitUrl = location.href.split('#')[0];
+  document.title = `ชุดของร้าน · ${s.name}`;
+
+  // building: chosen one, else the nearest real condo/hotel (Google reviews ≥ 10, same filter as Shop Radar)
+  const dist = (p) => Math.round(Math.hypot((p.lng - s.lng) * 111320 * Math.cos(s.lat * Math.PI / 180), (p.lat - s.lat) * 110540));
+  let b = BUILDING[s.id] || null;
+  if (!b && near) {
+    const list = (near.places || []).filter((p) => (p.reviews || 0) >= 10).sort((x, y) => dist(x) - dist(y));
+    if (list[0]) b = { id: list[0].id, name: list[0].name, m: dist(list[0]) };
+  }
+
+  const finding = hubRank && hub
+    ? `<p class="big">ค้นจาก ${esc(hub)} ร้านพี่อยู่<em>อันดับ ${hubRank}</em></p><p class="where">เมื่อคนค้นคำว่า “${esc(kw)}” จากแถว ${esc(hub)}</p>`
+    : `<p class="big">${esc(found)}</p><p class="where">เมื่อคนค้นคำว่า “${esc(kw)}” รอบร้านพี่</p>`;
+  const webFact = s.website && !/facebook|instagram|tiktok|lin\.ee|line\.me/i.test(s.website) ? 'มีเว็บไซต์ของร้านแล้ว' : 'ยังไม่มีเว็บไซต์ของร้านเอง';
+
+  $('app').innerHTML = `
+  <header class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>ชุดของร้าน</span></header>
+  <div class="title"><h1>${esc(s.name)}</h1><p>เราทำตัวอย่างของร้านพี่มาให้ดูแล้ว · ตรวจ ${new Date(R.checkedAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</p></div>
+
+  <section class="card"><p class="step">1 · ลูกค้าหาร้านพี่เจอไหม</p>${finding}
+    <div class="facts">
+      <div class="fact"><b>${esc(found)}</b><span>ใกล้ร้าน (9 พื้นที่ค้นหา รอบร้าน)</span></div>
+      <div class="fact"><b>★ ${esc(s.rating ?? '–')} · ${esc(s.reviews ?? 0)} รีวิว</b><span>${esc(webFact)}</span></div>
+    </div>
+    <a class="open" href="../?p=${encodeURIComponent(s.id)}${CAT ? '&c=' + CAT : ''}${AREA ? '&a=' + AREA : ''}" target="_blank" rel="noopener">ดูผลตรวจเต็ม (Shop Radar) →</a></section>
+
+  <section class="card"><p class="step">2 · หน้าร้านของพี่ หน้าเดียว ใช้ได้สองแบบ</p>
+    <h2>เตรียมหน้าให้แล้ว รอร้านตรวจ</h2>
+    <div class="two">
+      <div class="mode"><b>ฟรี</b><span>หน้าร้านในสมุดร้านของ bookease ลูกค้าค้นเจอ กดโทร นำทางได้</span></div>
+      <div class="mode paid"><b>เดือนละ ฿1,000</b><span>หน้าเดิมกลายเป็นเว็บแบรนด์ร้าน ทีมดูแลให้ต่อทุกเดือน</span></div>
+    </div>
+    <p class="lead">ลิงก์เดียวกันทั้งสองแบบ ยกเลิกเมื่อไหร่ หน้าก็ยังอยู่เป็นหน้าฟรี <span class="pill wait">พรีวิว ยังไม่เผยแพร่</span></p>
+    <div class="frame"><iframe src="${esc(site)}" title="หน้าร้านตัวอย่าง" loading="lazy"></iframe></div>
+    <a class="open" href="${esc(site)}" target="_blank" rel="noopener">เปิดเต็มจอ →</a></section>
+
+  <section class="card"><p class="step">3 · เอาร้านพี่ไปให้คนแถวนี้เห็น</p>
+    ${b ? `<h2>เมนูบริการรอบ ${esc(b.name)}</h2><p class="lead">แจกให้ลูกบ้านและแขกที่พัก สแกน QR แล้วเจอร้านพี่${b.m != null ? ` · ห่างร้าน ${Math.round(b.m / 10) * 10} ม.` : ''} <span class="pill wait">ตัวอย่าง ยังไม่ได้วาง</span></p>
+      <div class="frame"><iframe src="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}" title="เมนูอาคารตัวอย่าง" loading="lazy"></iframe></div>
+      <a class="open" href="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">เปิดเต็มจอ →</a>`
+      : '<h2>เมนูบริการรอบอาคารใกล้ร้าน</h2><p class="lead">ยังไม่พบคอนโดหรือโรงแรมที่มีรีวิวพอในระยะ 800 ม. ทีมจะหาให้ <span class="pill">ยังไม่มี</span></p>'}</section>
+
+  <section class="card"><p class="step">4 · ทุกเช้าวันจันทร์ พี่จะได้แบบนี้ทาง LINE</p>
+    <h2>ตัวอย่างรายงาน</h2><p class="lead">ข้อมูลจริงของร้านพี่วันนี้ ส่วนยอดกดโทรเริ่มนับเมื่อเริ่มดูแลร้าน</p>
+    <img class="cardimg" id="cardimg" alt="ตัวอย่างรายงานรายสัปดาห์ของร้าน"></section>
+
+  <section class="card"><p class="step">5 · เริ่มได้เลย</p>
+    <h2>โปรโมทร้านให้ฟรี</h2><p class="lead">ลงหน้าร้านในสมุดร้านของ bookease ให้ฟรี ไม่มีค่าใช้จ่าย</p>
+    <p class="price">฿1,000 <small>/ เดือน · ถ้าอยากให้ทีมช่วยดูแลต่อ</small></p>
+    <ul class="offer">
+      <li><i>✓</i>ดูแลหน้าร้านใน Google Maps ให้ครบ (เมื่อพี่เพิ่มเราเป็นผู้จัดการร้าน)</li>
+      <li><i>✓</i>เว็บร้านนี้พร้อมใช้ ลูกค้ากดโทร นำทางได้</li>
+      <li><i>✓</i>เอาร้านไปอยู่ในเมนูคอนโดและโรงแรมใกล้ร้าน</li>
+      <li><i>✓</i>รายงานทาง LINE ทุกเช้าวันจันทร์</li>
+    </ul>
+    <p class="lead" style="margin-top:8px">ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้ · ไม่รวมค่าโฆษณา · ไม่รับประกันจำนวนลูกค้า</p>
+    <p class="ask">พี่อยากให้เราเริ่มช่วยดูแลร้านเลยไหมครับ?</p>
+    <a class="btn" target="_blank" rel="noopener" href="https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(`อยากให้ bookease ช่วยดูแลร้าน ${s.name}\n${kitUrl}`)}">ทัก LINE @bookease</a>
+    <a class="btn soft" target="_blank" rel="noopener" href="https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(`อยากให้โปรโมทร้าน ${s.name} ฟรี\n${kitUrl}`)}">เริ่มจากลงร้านฟรีก่อน</a></section>
+
+  <p class="foot">ข้อมูลจาก Google · อันดับเปลี่ยนได้ตามคำค้น พื้นที่ และเวลาที่ค้น · bookease · LINE @bookease · 092-641-4296</p>`;
+
+  const card = {
+    name: s.name, week: 1, tone: 'start', color: '#2D55EB',
+    headline: hubRank ? `ตอนนี้อยู่อันดับ ${hubRank}` : `ยังไม่ติด ${max} ร้านแรก`,
+    from: '', where: hub ? `ค้นหา “${kw}” แถว ${hub}` : `ค้นหา “${kw}” รอบร้าน`,
+    ladder: hub ? ladder(hubRank, max) : [], calls: 'กดโทรหาร้าน · ยังวัดไม่ได้', cta: 'ดูว่าเราทำอะไรให้ร้าน', url: '',
+    photo: own ? photoUrl(own.name) : '',
+  };
+  cardBlob(card).then((blob) => { $('cardimg').src = URL.createObjectURL(blob); }).catch((e) => console.error('[kit] card', e));
+}
+
+const seg = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter('th', { granularity: 'word' }) : null;
+function wrapLines(ctx, text, maxW) {
+  const words = seg ? [...seg.segment(text)].map((x) => x.segment) : text.split(/(?<=\s)/);
+  const lines = []; let line = '';
+  for (const w of words) {
+    if (ctx.measureText(line + w).width > maxW && line) { lines.push(line.trimEnd()); line = w.trimStart(); } else line += w;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+async function cardBlob(c) {
+  // The approved weekly card (Art 2026-11-16), drawn as a picture: same content as the LINE flex card.
+  await Promise.all(['600 14px Anuphan', '700 16px Anuphan', '800 30px Anuphan', '800 17px Inter'].map((f) => document.fonts.load(f)));
+  let photo = null;
+  if (c.photo) {
+    photo = await new Promise((ok) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => ok(im); im.onerror = (e) => { console.error('[growth] card photo', e); ok(null); }; im.src = c.photo; });
+  }
+  const K = 3, W = 340 * K, P = 22 * K, canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+  const font = (w, px, fam = 'Anuphan') => `${w} ${px * K}px ${fam}`;
+  const paint = (draw) => {
+    let y = P;
+    const text = (str, f, color, lh, x = P, maxW = W - P - x) => {
+      ctx.font = f; ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      const lines = wrapLines(ctx, str, maxW);
+      lines.forEach((l, i) => draw && ctx.fillText(l, x, y + i * lh * K));
+      y += lines.length * lh * K;
+    };
+    const rr = (x, yy, w, h, r, fill, stroke) => { ctx.beginPath(); ctx.roundRect(x, yy, w, h, r); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.setLineDash([6 * K / 2, 4 * K / 2]); ctx.lineWidth = 2 * K; ctx.strokeStyle = stroke; ctx.stroke(); ctx.setLineDash([]); } };
+    // logo + week
+    if (draw) {
+      ctx.textBaseline = 'top'; ctx.textAlign = 'left'; ctx.font = font(800, 17, 'Inter');
+      ctx.fillStyle = '#0A0A0A'; ctx.fillText('book', P, y); const bw = ctx.measureText('book').width; ctx.fillStyle = '#2D55EB'; ctx.fillText('ease', P + bw, y);
+      ctx.font = font(600, 13); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'right'; ctx.fillText(`สัปดาห์ที่ ${c.week}`, W - P, y + 2 * K);
+    }
+    y += 34 * K;
+    text(c.headline, font(800, 30), c.color, 38);
+    if (c.from) { y += 2 * K; text(c.from, font(700, 16), c.color, 24); }
+    if (c.where) { y += 2 * K; text(c.where, font(600, 13.5), '#8A827B', 20); }
+    // ladder
+    if (c.ladder.length) {
+      y += 14 * K;
+      const numW = 30 * K, barX = P + numW + 10 * K, barW = W - P - barX, rowH = 40 * K;
+      for (const row of c.ladder) {
+        if (row.kind === 'gap') { if (draw) { ctx.font = font(700, 14, 'Inter'); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('· · ·', W / 2, y + 7 * K); } y += 16 * K; continue; }
+        if (draw) {
+          ctx.font = font(800, 17, 'Inter'); ctx.fillStyle = row.kind === 'me' ? c.color : '#8A827B'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+          ctx.fillText(row.n, P + numW, y + rowH / 2);
+          if (row.kind === 'me') {
+            rr(barX, y, barW, rowH, 12 * K, c.color);
+            let tx = barX + 14 * K;
+            if (photo) {
+              const d = 30 * K, cx = barX + 6 * K + d / 2, cy = y + rowH / 2;
+              ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, d / 2, 0, Math.PI * 2); ctx.clip();
+              const sz = Math.min(photo.width, photo.height); ctx.drawImage(photo, (photo.width - sz) / 2, (photo.height - sz) / 2, sz, sz, cx - d / 2, cy - d / 2, d, d); ctx.restore();
+              ctx.beginPath(); ctx.arc(cx, cy, d / 2, 0, Math.PI * 2); ctx.lineWidth = 2 * K; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
+              tx = barX + 6 * K + d + 10 * K;
+            }
+            ctx.font = font(700, 16); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'left'; ctx.fillText('ร้านคุณ', tx, y + rowH / 2);
+          } else if (row.kind === 'was') {
+            rr(barX + K, y + K, barW - 2 * K, rowH - 2 * K, 12 * K, null, '#D9D2CB');
+            ctx.font = font(600, 14); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'left'; ctx.fillText('สัปดาห์ก่อน', barX + 12 * K, y + rowH / 2);
+          } else rr(barX, y, barW, rowH, 12 * K, '#EFEBE7');
+        }
+        y += rowH + 6 * K;
+      }
+      y -= 6 * K;
+    }
+    // calls
+    y += 16 * K;
+    const boxH = 54 * K;
+    if (draw) {
+      rr(P, y, W - 2 * P, boxH, 16 * K, '#F7F5F2');
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.font = `${26 * K}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
+      ctx.fillText('📞', P + 16 * K, y + boxH / 2);
+      ctx.font = font(700, 17); ctx.fillStyle = '#14110F'; ctx.fillText(c.calls, P + 56 * K, y + boxH / 2);
+    }
+    y += boxH + 16 * K;
+    // button (the link itself is sent in the chat right after the picture)
+    const btnH = 48 * K;
+    if (draw) {
+      rr(P, y, W - 2 * P, btnH, btnH / 2, '#2D55EB');
+      ctx.font = font(700, 17); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.cta, W / 2, y + btnH / 2 + K);
+    }
+    y += btnH + P;
+    return y;
+  };
+  const H = paint(false);
+  canvas.width = W; canvas.height = H;
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+  paint(true);
+  return new Promise((ok, no) => canvas.toBlob((b) => (b ? ok(b) : no(new Error('toBlob failed'))), 'image/png'));
+}
+
+function lineText(d, week, from7, views7, contacts7) {
+  const s = d.shop, hist = d.hist, last = hist[hist.length - 1], prev = hist[hist.length - 2], first = hist[0];
+  const done = d.log.filter((e) => e.at >= from7);
+  const lines = [`รายงานร้าน ${s.name} · สัปดาห์ที่ ${week}`, '', 'สัปดาห์นี้เราทำอะไรให้ร้าน'];
+  lines.push(...(done.length ? done.map((e) => `• ${e.what}`) : ['• สัปดาห์นี้ไม่มีงานใหม่ แต่เรายังนับผลให้ทุกวัน']));
+  lines.push('', 'ผลที่นับได้');
+  const was = (now, before) => (before == null ? ' (สัปดาห์แรก ไว้เทียบครั้งต่อไป)' : ` (สัปดาห์ก่อน ${before})`);
+  if (last) {
+    lines.push(`• ใกล้ร้าน เจอร้านคุณ ${last.spacings[0].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[0].top3, prev && prev.spacings[0].top3)}`);
+    lines.push(`• ไกลออกไป 2 กม. เจอร้านคุณ ${last.spacings[1].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[1].top3, prev && prev.spacings[1].top3)}`);
+    if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
+  } else lines.push('• ลำดับร้านใน Google: ยังวัดไม่ได้ เราจะลองค้นครั้งแรกตอนร้านเปิด');
+  lines.push(`• คนเปิดดูหน้าร้าน ${views7} ครั้ง · กดโทร นำทาง หรือติดต่อร้าน ${contacts7} ครั้ง (7 วันล่าสุด)`);
+  const pending = [];
+  if (!s.gbp) pending.push('ตัวเลขจาก Google (รอเจ้าของร้านเพิ่มเราเป็นผู้จัดการร้าน)');
+  for (const b of d.buildings) if (b.status !== 'live') pending.push(`เมนูที่ ${b.name} (ยังไม่ได้วาง)`);
+  if (pending.length) lines.push('', `ยังวัดไม่ได้: ${pending.join(' · ')}`);
+  lines.push('', `ดูทั้งหมด: ${location.origin}${location.pathname}?p=${s.id}`);
+  return lines.join('\n');
+}
+
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) { $('app').innerHTML = '<p class="err">ไม่พบร้าน</p>'; return; }
+  const r = await fetch(`${API}/growth?p=${encodeURIComponent(P)}`);
+  const d = await r.json();
+  if (r.status === 404) { $('app').innerHTML = '<p class="err">ร้านนี้ยังไม่ได้เริ่มบริการโปรโมทร้าน</p>'; return; }
+  if (!r.ok) throw new Error(d.error || r.status);
+  render(d);
+}
+load().catch((e) => { console.error('[growth] load', e); $('app').innerHTML = '<p class="err">เปิดรายงานไม่ได้ ลองกดเปิดลิงก์ใหม่อีกครั้ง</p>'; });
+
+load().catch((e) => { console.error('[kit] load', e); $('app').innerHTML = '<p class="err">เปิดชุดของร้านไม่ได้ ลองกดเปิดลิงก์ใหม่อีกครั้ง</p>'; });
+</script>
+</body>
+</html>
