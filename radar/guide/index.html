@@ -318,8 +318,13 @@ function pin(on) {
 }
 function next() { if (pinned) return; if (hover || held || document.hidden) { timer = setTimeout(next, 500); return; } show((cur + 1) % D.areas.length); }
 tabs.addEventListener('click', (e) => {
-  if (e.target.closest('.play')) { pin(false); show((cur + 1) % D.areas.length); return; }
-  const b = e.target.closest('.tab'); if (b) { pin(true); show(+b.dataset.i); }
+  if (e.target.closest('.play')) { pin(false); history.replaceState(null, '', location.pathname); show((cur + 1) % D.areas.length); return; }
+  const b = e.target.closest('.tab');
+  if (b) {
+    pin(true); show(+b.dataset.i);
+    // keep the picked area in the address, so a refresh or a shared link opens the same area
+    history.replaceState(null, '', `?a=${encodeURIComponent(D.areas[+b.dataset.i].name)}`);
+  }
 });
 // the search box checks the shop on the Radar itself
 document.getElementById('f-find').addEventListener('submit', (e) => {
