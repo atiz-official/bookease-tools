@@ -35,10 +35,8 @@
  */
 
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
-import * as pay from './growth-pay.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
-const PAY_CRON = '*/10 * * * *'; // payment re-check (must match wrangler.toml)
 const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
 // Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
 // Checked against the real Google Maps app on 2026-11-14:
@@ -56,6 +54,21 @@ export const CATEGORIES = [
   { id: 'clinic', label: 'คลินิกความงาม', primary: ['skin_care_clinic'], broad: [], name: /คลินิก.*(ความงาม|ผิว)|ความงาม.*คลินิก|beauty clinic|aesthetic|skin clinic/i },
   { id: 'tattoo', label: 'ร้านสัก', primary: ['body_art_service', 'tattoo_shop'], broad: [], name: /ร้านสัก|สักลาย|tattoo/i },
 ];
+
+/**
+ * Google's Thai type name → the words people actually type into Maps. Google calls every restaurant
+ * "ภัตตาคาร…" (ภัตตาคารอาหารไทย), which almost nobody searches, so a shop looked top-3 everywhere
+ * (Art 2026-11-17, จันทน์นิยม). Say ร้านอาหาร / ร้านอาหารไทย instead.
+ */
+export function searchTerm(googleName) {
+  const n = String(googleName || '').trim();
+  if (!n.startsWith('ภัตตาคาร')) return n;
+  const rest = n.slice('ภัตตาคาร'.length).trim();
+  return rest ? `ร้าน${rest}` : 'ร้านอาหาร'; // ภัตตาคารอาหารไทย → ร้านอาหารไทย · ภัตตาคารซูชิ → ร้านซูชิ
+}
+
+/** A saved report searched with a word we no longer use: check it again instead of showing it. */
+const outdated = (r) => !!(r && r.category && r.category.id === 'other' && r.category.label !== searchTerm(r.category.label));
 
 /** Which type is this shop? Returns a CATEGORIES entry, or null when nothing fits. */
 export function detectCategory(shopRaw) {
@@ -304,7 +317,7 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
   if (!found && !googleName) return { error: 'unknown_type' };
   const category = found
     ? { id: found.id, label: found.label, auto: !asked }
-    : { id: 'other', label: googleName, auto: true };
+    : { id: 'other', label: searchTerm(googleName), auto: true };
   const KEYWORDS = [category.label];
 
   // Which neighbourhood? The one the person picked, else the nearest area landmark within AREA_RADIUS_M.
@@ -688,33 +701,13 @@ export default {
     if (!env.GOOGLE_PLACES_KEY) return json({ error: 'server_misconfigured' }, 500, origin);
 
     try {
-      // BookEase Growth payments (growth-pay.js). Off unless GROWTH_PAY=on and the Xendit collect key is set.
-      if (request.method === 'POST' && url.pathname === '/growth/checkout') {
-        let b = {};
-        try { b = await request.json(); } catch (e) { console.error('[pay] checkout body', e); return json({ error: 'bad_body' }, 400, origin); }
-        const r = await pay.checkout(env, { placeId: b.placeId, tier: b.tier, shopName: b.shopName, returnUrl: b.returnUrl });
-        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
-      }
-      if (request.method === 'GET' && url.pathname === '/growth/order') {
-        const r = await pay.orderStatus(env, url.searchParams.get('id') || '');
-        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
-      }
-      if (request.method === 'POST' && url.pathname === '/growth/xendit-webhook') {
-        const r = await pay.webhook(env, request);
-        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
-      }
-      if (request.method === 'GET' && url.pathname === '/growth/orders') {
-        const r = await pay.listOrders(env, request);
-        return json(r.error ? { error: r.error } : r, r.status || 200, origin);
-      }
-
       if (request.method === 'GET' && url.pathname === '/view') {
         const placeId = url.searchParams.get('p') || '';
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         const q = url.searchParams;
         const saved = await loadReport(env, request.url,
           reportKey(placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
-        if (!saved) return json({ error: 'not_found' }, 404, origin);
+        if (!saved || outdated(saved)) return json({ error: 'not_found' }, 404, origin);
         return json(saved, 200, origin);
       }
 
@@ -821,7 +814,7 @@ export default {
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         const key = reportKey(placeId, cat, area, spacing);
         const old = await loadReport(env, request.url, key);
-        if (old && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
+        if (old && !outdated(old) && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
         const report = await buildReport(env, placeId, cat, area, spacing);
         if (report.error) return json(report, 400, origin);
@@ -843,10 +836,6 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    if (event.cron === PAY_CRON) {
-      if (pay.payEnabled(env)) ctx.waitUntil(pay.sweep(env).catch((e) => console.error('[pay] sweep failed', e && e.stack || e)));
-      return;
-    }
     if (!env.GOOGLE_PLACES_KEY || !env.REPORTS) { console.error('[growth] tick: missing key or KV'); return; }
     ctx.waitUntil(growthTick(env).catch((e) => console.error('[growth] tick failed', e && e.stack || e)));
   },

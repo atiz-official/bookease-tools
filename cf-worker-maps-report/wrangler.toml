@@ -1,6 +1,5 @@
 # Deploy: npx wrangler deploy   (auth: `npx wrangler login`, or CLOUDFLARE_API_TOKEN)
 # Secret: GOOGLE_PLACES_KEY  →  npx wrangler secret put GOOGLE_PLACES_KEY
-# Payments (growth-pay.js, need Art's OK): XENDIT_SECRET_KEY (collect key only), GROWTH_ADMIN_TOKEN, optional XENDIT_CALLBACK_TOKEN; var GROWTH_PAY=on
 name = "bookease-maps-report"
 main = "worker.js"
 compatibility_date = "2026-05-05"
@@ -11,8 +10,7 @@ workers_dev = true
 #   npx wrangler kv namespace create RADAR_REPORTS
 # BookEase Growth weekly rank check: every 15 min, 10:00–19:45 Bangkok (UTC+7), one due shop per run.
 [triggers]
-# Growth payments: re-check open Xendit invoices every 10 min (covers a lost webhook). Inert unless GROWTH_PAY=on.
-crons = ["*/15 3-12 * * *", "*/10 * * * *"]
+crons = ["*/15 3-12 * * *"]
 
 [[kv_namespaces]]
 binding = "REPORTS"
