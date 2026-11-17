@@ -108,7 +108,8 @@ const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': 
 const qs = new URLSearchParams(location.search);
 const B = qs.get('b') || '';
 const SHOP = qs.get('shop') || ''; // the shop whose report opened this menu: pinned first
-const EDIT = qs.get('edit') === '1' || !qs.get('s');
+// view=1: show the finished menu with the automatic choice (sales kit preview) instead of the builder.
+const EDIT = qs.get('edit') === '1' || (!qs.get('s') && qs.get('view') !== '1');
 // How the reader arrived: the printed QR carries v=qr, a copied or LINE-shared link v=link.
 const VIA = ['qr', 'link'].includes(qs.get('v')) ? qs.get('v') : 'direct';
 /** Count a menu view or a tap on a shop for the weekly report (the worker counts tracked places only). */

@@ -149,8 +149,8 @@ function render(R, place, near) {
 
   <section class="card"><p class="step">3 · เอาร้านพี่ไปให้คนแถวนี้เห็น</p>
     ${b ? `<h2>เมนูบริการรอบ ${esc(b.name)}</h2><p class="lead">แจกให้ลูกบ้านและแขกที่พัก สแกน QR แล้วเจอร้านพี่${b.m != null ? ` · ห่างร้าน ${Math.round(b.m / 10) * 10} ม.` : ''} <span class="pill wait">ตัวอย่าง ยังไม่ได้วาง</span></p>
-      <div class="frame"><iframe src="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}" title="เมนูอาคารตัวอย่าง" loading="lazy"></iframe></div>
-      <a class="open" href="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">เปิดเต็มจอ →</a>`
+      <div class="frame"><iframe src="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}&view=1" title="เมนูอาคารตัวอย่าง" loading="lazy"></iframe></div>
+      <a class="open" href="../menu/?b=${encodeURIComponent(b.id)}&shop=${encodeURIComponent(s.id)}&view=1" target="_blank" rel="noopener">เปิดเต็มจอ →</a>`
       : '<h2>เมนูบริการรอบอาคารใกล้ร้าน</h2><p class="lead">ยังไม่พบคอนโดหรือโรงแรมที่มีรีวิวพอในระยะ 800 ม. ทีมจะหาให้ <span class="pill">ยังไม่มี</span></p>'}</section>
 
   <section class="card"><p class="step">4 · ทุกเช้าวันจันทร์ พี่จะได้แบบนี้ทาง LINE</p>
