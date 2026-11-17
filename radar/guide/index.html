@@ -97,6 +97,28 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 @media (max-width:620px){.board{grid-template-columns:1fr;padding:14px;border-radius:22px}.scope{aspect-ratio:1.3}.nums{flex-direction:row;justify-content:space-between}.num b{font-size:32px}.num span{font-size:13px}.find h1{font-size:26px}.row{grid-template-columns:18px 1fr;row-gap:4px}.row .meta{grid-column:2;justify-content:space-between}}
 @media (prefers-reduced-motion:reduce){.mark::after{animation:none}.fade,.row{transition:none}.tab.on .prog{animation:none;transform:scaleX(1)}}
 .contact{text-align:center;font-size:13px;color:var(--ink-3);margin-top:8px}
+/* map is the hero (Art/Codex 2026-11-17): one blue number with its label right above it, list ↔ pins linked
+   with one highlight colour, buildings reachable from the map */
+.num.main .k{display:block;font:700 15px Sarabun;color:var(--ink);line-height:1.35}
+.num.main b{display:inline-block;color:var(--blue);font-size:40px;margin:2px 8px 2px 0}
+.num.main .hw{display:block;font:500 13.5px Sarabun;color:var(--ink-3);margin-top:2px}
+.num.main b::before{content:"≈"}
+.num.main .u{font:700 16px Sarabun;color:var(--ink-2)}
+.howbtn{border:0;background:none;padding:0;font:700 14px Sarabun;color:var(--blue);cursor:pointer}
+.howbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.num.sub b{font-size:24px;color:var(--ink-2)}
+.num.sub span{font:600 13px Sarabun;color:var(--ink-3)}
+.lp.sel{background:var(--blue);transform:scale(1.4);z-index:30 !important}
+.row.sel{background:#EEF2FE}.row.sel .i{color:var(--blue)}.row.sel .nm{color:var(--blue)}
+.mapbld{position:absolute;right:10px;bottom:10px;z-index:35;border:0;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(16,24,40,.18);padding:7px 12px;font:700 13px Sarabun;color:var(--blue);cursor:pointer}
+.bldpanel .sample{margin-top:10px;font:600 13px Sarabun;color:var(--ink-3)}
+.bldpanel .sample a{color:var(--blue);font-weight:700;text-decoration:none}
+@media (max-width:620px){
+  .nums{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+  .num.main{grid-column:1 / -1}
+  .num.main b{font-size:36px}
+  .num.sub b{font-size:22px}
+}
 .contact a{color:var(--ink-2);font-weight:600;text-decoration:none}
 .contact a:hover{text-decoration:underline;text-underline-offset:3px}
 .bldrow{margin-top:14px}
@@ -142,11 +164,11 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
   <section class="guide" aria-label="ร้านนวดแต่ละย่าน">
     <div class="tabs" role="tablist"></div>
     <div class="board">
-      <div class="scope-wrap fade"><div class="scope"></div></div>
+      <div class="scope-wrap fade"><div class="scope"></div><button class="mapbld" id="mapbld" type="button">โรงแรมและคอนโดรอบนี้ →</button></div>
       <div class="nums fade">
-        <div class="num"><b data-k="shops">0</b><span>ร้านนวดในย่าน</span></div>
-        <div class="num"><b data-k="searches">0</b><span>ประมาณการค้นหา ครั้ง/เดือน</span></div>
-        <div class="num hot"><b data-k="seenFirst">0</b><span>ร้านที่ติด 3 อันดับแรก</span></div>
+        <div class="num main"><span class="k" id="num-k">ประมาณการค้นหาร้านนวด</span><b data-k="searches">0</b><span class="u">ครั้ง/เดือน</span><span class="hw">รวม "ใกล้ฉัน" (ประมาณ) · <button class="howbtn" id="howbtn" type="button" aria-controls="how" aria-expanded="false">ดูวิธีนับ</button></span></div>
+        <div class="num sub"><b data-k="shops">0</b><span>ร้านนวดในย่าน</span></div>
+        <div class="num sub"><b data-k="seenFirst">0</b><span>ร้านที่ติด 3 อันดับแรก</span></div>
       </div>
       <div class="lead fade"><h2>TOP 5 ร้านในย่าน</h2><div class="rows"></div>
         <div class="foot"><span class="tip"></span></div></div>
@@ -154,16 +176,16 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
     <div class="bldrow"><button class="bldlink" id="bldlink" type="button">โรงแรมและคอนโดในย่านนี้ · ดูรายการ →</button></div>
     <div class="bldpanel" id="bldpanel" hidden></div>
     <div class="sample-row"><a class="bldlink" href="../menu/?b=ChIJ-7PwX7iZ4jARp_rFql-yzO4&shop=ChIJPxz0o_iZ4jARqOODkDRBYCw&view=1" target="_blank" rel="noopener">ดูเมนูตัวอย่าง Aqua Residences →</a><span class="stp sample">มีเมนูตัวอย่าง · ยังไม่ได้แจกจริง</span></div>
-    <section class="how" id="how" aria-label="วิธีนับ">
+    <section class="how" id="how" aria-label="วิธีนับ" hidden>
       <h3 id="how-h">วิธีนับ</h3>
       <div class="how-rows">
-        <div><span>คำค้นที่ระบุชื่อย่าน<small>นวด · ร้านนวด · นวดไทย · massage + ชื่อย่าน · วัดจริง</small></span><b id="how-named">–</b></div>
-        <div><span>ส่วนแบ่ง "ร้านนวดใกล้ฉัน"<small>ประมาณจากยอดทั้งกรุงเทพฯ</small></span><b id="how-near">–</b></div>
-        <div class="sum"><span>ประมาณการค้นหา</span><b id="how-total">–</b></div>
+        <div><span>พิมพ์ชื่อย่าน</span><b id="how-named">–</b></div>
+        <div><span>"ใกล้ฉัน" (ประมาณ)</span><b id="how-near">–</b></div>
+        <div class="sum"><span>รวม</span><b id="how-total">–</b></div>
       </div>
       <p class="how-note" id="how-note"></p>
     </section>
-    <p class="src">ข้อมูลจาก Google · 14–15 พ.ย. 2569<br>ประมาณการค้นหา = คำค้นที่ระบุชื่อย่าน + ส่วนแบ่ง "ร้านนวดใกล้ฉัน" ทั้งกรุงเทพฯ · ไม่รวมคนค้นชื่อร้าน<br>ติด 3 อันดับแรก = นับจาก 9 จุดตรวจในย่าน</p>
+    <p class="src">ข้อมูลจาก Google · 14–15 พ.ย. 2569</p>
     <p class="contact">โปรโมทร้านฟรี · <a id="contact-line" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a> · <a href="tel:0926414296">092-641-4296</a></p>
   </section>
 </div>
@@ -223,7 +245,21 @@ function openCard(node, html) {
   card.style.top = `${below ? n.bottom - r.top + 8 : n.top - r.top - card.offsetHeight - 8}px`;
   held = true;
 }
-function closeCard() { scope.parentElement.querySelectorAll('.pop').forEach((p) => p.remove()); held = false; }
+function closeCard() { scope.parentElement.querySelectorAll('.pop').forEach((p) => p.remove()); held = false; select(-1); }
+// one selected shop at a time: its pin and its row turn blue; nothing else is highlighted
+let sel = -1;
+function select(k) {
+  sel = k;
+  scope.querySelectorAll('.lp').forEach((p) => p.classList.toggle('sel', +p.dataset.i === k));
+  document.querySelectorAll('.rows .row').forEach((r, j) => r.classList.toggle('sel', j === k));
+}
+function pickLeader(k, fromList) {
+  const p = scope.querySelector(`.lp[data-i="${k}"]`);
+  if (!p) return;
+  if (fromList) scope.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  openCard(p, leaderCard(k));
+  select(k);
+}
 const pips = (n) => `<span class="pp">${Array.from({ length: 9 }, (_, j) => `<i class="${j < n ? 'on' : ''}"></i>`).join('')}</span>`;
 function leaderCard(i) {
   const l = cur_a.leaders[i];
@@ -238,7 +274,7 @@ function dotCard(j) {
 scope.parentElement.addEventListener('click', (e) => {
   const lp = e.target.closest('.lp'), sd = e.target.closest('.sd');
   if (e.target.closest('.x')) { closeCard(); return; }
-  if (lp) { openCard(lp, leaderCard(+lp.dataset.i)); return; }
+  if (lp) { pickLeader(+lp.dataset.i, false); return; }
   if (sd) { openCard(sd, dotCard(+sd.dataset.d)); return; }
   if (!e.target.closest('.pop')) closeCard();
 });
@@ -280,7 +316,7 @@ async function openBuildings(lat, lng, title) {
     const go = st.menu ? `<a class="go" href="${st.menu}" target="_blank" rel="noopener">ดูเมนูตัวอย่าง →</a>`
       : `<a class="go" href="../menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a>`;
     return `<li><div><b>${esc(p.name)}</b><small><span class="stp ${st.step}">${STEP_TH[st.step]}</span>ห่าง ${Math.round(m(p) / 10) * 10} ม. · <a href="${esc(p.mapsUrl)}" target="_blank" rel="noopener">ดูบนแผนที่</a></small></div>${go}</li>`;
-  }).join('')}</ul>`);
+  }).join('')}</ul><p class="sample">ดูตัวอย่างเมนูที่ทำแล้ว: <a href="../menu/?b=ChIJ-7PwX7iZ4jARp_rFql-yzO4&shop=ChIJPxz0o_iZ4jARqOODkDRBYCw&view=1" target="_blank" rel="noopener">Aqua Residences (จอมทอง) →</a> · เมนูตัวอย่าง · ยังไม่ได้แจกจริง</p>`);
 }
 document.getElementById('bldpanel').addEventListener('click', (e) => {
   if (e.target.closest('.x')) { document.getElementById('bldpanel').hidden = true; held = false; }
@@ -299,6 +335,7 @@ scope.parentElement.addEventListener('click', (e) => {
 
 function show(i) {
   cur = i;
+  closeCard(); // a card from the previous area must not stay on the new map
   const bp = document.getElementById('bldpanel'); if (bp && !bp.hidden) { bp.hidden = true; held = false; }
   document.getElementById('bldlink').textContent = `โรงแรมและคอนโดในย่าน${D.areas[i].name} · ดูรายการ →`;
   const a = D.areas[i];
@@ -318,16 +355,17 @@ function show(i) {
       setTimeout(() => r.classList.add('in'), reduce ? 0 : 120 + k * 110);
       r.addEventListener('mouseenter', () => { hot = k; r.classList.add('hot'); markHot(); });
       r.addEventListener('mouseleave', () => { hot = -1; r.classList.remove('hot'); markHot(); });
-      r.addEventListener('click', () => { const p = scope.querySelector(`.lp[data-i="${k}"]`); if (p) openCard(p, leaderCard(k)); });
+      r.addEventListener('click', () => pickLeader(k, true));
     });
     $('.lead h2').textContent = `TOP 5 ร้านในย่าน${a.name}`;
+    document.getElementById('num-k').textContent = `ประมาณการค้นหาร้านนวดในย่าน${a.name}`;
     // วิธีนับ (Home links here with #how): the measured part and the estimated part, for this area
     const V = window.RadarVolume, nm = V.NEAR_ME_BKK[D.cat], near = V.nearShare(D.cat, a.searches);
-    document.getElementById('how-h').textContent = `วิธีนับ · ประมาณการค้นหาร้านนวดในย่าน${a.name}`;
-    document.getElementById('how-named').textContent = `${fmt(a.searches)} ครั้ง`;
-    document.getElementById('how-near').textContent = `≈${fmt(near)} ครั้ง`;
-    document.getElementById('how-total').textContent = `≈${fmt(a.searches + near)} ครั้ง/เดือน`;
-    document.getElementById('how-note').textContent = `ทั้งกรุงเทพฯ มีคนค้น "${nm.k}" ${fmt(nm.v)} ครั้ง/เดือน Google ไม่แยกตามย่าน เราจึงแบ่งให้แต่ละย่านตามสัดส่วนคำค้นที่ระบุชื่อย่านของย่านนั้น (${fmt(a.searches)} จาก ${fmt(V.NAMED_BKK[D.cat])} ครั้งที่เรามีข้อมูลทั้งกรุงเทพฯ) เรายังไม่มีข้อมูลทุกย่าน ตัวเลขนี้จึงอาจสูงกว่าจริง · ไม่รวมคนค้นชื่อร้านโดยตรง · ข้อมูล Google Keyword Planner ค่าเฉลี่ย 12 เดือน`;
+    document.getElementById('how-h').textContent = `วิธีนับ · ${a.name}`;
+    document.getElementById('how-named').textContent = fmt(a.searches);
+    document.getElementById('how-near').textContent = `≈${fmt(near)}`;
+    document.getElementById('how-total').textContent = `≈${fmt(a.searches + near)}`;
+    document.getElementById('how-note').textContent = `"ใกล้ฉัน" ทั้งกรุงเทพฯ ${fmt(nm.v)} ครั้ง แบ่งตามสัดส่วนย่าน · อาจสูงกว่าจริง`;
     const tip = $('.tip'); tip.textContent = a.insight || ''; tip.hidden = !a.insight;
     board.classList.remove('swap');
   }, reduce ? 0 : 380);
@@ -364,6 +402,24 @@ const want = new URLSearchParams(location.search).get('a');
 const start = D.areas.findIndex((a) => a.name === want);
 if (start >= 0) pin(true);
 show(Math.max(0, start));
-if (location.hash === '#how') setTimeout(() => document.getElementById('how').scrollIntoView({ block: 'start' }), reduce ? 0 : 500);
+function openHow(scroll) {
+  const h = document.getElementById('how'), b = document.getElementById('howbtn');
+  h.hidden = false; b.setAttribute('aria-expanded', 'true'); b.textContent = 'ซ่อนวิธีนับ';
+  pin(true);
+  if (scroll) h.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+}
+document.getElementById('howbtn').addEventListener('click', () => {
+  const h = document.getElementById('how'), b = document.getElementById('howbtn');
+  if (h.hidden) { openHow(true); return; }
+  h.hidden = true; b.setAttribute('aria-expanded', 'false'); b.textContent = 'ดูวิธีนับ';
+});
+// buildings straight from the map
+document.getElementById('mapbld').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const a = D.areas[cur];
+  openBuildings(a.lat, a.lng, `โรงแรมและคอนโดในย่าน${a.name}`);
+  document.getElementById('bldpanel').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+});
+if (location.hash === '#how') setTimeout(() => openHow(true), reduce ? 0 : 500);
 </script>
 </body></html>
