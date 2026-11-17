@@ -108,8 +108,13 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .howbtn:hover{text-decoration:underline;text-underline-offset:3px}
 .num.sub b{font-size:24px;color:var(--ink-2)}
 .num.sub span{font:600 13px Sarabun;color:var(--ink-3)}
+.num.sub .lbl{display:inline-flex;align-items:center;gap:5px}
+.num.sub .lbl svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--ink-3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lp.sel{background:var(--blue);transform:scale(1.4);z-index:30 !important}
 .row.sel{background:#EEF2FE}.row.sel .i{color:var(--blue)}.row.sel .nm{color:var(--blue)}
+.catpick{position:absolute;right:10px;top:10px;z-index:36;appearance:none;-webkit-appearance:none;border:0;border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232D55EB' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;box-shadow:0 2px 8px rgba(16,24,40,.18);padding:6px 28px 6px 12px;font:700 14px Sarabun;color:var(--ink);cursor:pointer}
+.nodata{position:absolute;inset:0;z-index:34;display:grid;place-items:center;background:rgba(243,245,248,.92);font:700 15px Sarabun;color:var(--ink-2);border-radius:18px;text-align:center;padding:20px}
+.nodata[hidden]{display:none}
 .mapbld{position:absolute;right:10px;bottom:10px;z-index:35;border:0;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(16,24,40,.18);padding:7px 12px;font:700 13px Sarabun;color:var(--blue);cursor:pointer}
 .bldpanel .sample{margin-top:10px;font:500 12.5px Sarabun;color:var(--ink-3);line-height:1.5}
 .bldpanel .sample a{color:var(--blue);font:700 14px Sarabun;text-decoration:none}
@@ -166,14 +171,14 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
     <form class="box" id="f-find"><input id="q" placeholder="วางลิงก์ร้านจาก Google Maps หรือพิมพ์ชื่อร้าน" aria-label="ลิงก์ร้านจาก Google Maps หรือชื่อร้าน">
       <button class="go-btn" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg></button></form></div>
 
-  <section class="guide" aria-label="ร้านนวดแต่ละย่าน">
+  <section class="guide" aria-label="ร้านแต่ละย่าน">
     <div class="tabs" role="tablist"></div>
     <div class="board">
-      <div class="scope-wrap fade"><div class="scope"></div><button class="mapbld" id="mapbld" type="button">โรงแรมและคอนโดรอบนี้ →</button></div>
+      <div class="scope-wrap fade"><div class="scope"></div><select class="catpick" id="catpick" aria-label="ประเภทร้าน"></select><p class="nodata" id="nodata" hidden>ยังไม่มีข้อมูลหมวดนี้ในย่านนี้</p><button class="mapbld" id="mapbld" type="button">โรงแรมและคอนโดรอบนี้ →</button></div>
       <div class="nums fade">
         <div class="num main"><span class="k" id="num-k">ประมาณการค้นหาร้านนวด</span><b data-k="searches">0</b><span class="u">ครั้ง/เดือน</span><span class="hw">รวม "ใกล้ฉัน" (ประมาณ) · <button class="howbtn" id="howbtn" type="button" aria-controls="how" aria-expanded="false">ดูวิธีนับ</button></span></div>
-        <div class="num sub"><b data-k="shops">0</b><span>ร้านนวดในย่าน</span></div>
-        <div class="num sub"><b data-k="seenFirst">0</b><span>ร้านที่ติด 3 อันดับแรก</span></div>
+        <div class="num sub"><b data-k="shops">0</b><span class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 20v-6h6v6"/></svg><span id="shops-k">ร้านในย่าน</span></span></div>
+        <div class="num sub"><b data-k="seenFirst">0</b><span class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 20V9h6v11M3 20v-7h6M15 20v-5h6v5M2 20h20"/></svg><span>ติด Top 3</span></span></div>
       </div>
       <div class="lead fade"><h2>TOP 5 ร้านในย่าน</h2><div class="rows"></div>
         <div class="foot"><span class="tip"></span></div></div>
@@ -190,14 +195,21 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
       </div>
       <p class="how-note" id="how-note"></p>
     </section>
-    <p class="src">ข้อมูลจาก Google · 14–15 พ.ย. 2569</p>
+    <p class="src" id="src">ข้อมูลจาก Google · 14–15 พ.ย. 2569</p>
     <p class="contact"><a class="promo" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">โปรโมทร้านฟรี</a> · <a id="contact-line" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a> · <a href="tel:0926414296">092-641-4296</a></p>
   </section>
 </div>
 <script src="../volume.js"></script>
 <script src="data.js"></script>
 <script>
-const D = window.GUIDE;
+// one shop type at a time (?c=); the area tabs and the picked area stay when the type changes
+const GD = window.GUIDE;
+function view(c) {
+  const t = (GD.cats || {})[c] || {};
+  return { cat: c, label: t.label || 'ร้านนวด', asOf: t.asOf || GD.asOf, areas: t.areas || GD.areas, dlat: GD.dlat, dlng: GD.dlng };
+}
+const CATS = Object.keys(GD.cats || { massage: 1 });
+let D = view(CATS.includes(new URLSearchParams(location.search).get('c')) ? new URLSearchParams(location.search).get('c') : 'massage');
 const fmt = (n) => n.toLocaleString('en-US');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s) => document.querySelector(s);
@@ -371,7 +383,8 @@ function show(i) {
       r.addEventListener('click', () => pickLeader(k, true));
     });
     $('.lead h2').textContent = `TOP 5 ร้านในย่าน${a.name}`;
-    document.getElementById('num-k').textContent = `ประมาณการค้นหาร้านนวดในย่าน${a.name}`;
+    document.getElementById('num-k').textContent = `ประมาณการค้นหา${D.label}ในย่าน${a.name}`;
+    document.getElementById('src').textContent = `ข้อมูลจาก Google · ${D.asOf}`;
     // วิธีนับ (Home links here with #how): the measured part and the estimated part, for this area
     const V = window.RadarVolume, nm = V.NEAR_ME_BKK[D.cat], near = V.nearShare(D.cat, a.searches);
     document.getElementById('how-h').textContent = `วิธีนับ · ${a.name}`;
@@ -394,12 +407,12 @@ function pin(on) {
 }
 function next() { if (pinned) return; if (hover || held || document.hidden) { timer = setTimeout(next, 500); return; } show((cur + 1) % D.areas.length); }
 tabs.addEventListener('click', (e) => {
-  if (e.target.closest('.play')) { pin(false); history.replaceState(null, '', location.pathname); show((cur + 1) % D.areas.length); return; }
+  if (e.target.closest('.play')) { pin(false); setAddress(); show((cur + 1) % D.areas.length); return; }
   const b = e.target.closest('.tab');
   if (b) {
     pin(true); show(+b.dataset.i);
     // keep the picked area in the address, so a refresh or a shared link opens the same area
-    history.replaceState(null, '', `?a=${encodeURIComponent(D.areas[+b.dataset.i].name)}${location.hash}`);
+    setAddress();
   }
 });
 // the search box checks the shop on the Radar itself
@@ -411,6 +424,25 @@ document.getElementById('f-find').addEventListener('submit', (e) => {
 });
 $('.guide').addEventListener('mouseenter', () => { hover = true; });
 $('.guide').addEventListener('mouseleave', () => { hover = false; });
+function setAddress() {
+  const q = new URLSearchParams();
+  if (D.cat !== 'massage') q.set('c', D.cat);
+  if (pinned && D.areas[cur]) q.set('a', D.areas[cur].name);
+  const qs = q.toString();
+  history.replaceState(null, '', `${location.pathname}${qs ? '?' + qs : ''}${location.hash}`);
+}
+// type picker: only types that have data; the same area stays picked
+const picker = document.getElementById('catpick');
+picker.innerHTML = CATS.map((c) => `<option value="${c}"${c === D.cat ? ' selected' : ''}>${esc(view(c).label)}</option>`).join('');
+picker.addEventListener('change', () => {
+  const name = D.areas[cur] && D.areas[cur].name;
+  D = view(picker.value);
+  const i = D.areas.findIndex((a) => a.name === name);
+  document.getElementById('nodata').hidden = i >= 0;
+  pin(true);
+  show(i >= 0 ? i : cur);
+  setAddress();
+});
 const want = new URLSearchParams(location.search).get('a');
 const start = D.areas.findIndex((a) => a.name === want);
 if (start >= 0) pin(true);
