@@ -84,6 +84,11 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .row:last-child{border-bottom:0}
 .row .i{font:800 13px Inter;color:#A0A7B4}
 .row .nm{font:600 15px Sarabun;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nmline{display:flex;align-items:baseline;gap:10px;min-width:0}
+.row .nmline .nm{flex:1;min-width:0}
+.row .web{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 13px Inter,Sarabun,sans-serif}
+.row .web.yes{color:var(--blue);text-decoration:underline;text-decoration-color:#C9D3F8;text-underline-offset:3px}
+.row .web.soc,.row .web.no{color:#9AA3B2;font-weight:500;font-size:12.5px}
 .row .meta{display:flex;align-items:center;gap:10px}
 .pips{display:flex;gap:2px}
 .pips i{width:6px;height:14px;border-radius:2px;background:#E8EBF0}
@@ -210,7 +215,7 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
   </section>
 </div>
 <script src="../volume.js?v=20261117c"></script>
-<script src="data.js?v=20261117c"></script>
+<script src="data.js?v=20261117d"></script>
 <script>
 // one shop type at a time (?c=); the area tabs and the picked area stay when the type changes
 const EMBED = new URLSearchParams(location.search).get('embed') === '1' && window.parent !== window;
@@ -299,6 +304,17 @@ function pickLeader(k, fromList) {
   if (fromList) scope.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
   openCard(p, leaderCard(k));
   select(k);
+}
+const SOCIAL = [['facebook.com', 'เพจ Facebook'], ['fb.com', 'เพจ Facebook'], ['fb.me', 'เพจ Facebook'], ['instagram.com', 'Instagram'], ['linktr.ee', 'Linktree'],
+  ['line.me', 'LINE'], ['lin.ee', 'LINE'], ['tiktok.com', 'TikTok'], ['youtube.com', 'YouTube'], ['x.com', 'X'], ['twitter.com', 'X']];
+function webTag(url) {
+  if (url === undefined || url === null) return ''; // not checked → say nothing rather than guess
+  if (!url) return '<span class="web no">ไม่มีเว็บ</span>';
+  let h = '';
+  try { h = new URL(url).hostname.replace(/^(www|m)\./, ''); } catch (e) { console.error('[guide] bad website url', url, e); return ''; }
+  const soc = SOCIAL.find(([d]) => h === d || h.endsWith(`.${d}`));
+  if (soc) return `<span class="web soc">${soc[1]}</span>`;
+  return `<a class="web yes" href="${esc(url)}" target="_blank" rel="noopener nofollow">${esc(h)}</a>`;
 }
 const pips = (n) => `<span class="pp">${Array.from({ length: 9 }, (_, j) => `<i class="${j < n ? 'on' : ''}"></i>`).join('')}</span>`;
 function leaderCard(i) {
@@ -396,14 +412,14 @@ function show(i) {
     setDots(a);
     document.querySelectorAll('[data-k]').forEach((el) => countUp(el, el.dataset.k === 'searches' ? RadarVolume.total(D.cat, a.searches) : a[el.dataset.k]));
     const rows = $('.rows');
-    rows.innerHTML = a.leaders.map((l, k) => `<div class="row"><span class="i">${k + 1}</span><span class="nm" title="${l.name}">${l.name}</span>
+    rows.innerHTML = a.leaders.map((l, k) => `<div class="row"><span class="i">${k + 1}</span><span class="nmline"><span class="nm" title="${esc(l.name)}">${esc(l.name)}</span>${webTag(l.web)}</span>
       <span class="meta"><span class="pips" aria-label="ติด 3 อันดับแรก ${l.n} ใน 9 พื้นที่ค้นหา">${Array.from({ length: 9 }, (_, j) => `<i class="${j < l.n ? 'on' : ''}"></i>`).join('')}</span>
       <small>${l.rating ? '★' + l.rating : ''}${l.reviews != null ? ' · ' + fmt(l.reviews) : ''}</small></span></div>`).join('');
     [...rows.children].forEach((r, k) => {
       setTimeout(() => r.classList.add('in'), reduce ? 0 : 120 + k * 110);
       r.addEventListener('mouseenter', () => { hot = k; r.classList.add('hot'); markHot(); });
       r.addEventListener('mouseleave', () => { hot = -1; r.classList.remove('hot'); markHot(); });
-      r.addEventListener('click', () => pickLeader(k, true));
+      r.addEventListener('click', (e) => { if (e.target.closest('a')) return; pickLeader(k, true); });
     });
     $('.lead h2').textContent = `TOP 5 ร้านในย่าน${a.name}`;
     document.getElementById('num-k').textContent = `ประมาณการค้นหา${D.label}ในย่าน${a.name}`;
