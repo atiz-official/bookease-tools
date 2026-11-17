@@ -112,7 +112,6 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .num.sub .lbl svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--ink-3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lp.sel{background:var(--blue);transform:scale(1.4);z-index:30 !important}
 .row.sel{background:#EEF2FE}.row.sel .i{color:var(--blue)}.row.sel .nm{color:var(--blue)}
-.catpick{position:absolute;right:10px;top:10px;z-index:36;appearance:none;-webkit-appearance:none;border:0;border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232D55EB' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;box-shadow:0 2px 8px rgba(16,24,40,.18);padding:6px 28px 6px 12px;font:700 14px Sarabun;color:var(--ink);cursor:pointer}
 .nodata{position:absolute;inset:0;z-index:34;display:grid;place-items:center;background:rgba(243,245,248,.92);font:700 15px Sarabun;color:var(--ink-2);border-radius:18px;text-align:center;padding:20px}
 .nodata[hidden]{display:none}
 .mapbld{position:absolute;right:10px;bottom:10px;z-index:35;border:0;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(16,24,40,.18);padding:7px 12px;font:700 13px Sarabun;color:var(--blue);cursor:pointer}
@@ -160,6 +159,16 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 .sample-row[hidden]{display:none}
 .sample-row .stp{display:inline-block;font:600 11.5px Sarabun;border-radius:999px;padding:1px 8px;background:#FFF4D6;color:#8A5A00}
 .guide.pinned .tab .prog{display:none}
+/* shop type: a row of chips above the area tabs, selected = light blue (Art 2026-11-17: the map picker was not noticed) */
+.cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 8px}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:700 14.5px Sarabun;color:var(--ink-2);cursor:pointer}
+.cats button[aria-selected=true]{background:#EAF0FE;border-color:#EAF0FE;color:var(--blue)}
+/* embedded under the Radar home search (?embed=1): no header, search or footer of its own */
+.embed .top,.embed .find,.embed .contact{display:none}
+.embed .wrap{padding:0 0 8px}
+.embed .guide{margin-top:0}
+.embed body{background:transparent}
 .play{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:600 13px Sarabun;color:var(--ink-3);cursor:pointer;white-space:nowrap}
 .bldpanel a.go{font:700 13.5px Sarabun;color:var(--blue);text-decoration:none;white-space:nowrap}
 @media (max-width:560px){.bldpanel li{grid-template-columns:1fr;gap:2px}}
@@ -172,9 +181,10 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
       <button class="go-btn" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg></button></form></div>
 
   <section class="guide" aria-label="ร้านแต่ละย่าน">
+    <div class="cats" id="cats" role="tablist" aria-label="ประเภทร้าน"></div>
     <div class="tabs" role="tablist"></div>
     <div class="board">
-      <div class="scope-wrap fade"><div class="scope"></div><select class="catpick" id="catpick" aria-label="ประเภทร้าน"></select><p class="nodata" id="nodata" hidden>ยังไม่มีข้อมูลหมวดนี้ในย่านนี้</p><button class="mapbld" id="mapbld" type="button">โรงแรมและคอนโดรอบนี้ →</button></div>
+      <div class="scope-wrap fade"><div class="scope"></div><p class="nodata" id="nodata" hidden>ยังไม่มีข้อมูลหมวดนี้ในย่านนี้</p><button class="mapbld" id="mapbld" type="button">โรงแรมและคอนโดรอบนี้ →</button></div>
       <div class="nums fade">
         <div class="num main"><span class="k" id="num-k">ประมาณการค้นหาร้านนวด</span><b data-k="searches">0</b><span class="u">ครั้ง/เดือน</span><span class="hw">รวม "ใกล้ฉัน" (ประมาณ) · <button class="howbtn" id="howbtn" type="button" aria-controls="how" aria-expanded="false">ดูวิธีนับ</button></span></div>
         <div class="num sub"><b data-k="shops">0</b><span class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 20v-6h6v6"/></svg><span id="shops-k">ร้านในย่าน</span></span></div>
@@ -203,6 +213,19 @@ body{font-family:Sarabun,Inter,system-ui,sans-serif;color:var(--ink);-webkit-fon
 <script src="data.js?v=20261117c"></script>
 <script>
 // one shop type at a time (?c=); the area tabs and the picked area stay when the type changes
+const EMBED = new URLSearchParams(location.search).get('embed') === '1' && window.parent !== window;
+// The Guide now lives under the Radar home search (Art 2026-11-17). Opened on its own (old links), go to Home
+// with the same type/area, so every shared link keeps working.
+if (!EMBED) {
+  const q = new URLSearchParams(location.search); q.delete('embed');
+  location.replace(`../${q.toString() ? '?' + q.toString() : ''}${location.hash}`);
+}
+if (EMBED) {
+  document.documentElement.classList.add('embed');
+  const tell = () => parent.postMessage({ radarGuide: { height: Math.ceil(document.querySelector('.wrap').getBoundingClientRect().height) } }, location.origin);
+  new ResizeObserver(tell).observe(document.body);
+  addEventListener('load', tell);
+}
 const GD = window.GUIDE;
 function view(c) {
   const t = (GD.cats || {})[c] || {};
@@ -429,14 +452,20 @@ function setAddress() {
   if (D.cat !== 'massage') q.set('c', D.cat);
   if (pinned && D.areas[cur]) q.set('a', D.areas[cur].name);
   const qs = q.toString();
+  if (EMBED) { parent.postMessage({ radarGuide: { query: qs } }, location.origin); return; }
   history.replaceState(null, '', `${location.pathname}${qs ? '?' + qs : ''}${location.hash}`);
 }
 // type picker: only types that have data; the same area stays picked
-const picker = document.getElementById('catpick');
-picker.innerHTML = CATS.map((c) => `<option value="${c}"${c === D.cat ? ' selected' : ''}>${esc(view(c).label)}</option>`).join('');
-picker.addEventListener('change', () => {
+const chips = document.getElementById('cats');
+function drawChips() {
+  chips.innerHTML = CATS.map((c) => `<button type="button" role="tab" data-c="${c}" aria-selected="${c === D.cat}">${esc(view(c).label)}</button>`).join('');
+}
+drawChips();
+chips.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b || b.dataset.c === D.cat) return;
   const name = D.areas[cur] && D.areas[cur].name;
-  D = view(picker.value);
+  D = view(b.dataset.c);
+  drawChips();
   const i = D.areas.findIndex((a) => a.name === name);
   document.getElementById('nodata').hidden = i >= 0;
   pin(true);

@@ -59,26 +59,10 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .btn:focus-visible,.btn2:focus-visible,.link:focus-visible,.seg button:focus-visible,.dot:focus-visible,.cand:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .err{color:var(--bad);font-weight:600;font-size:15px}
 .cands{display:flex;flex-direction:column;gap:8px}
-/* Home "สำรวจย่าน": one blue number with its meaning right above it; light-blue selected tab (Art/Codex 2026-11-17) */
-.explore{margin-top:20px;background:var(--card);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
-.explore h2{font-size:17px}
-.ex-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:2px -4px 6px;padding:0 4px}
-.ex-tabs::-webkit-scrollbar{display:none}
-.ex-tabs button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:600 14px Sarabun,sans-serif;color:var(--ink-2);cursor:pointer;white-space:nowrap}
-.ex-tabs button[aria-selected=true]{background:#EAF0FE;border-color:#EAF0FE;color:var(--blue)}
-.ex-k{font:700 15px Sarabun,sans-serif;color:var(--ink)}
-.ex-main{display:flex;align-items:baseline;gap:8px;margin-top:-4px}
-.ex-main b{font:800 40px Inter,Sarabun,sans-serif;color:var(--blue);letter-spacing:-.02em;line-height:1.15}
-.ex-main span{font:700 16px Sarabun,sans-serif;color:var(--ink-2)}
-.ex-what{font-size:13px;color:var(--ink-3);line-height:1.5}
-.ex-what a{color:var(--blue);font-weight:700;text-decoration:none;white-space:nowrap}
-.ex-shops{font-size:14px;color:var(--ink-2);margin-top:4px}
-.ex-h{font-size:14px;font-weight:700;color:var(--ink-2);margin-top:4px}
-.ex-list{list-style:none;display:flex;flex-direction:column;gap:2px;font-size:14px}
-.ex-list li{display:flex;gap:8px;align-items:baseline;min-width:0;color:var(--ink-2)}
-.ex-list li::before{content:"•";color:var(--ink-3);flex:none}
-.ex-list li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ex-go{align-self:flex-start;color:var(--blue);font:700 15px Sarabun,sans-serif;text-decoration:none;margin-top:4px}
+/* Home = search + the neighbourhood Guide under it (Art 2026-11-17). The Guide keeps its own page and code
+   (guide/?embed=1) so nothing clashes with the report; it is wider than the search column on big screens. */
+.guide-wrap{margin-top:24px;width:min(1160px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}
+.guide-wrap iframe{display:block;width:100%;height:900px;border:0;background:transparent}
 .promo-btn{display:flex;align-items:center;justify-content:center;margin-top:12px;height:46px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink);font:700 16px Sarabun,sans-serif;text-decoration:none;background:#fff}
 @media (max-width:520px){.start.find{margin-top:3vh}}
 .cand{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;cursor:pointer;font:inherit;color:inherit}
@@ -256,18 +240,8 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
     </form>
     <p class="err" id="find-err" role="alert" hidden></p>
     <div class="cands" id="cands" hidden></div>
-    <div class="explore" id="explore" hidden>
-      <h2>สำรวจย่าน</h2>
-      <div class="ex-tabs" id="ex-tabs" role="tablist" aria-label="เลือกย่าน"></div>
-      <p class="ex-k" id="ex-k">ประมาณการค้นหาร้านนวด</p>
-      <div class="ex-main"><b class="num" id="ex-search">–</b><span>ครั้ง/เดือน</span></div>
-      <p class="ex-what">อิงคำค้นที่ระบุย่านและค่าประมาณคำค้น "ใกล้ฉัน" · <a id="ex-how" href="guide/#how">ดูวิธีนับ →</a></p>
-      <p class="ex-shops" id="ex-shops"></p>
-      <h3 class="ex-h">ร้านที่ปรากฏบ่อยในผลตรวจ</h3>
-      <ul class="ex-list" id="ex-list"></ul>
-      <a class="ex-go" id="ex-go" href="guide/">สำรวจย่านนี้ →</a>
-    </div>
-    <a class="promo-btn" id="promo-btn" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener" hidden>โปรโมทร้านให้ฟรี</a>
+    <div class="guide-wrap" id="guide-wrap"></div>
+    <a class="promo-btn" id="promo-btn" href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">โปรโมทร้านให้ฟรี</a>
   </section>
 
   <!-- 2 · loading -->
@@ -817,37 +791,26 @@ async function drawMap(k) {
   pin.style.left = '50%'; pin.style.top = 'calc(50% + 24px)';
 }
 
-/* ── สำรวจย่าน (Home) ─────────────────────────────────────────── */
-// Same data as the Guide (guide/data.js), loaded after the page so the search box is never slowed down.
-function exploreShow(i) {
-  const G = window.GUIDE, a = G.areas[i];
-  [...$('ex-tabs').children].forEach((b, j) => b.setAttribute('aria-selected', j === i));
-  $('ex-k').textContent = `ประมาณการค้นหาร้านนวดในย่าน${a.name}`;
-  $('ex-search').textContent = `≈${fmt(window.RadarVolume.total(G.cat, a.searches))}`;
-  $('ex-shops').textContent = `พบร้านนวด ${fmt(a.shops)} แห่ง · ตรวจ ${G.asOf}`;
-  $('ex-list').innerHTML = a.leaders.slice(0, 3).map((l) => `<li><span>${esc(l.name)}</span></li>`).join('');
-  const q = `?a=${encodeURIComponent(a.name)}`;
-  $('ex-go').href = `guide/${q}`;
-  $('ex-go').textContent = `สำรวจย่าน${a.name} →`;
-  $('ex-how').href = `guide/${q}#how`;
-}
-function exploreInit() {
-  const G = window.GUIDE;
-  if (!G || !G.areas || !G.areas.length) return;
-  $('ex-tabs').innerHTML = G.areas.map((a, i) => `<button type="button" role="tab" data-i="${i}">${esc(a.name)}</button>`).join('');
-  $('ex-tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) exploreShow(+b.dataset.i); });
-  exploreShow(0);
-  $('explore').hidden = false; $('promo-btn').hidden = false;
-}
+/* ── Guide under the search (Home) ─────────────────────────────── */
+// Loaded after the page so the search box is ready first. Type/area from the address (?c=, ?a=, #how) go in;
+// the Guide sends back its height and the type/area to keep in the address (shared links).
 function exploreLoad() {
   if (exploreLoad.started) return;
   exploreLoad.started = true;
-  const sc = document.createElement('script');
-  sc.src = 'guide/data.js?v=20261117c'; // bump when the data changes (browsers cache it ~10 min)
-  sc.onload = exploreInit;
-  sc.onerror = (e) => console.error('[explore] guide data failed to load', e);
-  document.head.appendChild(sc);
+  const qs = new URLSearchParams(location.search), q = new URLSearchParams({ embed: '1' });
+  if (!qs.get('p')) { ['c', 'a'].forEach((k) => { if (qs.get(k)) q.set(k, qs.get(k)); }); }
+  const f = document.createElement('iframe');
+  f.title = 'สำรวจย่าน';
+  f.src = `guide/?${q.toString()}${location.hash === '#how' ? '#how' : ''}`;
+  f.id = 'guide-frame';
+  $('guide-wrap').appendChild(f);
 }
+addEventListener('message', (e) => {
+  if (e.origin !== location.origin || !e.data || !e.data.radarGuide) return;
+  const g = e.data.radarGuide, f = $('guide-frame');
+  if (f && g.height) f.style.height = `${g.height}px`;
+  if (typeof g.query === 'string' && !$('s-find').hidden) history.replaceState(null, '', `${location.pathname}${g.query ? '?' + g.query : ''}`);
+});
 
 /* ── boot ───────────────────────────────────────────────────────── */
 (async function boot() {
