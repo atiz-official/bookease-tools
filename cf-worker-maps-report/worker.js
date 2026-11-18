@@ -24,6 +24,8 @@
  *    1 × Place Details Enterprise  → 1,000 free / month, then $20 per 1,000
  *   /find = 1 × Text Search Pro    → 5,000 free / month
  *   ≈ 500 reports / month free, then ≈ $0.09 per report.
+ *   + 1 × Place Details (reviews), only for a shop Google files under catch-all types alone (e.g. "บริการ")
+ *     whose name says nothing either: the search word is then read from its reviews (keywords.js).
  *
  * Cost guards, in place of a login:
  *   - DAILY_CAP: new reports / searches per day, then the tool answers "full for today".
@@ -35,6 +37,7 @@
  */
 
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
+import { wordFromListing, wordFromReviews } from './keywords.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
@@ -56,19 +59,12 @@ export const CATEGORIES = [
 ];
 
 /**
- * Google's Thai type name → the words people actually type into Maps. Google calls every restaurant
- * "ภัตตาคาร…" (ภัตตาคารอาหารไทย), which almost nobody searches, so a shop looked top-3 everywhere
- * (Art 2026-11-17, จันทน์นิยม). Say ร้านอาหาร / ร้านอาหารไทย instead.
+ * A saved report searched with a word we no longer use: check it again instead of showing it.
+ * Reports of a shop outside our own types saved before the automatic search word (KW_VERSION) are all re-checked:
+ * some searched Google's catch-all "บริการ" (Art 2026-11-18).
  */
-export function searchTerm(googleName) {
-  const n = String(googleName || '').trim();
-  if (!n.startsWith('ภัตตาคาร')) return n;
-  const rest = n.slice('ภัตตาคาร'.length).trim();
-  return rest ? `ร้าน${rest}` : 'ร้านอาหาร'; // ภัตตาคารอาหารไทย → ร้านอาหารไทย · ภัตตาคารซูชิ → ร้านซูชิ
-}
-
-/** A saved report searched with a word we no longer use: check it again instead of showing it. */
-const outdated = (r) => !!(r && r.category && r.category.id === 'other' && r.category.label !== searchTerm(r.category.label));
+const KW_VERSION = 2;
+const outdated = (r) => !!(r && r.category && r.category.id === 'other' && r.category.kw !== KW_VERSION);
 
 /** Which type is this shop? Returns a CATEGORIES entry, or null when nothing fits. */
 export function detectCategory(shopRaw) {
@@ -309,15 +305,27 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
   shop.openNow = shopRaw.currentOpeningHours && typeof shopRaw.currentOpeningHours.openNow === 'boolean' ? shopRaw.currentOpeningHours.openNow : null;
   if (shop.lat == null) return { error: 'no_location' };
 
-  // Shop type: the one asked for, else read from the Google listing. A type we have no keyword list for
-  // (a restaurant, a gym) is still ranked, under Google's own Thai name for it, but gets no search volume.
+  // Shop type: the one asked for, else read from the Google listing. A shop outside our own types still gets a
+  // search word, chosen automatically (keywords.js: Google type → name → Google's Thai name → reviews), but no
+  // search volume. The owner is never asked (Art 2026-11-18).
   const asked = CATEGORIES.find((c) => c.id === catId) || null;
-  const found = asked || detectCategory(shopRaw);
-  const googleName = (shopRaw.primaryTypeDisplayName && shopRaw.primaryTypeDisplayName.text) || '';
-  if (!found && !googleName) return { error: 'unknown_type' };
+  let found = asked || detectCategory(shopRaw);
+  let other = found ? null : wordFromListing(shopRaw);
+  let reviewHits = 0;
+  if (!found && !other) {
+    // Only Google's catch-all types: read the reviews. One extra Place Details (Atmosphere) call, these shops only.
+    const rv = await google(env, `places/${placeId}?languageCode=th`, 'reviews', null);
+    const texts = (rv.reviews || []).map((r) => (r.text && r.text.text) || (r.originalText && r.originalText.text) || '');
+    const best = wordFromReviews(texts, CATEGORIES.map((c) => [c.name, c.id]));
+    const ours = best && CATEGORIES.find((c) => c.id === best.value);
+    if (ours) found = ours;
+    else if (best) other = { label: best.value, from: 'reviews' };
+    reviewHits = best ? best.hits : 0;
+  }
+  if (!found && !other) return { error: 'unknown_type' };
   const category = found
-    ? { id: found.id, label: found.label, auto: !asked }
-    : { id: 'other', label: searchTerm(googleName), auto: true };
+    ? { id: found.id, label: found.label, auto: !asked, ...(reviewHits ? { from: 'reviews' } : {}) }
+    : { id: 'other', label: other.label, auto: true, from: other.from, kw: KW_VERSION };
   const KEYWORDS = [category.label];
 
   // Which neighbourhood? The one the person picked, else the nearest area landmark within AREA_RADIUS_M.
