@@ -542,16 +542,16 @@ function nearShop() {
 }
 const latinGap = (t) => (/^[A-Za-z]/.test(t) ? ' ' : '');
 
-function pushLink(k) {
-  const rank = R.area ? k.hubRank : k.centreRank;
-  if (R.shop.openNow === false || (rank != null && rank <= 3)) return '';
+// The push button is a service offer, not a reading of today's rank: it always shows, shop open or closed,
+// top 3 or not (Art 2026-11-19: "don't hide the button. the button is a service").
+function pushLink() {
   return '<a class="push" id="push" target="_blank" rel="noopener" aria-label="ดันร้านให้สูงขึ้น"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>ดันร้าน</a>';
 }
 // Put the button at the end of the shop's own row (Art 2026-11-17: an icon in that line, variant B).
 function withPush(list, k) {
   const btn = pushLink(k);
-  if (!btn) return list;
-  return list.replace(/<li class="you">([\s\S]*?)<\/li>/, (m, inner) => `<li class="you has-push">${inner}${btn}</li>`);
+  // the shop's row is "you", or "you ok" when it is in the top 3
+  return list.replace(/<li class="you( ok)?">([\s\S]*?)<\/li>/, (m, ok, inner) => `<li class="you${ok || ''} has-push">${inner}${btn}</li>`);
 }
 
 function aheadList(k) {
