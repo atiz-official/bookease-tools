@@ -33,8 +33,8 @@ export const TYPE_WORDS = {
   car_rental: 'รถเช่า', car_repair: 'อู่ซ่อมรถ', car_wash: 'ล้างรถ', // Google: "บริการล้างรถ"; คาร์แคร์ = coating/detailing, only from the name auto_parts_store: 'ร้านอะไหล่รถยนต์',
   // health
   dentist: 'คลินิกทันตกรรม', dental_clinic: 'คลินิกทันตกรรม', veterinary_care: 'คลินิกสัตว์',
-  physiotherapist: 'กายภาพบำบัด', chiropractor: 'กายภาพบำบัด', doctor: 'คลินิก', medical_clinic: 'คลินิก',
-  medical_center: 'คลินิก', hospital: 'โรงพยาบาล', pharmacy: 'ร้านขายยา', drugstore: 'ร้านขายยา',
+  physiotherapist: 'กายภาพบำบัด', chiropractor: 'กายภาพบำบัด', doctor: 'คลินิกเวชกรรม', medical_clinic: 'คลินิกเวชกรรม',
+  medical_center: 'คลินิกเวชกรรม', hospital: 'โรงพยาบาล', pharmacy: 'ร้านขายยา', drugstore: 'ร้านขายยา',
   // fitness
   gym: 'ฟิตเนส', fitness_center: 'ฟิตเนส', yoga_studio: 'โยคะ', swimming_pool: 'สระว่ายน้ำ',
   // food and drink
@@ -77,7 +77,7 @@ export const NAME_WORDS = [
   [/ล้างแอร์|ซ่อมแอร์|air\s*con/i, 'ล้างแอร์'],
   [/ขนของ|ย้ายบ้าน|moving/i, 'รถรับจ้างขนของ'],
   [/สะดวกซัก|ซักผ้า|ซักรีด|laundr/i, 'ร้านซักผ้า'],
-  [/ทันตก|ทำฟัน|จัดฟัน|dental|dentist/i, 'คลินิกทันตกรรม'],
+  [/ทันตก|ทำฟัน|จัดฟัน|หมอฟัน|dental|dentist/i, 'คลินิกทันตกรรม'],
   [/สัตวแพทย์|รักษาสัตว์|คลินิกสัตว์|โรงพยาบาลสัตว์|\bvet\b/i, 'คลินิกสัตว์'],
   [/อาบน้ำ\S*\s*(หมา|สุนัข|แมว)|ตัดขน|grooming/i, 'อาบน้ำตัดขนสุนัข'],
   [/กายภาพ|physio/i, 'กายภาพบำบัด'],
@@ -115,7 +115,10 @@ export const NAME_WORDS = [
   [/ทัวร์|\btours?\b|travel/i, 'ทัวร์'],
   [/คาราโอเกะ|karaoke/i, 'คาราโอเกะ'],
   [/ร้านอาหาร|restaurant|kitchen/i, 'ร้านอาหาร'],
-  [/คลินิก|clinic/i, 'คลินิก'],
+  [/คลินิกเด็ก|หมอเด็ก|กุมาร|pediatric|paediatric|\bkids?\b.*clinic/i, 'คลินิกเด็ก'],
+  [/แพทย์แผนไทย|แผนไทย|thai\s*traditional/i, 'คลินิกแพทย์แผนไทย'],
+  [/เวชกรรม|คลินิกแพทย์|คลินิกหมอ|medical\s*clinic|\bgp\b/i, 'คลินิกเวชกรรม'],
+  [/คลินิก|clinic/i, 'คลินิกเวชกรรม'],
 ];
 
 /** The first rule that matches the text, or null. */
