@@ -79,20 +79,20 @@ function thWhen(iso) {
 }
 
 const TIERS = {
-  1000: { name: 'ให้ลูกค้าแถวร้านเจอคุณก่อน', items: [['📍', 'ลูกค้าเจอร้านบน Google ง่ายขึ้น'], ['📱', 'มีเว็บร้าน กดโทร/จองได้ทันที'], ['📊', 'เราโปรโมทให้ สรุปผลทุกสัปดาห์']] },
-  2000: { name: 'ให้ลูกค้าเลือกร้านคุณ', items: [['✅', 'ได้ทุกอย่างใน 1,000'], ['⭐', 'รีวิวและรูปเพิ่ม ร้านน่าเลือกขึ้น'], ['🌏', 'ลูกค้าต่างชาติอ่านหน้าร้านได้']] },
-  3000: { name: 'ให้ร้านเด่นกว่าร้านอื่น', items: [['✅', 'ได้ทุกอย่างใน 2,000'], ['🏅', 'ป้ายร้านยืนยันแล้ว + ร้านแนะนำ'], ['📣', 'เราตั้งโฆษณาให้ 1 แคมเปญ/เดือน']] },
+  1290: { name: 'ให้ลูกค้าแถวร้านเจอคุณก่อน', items: [['📍', 'ลูกค้าเจอร้านบน Google ง่ายขึ้น'], ['📱', 'มีเว็บร้าน กดโทร/จองได้ทันที'], ['📊', 'เราโปรโมทให้ สรุปผลทุกสัปดาห์']] },
+  2490: { name: 'ให้ลูกค้าเลือกร้านคุณ', items: [['✅', 'ได้ทุกอย่างใน 1,290'], ['⭐', 'รีวิวและรูปเพิ่ม ร้านน่าเลือกขึ้น'], ['🌏', 'ลูกค้าต่างชาติอ่านหน้าร้านได้']] },
+  3490: { name: 'ให้ร้านเด่นกว่าร้านอื่น', items: [['✅', 'ได้ทุกอย่างใน 2,490'], ['🏅', 'ป้ายร้านยืนยันแล้ว + ร้านแนะนำ'], ['📣', 'เราตั้งโฆษณาให้ 1 แคมเปญ/เดือน']] },
 };
 
 // Recommend by the shop's real problem:
-// customers don't find the shop yet (rank from the area hub worse than 3, or top-3 in under 2/3 of the points) → 1,000 (be found first);
-// customers already find it → 2,000 (be chosen: reviews, photos, other languages).
+// customers don't find the shop yet (rank from the area hub worse than 3, or top-3 in under 2/3 of the points) → 1,290 (be found first);
+// customers already find it → 2,490 (be chosen: reviews, photos, other languages).
 function recommend(top3, total, hubRank, hub) {
   const found = hubRank && hubRank <= 3 && top3 >= Math.ceil(total * 2 / 3);
   if (!found) {
-    return { price: 1000, why: hubRank ? `คนที่ค้นจาก ${hub} ยังเห็นร้านคุณอันดับ ${hubRank} → ทำให้ลูกค้าเจอร้านก่อน` : `คนที่ค้นจาก ${hub} ยังไม่เห็นร้านคุณ → ทำให้ลูกค้าเจอร้านก่อน` };
+    return { price: 1290, why: hubRank ? `คนที่ค้นจาก ${hub} ยังเห็นร้านคุณอันดับ ${hubRank} → ทำให้ลูกค้าเจอร้านก่อน` : `คนที่ค้นจาก ${hub} ยังไม่เห็นร้านคุณ → ทำให้ลูกค้าเจอร้านก่อน` };
   }
-  return { price: 2000, why: 'ลูกค้าเจอร้านคุณแล้ว → ทำให้ลูกค้าเลือกร้านคุณ' };
+  return { price: 2490, why: 'ลูกค้าเจอร้านคุณแล้ว → ทำให้ลูกค้าเลือกร้านคุณ' };
 }
 
 async function load() {
@@ -151,7 +151,7 @@ function render(r) {
       <p class="sub">ไม่ผูกมัด ยกเลิกได้ทุกเดือน · ใช้ได้ทุกร้าน</p>
     </div>
     <div class="links"><button id="more">ดูแพ็กเกจอื่น</button><a href="${report}">ดูผลตรวจเต็ม</a></div>
-    <div id="all" hidden><img src="packages.png" alt="แพ็กเกจ 1,000 / 2,000 / 3,000 บาทต่อเดือน"></div>
+    <div id="all" hidden><img src="packages.png" alt="แพ็กเกจ 1,290 / 2,490 / 3,490 บาทต่อเดือน"></div>
     <p class="foot">LINE ${LINE_OA} · ${PHONE}</p>
     ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วข้อความเข้า ${LINE_OA} พร้อมชื่อร้านและแพ็กเกจ)
       <input id="link" readonly value="${esc(self)}"><button id="copy">คัดลอกลิงก์</button> <span id="ok" hidden>คัดลอกแล้ว</span></div>` : ''}`;
