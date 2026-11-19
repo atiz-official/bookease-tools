@@ -520,6 +520,18 @@ const G_RETRY_MS = 3 * 3600 * 1000;        // shop closed → try again in 3 hou
 const bkkDay = (t = Date.now()) => new Date(t + 7 * 3600 * 1000).toISOString().slice(0, 10);
 const gid = (v) => (/^[A-Za-z0-9_-]{10,200}$/.test(v || '') ? v : '');
 
+const CMS_API = 'https://atizrail.bookease.co';
+/** True when the token is a live bookease.co CMS session (the admin login the team already has). */
+async function isCmsAdmin(token) {
+  if (!/^[A-Za-z0-9._~+/=-]{16,4096}$/.test(token)) return false;
+  try {
+    const r = await fetch(`${CMS_API}/api/admin/cms/session`, { headers: { Authorization: `Bearer ${token}` } });
+    return r.ok;
+  } catch (e) {
+    console.error('[growth-admin] session check', e);
+    return false;
+  }
+}
 async function gIndex(env) { return (await env.REPORTS.get('g/index', 'json')) || []; }
 
 /**
@@ -801,6 +813,56 @@ export default {
       }
 
       // Take this week's rank check now. Safe without a login: only tracked shops that are due, once a week.
+      // Team registration of BookEase Growth shops, from the bookease.co admin (its CMS login is the only key:
+      // the worker asks atizrail whether the token is a live CMS session). Billing stays in g/billing/<id>,
+      // never in g/shop, because the public report page returns g/shop to the browser.
+      if (url.pathname === '/growth/admin/list' || url.pathname === '/growth/admin/save') {
+        if (!(await isCmsAdmin(String(body.token || '')))) return json({ error: 'unauthorized' }, 401, origin);
+        if (url.pathname === '/growth/admin/list') {
+          const index = (await gIndex(env)).filter((x) => x.kind === 'shop');
+          const rows = await Promise.all(index.map(async ({ id }) => {
+            const [shop, billing, hist, log, plan] = await Promise.all(['shop', 'billing', 'hist', 'log', 'plan']
+              .map((k) => env.REPORTS.get(`g/${k}/${id}`, 'json')));
+            const h = hist || [];
+            const ring = (snap, m) => { const r = snap && (snap.spacings || []).find((x) => x.m === m); return r ? r.top3 : null; };
+            return { id, shop, billing, first: h[0] ? { at: h[0].at, near: ring(h[0], 500), wide: ring(h[0], 2000) } : null,
+              last: h.length ? { at: h[h.length - 1].at, near: ring(h[h.length - 1], 500), wide: ring(h[h.length - 1], 2000),
+                rating: h[h.length - 1].rating, reviews: h[h.length - 1].reviews } : null,
+              checks: h.length, workDone: (log || []).length, lastWork: (log || []).length ? log[log.length - 1].at : null,
+              planned: (plan || []).filter((x) => !x.done).length };
+          }));
+          return json({ rows }, 200, origin);
+        }
+        const id = gid(String(body.placeId || ''));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        const name = String(body.name || '').trim().slice(0, 120);
+        const word = String(body.word || '').trim().slice(0, 60);
+        const cat = word ? 'other' : String(body.cat || '');
+        if (!name) return json({ error: 'name_required' }, 400, origin);
+        if (!['salon', 'massage', 'barber', 'nail', 'clinic', 'tattoo', 'other'].includes(cat)) return json({ error: 'bad_cat' }, 400, origin);
+        const plan = String(body.plan || '');
+        if (!['basic', 'custom', 'premium'].includes(plan)) return json({ error: 'bad_plan' }, 400, origin);
+        const price = Math.round(Number(body.priceTHB));
+        if (!Number.isFinite(price) || price < 0 || price > 1000000) return json({ error: 'bad_price' }, 400, origin);
+        const period = body.period === 'yearly' ? 'yearly' : 'monthly';
+        const day = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '');
+        const text = (v, n) => String(v || '').trim().slice(0, n);
+        const old = (await env.REPORTS.get(`g/shop/${id}`, 'json')) || {};
+        const shop = { ...old, id, kind: 'shop', name, cat, word: cat === 'other' ? word : undefined,
+          area: text(body.area, 40) || old.area || '', since: old.since || day(body.since) || bkkDay(),
+          buildings: old.buildings || [], active: body.active !== false };
+        const oldBilling = (await env.REPORTS.get(`g/billing/${id}`, 'json')) || {};
+        const billing = { ...oldBilling, id, plan, priceTHB: price, period, paidAt: day(body.paidAt),
+          receipt: text(body.receipt, 64), paymentVerified: Boolean(body.paymentVerified) && Boolean(text(body.receipt, 64)),
+          gbpManager: Boolean(body.gbpManager), contact: text(body.contact, 120), note: text(body.note, 300),
+          updatedAt: new Date().toISOString() };
+        await env.REPORTS.put(`g/shop/${id}`, JSON.stringify(shop));
+        await env.REPORTS.put(`g/billing/${id}`, JSON.stringify(billing));
+        const index = await gIndex(env);
+        if (!index.some((x) => x.id === id)) await env.REPORTS.put('g/index', JSON.stringify([...index, { id, kind: 'shop' }]));
+        return json({ ok: true, shop, billing }, 200, origin);
+      }
+
       if (url.pathname === '/growth/snap') {
         const id = gid(String(body.p || ''));
         if (!id) return json({ error: 'bad_place_id' }, 400, origin);
