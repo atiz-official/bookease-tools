@@ -221,7 +221,39 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
   .dot{width:38px;height:38px;font-size:14px}
   .check-row{grid-template-columns:1fr 78px 78px}
 }
-@media print{.top .link,.cta,.seg{display:none}}
+/* PDF: the report printed as a proper document, 1–2 A4 pages (Art 2026-11-19: "ส่งเป็น PDF ให้ดูเป็นรายงานจริง").
+   Same page, print layout only: report number + date on top, contact at the bottom, no buttons or pickers. */
+.print-only{display:none}
+@media print{
+  @page{size:A4;margin:12mm 11mm}
+  html,body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{min-height:0;padding:0;gap:10px;max-width:none}
+  .top .link,.cta,.seg,.shop-q,.shop-meta a,.push,.contact,.legend a,.guide-wrap,.promo-btn,#bld,.note{display:none!important}
+  .print-only{display:block}
+  .card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;break-inside:avoid;page-break-inside:avoid}
+  .main,.bottom{display:block}
+  .main>.card+.card,.bottom>.card+.card{margin-top:10px}
+  .main>.card:nth-child(2){break-before:page;page-break-before:always}
+  .map{height:360px;border-radius:10px}
+  .rank-list li{break-inside:avoid;padding-top:5px!important;padding-bottom:5px!important}
+  .rank-list .nm{font-size:13.5px}
+  .check-row{padding:5px 0}
+  .card h2{font-size:17px}
+  .vol-label{margin-top:4px}
+  .vol-label select{appearance:none;-webkit-appearance:none;border:0;background:none;padding:0;color:inherit;font:inherit;width:auto!important}
+  .shop-meta{margin:0}
+  .novol{display:none!important}
+  .print-head{border-bottom:2px solid var(--ink);padding-bottom:10px}
+  .print-head .r{margin-top:8px;font:800 20px Sarabun,sans-serif}
+  .print-head .t{font:700 12px Sarabun,sans-serif;color:var(--ink-3);letter-spacing:.02em}
+  .print-head .n{font:800 26px/1.25 Sarabun,sans-serif;margin:2px 0}
+  .print-head .a{font-size:12.5px;color:var(--ink-3)}
+  .print-head .m{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;font-size:12.5px;color:var(--ink-2)}
+  .print-head .m b{font-weight:700;color:var(--ink)}
+  .print-foot{border-top:2px solid var(--ink);padding-top:10px;break-inside:avoid;font-size:13px;color:var(--ink-2)}
+  .print-foot b{display:block;font:800 17px Sarabun,sans-serif;color:var(--ink);margin-bottom:2px}
+  .source{text-align:left}
+}
 </style>
 </head>
 <body>
@@ -491,7 +523,7 @@ function headline(k) {
   // The search volume is the one big thing on the card: label, then the number.
   const first = R.volume
     ? `<div class="vol-label"><h1>จำนวนการค้นหา</h1>${typePicker()}${areaPicker(wherePlace(R.volume), wherePrefix(R.volume))}</div><p class="vol"><span class="num">${nearMeShare(R.volume) ? '≈' : ''}${fmt(volTotal(R.volume))}</span><span>ครั้ง/เดือน</span></p>${volNote(R.volume)}`
-    : `<div class="vol-label"><h1>ยังไม่มีจำนวนการค้นหา</h1>${typePicker()}${R.area ? areaPicker(esc(R.area.name), 'บริเวณ') : areaPicker('ย่านนี้')}</div>`;
+    : `<div class="vol-label novol"><h1>ยังไม่มีจำนวนการค้นหา</h1>${typePicker()}${R.area ? areaPicker(esc(R.area.name), 'บริเวณ') : areaPicker('ย่านนี้')}</div>`;
   const n = k.top3Count, total = k.points.length;
   // A closed shop drops down the list, so "found / not found" would mislead: say nothing here.
   // The small "closed" chip sits beside the shop name instead.
@@ -609,6 +641,29 @@ function selectedNote(k) {
   return `<div class="note">3 ร้านแรกตรงจุดนี้<ol class="top3list">${items}</ol></div>`;
 }
 
+// Report number on the PDF: date of the check + a short code from the shop id (same shop + same check = same number).
+function reportNo(r) {
+  const d = new Date(r.checkedAt);
+  let h = 0;
+  for (const ch of `${r.shop.id}|${r.checkedAt}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return `SR-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${h.toString(36).toUpperCase().slice(0, 5)}`;
+}
+// "ดาวน์โหลด PDF": the browser's own print → Save as PDF (iPhone: Share → Print → Save to Files). LINE's in-app
+// browser cannot print, so there it reopens the same report in the phone's normal browser first.
+function savePdf(e) {
+  e.preventDefault();
+  if (/\bLine\//i.test(navigator.userAgent)) {
+    const u = new URL(location.href);
+    u.searchParams.set('openExternalBrowser', '1');
+    location.href = u.toString();
+    return;
+  }
+  const keep = document.title;
+  document.title = `Shop Radar - ${R.shop.name} - ${reportNo(R)}`; // the PDF's file name
+  window.print();
+  setTimeout(() => { document.title = keep; }, 1000);
+}
+
 function paint() {
   const k = R.keywords[KW], s = R.shop;
   const checked = new Date(R.checkedAt);
@@ -616,12 +671,21 @@ function paint() {
   const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(k.keyword)}/@${s.lat},${s.lng},16z?hl=th`;
   const meta = [s.rating != null ? `<span class="star">★ ${esc(s.rating)}</span>` : '', s.reviews != null ? `<span class="num">${fmt(s.reviews)} รีวิว</span>` : ''].join('');
   const bottom = [volumeCard(), gapCard(k)].filter(Boolean);
-  const open = s.openNow === true ? ' · ร้านเปิดอยู่' : s.openNow === false ? ' · ร้านปิดอยู่ ตรวจใหม่ตอนร้านเปิด' : '';
+  const open = s.openNow === true ? ' · ร้านเปิดอยู่' : s.openNow === false ? ' · ร้านปิดอยู่ตอนตรวจ' : '';
 
+  const rid = reportNo(R);
+  const reportUrl = `${location.origin}${location.pathname}${link(R)}`;
   $('s-report').innerHTML = `
+  <header class="print-only print-head">
+    <p class="t">รายงานตรวจร้าน · Shop Radar · bookease</p>
+    <p class="n">${esc(s.name)}</p>
+    ${s.address ? `<p class="a">${esc(s.address)}</p>` : ''}
+    <p class="r">${k.top3Count === k.points.length ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : k.top3Count ? `เจอร้านคุณ ${k.top3Count} ใน ${k.points.length} พื้นที่ค้นหา` : 'ยังไม่เจอร้านคุณใน 3 ร้านแรก'} · อันดับ ${rankText(R.area ? k.hubRank : k.centreRank)} ${R.area ? `จาก ${esc(R.area.hub)}` : 'ที่หน้าร้าน'}</p>
+    <p class="m"><span>ตรวจเมื่อ <b>${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.</b></span><span>เลขที่รายงาน <b>${rid}</b></span><span>คำค้น <b>"${esc(k.keyword)}"</b></span><span>ระยะรอบร้าน <b>${kmText(R.spacingM || 500)}</b></span></p>
+  </header>
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
-    <p class="shop-meta">${meta}${s.openNow === false ? '<span class="closed-chip">ร้านปิดอยู่</span>' : ''}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a></p>
+    <p class="shop-meta">${meta}${s.openNow === false ? '<span class="closed-chip">ร้านปิดอยู่</span>' : ''}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
     ${headline(k)}
   </section>
 
@@ -648,6 +712,10 @@ function paint() {
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
   <section class="card bld" id="bld" hidden></section>
+  <footer class="print-only print-foot">
+    <b>อยากให้ลูกค้าแถวร้านเจอร้านคุณก่อน?</b>
+    ทัก LINE @bookease · โทร 092-641-4296 · ดูรายงานล่าสุด ${esc(reportUrl.replace(/^https?:\/\//, ''))}
+  </footer>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${open}</p>`;
 
   const share = $('share');
@@ -673,6 +741,8 @@ ${url}`)}`;
 ${url}`;
     push.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
   }
+  const pdf = $('pdf');
+  if (pdf) pdf.addEventListener('click', savePdf);
   fitPickers();
   drawMap(k);
   loadBuildings(s);
