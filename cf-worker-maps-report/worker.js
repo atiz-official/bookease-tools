@@ -41,7 +41,7 @@ import { wordFromListing, wordFromReviews } from './keywords.js';
 import { MORE, MORE_AS_OF } from './volumes-more.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
-const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
+const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io', 'https://bookease.co'];
 // Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
 // Checked against the real Google Maps app on 2026-11-14:
 //   "ร้านนวด"  → API rank matched Maps (1 vs 2, 33 vs 34).
@@ -817,6 +817,42 @@ export default {
       }
 
       // Shops of one Google type around a point (for a building's service menu). Read-only.
+      // Every service shop within 1 km of a building, for the bookease.co Nearby Services page (/r/<code>).
+      // One Google pass per building per day (cached in KV): the page is a daily picture, not a live one.
+      if (url.pathname === '/directory') {
+        const b = String(body.b || '');
+        if (!/^[A-Za-z0-9_-]{10,200}$/.test(b)) return json({ error: 'bad_place_id' }, 400, origin);
+        const key = `dir/v1/${b}`;
+        const cached = env.REPORTS ? await env.REPORTS.get(key, 'json') : null;
+        if (cached) return json(cached, 200, origin);
+        if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
+        const place = await google(env, `places/${encodeURIComponent(b)}?languageCode=th&regionCode=TH`, 'id,displayName,location');
+        if (!place || !place.location) return json({ error: 'not_found' }, 404, origin);
+        const lat = place.location.latitude, lng = place.location.longitude;
+        const TYPES = [['massage', 'spa'], ['hair_salon'], ['barber_shop'], ['nail_salon'], ['beauty_salon', 'beautician'],
+          ['skin_care_clinic'], ['dental_clinic'], ['physiotherapist'], ['gym', 'fitness_center', 'yoga_studio'], ['laundry']];
+        let failed = 0;
+        const lists = await Promise.all(TYPES.map((types) => google(env, 'places:searchNearby',
+          'places.id,places.displayName,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.businessStatus,places.primaryType,places.photos,places.nationalPhoneNumber',
+          { includedTypes: types, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'th', regionCode: 'TH',
+            locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius: 1000 } } })
+          .catch((e) => { console.error('[directory] nearby', types.join(','), e); failed += 1; return { places: [] }; })));
+        const seen = new Map();
+        lists.forEach((r, i) => (r.places || []).forEach((p) => {
+          if (p.id === b || seen.has(p.id) || p.businessStatus === 'CLOSED_PERMANENTLY') return;
+          const s2 = slim(p);
+          const x = (s2.lng - lng) * 111320 * Math.cos(lat * Math.PI / 180), y = (s2.lat - lat) * 110540;
+          seen.set(p.id, { id: s2.id, name: s2.name, rating: s2.rating, reviews: s2.reviews, mapsUrl: s2.mapsUrl,
+            phone: p.nationalPhoneNumber || '', primaryType: p.primaryType || '', group: i,
+            photo: ((p.photos || [])[0] || {}).name || '', m: Math.round(Math.hypot(x, y)) });
+        }));
+        const out = { building: { id: b, name: (place.displayName && place.displayName.text) || '', lat, lng },
+          shops: [...seen.values()], at: new Date().toISOString() };
+        // A partial answer is served but not cached, so tomorrow's visitors do not inherit a missing group.
+        if (env.REPORTS && !failed) await env.REPORTS.put(key, JSON.stringify(out), { expirationTtl: 86400 });
+        return json(out, 200, origin);
+      }
+
       if (url.pathname === '/nearby') {
         const lat = Number(body.lat), lng = Number(body.lng), type = String(body.type || '');
         const types = type.split(',').map((t) => t.trim()).filter(Boolean);
