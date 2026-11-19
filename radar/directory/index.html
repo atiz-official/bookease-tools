@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ร้านบริการรอบอาคาร · bookease</title>
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="../menu/buildings.js"></script>
+<style>
+:root{--ink:#0A0A0A;--ink-2:#3B4250;--ink-3:#6B7383;--line:#E3E6EC;--ground:#F3F5F8;--card:#FFFFFF;--blue:#2D55EB;--warn-bg:#FFF4D6;--warn:#8A5A00}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:14px}
+.head{background:#fff;border-radius:18px;padding:22px 20px 18px;position:relative}
+.sample{display:inline-block;margin-bottom:10px;font:700 12px Sarabun;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:3px 10px}
+.logo{height:18px;display:block;margin-bottom:12px}
+.wrap>*,.list,.cat,.row{min-width:0;max-width:100%}
+.eye{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--ink-3)}
+h1{font:800 28px/1.1 Sarabun;margin:6px 0 4px;letter-spacing:-.01em}
+.sub{font-size:14px;color:var(--ink-2);overflow-wrap:anywhere}
+.sub i{font-style:normal;color:var(--ink-3)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips a{flex:none;text-decoration:none;font:700 14px Sarabun;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+.chips a small{font:600 12px Inter;color:var(--ink-3);margin-left:4px}
+.cat{background:#fff;border-radius:18px;padding:16px 16px 6px;scroll-margin-top:12px}
+.cat h2{font:800 19px Sarabun;display:flex;align-items:baseline;gap:8px}
+.cat h2 span{font:500 13px Inter;color:var(--ink-3)}
+.row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.cat h2 + .row{border-top:0}
+.row:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:10px}
+.th{width:64px;height:64px;border-radius:12px;background:#EEF0F4;flex:none;overflow:hidden}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.tx{min-width:0;flex:1}
+.tx b{display:block;font:700 15.5px/1.3 Sarabun;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx small{font-size:13px;color:var(--ink-3)}
+.go{flex:none;color:#B4BAC5;font:700 20px Inter}
+.more{display:block;width:100%;border:0;background:none;font:700 14px Sarabun;color:var(--blue);padding:10px 0 12px;cursor:pointer;text-align:left;border-top:1px solid var(--line)}
+.foot{display:flex;gap:16px;align-items:center;background:#fff;border-radius:18px;padding:16px}
+.foot .qr{width:96px;height:96px;flex:none}
+.foot .qr img,.foot .qr canvas{width:100%!important;height:100%!important}
+.foot p{font-size:13px;color:var(--ink-2)}
+.foot p b{display:block;font:800 15px Sarabun;color:var(--ink)}
+.note{font-size:12px;color:#9AA3B2;text-align:center}
+.busy{padding:40px;text-align:center;color:var(--ink-3)}
+.err{padding:20px;color:#B91C1C}
+@media print{
+  @page{size:A4;margin:10mm}
+  body{background:#fff;font-size:12px}
+  .wrap{max-width:none;padding:0;gap:6px}
+  .chips,.more,.no-print,.sample{display:none!important}
+  .list{columns:2;column-gap:18px}
+  .cat{break-inside:avoid;padding:6px 0;border-radius:0}
+  .row{padding:4px 0}.th{width:38px;height:38px;border-radius:6px}
+  .row.extra{display:flex!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="busy">กำลังหาร้านรอบอาคาร…</p></div>
+<script>
+const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+// Service types residents book. Thai first (the page is Thai), English under it for foreign residents.
+const CATS = [
+  { k: 'massage', th: 'นวด · สปา', en: 'Massage & spa', types: 'massage,spa' },
+  { k: 'hair', th: 'ทำผม', en: 'Hair', types: 'hair_salon' },
+  { k: 'barber', th: 'ตัดผมชาย', en: 'Barber', types: 'barber_shop' },
+  { k: 'nail', th: 'ทำเล็บ', en: 'Nails', types: 'nail_salon' },
+  { k: 'beauty', th: 'ความงาม · ขนตา', en: 'Beauty & lashes', types: 'beauty_salon,beautician' },
+  { k: 'clinic', th: 'คลินิกผิว', en: 'Skin clinic', types: 'skin_care_clinic' },
+  { k: 'dental', th: 'ทำฟัน', en: 'Dental', types: 'dental_clinic' },
+  { k: 'physio', th: 'กายภาพบำบัด', en: 'Physiotherapy', types: 'physiotherapist' },
+  { k: 'fitness', th: 'ฟิตเนส · โยคะ', en: 'Gym & yoga', types: 'gym,fitness_center,yoga_studio' },
+  { k: 'laundry', th: 'ซักรีด', en: 'Laundry', types: 'laundry' },
+];
+// Google's main type decides the group when we know it (a nail salon that also lists "spa" is a nail salon).
+const BY_PRIMARY = {
+  massage: 'massage', massage_spa: 'massage', spa: 'massage', thai_massage: 'massage', wellness_center: 'massage', sauna: 'massage',
+  hair_salon: 'hair', hair_care: 'hair', barber_shop: 'barber', nail_salon: 'nail',
+  beauty_salon: 'beauty', beautician: 'beauty', makeup_artist: 'beauty',
+  skin_care_clinic: 'clinic', dental_clinic: 'dental', dentist: 'dental', physiotherapist: 'physio',
+  gym: 'fitness', fitness_center: 'fitness', yoga_studio: 'fitness', pilates_studio: 'fitness', laundry: 'laundry',
+};
+// Not service shops: hotels and resorts (their spa is for guests), and places that only list a service on the side.
+const SKIP_PRIMARY = new Set(['hotel', 'resort_hotel', 'lodging', 'guest_house', 'motel', 'coffee_shop', 'cafe', 'restaurant', 'bar', 'store', 'convenience_store', 'clothing_store', 'shopping_mall', 'real_estate_agency', 'tattoo_and_piercing_shop']);
+const SHOW = 6;
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const qs = new URLSearchParams(location.search);
+const B = qs.get('b') || '';
+const CONF = (typeof BUILDING_STATUS === 'object' && BUILDING_STATUS[B]) || {};
+const VIA = ['qr', 'link'].includes(qs.get('v')) ? qs.get('v') : 'direct';
+const photoUrl = (name) => `${API}/photo?w=200&name=${encodeURIComponent(name)}`;
+const score = (p) => (p.rating || 0) * Math.log10(1 + (p.reviews || 0)) - p.m / 1500;
+const distText = (m) => (m < 60 ? 'ในอาคาร / ติดกัน' : m < 1000 ? `${Math.round(m / 10) * 10} ม.` : `${(m / 1000).toFixed(1)} กม.`);
+function metres(a, b) {
+  const x = (b.lng - a.lng) * 111320 * Math.cos(a.lat * Math.PI / 180), y = (b.lat - a.lat) * 110540;
+  return Math.round(Math.hypot(x, y));
+}
+/** Count a directory view (the worker counts tracked places only). */
+function hit(p, a, src) {
+  try { if (localStorage.getItem('bookease-staff') === '1') return; } catch (e) { console.error('[dir] storage', e); }
+  try {
+    const body = JSON.stringify({ p, a, src });
+    if (!(navigator.sendBeacon && navigator.sendBeacon(API + '/hit', body))) {
+      fetch(API + '/hit', { method: 'POST', body, keepalive: true }).catch((e) => console.error('[dir] hit', e));
+    }
+  } catch (e) { console.error('[dir] hit', e); }
+}
+async function post(path, body) {
+  const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || `http_${r.status}`);
+  return d;
+}
+
+async function load() {
+  if (!/^[A-Za-z0-9_-]{10,200}$/.test(B)) { $('app').innerHTML = '<p class="err">ไม่พบอาคาร · เปิดจากเมนูบริการรอบอาคาร</p>'; return; }
+  const key = `dir-pool-v1:${B}`;
+  let cached = null;
+  try { cached = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { console.error('[dir] cache read', e); }
+  let building, pool;
+  if (cached) ({ building, pool } = cached);
+  else {
+    building = await post('/place', { placeId: B });
+    const lists = await Promise.all(CATS.map((c) => post('/nearby', { lat: building.lat, lng: building.lng, type: c.types, radius: 1000 })
+      .then((d) => d.places || []).catch((e) => { console.error('[dir] nearby', c.k, e); return []; })));
+    const seen = new Map();
+    CATS.forEach((c, i) => lists[i].forEach((p) => {
+      if (p.id === B || seen.has(p.id) || SKIP_PRIMARY.has(p.primaryType)) return;
+      seen.set(p.id, { id: p.id, name: p.name, rating: p.rating, reviews: p.reviews, photo: p.photo,
+        cat: BY_PRIMARY[p.primaryType] || c.k, m: metres(building, p) });
+    }));
+    pool = [...seen.values()];
+    try { sessionStorage.setItem(key, JSON.stringify({ building: { name: building.name, lat: building.lat, lng: building.lng }, pool })); }
+    catch (e) { console.error('[dir] cache write', e); }
+  }
+  render(CONF.name || building.name, pool);
+}
+
+function render(name, pool) {
+  const live = CONF.step === 'live';
+  const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+  // Only shops people have reviewed and liked: a listing with almost no reviews may be closed or a home address.
+  const groups = CATS.map((c) => ({ c, shops: pool.filter((p) => p.cat === c.k && (p.reviews || 0) >= 5 && (p.rating || 0) >= 4).sort((a, b) => score(b) - score(a)) }))
+    .filter((g) => g.shops.length);
+  const total = groups.reduce((n, g) => n + g.shops.length, 0);
+  const row = (p, extra) => `<a class="row${extra ? ' extra' : ''}" ${extra ? 'hidden ' : ''}href="../site/?p=${encodeURIComponent(p.id)}&src=b:${encodeURIComponent(B)}">
+      <div class="th">${p.photo ? `<img src="${photoUrl(p.photo)}" alt="" loading="lazy">` : ''}</div>
+      <div class="tx"><b>${esc(p.name)}</b><small>${p.rating ? `★ ${p.rating} · ${p.reviews} รีวิว · ` : ''}${distText(p.m)}</small></div><span class="go">›</span></a>`;
+  $('app').innerHTML = `
+    <section class="head">
+      <img class="logo" src="../../brand/bookease-logo.svg" alt="bookease">${live ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
+      <div class="eye">ร้านบริการรอบอาคาร · SERVICES NEARBY</div>
+      <h1>${esc(name)}</h1>
+      <p class="sub">${total} ร้านในระยะ 1 กม. · แตะร้านเพื่อโทรหรือนำทาง<br><i>${total} places within 1 km · tap a place to call or get directions</i></p>
+    </section>
+    <nav class="chips no-print">${groups.map((g) => `<a href="#${g.c.k}">${esc(g.c.th)}<small>${g.shops.length}</small></a>`).join('')}</nav>
+    <div class="list">${groups.map((g) => `<section class="cat" id="${g.c.k}"><h2>${esc(g.c.th)} <span>${esc(g.c.en)}</span></h2>
+      ${g.shops.map((p, i) => row(p, i >= SHOW)).join('')}
+      ${g.shops.length > SHOW ? `<button class="more" data-k="${g.c.k}">ดูอีก ${g.shops.length - SHOW} ร้าน</button>` : ''}</section>`).join('')}</div>
+    <section class="foot"><div class="qr" id="qr"></div><p><b>เปิดรายชื่อนี้ในมือถือ</b>สแกน QR · ไม่ต้องโหลดแอป<br>ร้านของคุณอยู่ในรายชื่อนี้? ขอแก้ข้อมูลหรือขอออกได้ทาง <a href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a></p></section>
+    <p class="note">ข้อมูลร้านจาก Google · ฉบับ ${esc(today)} · ระยะเป็นระยะทางตรงจากอาคาร</p>`;
+  $('app').querySelectorAll('.more').forEach((btn) => btn.addEventListener('click', () => {
+    btn.closest('.cat').querySelectorAll('.row.extra').forEach((r) => { r.hidden = false; });
+    btn.remove();
+  }));
+  try {
+    new QRCode($('qr'), { text: `${location.origin}${location.pathname}?b=${encodeURIComponent(B)}&v=qr`, width: 300, height: 300, correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) { console.error('[dir] qr', e); }
+}
+
+if (B) hit(B, 'view', `dir-${VIA}`);
+load().catch((e) => { console.error('[dir] load', e); $('app').innerHTML = `<p class="err">โหลดรายชื่อร้านไม่ได้ (${esc(e.message)}) ลองใหม่อีกครั้ง</p>`; });
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@
 <link rel="icon" href="../../favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="buildings.js"></script>
 <style>
 :root{--ink:#0A0A0A;--ink-2:#3B4250;--ink-3:#6B7383;--line:#E3E6EC;--ground:#F3F5F8;--card:#FFFFFF;--blue:#2D55EB;--good:#15803D;--warn-bg:#FFF4D6;--warn:#8A5A00}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -91,7 +92,6 @@ a.tile:focus-visible{outline:3px solid #2D55EB;outline-offset:3px;border-radius:
 <script>
 const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 // Building status is set by the team from real evidence, never by the page: survey → sample → approved → live.
-const BUILDING_STATUS = { 'ChIJ-7PwX7iZ4jARp_rFql-yzO4': { step: 'sample' } }; // Aqua Residences · set from evidence only
 const STEPS = [['survey', 'สำรวจแล้ว'], ['sample', 'มีเมนูตัวอย่าง'], ['approved', 'อนุมัติแล้ว'], ['live', 'แจกจริง']];
 const CATS = [
   { k: 'hair', label: 'ทำผม', types: 'hair_salon,beautician' },
@@ -123,6 +123,11 @@ function hit(p, a, src) {
   } catch (e) { console.error('[menu] hit', e); }
 }
 let building = null, pool = [], chosen = [];
+const CONF = BUILDING_STATUS[B] || {};
+// The building's short name when we set one (Google's can be long or Thai-only), else Google's.
+const bname = () => CONF.name || building.name;
+// Shops in the URL win; a building with a hand-picked menu (buildings.js) uses that; otherwise the automatic choice.
+const PICKS = qs.has('s') ? (qs.get('s') || '') : (CONF.pick || []).join(',');
 
 async function post(path, body) {
   const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -176,8 +181,8 @@ async function load() {
     }
     try { sessionStorage.setItem(key, JSON.stringify({ building, pool })); } catch (e) { console.error('[menu] cache write', e); }
   }
-  const fromUrl = (qs.get('s') || '').split(',').filter((id) => /^[A-Za-z0-9_-]{10,200}$/.test(id)).slice(0, MAX);
-  if (qs.has('s')) {
+  const fromUrl = PICKS.split(',').filter((id) => /^[A-Za-z0-9_-]{10,200}$/.test(id)).slice(0, MAX);
+  if (PICKS) {
     const missing = fromUrl.filter((id) => !pool.some((p) => p.id === id));
     const got = await Promise.all(missing.map((id) => post('/place', { placeId: id }).catch((e) => { console.error('[menu] shop', id, e); return null; })));
     got.filter(Boolean).forEach((sp) => pool.push({ id: sp.id, name: sp.name, rating: sp.rating, reviews: sp.reviews, lat: sp.lat, lng: sp.lng,
@@ -222,7 +227,7 @@ function render() {
   }).join('');
   const sheet = `<section class="sheet" id="sheet">
     ${isLive ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
-    <header><div><div class="eye">เมนูบริการ · สำหรับลูกบ้านและแขก</div><h1>${esc(building.name)}</h1><p class="tag">ร้านดีใกล้ตัว · สแกน QR เพื่อดูร้านและติดต่อ</p></div>
+    <header><div><div class="eye">เมนูบริการ · สำหรับลูกบ้านและแขก</div><h1>${esc(bname())}</h1><p class="tag">ร้านดีใกล้ตัว · สแกน QR เพื่อดูร้านและติดต่อ</p></div>
       <div class="brand"><img src="../../brand/bookease-logo.svg" alt="bookease"></div></header>
     <div class="grid">${tiles}<article class="qrtile"><div class="qr" id="qr"></div><b>สแกนดูร้าน<br>และติดต่อจองคิว</b><small>ไม่ต้องโหลดแอป</small></article></div>
     <footer><div>ข้อมูลร้านจาก Google · ฉบับ ${today} · ระยะเป็นระยะทางตรงจากอาคาร</div><div>bookease.co</div></footer>
@@ -240,7 +245,7 @@ function render() {
     <div class="actions"><button class="btn" id="copy">คัดลอกลิงก์เมนู</button><a class="btn soft" id="line" target="_blank" rel="noopener">ส่งทาง LINE</a><button class="btn soft" id="print">พิมพ์ / PDF</button></div>
     <p class="toast" id="toast" hidden>คัดลอกลิงก์แล้ว</p>
   </aside>`;
-  $('app').innerHTML = `<div class="cols">${EDIT ? panel : ''}<div>${sheet}${EDIT ? '' : `<p class="no-print" style="margin-top:10px"><a href="${shareUrl()}&edit=1">แก้ไขเมนูนี้</a></p>`}</div></div>`;
+  $('app').innerHTML = `<div class="cols">${EDIT ? panel : ''}<div>${sheet}${EDIT ? '' : `<p class="no-print" style="margin-top:10px;display:flex;gap:18px;flex-wrap:wrap"><a href="../directory/?b=${encodeURIComponent(B)}"><b>ดูร้านทั้งหมดรอบอาคาร →</b></a><a href="${shareUrl()}&edit=1">แก้ไขเมนูนี้</a></p>`}</div></div>`;
   if (!EDIT) $('app').querySelector('.cols').style.gridTemplateColumns = '1fr';
   try { new QRCode($('qr'), { text: shareUrl('qr'), width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M }); }
   catch (e) { console.error('[menu] qr', e); }
@@ -250,7 +255,7 @@ function render() {
 
 function wire() {
   const line = $('line');
-  if (line) line.href = `https://line.me/R/share?text=${encodeURIComponent(`เมนูบริการรอบ ${building.name}\n${shareUrl('link')}`)}`;
+  if (line) line.href = `https://line.me/R/share?text=${encodeURIComponent(`เมนูบริการรอบ ${bname()}\n${shareUrl('link')}`)}`;
   $('app').querySelectorAll('.opt input').forEach((box) => box.addEventListener('change', () => {
     const id = box.dataset.id;
     if (box.checked) { if (chosen.length >= MAX) { box.checked = false; return; } chosen.push(id); }
