@@ -433,6 +433,18 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
   };
 }
 
+/**
+ * A saved report with no search volume gets one looked up again when it is read: volumes-more.js grows after
+ * reports were saved (Keyword Planner pull 2026-11-19), and the lookup costs no Google call.
+ */
+function withVolume(r) {
+  if (!r || r.volume || !r.shop || !r.category) return r;
+  const area = r.area ? AREAS.find((a) => a.id === r.area.id) || null : null;
+  const here = { lat: r.shop.lat, lng: r.shop.lng };
+  const volume = area && r.area.auto === false ? pickedVolume(r.category, area) : volumeFor(r.category, r.shop, area, here);
+  return volume ? { ...r, volume } : r;
+}
+
 // ── cache + rate limit ──────────────────────────────────────────────
 
 // One saved report per shop, shop type, neighbourhood and distance. 'auto' = "whatever the tool chose".
@@ -748,7 +760,7 @@ export default {
         const saved = await loadReport(env, request.url,
           reportKey(placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
         if (!saved || outdated(saved)) return json({ error: 'not_found' }, 404, origin);
-        return json(saved, 200, origin);
+        return json(withVolume(saved), 200, origin);
       }
 
       // A shop's Google photo, fetched server-side so the key never reaches the page. Only Places photo names.
@@ -854,7 +866,7 @@ export default {
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         const key = reportKey(placeId, cat, area, spacing);
         const old = await loadReport(env, request.url, key);
-        if (old && !outdated(old) && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...old, cached: true }, 200, origin);
+        if (old && !outdated(old) && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...withVolume(old), cached: true }, 200, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
         const report = await buildReport(env, placeId, cat, area, spacing);
         if (report.error) return json(report, 400, origin);
