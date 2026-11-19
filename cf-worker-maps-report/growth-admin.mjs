@@ -4,6 +4,8 @@
 // Cloudflare login (`npx wrangler login`) and no extra secret. Run from this folder.
 //
 //   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --cat salon --area thaphra [--buildings <id>,<id>] [--since 2026-11-16]
+//   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --word "ศูนย์ดูแลผู้สูงอายุ" --area ramintra   (any other shop type:
+//        --word = the search word the Radar report used for this shop, keywords.js; Art 2026-11-19, a nursing home bought Basic)
 //   node growth-admin.mjs track-building <placeId> --name "Aqua Residences" --status sample|approved|live
 //   node growth-admin.mjs log <placeId> --at 2026-11-15 --what "…" [--short "…"] [--where "…"] [--minutes 5] [--evidence https://…]
 //   node growth-admin.mjs plan <placeId> --what "…" [--short "…"]        (next week's work, shown on the card as planned)
@@ -77,9 +79,10 @@ try {
   if (cmd === 'track-shop') {
     const id = placeId(rawId);
     if (!f.name) throw new Error('--name is required');
-    if (!CATS.includes(f.cat)) throw new Error(`--cat must be one of ${CATS.join(', ')}`);
+    const cat = f.word ? 'other' : f.cat;
+    if (!CATS.includes(cat) && cat !== 'other') throw new Error(`--cat must be one of ${CATS.join(', ')}, or give --word "<search word>"`);
     const old = kvGet(`g/shop/${id}`) || {};
-    const cfg = { ...old, id, kind: 'shop', name: f.name, cat: f.cat, area: f.area || old.area || '',
+    const cfg = { ...old, id, kind: 'shop', name: f.name, cat, word: cat === 'other' ? String(f.word) : undefined, area: f.area || old.area || '',
       since: f.since || old.since || today(), buildings: f.buildings ? String(f.buildings).split(',').map(placeId) : (old.buildings || []), active: true };
     kvPut(`g/shop/${id}`, cfg);
     console.log('tracked shop', cfg, '· index size', setIndex(id, 'shop'));

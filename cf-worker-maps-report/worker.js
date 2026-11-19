@@ -532,7 +532,8 @@ async function growthSnapshot(env, cfg) {
   const open = raw.currentOpeningHours && typeof raw.currentOpeningHours.openNow === 'boolean' ? raw.currentOpeningHours.openNow : null;
   if (open === false) return { skipped: 'closed' };
   if (!raw.location) return { skipped: 'no_location' };
-  const cat = CATEGORIES.find((c) => c.id === cfg.cat);
+  // own six types by id; any other shop type carries its search word (cfg.word, set by growth-admin --word)
+  const cat = CATEGORIES.find((c) => c.id === cfg.cat) || (cfg.cat === 'other' && cfg.word ? { id: 'other', label: String(cfg.word) } : null);
   if (!cat) return { skipped: 'no_category' };
   const lat = raw.location.latitude, lng = raw.location.longitude;
   const spacings = [];
