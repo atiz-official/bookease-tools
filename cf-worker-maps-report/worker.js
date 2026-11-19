@@ -38,6 +38,7 @@
 
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
 import { wordFromListing, wordFromReviews } from './keywords.js';
+import { MORE, MORE_AS_OF } from './volumes-more.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io'];
@@ -248,50 +249,83 @@ async function find(env, q) {
 // ── /report ─────────────────────────────────────────────────────────
 
 /** Search volume of one shop type in one area / district, or null when Keyword Planner had no number. */
-function areaVolume(cat, a) {
+// Search volume. Own six types in Bangkok: areas-data.js (2026-11-14/15 pulls). Every other search word, and the six
+// outside Bangkok: volumes-more.js (Keyword Planner, location Thailand, types_nationwide.py upload), keyed by the
+// search word the report uses (category.label), so a clinic or a car rental gets a number too (Art 2026-11-19).
+const more = (label) => (label && MORE[label]) || null;
+function areaVolume(cat, a, label) {
   if (cat === 'massage') return { total: a.total, rows: a.rows };
-  return (VOLUMES[cat] && VOLUMES[cat].areas[a.id]) || null;
+  const own = VOLUMES[cat] && VOLUMES[cat].areas[a.id];
+  if (own) return own;
+  const m = more(label);
+  return (m && m.areas && m.areas[a.id]) || null;
 }
-function districtVolume(cat, name) {
+function districtVolume(cat, name, label) {
   const same = AREAS.find((a) => a.name === name); // a district that shares its name with an area uses the area's numbers
-  if (same) return areaVolume(cat, same);
-  if (cat === 'massage') return DISTRICTS[name] || null;
-  return (VOLUMES[cat] && VOLUMES[cat].districts[name]) || null;
+  if (same) return areaVolume(cat, same, label);
+  if (cat === 'massage' && DISTRICTS[name]) return DISTRICTS[name];
+  const own = VOLUMES[cat] && VOLUMES[cat].districts[name];
+  if (own) return own;
+  const m = more(label);
+  return (m && m.districts && m.districts[name]) || null;
+}
+// numbers from volumes-more.js carry its date; the original pulls keep theirs
+const isMore = (label, v) => { const m = more(label); return !!(m && v && [m.areas, m.districts, m.places].some((o) => o && Object.values(o).includes(v))); };
+const asOfFor = (cat, label, v) => (isMore(label, v) ? MORE_AS_OF : cat === 'massage' ? AREAS_AS_OF : (VOLUMES[cat] && VOLUMES[cat].asOf) || MORE_AS_OF);
+const PROVINCE_ALIAS = [['Chon Buri', 'ชลบุรี'], ['Chonburi', 'ชลบุรี'], ['Pattaya', 'พัทยา'], ['Phuket', 'ภูเก็ต'], ['Chiang Mai', 'เชียงใหม่'], ['Hua Hin', 'หัวหิน']];
+const PROVINCES_SET = new Set(['กระบี่', 'กาญจนบุรี', 'กาฬสินธุ์', 'กำแพงเพชร', 'ขอนแก่น', 'จันทบุรี', 'ฉะเชิงเทรา', 'ชลบุรี', 'ชัยนาท', 'ชัยภูมิ',
+  'ชุมพร', 'เชียงราย', 'เชียงใหม่', 'ตรัง', 'ตราด', 'ตาก', 'นครนายก', 'นครปฐม', 'นครพนม', 'นครราชสีมา', 'นครศรีธรรมราช', 'นครสวรรค์', 'นนทบุรี',
+  'นราธิวาส', 'น่าน', 'บึงกาฬ', 'บุรีรัมย์', 'ปทุมธานี', 'ประจวบคีรีขันธ์', 'ปราจีนบุรี', 'ปัตตานี', 'พระนครศรีอยุธยา', 'พะเยา', 'พังงา', 'พัทลุง',
+  'พิจิตร', 'พิษณุโลก', 'เพชรบุรี', 'เพชรบูรณ์', 'แพร่', 'ภูเก็ต', 'มหาสารคาม', 'มุกดาหาร', 'แม่ฮ่องสอน', 'ยโสธร', 'ยะลา', 'ร้อยเอ็ด', 'ระนอง',
+  'ระยอง', 'ราชบุรี', 'ลพบุรี', 'ลำปาง', 'ลำพูน', 'เลย', 'ศรีสะเกษ', 'สกลนคร', 'สงขลา', 'สตูล', 'สมุทรปราการ', 'สมุทรสงคราม', 'สมุทรสาคร',
+  'สระแก้ว', 'สระบุรี', 'สิงห์บุรี', 'สุโขทัย', 'สุพรรณบุรี', 'สุราษฎร์ธานี', 'สุรินทร์', 'หนองคาย', 'หนองบัวลำภู', 'อ่างทอง', 'อำนาจเจริญ',
+  'อุดรธานี', 'อุตรดิตถ์', 'อุทัยธานี', 'อุบลราชธานี', 'อยุธยา']);
+/** Outside Bangkok: the town named in the address (หัวหิน, พัทยา …), else the province. Longest name wins. */
+function placeVolume(label, address) {
+  const m = more(label);
+  if (!m || !m.places) return null;
+  let a = String(address || '');
+  for (const [en, th] of PROVINCE_ALIAS) if (a.includes(en)) a += ` ${th}`;
+  const names = Object.keys(m.places).filter((n) => a.includes(n)).sort((x, y) => y.length - x.length);
+  return names.length ? { name: names[0], v: m.places[names[0]] } : null;
 }
 
 /**
- * Search volume to show for a shop, for its own shop type, most local first:
+ * Search volume to show for a shop, for its search word, most local first:
  *   1. the area whose landmark is within AREA_RADIUS_M            → "บริเวณอโศก"
  *   2. the shop's district (เขต) read from its Google address      → "เขตบางบอน"
  *   3. the nearest area landmark within 8 km that has a number    → kind 'nearest', with the distance
+ *   4. outside Bangkok: the town named in the address, else the province → kind 'town' / 'province'
  * Nothing is invented: if none applies the report says there is no number for this spot.
  */
-function volumeFor(cat, shop, area, here) {
-  const asOf = cat === 'massage' ? AREAS_AS_OF : (VOLUMES[cat] && VOLUMES[cat].asOf);
+function volumeFor(category, shop, area, here) {
+  const cat = category.id, label = category.label;
+  const out = (kind, name, v, extra = {}) => ({ kind, area: name, asOf: asOfFor(cat, label, v), total: v.total, rows: v.rows, ...extra });
   if (area) {
-    const v = areaVolume(cat, area);
-    if (v) return { kind: 'area', area: area.name, asOf, total: v.total, rows: v.rows };
+    const v = areaVolume(cat, area, label);
+    if (v) return out('area', area.name, v);
   }
   const m = /เขต\s*([ก-๙]+)/.exec(shop.address || '');
   if (m) {
-    const v = districtVolume(cat, m[1]);
-    if (v) return { kind: 'district', area: m[1], asOf, total: v.total, rows: v.rows };
+    const v = districtVolume(cat, m[1], label);
+    if (v) return out('district', m[1], v);
   }
   let near = null, dist = Infinity, nearV = null;
   for (const a of AREAS) {
     const x = metres(here, a);
     if (x >= dist) continue;
-    const v = areaVolume(cat, a);
+    const v = areaVolume(cat, a, label);
     if (v) { near = a; dist = x; nearV = v; }
   }
-  if (near && dist <= 8000) return { kind: 'nearest', area: near.name, km: +(dist / 1000).toFixed(1), asOf, total: nearV.total, rows: nearV.rows };
+  if (near && dist <= 8000) return out('nearest', near.name, nearV, { km: +(dist / 1000).toFixed(1) });
+  const p = placeVolume(label, shop.address);
+  if (p) return out(PROVINCES_SET.has(p.name) ? 'province' : 'town', p.name, p.v);
   return null;
 }
 
-function pickedVolume(cat, area) {
-  const v = areaVolume(cat, area);
-  const asOf = cat === 'massage' ? AREAS_AS_OF : (VOLUMES[cat] && VOLUMES[cat].asOf);
-  return v ? { kind: 'area', area: area.name, asOf, total: v.total, rows: v.rows } : null;
+function pickedVolume(category, area) {
+  const v = areaVolume(category.id, area, category.label);
+  return v ? { kind: 'area', area: area.name, asOf: asOfFor(category.id, category.label, v), total: v.total, rows: v.rows } : null;
 }
 
 async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
@@ -395,9 +429,7 @@ async function buildReport(env, placeId, catId, areaId, spacing = SPACING_M) {
     area: area && { id: area.id, name: area.name, hub: area.hub, lat: area.lat, lng: area.lng, distanceM: Math.round(areaDist), auto: !picked },
     areas,
     // A picked neighbourhood shows its own number or none; it never falls back to another place's number.
-    volume: category.id === 'other' ? null
-      : picked ? pickedVolume(category.id, picked)
-      : volumeFor(category.id, shop, area, here),
+    volume: picked ? pickedVolume(category, picked) : volumeFor(category, shop, area, here),
   };
 }
 

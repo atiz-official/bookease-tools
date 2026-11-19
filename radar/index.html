@@ -463,7 +463,7 @@ const realSite = (url) => !!url && !socialName(url);
 function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { console.error('[report] bad website url', url, e); return 'เว็บไซต์'; } }
 
 // The headline says "บริเวณ" / "เขต" as plain words; only the place name is the underlined picker.
-function wherePrefix(v) { return v && v.kind === 'district' ? 'เขต' : 'บริเวณ'; }
+function wherePrefix(v) { return v && v.kind === 'district' ? 'เขต' : v && v.kind === 'province' ? 'จังหวัด' : 'บริเวณ'; }
 function wherePlace(v) {
   if (v.kind === 'nearest') return `${esc(v.area)} (ห่างร้าน ${esc(v.km)} กม.)`;
   return esc(v.area);
@@ -628,7 +628,7 @@ function volumeCard() {
   const max = Math.max(...v.rows.map((r) => r.v));
   const [y, m] = v.asOf.split('-').map(Number);
   return `<div class="card">
-    <h2>คำที่คนค้น ${v.kind === 'district' ? 'เขต' : 'บริเวณ'}${esc(v.area)}</h2>
+    <h2>คำที่คนค้น ${wherePrefix(v)}${esc(v.area)}</h2>
     <div class="kw">${v.rows.map((r) => `<div class="kw-row"><span class="k">${esc(r.k)}</span><span class="bar"><i style="width:${Math.round(r.v / max * 100)}%"></i></span><span class="v num">${fmt(r.v)}</span></div>`).join('')}</div>
     <p class="foot">ครั้ง/เดือน · ${TH_MONTH[m - 1]} ${y + 543}</p>
   </div>`;
