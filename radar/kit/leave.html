@@ -17,7 +17,13 @@ body{background:#E9E5E1;font-family:Anuphan,Inter,sans-serif;color:#14110F;-webk
 .top small{font:600 3.3mm Anuphan;color:#7A726C;text-align:right}
 h1{font:800 8.6mm/1.15 Anuphan;margin-top:5mm;text-wrap:balance}
 .sub{font:600 4.1mm/1.45 Anuphan;color:#4A4440;margin-top:1.5mm}
-.photo{display:block;width:100%;height:44mm;border-radius:4mm;background:#F3F0EC;object-fit:cover;margin-top:4.5mm}
+.res{display:grid;grid-template-columns:auto 1fr;gap:3.5mm;align-items:center;margin-top:3.5mm;padding:3mm 4mm;border-radius:3.5mm;background:#EEF2FD;border-left:1.4mm solid #2D55EB}
+.res.bad{background:#FFF1F1;border-left-color:#DC2626}.res.good{background:#ECFDF3;border-left-color:#15803D}
+.res .big{font:800 9mm/1 Inter;color:#14110F;white-space:nowrap}.res .big small{font:800 3.6mm Anuphan;margin-right:1.2mm}
+.res b{display:block;font:800 4.6mm/1.3 Anuphan}.res span{display:block;font:600 3.3mm/1.45 Anuphan;color:#4A4440;margin-top:.6mm}
+.line{display:inline-block;background:#06C755;color:#fff;font:800 4.6mm Anuphan;border-radius:2.4mm;padding:1.4mm 3mm;margin-top:2mm}
+.scan .tel{font:700 3.8mm Inter;color:#14110F;margin-top:1.5mm}
+.photo{display:block;width:100%;height:40mm;border-radius:4mm;background:#F3F0EC;object-fit:cover;margin-top:4.5mm}
 .free{font:800 5.6mm/1.3 Anuphan;margin-top:4.5mm}
 .free span{display:block;font:500 3.7mm/1.45 Anuphan;color:#4A4440;margin-top:1mm}
 .offer{background:#EEF2FD;border-radius:3.5mm;padding:3.2mm 4mm;margin-top:3.5mm}
@@ -44,7 +50,6 @@ const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 const qs = new URLSearchParams(location.search);
 const P = qs.get('p') || '', CAT = qs.get('c') || '', AREA = qs.get('a') || '';
 const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const BUILDING = { ChIJPxz0o_iZ4jARqOODkDRBYCw: 'Aqua Residences' }; // same choice as the kit page
 const post = async (path, body) => {
   const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const d = await r.json();
@@ -54,14 +59,9 @@ const post = async (path, body) => {
 async function load() {
   if (!/^[A-Za-z0-9_-]{10,200}$/.test(P)) throw new Error('bad_place');
   const d = await post('/place', { placeId: P });
-  let building = BUILDING[P] || '';
-  if (!building && d.lat != null) {
-    const near = await post('/nearby', { lat: d.lat, lng: d.lng, type: 'lodging,hotel,apartment_building,apartment_complex,condominium_complex', radius: 800 })
-      .catch((e) => { console.error('[leave] nearby', e); return null; });
-    const m = (p) => Math.hypot((p.lng - d.lng) * 111320 * Math.cos(d.lat * Math.PI / 180), (p.lat - d.lat) * 110540);
-    const list = ((near && near.places) || []).filter((p) => (p.reviews || 0) >= 10).sort((x, y) => m(x) - m(y));
-    if (list[0]) building = list[0].name;
-  }
+  // The shop's own Shop Radar result (saved report, never a new check). Missing = no result box, never a guess.
+  const vq = new URLSearchParams({ p: P }); if (CAT) vq.set('c', CAT); if (AREA) vq.set('a', AREA);
+  const rep = await fetch(`${API}/view?${vq}`).then((r) => (r.ok ? r.json() : null)).catch((e) => { console.error('[leave] view', e); return null; });
   const photos = d.photos || [];
   const own = photos.find((ph) => ph.by === d.name) || photos[0];
   // if Google won't serve a photo, try the shop's next ones, then drop the box
@@ -70,20 +70,32 @@ async function load() {
   kit.searchParams.set('p', P); if (CAT) kit.searchParams.set('c', CAT); if (AREA) kit.searchParams.set('a', AREA);
   kit.searchParams.set('v', 'qr');
   // "ร้าน" goes in front of a Thai name only once, and with a space before a Latin name ("ร้าน PHOMHOM…")
-  const name = esc(d.name), shopWord = /^ร้าน/.test(d.name) ? '' : /^[A-Za-z0-9]/.test(d.name) ? 'ร้าน ' : 'ร้าน';
-  const inside = ['ผลตรวจการค้นหา', 'หน้าร้านตัวอย่าง', building ? `ตัวอย่างเมนู ${esc(building)}` : '', 'ตัวอย่างรายงานทาง LINE'].filter(Boolean).join(' · ');
+  const name = esc(d.name);
   document.title = `ใบฝากร้าน · ${d.name}`;
+  // Result: the locked report words ("เจอร้านคุณ n ใน 9 พื้นที่ค้นหา") plus the rank at the shop's door AND from the area
+  // landmark — both, so an owner who checks Maps inside the shop sees the same thing (Art 2026-11-19, Lalisa case).
+  let res = '';
+  if (rep && rep.keywords && rep.keywords[0]) {
+    const k = rep.keywords[0], n = k.points.length, t = k.top3Count, max = rep.maxRank || 40;
+    const rk = (r) => (r == null ? `${max}+` : String(r));
+    const head = t === n ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : t ? `เจอร้านคุณ ${t} ใน ${n} พื้นที่ค้นหา` : 'ยังไม่เจอร้านคุณใน 3 ร้านแรก';
+    const hub = rep.area && rep.area.hub;
+    const big = hub ? k.hubRank : k.centreRank;
+    res = `<div class="res ${t === n ? 'good' : t <= 2 ? 'bad' : ''}"><div class="big"><small>อันดับ</small>${rk(big)}</div>
+      <div><b>${head}</b><span>ค้น “${esc(k.keyword)}” · หน้าร้าน อันดับ ${rk(k.centreRank)}${hub ? ` · จาก ${esc(hub)} อันดับ ${rk(k.hubRank)}` : ''}</span></div></div>`;
+  } else console.error('[leave] no saved report for', P);
+  const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const when = rep && rep.checkedAt ? new Date(rep.checkedAt) : new Date();
   document.getElementById('sheet').innerHTML = `
-    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>สำหรับ ${name}</small></div>
+    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><small>ผลตรวจ ${when.getDate()} ${TH_M[when.getMonth()]} ${when.getFullYear() + 543}</small></div>
     <h1>${name}</h1>
-    <p class="sub">เราทำตัวอย่างหน้าร้านและการโปรโมตของร้านพี่มาให้ดูแล้ว</p>
+    ${res}
     ${own ? `<img class="photo" id="photo" src="${API}/photo?w=1000&name=${encodeURIComponent(own.name)}" alt="รูปร้าน ${name}">` : ''}
-    <p class="free">โปรโมทร้านให้ฟรี<span>ลงหน้าร้านในสมุดร้านของ bookease ให้ลูกค้าค้นเจอ กดโทร นำทางได้</span></p>
-    <div class="offer"><b>฿1,290 <small>/ เดือน · ถ้าอยากให้ทีมช่วยดูแลต่อ</small></b>
-      <p>ดูแล Google Maps · เว็บร้านพร้อมใช้ · เมนูคอนโดและโรงแรมใกล้ร้าน · รายงานทาง LINE ทุกสัปดาห์</p>
+    <p class="free">โปรโมทร้านให้ฟรี<span>ลงร้านในสมุดร้านออนไลน์ ให้ลูกค้าค้นเจอ กดโทร นำทางได้</span></p>
+    <div class="offer"><b>฿1,290 <small>/ เดือน · ให้ทีมช่วยดูแลต่อ</small></b>
+      <p>ดูแล Google Maps · เว็บร้านพร้อมใช้ · รายงานทาง LINE ทุกสัปดาห์</p>
       <em>ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้</em></div>
-    <div class="scan"><div><strong>สแกนดูชุดโปรโมต${shopWord}${name}</strong><p>${inside}</p><p class="url">radar.bookease.co</p></div><div id="qr" role="img" aria-label="QR เปิดชุดโปรโมตร้าน"></div></div>
-    <p class="foot">bookease · LINE @bookease · 092-641-4296</p>`;
+    <div class="scan"><div><strong>สแกนดูผลตรวจร้าน<br>และเว็บตัวอย่าง</strong><span class="line">ทัก LINE @bookease</span><p class="tel">โทร 092-641-4296</p></div><div id="qr" role="img" aria-label="QR เปิดผลตรวจร้าน"></div></div>`;
   const img = document.getElementById('photo');
   if (img) img.addEventListener('error', () => { const next = others.shift(); console.error('[leave] photo failed, trying next', !!next); if (next) img.src = next; else img.remove(); });
   new QRCode(document.getElementById('qr'), { text: kit.toString(), width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
