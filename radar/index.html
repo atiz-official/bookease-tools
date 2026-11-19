@@ -221,6 +221,12 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
   .dot{width:38px;height:38px;font-size:14px}
   .check-row{grid-template-columns:1fr 78px 78px}
 }
+.staff-card{border:2px dashed var(--line)}
+.staff-card textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:10px;padding:10px;font:500 14px/1.5 Sarabun,sans-serif;color:var(--ink);resize:vertical}
+.staff-card .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}
+.staff-card .row b{font-size:14px}
+.staff-card button{border:0;border-radius:999px;background:var(--ink);color:#fff;font:700 13px Sarabun,sans-serif;padding:6px 14px;cursor:pointer}
+@media print{.staff-card{display:none!important}}
 /* PDF: the report printed as a proper document, 1–2 A4 pages (Art 2026-11-19: "ส่งเป็น PDF ให้ดูเป็นรายงานจริง").
    Same page, print layout only: report number + date on top, contact at the bottom, no buttons or pickers. */
 .print-only{display:none}
@@ -664,6 +670,44 @@ function savePdf(e) {
   setTimeout(() => { document.title = keep; }, 1000);
 }
 
+// Team only (device marked with ?staff=1, same flag as the offer page): call opening, LINE/SMS and e-mail for THIS shop,
+// with its own numbers, so the sales team never pitches a generic line (Art 2026-11-19, call results "ทำการตลาดเองอยู่แล้ว").
+const STAFF = (() => {
+  try {
+    if (new URLSearchParams(location.search).has('staff')) localStorage.setItem('bookease-staff', '1');
+    return localStorage.getItem('bookease-staff') === '1';
+  } catch (e) { console.error('[staff] storage', e); return false; }
+})();
+function salesTexts(k) {
+  const s = R.shop, n = k.points.length, t = k.top3Count;
+  const hub = R.area && R.area.hub, hubRank = hub ? k.hubRank : null;
+  const comp = (k.ahead || []).map((id) => R.places[id]).find((p) => p && p.name);
+  const compTxt = comp ? `ร้าน ${comp.name}${comp.reviews != null ? ` (${fmt(comp.reviews)} รีวิว)` : ''} ขึ้นก่อน` : '';
+  let finding;
+  if (t === n) finding = hub && hubRank && hubRank > 3 ? `เจอร้านพี่ทุกจุดรอบร้าน แต่คนที่ค้นจาก ${hub} เจอร้านพี่อันดับ ${rankText(hubRank)}${compTxt ? ` ${compTxt}` : ''}` : 'เจอร้านพี่ทุกจุดรอบร้าน ร้านพี่ทำได้ดีมาก';
+  else if (t === 0) finding = `ยังไม่เจอร้านพี่ใน 3 ร้านแรกเลย${compTxt ? ` ${compTxt}` : ''}`;
+  else finding = `เจอร้านพี่ ${t} ใน ${n} พื้นที่ค้นหา${hub ? ` ค้นจาก ${hub} อันดับ ${rankText(hubRank)}` : ''}${compTxt ? ` ${compTxt}` : ''}`;
+  const url = `${location.origin}${location.pathname}${link(R)}`;
+  return {
+    call: `สวัสดีครับ ผมโทรจาก bookease ครับ เราเพิ่งตรวจร้าน ${s.name} ใน Google Maps ให้ฟรีครับ คนที่ค้น "${k.keyword}" แถวร้าน ${finding} ขอส่งผลให้เจ้าของร้านดูทาง LINE ได้ไหมครับ`,
+    line: `ผลตรวจร้าน ${s.name} ใน Google ครับ (ฟรี) 📍\nคนที่ค้น "${k.keyword}" แถวร้าน ${finding}\n\nดูผลเต็ม 👉 ${url}\n\nอยากให้ช่วยดันร้านให้ลูกค้าเจอก่อน ทัก LINE @bookease หรือโทร 092-641-4296 ครับ`,
+    mail: `หัวข้อ: ผลตรวจร้าน ${s.name} ใน Google Maps (ฟรี)\n\nสวัสดีครับ\n\nเราตรวจร้าน ${s.name} ใน Google Maps ให้แล้วครับ คนที่ค้น "${k.keyword}" แถวร้าน ${finding}\n\nดูผลเต็มและดาวน์โหลด PDF ได้ที่ ${url}\n\nถ้าอยากให้ลูกค้าแถวร้านเจอร้านก่อน เราช่วยดูแลให้ได้ เดือนละ 1,290 บาท ไม่ผูกมัด ยกเลิกเมื่อไหร่ก็ได้\nตอบกลับอีเมลนี้ ทัก LINE @bookease หรือโทร 092-641-4296 ครับ\n\nทีม bookease`,
+  };
+}
+function staffCard(k) {
+  if (!STAFF) return '';
+  const t = salesTexts(k);
+  const box = (key, title) => `<div class="row"><b>${title}</b><button type="button" data-copy="${key}">คัดลอก</button></div><textarea id="tx-${key}" readonly>${esc(t[key])}</textarea>`;
+  return `<section class="card staff-card"><h2>สำหรับทีมขาย · ร้านนี้</h2>${box('call', 'บทเปิดตอนโทร')}${box('line', 'ข้อความ LINE / SMS')}${box('mail', 'อีเมล')}</section>`;
+}
+function wireStaff() {
+  document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+    const ta = $(`tx-${b.dataset.copy}`);
+    try { await navigator.clipboard.writeText(ta.value); } catch (e) { console.error('[staff] clipboard', e); ta.select(); document.execCommand('copy'); }
+    b.textContent = 'คัดลอกแล้ว'; setTimeout(() => { b.textContent = 'คัดลอก'; }, 1500);
+  }));
+}
+
 function paint() {
   const k = R.keywords[KW], s = R.shop;
   const checked = new Date(R.checkedAt);
@@ -712,6 +756,7 @@ function paint() {
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
   <section class="card bld" id="bld" hidden></section>
+  ${staffCard(k)}
   <footer class="print-only print-foot">
     <b>อยากให้ลูกค้าแถวร้านเจอร้านคุณก่อน?</b>
     ทัก LINE @bookease · โทร 092-641-4296 · ดูรายงานล่าสุด ${esc(reportUrl.replace(/^https?:\/\//, ''))}
@@ -741,6 +786,7 @@ ${url}`)}`;
 ${url}`;
     push.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
   }
+  wireStaff();
   const pdf = $('pdf');
   if (pdf) pdf.addEventListener('click', savePdf);
   fitPickers();
