@@ -31,7 +31,7 @@ Preview: serve the repo root, open `/report/?demo=demo-local.json` (localhost on
 gitignored because it holds real shop names and ranks).
 
 ## Found on day one (2026-11-14)
-- **Rank swings with opening hours.** Same shop, same day: Relaxing Time was #33 at 01:30 (closed) and
+- **SUPERSEDED for sales (Art 2026-11-19): shop open/closed and time of day are not a factor to act on. Never tell anyone to wait or re-check by the hour; daily freshness is enough.** Original note: **Rank swings with opening hours.** Same shop, same day: Relaxing Time was #33 at 01:30 (closed) and
   #1 at its own door at 10:40 (open); Worrapan was top-3 at 9/9 points at 01:30 (open) and outside the
   top 40 everywhere at 10:40 (closed). The report now carries `shop.openNow` and the page says so.
   Always check a shop during its opening hours before quoting a rank to the owner.
