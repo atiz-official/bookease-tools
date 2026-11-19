@@ -135,7 +135,6 @@ function render(r) {
       <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>ผลตรวจร้านฟรี</span></div>
       <h1>${esc(s.name)}</h1>
       <p class="when">ตรวจจาก Google Maps · ${esc(thWhen(r.checkedAt))}</p>
-      ${s.openNow === false ? '<p class="closed">ตอนตรวจร้านปิดอยู่ Google จะดันร้านที่ปิดลง ผลจริงตอนร้านเปิดน่าจะดีกว่านี้</p>' : ''}
       <p class="q">ลูกค้าเจอร้านคุณไหม?</p>
       <div class="stats">
         <div class="st ${top3 >= Math.ceil(total * 2 / 3) ? 'good' : top3 >= Math.ceil(total / 3) ? 'mid' : 'bad'}"><b>${top3}<i> / ${total}</i></b><small>จุดรอบร้านที่ติด 3 อันดับแรก</small></div>

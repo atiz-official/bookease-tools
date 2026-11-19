@@ -84,6 +84,8 @@ const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const qs = new URLSearchParams(location.search);
 const P = qs.get('p') || '';
+// The owner taps this once and sends the prefilled message in @bookease; the worker links their LINE to this shop.
+const lineLinkUrl = `https://line.me/R/oaMessage/%40bookease/?${encodeURIComponent(`เชื่อมรายงาน ${P}`)}`;
 const STAFF = qs.has('staff');
 // A device that opened the team view stops counting its own visits to shop pages and menus.
 if (STAFF) { try { localStorage.setItem('bookease-staff', '1'); } catch (e) { console.error('[growth] storage', e); } }
@@ -180,7 +182,7 @@ function render(d) {
   const delta = (now, before) => before == null || now == null ? '' : now > before ? `<span class="d up">↑ เพิ่ม ${now - before} จากสัปดาห์ก่อน</span>` : now < before ? `<span class="d down">↓ ลด ${before - now} จากสัปดาห์ก่อน</span>` : '<span class="d">เท่ากับสัปดาห์ก่อน</span>';
   const stat = (label, value, extra) => `<div class="stat"><small>${label}</small><b>${value}</b>${extra || ''}</div>`;
   const na = (label, why) => `<div class="stat na"><small>${label}</small><b>ยังวัดไม่ได้</b><span class="d">${why}</span></div>`;
-  const firstCheck = 'เราจะลองค้นครั้งแรกตอนร้านเปิด';
+  const firstCheck = 'เราจะลองค้นครั้งแรกเร็วๆ นี้';
   const views7 = sum(d.counts, from7, today, ['view']);
   const contacts7 = sum(d.counts, from7, today, CONTACT);
   const L1 = 'ใกล้ร้าน เจอร้านคุณ', L2 = 'ไกลออกไป 2 กม. เจอร้านคุณ';
@@ -205,7 +207,7 @@ function render(d) {
       <div class="grids">${g9(last, 0, 'ใกล้ร้าน (ห่างกัน 500 ม.)')}${g9(last, 1, 'ไกลออกไป (ห่างกัน 2 กม.)')}</div>
       <p class="legend">9 ช่อง คือ 9 พื้นที่ค้นหา · ช่องกลางกรอบดำคือร้านคุณ · ตัวเลขคืออันดับร้านคุณ · สีเขียวเข้มคือเจอร้านคุณใน 3 ร้านแรก · ขีด (–) คือไม่เจอร้านคุณใน ${last.maxRank} ร้านแรก</p></div>`);
   } else {
-    ch.push(`<div class="ch"><b>Google Maps</b><span class="pill">ยังวัดไม่ได้</span><small>${firstCheck} (ตอนร้านปิด Google จะดันร้านลง ผลจะไม่ตรง)</small></div>`);
+    ch.push(`<div class="ch"><b>Google Maps</b><span class="pill">ยังวัดไม่ได้</span><small>${firstCheck}</small></div>`);
   }
   const siteViews = sum(d.counts, s.since, today, ['view'], (x) => !x.startsWith('b:'));
   const siteContacts = sum(d.counts, s.since, today, CONTACT, (x) => !x.startsWith('b:'));
@@ -232,14 +234,20 @@ function render(d) {
     ${progress(hist)}
     <section class="card" id="work"><h2>งานที่เราทำให้ร้าน</h2>${logHtml}${(d.plan || []).length ? `<h2 style="margin-top:18px">สัปดาห์หน้าเราจะทำต่อ</h2><ul class="log">${d.plan.map((x) => `<li><time>ต่อไป</time><div><b>${esc(x.what)}</b></div></li>`).join("")}</ul>` : ""}</section>
     <section class="card"><h2>ลูกค้าเห็นร้านคุณจากที่ไหนบ้าง</h2><p class="lead">ตัวเลขนับจริงทุกครั้ง · ถ้ายังนับไม่ได้ เราจะเขียนว่า “ยังวัดไม่ได้” · ถ้าไม่มีคนเลย จะเขียน 0</p><div class="chan">${ch.join('')}</div></section>
-    ${STAFF ? `<section class="card staff"><h2>ส่งรายงานวันจันทร์ทาง LINE (สำหรับทีม)</h2>
+    ${STAFF ? `<section class="card staff"><h2>ส่งการ์ดอัตโนมัติทาง LINE (สำหรับทีม)</h2>
+      ${d.lineLinked ? `<p class="lead">เชื่อม LINE ของร้านแล้ว · ระบบส่งการ์ดให้เองทุกวันจันทร์ 10:00${d.linePushedAt ? ` · ส่งล่าสุด ${esc(thDateY(d.linePushedAt.slice(0, 10)))}` : ''}</p>`
+        : `<p class="lead">ยังไม่เชื่อม: ส่งลิงก์นี้ให้เจ้าของร้าน กดแล้วกด "ส่ง" ในแชต @bookease ครั้งเดียว จากนั้นการ์ดจะไปถึงร้านเองทุกวันจันทร์</p>
+      <p><a id="linelink" href="${esc(lineLinkUrl)}" target="_blank" rel="noopener">${esc(lineLinkUrl)}</a> <button id="copyline" class="soft">คัดลอกลิงก์เชื่อม LINE</button></p>`}</section>
+    <section class="card staff"><h2>ส่งรายงานวันจันทร์ทาง LINE (สำหรับทีม)</h2>
       <p class="lead">1) ส่งรูปการ์ดนี้ให้ร้าน 2) ส่งลิงก์รายงานตามไป ร้านกดดูรายละเอียดจากลิงก์</p>
       <img id="cardimg" alt="การ์ดรายงานประจำสัปดาห์" style="width:100%;max-width:420px;display:block;border-radius:14px">
       <button id="share">ส่งรูปการ์ดทาง LINE</button> <button id="save" class="soft">บันทึกรูป</button> <button id="copylink" class="soft">คัดลอกลิงก์รายงาน</button> <span id="ok" hidden>คัดลอกแล้ว</span>
       <details style="margin-top:14px"><summary style="cursor:pointer;color:var(--ink-3);font-size:14px">ข้อความแบบยาว (ถ้าส่งรูปไม่ได้)</summary><textarea id="msg">${esc(lineText(d, week, from7, views7, contacts7))}</textarea><button id="copy">คัดลอกข้อความ</button></details></section>` : ''}
-    <p class="foot">เราลองค้นใน Google แทนลูกค้า ตอนร้านเปิด · มือถือแต่ละเครื่องอาจเห็นลำดับต่างกันนิดหน่อย</p>`;
+    <p class="foot">เราลองค้นใน Google แทนลูกค้า · มือถือแต่ละเครื่องอาจเห็นลำดับต่างกันนิดหน่อย</p>`;
   if (location.hash === '#work') requestAnimationFrame(() => $('work').scrollIntoView({ block: 'start' }));
   if (STAFF) {
+    const copyLine = $('copyline');
+    if (copyLine) copyLine.addEventListener('click', () => navigator.clipboard.writeText(lineLinkUrl).catch((e) => console.error('[growth] copy line link', e)));
     const copy = async (text, onFail) => {
       try { await navigator.clipboard.writeText(text); $('ok').hidden = false; } catch (e) { console.error('[growth] copy', e); onFail && onFail(); }
     };
@@ -363,7 +371,7 @@ function lineText(d, week, from7, views7, contacts7) {
     lines.push(`• ใกล้ร้าน เจอร้านคุณ ${last.spacings[0].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[0].top3, prev && prev.spacings[0].top3)}`);
     lines.push(`• ไกลออกไป 2 กม. เจอร้านคุณ ${last.spacings[1].top3} ใน 9 พื้นที่ค้นหา${was(last.spacings[1].top3, prev && prev.spacings[1].top3)}`);
     if (last.reviews != null) lines.push(`• รีวิว ${last.reviews}${first && first !== last ? ` (เพิ่ม ${last.reviews - first.reviews} ตั้งแต่เริ่ม)` : ''}`);
-  } else lines.push('• ลำดับร้านใน Google: ยังวัดไม่ได้ เราจะลองค้นครั้งแรกตอนร้านเปิด');
+  } else lines.push('• ลำดับร้านใน Google: ยังวัดไม่ได้ เราจะลองค้นครั้งแรกเร็วๆ นี้');
   lines.push(`• คนเปิดดูหน้าร้าน ${views7} ครั้ง · กดโทร นำทาง หรือติดต่อร้าน ${contacts7} ครั้ง (7 วันล่าสุด)`);
   const pending = [];
   if (!s.gbp) pending.push('ตัวเลขจาก Google (รอเจ้าของร้านเพิ่มเราเป็นผู้จัดการร้าน)');

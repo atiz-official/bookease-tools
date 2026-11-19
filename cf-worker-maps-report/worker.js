@@ -593,7 +593,70 @@ async function growthRun(env, cfg) {
 }
 
 /** Cron (every 15 min, 10:00–19:45 Bangkok): check the first due shop, at most one per run. */
+// ── LINE: link the owner, push the weekly card ──
+const LINE_API = 'https://api.line.me/v2/bot/message';
+const LINK_RE = /เชื่อมรายงาน\s+([A-Za-z0-9_-]{10,200})/;
+
+async function lineSignatureOk(secret, raw, signature) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(raw)));
+  const expected = btoa(String.fromCharCode(...mac));
+  if (expected.length !== signature.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  return diff === 0;
+}
+
+async function lineCall(env, path, payload) {
+  if (!env.LINE_CHANNEL_TOKEN) { console.error('[line] no LINE_CHANNEL_TOKEN; not sending', path); return false; }
+  const r = await fetch(`${LINE_API}/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.LINE_CHANNEL_TOKEN}` }, body: JSON.stringify(payload) });
+  if (!r.ok) { console.error('[line]', path, r.status, (await r.text()).slice(0, 300)); return false; }
+  return true;
+}
+
+/** "เชื่อมรายงาน <placeId>" from the owner → remember their LINE user for that shop and answer with this week's card. */
+async function lineEvent(env, ev) {
+  if (ev.type !== 'message' || !ev.message || ev.message.type !== 'text' || !ev.source || !ev.source.userId) return;
+  const m = LINK_RE.exec(ev.message.text || '');
+  if (!m) return; // any other chat is the team's to answer
+  const id = gid(m[1]);
+  const cfg = id ? await env.REPORTS.get(`g/shop/${id}`, 'json') : null;
+  if (!cfg || cfg.kind !== 'shop') {
+    await lineCall(env, 'reply', { replyToken: ev.replyToken, messages: [{ type: 'text', text: 'ยังไม่พบรายงานของร้านนี้ครับ ทีมงานจะตรวจสอบและติดต่อกลับ' }] });
+    return;
+  }
+  const old = (await env.REPORTS.get(`g/line/${id}`, 'json')) || {};
+  await env.REPORTS.put(`g/line/${id}`, JSON.stringify({ ...old, userId: ev.source.userId, linkedAt: new Date().toISOString() }));
+  const data = await growthData(env, id);
+  const messages = [{ type: 'text', text: `เชื่อมรายงานของ ${cfg.name} แล้วครับ ทุกวันจันทร์จะส่งการ์ดสรุปให้ที่นี่` }];
+  if (data && data.hist.length) messages.push(growthFlex(data.card));
+  await lineCall(env, 'reply', { replyToken: ev.replyToken, messages });
+}
+
+/** Monday from 10:00 Bangkok: one push per linked, paying shop per week. Off until LINE_CHANNEL_TOKEN is set. */
+async function lineWeekly(env, now = Date.now()) {
+  if (!env.LINE_CHANNEL_TOKEN) return 0;
+  const bkk = new Date(now + 7 * 3600 * 1000);
+  if (bkk.getUTCDay() !== 1 || bkk.getUTCHours() < 10) return 0;
+  let sent = 0;
+  for (const item of await gIndex(env)) {
+    if (item.kind !== 'shop') continue;
+    const [line, billing] = await Promise.all([env.REPORTS.get(`g/line/${item.id}`, 'json'), env.REPORTS.get(`g/billing/${item.id}`, 'json')]);
+    if (!line || !line.userId || !billing) continue;
+    if (line.pushedAt && now - Date.parse(line.pushedAt) < 6 * 24 * 3600 * 1000) continue;
+    const data = await growthData(env, item.id);
+    if (!data || !data.hist.length || data.shop.active === false) continue;
+    if (await lineCall(env, 'push', { to: line.userId, messages: [growthFlex(data.card)] })) {
+      await env.REPORTS.put(`g/line/${item.id}`, JSON.stringify({ ...line, pushedAt: new Date(now).toISOString() }));
+      sent += 1;
+    }
+  }
+  return sent;
+}
+
 async function growthTick(env) {
+  const pushed = await lineWeekly(env).catch((e) => { console.error('[line] weekly', e && e.stack || e); return 0; });
+  if (pushed) console.log('[line] weekly cards sent', pushed);
   for (const item of await gIndex(env)) {
     if (item.kind !== 'shop') continue;
     const cfg = await growthDue(env, item.id);
@@ -643,7 +706,9 @@ async function growthData(env, id) {
     env.REPORTS.get(`g/log/${id}`, 'json'), env.REPORTS.get(`g/hist/${id}`, 'json'), growthCounts(env, [id, ...bIds]),
     Promise.all(bIds.map((b) => env.REPORTS.get(`g/shop/${b}`, 'json'))), env.REPORTS.get(`g/plan/${id}`, 'json')]);
   const buildings = bcfgs.map((bc, i) => bc && { ...bc, counts: counts[bIds[i]] || {} }).filter(Boolean);
-  const data = { shop: cfg, log: log || [], plan: plan || [], hist: hist || [], counts: counts[id] || {}, buildings, today: bkkDay() };
+  const line = await env.REPORTS.get(`g/line/${id}`, 'json');
+  const data = { shop: cfg, log: log || [], plan: plan || [], hist: hist || [], counts: counts[id] || {}, buildings, today: bkkDay(),
+    lineLinked: Boolean(line && line.userId), linePushedAt: (line && line.pushedAt) || null };
   data.card = growthCard(data);
   return data;
 }
@@ -692,7 +757,7 @@ function growthCard(d) {
     calls: `กดโทรหาร้าน ${calls7} ครั้ง`, cta: 'ดูว่าเราทำอะไรให้ร้าน', url: `${G_REPORT_URL}${s.id}#work`,
     photo: photoName ? `${G_WORKER_URL}/photo?w=200&name=${encodeURIComponent(photoName)}` : '',
   });
-  if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', '', 'เราจะตรวจอันดับร้านคุณครั้งแรกตอนร้านเปิด');
+  if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', '', 'เราจะตรวจอันดับร้านคุณครั้งแรกเร็วๆ นี้');
 
   const kw = last.keyword, max = last.maxRank || 40;
   if (last.hub) {
@@ -754,7 +819,7 @@ function growthFlex(c) {
 
 // ── handler ─────────────────────────────────────────────────────────
 
-export { growthCard, growthFlex, growthLadder };
+export { growthCard, growthFlex, growthLadder, lineWeekly, lineSignatureOk };
 
 export default {
   async fetch(request, env, ctx) {
@@ -800,6 +865,20 @@ export default {
         if (!id) return json({ error: 'bad_place_id' }, 400, origin);
         const data = await growthData(env, id);
         return data ? json(growthFlex(data.card), 200, origin) : json({ error: 'not_tracked' }, 404, origin);
+      }
+
+      // LINE OA @bookease webhook: the owner links the weekly card by sending "เชื่อมรายงาน <placeId>" (prefilled link
+      // from the staff page). Every other message is left alone for the team. Off until LINE_CHANNEL_SECRET is set.
+      if (request.method === 'POST' && url.pathname === '/line/webhook') {
+        if (!env.LINE_CHANNEL_SECRET) return json({ error: 'line_off' }, 503, origin);
+        const raw = await request.text();
+        if (!(await lineSignatureOk(env.LINE_CHANNEL_SECRET, raw, request.headers.get('x-line-signature') || ''))) return json({ error: 'bad_signature' }, 401, origin);
+        let events = [];
+        try { events = JSON.parse(raw).events || []; } catch (e) { console.error('[line] bad body', e); return json({ error: 'invalid_json' }, 400, origin); }
+        for (const ev of events) {
+          try { await lineEvent(env, ev); } catch (e) { console.error('[line] event', e && e.stack || e); }
+        }
+        return json({ ok: true }, 200, origin);
       }
 
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);

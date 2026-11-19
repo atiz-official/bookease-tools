@@ -619,12 +619,12 @@ function paint() {
   const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(k.keyword)}/@${s.lat},${s.lng},16z?hl=th`;
   const meta = [s.rating != null ? `<span class="star">★ ${esc(s.rating)}</span>` : '', s.reviews != null ? `<span class="num">${fmt(s.reviews)} รีวิว</span>` : ''].join('');
   const bottom = [volumeCard(), gapCard(k)].filter(Boolean);
-  const open = s.openNow === true ? ' · ร้านเปิดอยู่' : s.openNow === false ? ' · ร้านปิดอยู่ ตรวจใหม่ตอนร้านเปิด' : '';
+  const open = ''; // Art 2026-11-19: never mention open/closed or time of day on Radar results
 
   $('s-report').innerHTML = `
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
-    <p class="shop-meta">${meta}${s.openNow === false ? '<span class="closed-chip">ร้านปิดอยู่</span>' : ''}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a></p>
+    <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a></p>
     ${headline(k)}
   </section>
 
@@ -651,7 +651,7 @@ function paint() {
 
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
   <section class="card bld" id="bld" hidden></section>
-  <p class="source">ข้อมูลจาก Google · ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${open}</p>`;
+  <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
   const share = $('share');
   if (share) {

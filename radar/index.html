@@ -719,7 +719,7 @@ function paint() {
   const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(k.keyword)}/@${s.lat},${s.lng},16z?hl=th`;
   const meta = [s.rating != null ? `<span class="star">★ ${esc(s.rating)}</span>` : '', s.reviews != null ? `<span class="num">${fmt(s.reviews)} รีวิว</span>` : ''].join('');
   const bottom = [volumeCard(), gapCard(k)].filter(Boolean);
-  const open = s.openNow === true ? ' · ร้านเปิดอยู่' : s.openNow === false ? ' · ร้านปิดอยู่ตอนตรวจ' : '';
+  const open = ''; // Art 2026-11-19: never mention open/closed or time of day on Radar results
 
   const rid = reportNo(R);
   const reportUrl = `${location.origin}${location.pathname}${link(R)}`;
@@ -729,11 +729,11 @@ function paint() {
     <p class="n">${esc(s.name)}</p>
     ${s.address ? `<p class="a">${esc(s.address)}</p>` : ''}
     <p class="r">${k.top3Count === k.points.length ? 'เจอร้านคุณทุกพื้นที่ค้นหา' : k.top3Count ? `เจอร้านคุณ ${k.top3Count} ใน ${k.points.length} พื้นที่ค้นหา` : 'ยังไม่เจอร้านคุณใน 3 ร้านแรก'} · อันดับ ${rankText(R.area ? k.hubRank : k.centreRank)} ${R.area ? `จาก ${esc(R.area.hub)}` : 'ที่หน้าร้าน'}</p>
-    <p class="m"><span>ตรวจเมื่อ <b>${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.</b></span><span>เลขที่รายงาน <b>${rid}</b></span><span>คำค้น <b>"${esc(k.keyword)}"</b></span><span>ระยะรอบร้าน <b>${kmText(R.spacingM || 500)}</b></span></p>
+    <p class="m"><span>ตรวจเมื่อ <b>${thDate(checked)}</b></span><span>เลขที่รายงาน <b>${rid}</b></span><span>คำค้น <b>"${esc(k.keyword)}"</b></span><span>ระยะรอบร้าน <b>${kmText(R.spacingM || 500)}</b></span></p>
   </header>
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
-    <p class="shop-meta">${meta}${s.openNow === false ? '<span class="closed-chip">ร้านปิดอยู่</span>' : ''}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
+    <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
     ${headline(k)}
   </section>
 
@@ -765,7 +765,7 @@ function paint() {
     <b>อยากให้ลูกค้าแถวร้านเจอร้านคุณก่อน?</b>
     ทัก LINE @bookease · โทร 092-641-4296 · ดูรายงานล่าสุด ${esc(reportUrl.replace(/^https?:\/\//, ''))}
   </footer>
-  <p class="source">ข้อมูลจาก Google · ${thDate(checked)} ${String(checked.getHours()).padStart(2, '0')}:${String(checked.getMinutes()).padStart(2, '0')} น.${open}</p>`;
+  <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
   const share = $('share');
   if (share) {
