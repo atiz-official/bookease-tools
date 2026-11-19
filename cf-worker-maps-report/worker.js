@@ -64,7 +64,7 @@ export const CATEGORIES = [
  * Reports of a shop outside our own types saved before the automatic search word (KW_VERSION) are all re-checked:
  * some searched Google's catch-all "บริการ" (Art 2026-11-18).
  */
-const KW_VERSION = 3; // 3 = clinic subtypes (คลินิกเวชกรรม / คลินิกเด็ก / แพทย์แผนไทย), 2026-11-19
+const KW_VERSION = 4; // 4 = ศูนย์ดูแลผู้สูงอายุ (nursing homes), 3 = clinic subtypes, 2026-11-19
 const outdated = (r) => !!(r && r.category && r.category.id === 'other' && r.category.kw !== KW_VERSION);
 
 /** Which type is this shop? Returns a CATEGORIES entry, or null when nothing fits. */

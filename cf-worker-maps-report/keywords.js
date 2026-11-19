@@ -80,6 +80,9 @@ export const NAME_WORDS = [
   [/ทันตก|ทำฟัน|จัดฟัน|หมอฟัน|dental|dentist/i, 'คลินิกทันตกรรม'],
   [/สัตวแพทย์|รักษาสัตว์|คลินิกสัตว์|โรงพยาบาลสัตว์|\bvet\b/i, 'คลินิกสัตว์'],
   [/อาบน้ำ\S*\s*(หมา|สุนัข|แมว)|ตัดขน|grooming/i, 'อาบน้ำตัดขนสุนัข'],
+  // before กายภาพ: a nursing home's reviews and name often say กายภาพ too (ช่อลิลลี่ เนอร์สซิ่งโฮม, Art 2026-11-19).
+  // ศูนย์ดูแลผู้สูงอายุ = the word most typed (Keyword Planner TH: 8,100/mo vs เนอร์สซิ่งโฮม 1,000).
+  [/เน[อิ]ร์?ส\s*ซิ่ง|nursing|ผู้สูงอายุ|คนชรา|ผู้ป่วยติดเตียง|elderly|senior\s*(care|living)|aged\s*care/i, 'ศูนย์ดูแลผู้สูงอายุ'],
   [/กายภาพ|physio/i, 'กายภาพบำบัด'],
   [/ต่อขนตา|eyelash|\blash/i, 'ต่อขนตา'],
   [/สักคิ้ว|\bbrows?\b/i, 'สักคิ้ว'],
