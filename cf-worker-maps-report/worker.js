@@ -1065,7 +1065,7 @@ export default {
         if (body.name !== undefined) rec.name = bldShortName(rec.gname || rec.name, body.name);
         rec.updatedAt = new Date().toISOString();
         await env.REPORTS.put(`bld/code/${rec.code}`, JSON.stringify(rec));
-        await env.REPORTS.delete(`dir/v3/${b}`); // the phone page shows the new paper shops at once
+        await env.REPORTS.delete(`dir/v4/${b}`); // the phone page shows the new paper shops at once
         return json(bldPublic(rec), 200, origin);
       }
 
@@ -1075,7 +1075,7 @@ export default {
       if (url.pathname === '/directory') {
         const b = String(body.b || '');
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(b)) return json({ error: 'bad_place_id' }, 400, origin);
-        const key = `dir/v3/${b}`;
+        const key = `dir/v4/${b}`;
         const cached = env.REPORTS ? await env.REPORTS.get(key, 'json') : null;
         if (cached) return json(cached, 200, origin);
         if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
@@ -1084,12 +1084,23 @@ export default {
         const lat = place.location.latitude, lng = place.location.longitude;
         const TYPES = [['massage', 'spa'], ['hair_salon'], ['barber_shop'], ['nail_salon'], ['beauty_salon', 'beautician'],
           ['skin_care_clinic'], ['dental_clinic'], ['physiotherapist'], ['gym', 'fitness_center', 'yoga_studio'], ['laundry']];
-        let failed = 0;
-        const lists = await Promise.all(TYPES.map((types) => google(env, 'places:searchNearby',
-          'places.id,places.displayName,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.businessStatus,places.primaryType,places.types,places.photos,places.nationalPhoneNumber',
-          { includedTypes: types, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'th', regionCode: 'TH',
-            locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius: 1000 } } })
-          .catch((e) => { console.error('[directory] nearby', types.join(','), e); failed += 1; return { places: [] }; })));
+        // Radius: 1 km; a quiet area with fewer than 8 good shops widens to 3 km, then 5 km, and stops there
+        // (Art 2026-11-21: "ล็อคไว้ที่แค่ 5 กิโลเมตร" — farther is a drive, not "ร้านดีใกล้ตัว"; a farther shop a
+        // hotel wants is put on its paper, and paper shops are always listed below).
+        const RADII = [1000, 3000, 5000], ENOUGH = 8;
+        const good = (p) => (p.userRatingCount || 0) >= 5 && (p.rating || 0) >= 4 && p.businessStatus !== 'CLOSED_PERMANENTLY';
+        let failed = 0, lists = [], radius = RADII[0];
+        for (radius of RADII) {
+          failed = 0;
+          lists = await Promise.all(TYPES.map((types) => google(env, 'places:searchNearby',
+            'places.id,places.displayName,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.businessStatus,places.primaryType,places.types,places.photos,places.nationalPhoneNumber',
+            { includedTypes: types, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'th', regionCode: 'TH',
+              locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius } } })
+            .catch((e) => { console.error('[directory] nearby', types.join(','), radius, e); failed += 1; return { places: [] }; })));
+          const ids = new Set();
+          lists.forEach((r) => (r.places || []).forEach((p) => { if (p.id !== b && good(p)) ids.add(p.id); }));
+          if (ids.size >= ENOUGH) break;
+        }
         const seen = new Map();
         lists.forEach((r, i) => (r.places || []).forEach((p) => {
           if (p.id === b || seen.has(p.id) || p.businessStatus === 'CLOSED_PERMANENTLY') return;
@@ -1114,7 +1125,7 @@ export default {
             photo: ((p.photos || [])[0] || {}).name || '', m: Math.round(Math.hypot(x, y)) });
         });
         const out = { building: { id: b, name: (place.displayName && place.displayName.text) || '', lat, lng },
-          shops: [...seen.values()], at: new Date().toISOString() };
+          radius, shops: [...seen.values()], at: new Date().toISOString() };
         // A partial answer is served but not cached, so tomorrow's visitors do not inherit a missing group.
         if (env.REPORTS && !failed) await env.REPORTS.put(key, JSON.stringify(out), { expirationTtl: 86400 });
         return json(out, 200, origin);
