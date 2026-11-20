@@ -74,8 +74,7 @@ if (STAFF) { try { localStorage.setItem('bookease-staff', '1'); } catch (e) { co
 const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 function thWhen(iso) {
   const d = new Date(Date.parse(iso) + 7 * 3600e3);
-  const hh = String(d.getUTCHours()).padStart(2, '0'), mm = String(d.getUTCMinutes()).padStart(2, '0');
-  return `${d.getUTCDate()} ${TH_M[d.getUTCMonth()]} ${(d.getUTCFullYear() + 543) % 100} · ${hh}:${mm} น.`;
+  return `${d.getUTCDate()} ${TH_M[d.getUTCMonth()]} ${(d.getUTCFullYear() + 543) % 100}`; // date only: no time of day on Radar (Art 2026-11-19)
 }
 
 const TIERS = {
@@ -137,7 +136,7 @@ function render(r) {
       <p class="when">ตรวจจาก Google Maps · ${esc(thWhen(r.checkedAt))}</p>
       <p class="q">ลูกค้าเจอร้านคุณไหม?</p>
       <div class="stats">
-        <div class="st ${top3 >= Math.ceil(total * 2 / 3) ? 'good' : top3 >= Math.ceil(total / 3) ? 'mid' : 'bad'}"><b>${top3}<i> / ${total}</i></b><small>จุดรอบร้านที่ติด 3 อันดับแรก</small></div>
+        <div class="st ${top3 >= Math.ceil(total * 2 / 3) ? 'good' : top3 >= Math.ceil(total / 3) ? 'mid' : 'bad'}"><b>${top3}<i> ใน ${total} พื้นที่ค้นหา</i></b><small>เจอร้านคุณใน 3 ร้านแรก</small></div>
         <div class="st ${hubRank && hubRank <= 3 ? 'good' : hubRank && hubRank <= 10 ? 'mid' : 'bad'}"><b>${hubRank ? `#${hubRank}` : '—'}</b><small>${hubRank ? `อันดับเมื่อค้นจาก ${esc(hub)}` : `ไม่ติด ${maxRank} อันดับเมื่อค้นจาก ${esc(hub)}`}</small></div>
       </div>
       ${first ? `<p class="ahead">ร้านที่ลูกค้าเห็นก่อน: <b>${esc(first.name)}</b> · ${first.reviews || 0} รีวิว</p>` : ''}

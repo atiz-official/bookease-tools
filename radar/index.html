@@ -687,7 +687,7 @@ function salesTexts(k) {
   const comp = (k.ahead || []).map((id) => R.places[id]).find((p) => p && p.name);
   const compTxt = comp ? `ร้าน ${comp.name}${comp.reviews != null ? ` (${fmt(comp.reviews)} รีวิว)` : ''} ขึ้นก่อน` : '';
   let finding;
-  if (t === n) finding = hub && hubRank && hubRank > 3 ? `เจอร้านพี่ทุกจุดรอบร้าน แต่คนที่ค้นจาก ${hub} เจอร้านพี่อันดับ ${rankText(hubRank)}${compTxt ? ` ${compTxt}` : ''}` : 'เจอร้านพี่ทุกจุดรอบร้าน ร้านพี่ทำได้ดีมาก';
+  if (t === n) finding = hub && hubRank && hubRank > 3 ? `เจอร้านพี่ทุกพื้นที่ค้นหา แต่คนที่ค้นจาก ${hub} เจอร้านพี่อันดับ ${rankText(hubRank)}${compTxt ? ` ${compTxt}` : ''}` : 'เจอร้านพี่ทุกพื้นที่ค้นหา ร้านพี่ทำได้ดีมาก';
   else if (t === 0) finding = `ยังไม่เจอร้านพี่ใน 3 ร้านแรกเลย${compTxt ? ` ${compTxt}` : ''}`;
   else finding = `เจอร้านพี่ ${t} ใน ${n} พื้นที่ค้นหา${hub ? ` ค้นจาก ${hub} อันดับ ${rankText(hubRank)}` : ''}${compTxt ? ` ${compTxt}` : ''}`;
   const url = `${location.origin}${location.pathname}${link(R)}`;
