@@ -191,7 +191,7 @@ let savedKey = '';
 const stateKey = () => JSON.stringify([chosen, chosen.map((id) => photos[id] || '')]);
 
 async function load() {
-  if (!ID.test(B)) { $('app').innerHTML = '<p class="err">ไม่พบอาคาร · เปิดจากรายงาน Shop Radar แล้วกด "สร้างเมนูรอบอาคาร"</p>'; return; }
+  if (!ID.test(B)) { $('app').innerHTML = '<p class="err">ไม่พบอาคาร · เปิดจากรายงาน Shop Radar แล้วกด "ร้านบริการใกล้ฉัน"</p>'; return; }
   // The registry record: made once per building (its code is the QR's address on bookease.co, so it never changes).
   try { rec = await post('/building/get', { b: B }); }
   catch (e) { if (e.status !== 404) throw e; rec = await post('/building/save', { b: B }); }

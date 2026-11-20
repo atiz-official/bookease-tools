@@ -813,9 +813,9 @@ async function loadBuildings(s) {
   if (!list.length || !$('bld') || box !== $('bld')) return;
   const m = (p) => Math.round(Math.hypot((p.lng - s.lng) * 111320 * Math.cos(s.lat * Math.PI / 180), (p.lat - s.lat) * 110540));
   const dist = (x) => (x < 60 ? 'อาคารเดียวกัน / ติดกัน' : `ห่าง ${Math.round(x / 10) * 10} ม.`);
-  box.innerHTML = `<h2>โรงแรมและคอนโดใกล้ร้าน</h2><p class="sub">${list.length} แห่งในระยะ 800 ม. (ข้อมูลจาก Google) · สร้างเมนูบริการให้ลูกบ้านของแต่ละตึกได้</p>
+  box.innerHTML = `<h2>โรงแรมและคอนโดใกล้ร้าน</h2><p class="sub">${list.length} แห่งในระยะ 800 ม. · ข้อมูลจาก Google</p>
     <ul>${list.map((p) => `<li><div><b>${esc(p.name)}</b><small>${dist(m(p))} · <a href="${esc(p.mapsUrl || mapsLink(p.id))}" target="_blank" rel="noopener">ดูบนแผนที่</a></small></div>
-      <a class="mk" href="menu/?b=${encodeURIComponent(p.id)}&shop=${encodeURIComponent(s.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนูรอบอาคาร →</a></li>`).join('')}</ul>`;
+      <a class="mk" href="menu/?b=${encodeURIComponent(p.id)}&shop=${encodeURIComponent(s.id)}&edit=1" target="_blank" rel="noopener">ร้านบริการใกล้ฉัน →</a></li>`).join('')}</ul>`;
   box.hidden = false;
 }
 

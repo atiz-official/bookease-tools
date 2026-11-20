@@ -379,7 +379,7 @@ async function openBuildings(lat, lng, title) {
   panel.insertAdjacentHTML('beforeend', `<ul>${list.map((p) => {
     const s0 = st(p);
     const go = s0.menu ? `<a class="go" href="${s0.menu}" target="_blank" rel="noopener">ดูเมนู →</a>`
-      : `<a class="go" href="../menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">สร้างเมนู →</a>`;
+      : `<a class="go" href="../menu/?b=${encodeURIComponent(p.id)}&edit=1" target="_blank" rel="noopener">ร้านบริการใกล้ฉัน →</a>`;
     const chip = s0.step === 'survey' ? '' : `<span class="stp ${s0.step}">${STEP_TH[s0.step]}</span>`;
     return `<li><b>${esc(p.name)}</b>${chip}<small>${Math.round(m(p) / 10) * 10} ม. · <a href="${esc(p.mapsUrl)}" target="_blank" rel="noopener">ดูแผนที่</a> · ${go}</small></li>`;
   }).join('')}</ul><p class="sample"><a href="../menu/?b=ChIJ-7PwX7iZ4jARp_rFql-yzO4&shop=ChIJPxz0o_iZ4jARqOODkDRBYCw&view=1" target="_blank" rel="noopener">ดูเมนูตัวอย่าง Aqua Residences (จอมทอง) →</a><br>ยังไม่ได้แจกจริง</p>`);
