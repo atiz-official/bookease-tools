@@ -48,7 +48,8 @@ const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co'
 //   "massage"  → API said "not in top 40" where Maps showed the shop at #6. Not trustworthy → English is off
 //   until the cause is found. Do not add English keywords without re-checking against Maps.
 // The other labels have NOT been compared with the Maps app yet.
-// A type is picked in this order: exact Google primary type → a word in the shop name → broad Google types.
+// A type is picked in this order: exact Google primary type → a word in the shop name → the first specific type in
+// Google's list → broad Google types.
 // Google files many nail and hair shops under the broad "beauty_salon", so the name is asked before that.
 export const CATEGORIES = [
   { id: 'massage', label: 'ร้านนวด', primary: ['massage', 'massage_spa', 'thai_massage'], broad: ['spa', 'sauna', 'wellness_center'], name: /นวด|สปา|massage|\bspa\b/i },
@@ -72,10 +73,13 @@ export function detectCategory(shopRaw) {
   const primary = shopRaw.primaryType || '';
   const types = shopRaw.types || [];
   const name = (shopRaw.displayName && shopRaw.displayName.text) || '';
+  // A specific type anywhere in Google's list (in Google's own order) beats a broad main type: Wanaka Sanctuary is
+  // filed as "wellness_center" (broad → massage) but lists "skin_care_clinic" next; it is a beauty clinic (Art 2026-11-20).
+  const firstSpecific = types.map((t) => CATEGORIES.find((c) => c.primary.includes(t))).find(Boolean);
   return CATEGORIES.find((c) => c.primary.includes(primary))
     || CATEGORIES.find((c) => c.name.test(name))
+    || firstSpecific
     || CATEGORIES.find((c) => c.broad.includes(primary))
-    || CATEGORIES.find((c) => types.some((t) => c.primary.includes(t)))
     || CATEGORIES.find((c) => types.some((t) => c.broad.includes(t)))
     || null;
 }
