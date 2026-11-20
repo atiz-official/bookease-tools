@@ -1065,6 +1065,7 @@ export default {
         if (body.name !== undefined) rec.name = bldShortName(rec.gname || rec.name, body.name);
         rec.updatedAt = new Date().toISOString();
         await env.REPORTS.put(`bld/code/${rec.code}`, JSON.stringify(rec));
+        await env.REPORTS.delete(`dir/v3/${b}`); // the phone page shows the new paper shops at once
         return json(bldPublic(rec), 200, origin);
       }
 
@@ -1074,7 +1075,7 @@ export default {
       if (url.pathname === '/directory') {
         const b = String(body.b || '');
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(b)) return json({ error: 'bad_place_id' }, 400, origin);
-        const key = `dir/v1/${b}`;
+        const key = `dir/v3/${b}`;
         const cached = env.REPORTS ? await env.REPORTS.get(key, 'json') : null;
         if (cached) return json(cached, 200, origin);
         if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
@@ -1085,7 +1086,7 @@ export default {
           ['skin_care_clinic'], ['dental_clinic'], ['physiotherapist'], ['gym', 'fitness_center', 'yoga_studio'], ['laundry']];
         let failed = 0;
         const lists = await Promise.all(TYPES.map((types) => google(env, 'places:searchNearby',
-          'places.id,places.displayName,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.businessStatus,places.primaryType,places.photos,places.nationalPhoneNumber',
+          'places.id,places.displayName,places.location,places.googleMapsUri,places.rating,places.userRatingCount,places.businessStatus,places.primaryType,places.types,places.photos,places.nationalPhoneNumber',
           { includedTypes: types, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'th', regionCode: 'TH',
             locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius: 1000 } } })
           .catch((e) => { console.error('[directory] nearby', types.join(','), e); failed += 1; return { places: [] }; })));
@@ -1095,9 +1096,23 @@ export default {
           const s2 = slim(p);
           const x = (s2.lng - lng) * 111320 * Math.cos(lat * Math.PI / 180), y = (s2.lat - lat) * 110540;
           seen.set(p.id, { id: s2.id, name: s2.name, rating: s2.rating, reviews: s2.reviews, mapsUrl: s2.mapsUrl,
-            phone: p.nationalPhoneNumber || '', primaryType: p.primaryType || '', group: i,
+            phone: p.nationalPhoneNumber || '', primaryType: p.primaryType || '', types: (p.types || []).slice(0, 8), group: i,
             photo: ((p.photos || [])[0] || {}).name || '', m: Math.round(Math.hypot(x, y)) });
         }));
+        // The shops printed on the building's paper (registry picks) are always on its phone page, even when they
+        // are beyond 1 km or crowded out of Google's 20 nearest of their type (41 Suite: 7 of its 8 bookable shops).
+        const rec = env.REPORTS ? await bldByPlace(env, b) : null;
+        const missing = ((rec && rec.picks) || []).filter((id) => PLACE_ID.test(id) && !seen.has(id) && id !== b).slice(0, 20);
+        const extra = await Promise.all(missing.map((id) => google(env, `places/${encodeURIComponent(id)}?languageCode=th&regionCode=TH`,
+          'id,displayName,location,googleMapsUri,rating,userRatingCount,businessStatus,primaryType,types,photos,nationalPhoneNumber', null)
+          .catch((e) => { console.error('[directory] pick', id, e); failed += 1; return null; })));
+        extra.filter((p) => p && p.location && p.businessStatus !== 'CLOSED_PERMANENTLY').forEach((p) => {
+          const s2 = slim(p);
+          const x = (s2.lng - lng) * 111320 * Math.cos(lat * Math.PI / 180), y = (s2.lat - lat) * 110540;
+          seen.set(p.id, { id: s2.id, name: s2.name, rating: s2.rating, reviews: s2.reviews, mapsUrl: s2.mapsUrl,
+            phone: p.nationalPhoneNumber || '', primaryType: p.primaryType || '', types: (p.types || []).slice(0, 8), pick: true,
+            photo: ((p.photos || [])[0] || {}).name || '', m: Math.round(Math.hypot(x, y)) });
+        });
         const out = { building: { id: b, name: (place.displayName && place.displayName.text) || '', lat, lng },
           shops: [...seen.values()], at: new Date().toISOString() };
         // A partial answer is served but not cached, so tomorrow's visitors do not inherit a missing group.
