@@ -832,7 +832,8 @@ function growthFlex(c) {
         { type: 'box', layout: 'horizontal', contents: [
           { type: 'text', contents: [{ type: 'span', text: 'book', color: '#0A0A0A', weight: 'bold' }, { type: 'span', text: 'ease', color: '#2D55EB', weight: 'bold' }], size: 'sm' },
           t(`สัปดาห์ที่ ${c.week}`, { size: 'xs', color: '#8A827B', align: 'end' })] },
-        t(c.headline, { size: 'xl', weight: 'bold', color: c.color, margin: 'md' }),
+        t(c.name, { size: 'sm', weight: 'bold', color: '#14110F', margin: 'md', maxLines: 2 }),
+        t(c.headline, { size: 'xl', weight: 'bold', color: c.color, margin: 'sm' }),
         ...(c.from ? [t(c.from, { size: 'sm', weight: 'bold', color: c.color, margin: 'xs' })] : []),
         ...(c.where ? [t(c.where, { size: 'xs', color: '#8A827B', margin: 'xs' })] : []),
         ...(c.ladder.length ? [{ type: 'box', layout: 'vertical', margin: 'md', contents: c.ladder.map(rung) }] : []),

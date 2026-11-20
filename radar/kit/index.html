@@ -60,6 +60,7 @@ a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </head>
 <body>
 <main class="wrap" id="app"><p class="busy">กำลังเปิดชุดของร้าน…</p></main>
+<script src="../growth/card.js"></script>
 <script>
 // Sales kit: one link per shop for the field visit (iPad) and for the owner afterwards (phone). No login.
 // Order agreed with Art + Codex 2026-11-17: finding → one page two modes → building menu → LINE card sample → one offer.
@@ -184,105 +185,16 @@ function render(R, place, near) {
     name: s.name, week: 1, tone: 'start', color: '#2D55EB',
     headline: hubRank ? `ตอนนี้อยู่อันดับ ${hubRank}` : `ยังไม่ติด ${max} ร้านแรก`,
     from: '', where: hub ? `ค้นหา “${kw}” แถว ${hub}` : `ค้นหา “${kw}” รอบร้าน`,
-    ladder: hub ? ladder(hubRank, max) : [], calls: 'กดโทรหาร้าน · ยังวัดไม่ได้', cta: 'ดูว่าเราทำอะไรให้ร้าน', url: '',
+    ladder: hub ? ladder(hubRank, max) : [], calls: 'กดโทรหาร้าน · ยังวัดไม่ได้', cta: '', url: '',
+    // What a first week looks like for this shop: the check we really ran today, where it will be shown, and the
+    // first work of the package. A building menu is listed only as a sample (never as placed).
+    done: ['ตรวจอันดับร้านใน Google Maps'], doneMore: 0,
+    shownOn: ['Google Maps', 'หน้าร้านบน bookease.co (กำลังทำ)', ...(b ? [`เมนูบริการที่ ${b.name} (ตัวอย่าง)`] : [])],
+    next: ['แก้ข้อมูลร้านใน Google Maps', 'ทำเว็บร้าน + ใส่ใน Google Maps'],
     photo: own ? photoUrl(own.name) : '',
   };
   cardBlob(card).then((blob) => { $('cardimg').src = URL.createObjectURL(blob); }).catch((e) => console.error('[kit] card', e));
 }
-
-const seg = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter('th', { granularity: 'word' }) : null;
-function wrapLines(ctx, text, maxW) {
-  const words = seg ? [...seg.segment(text)].map((x) => x.segment) : text.split(/(?<=\s)/);
-  const lines = []; let line = '';
-  for (const w of words) {
-    if (ctx.measureText(line + w).width > maxW && line) { lines.push(line.trimEnd()); line = w.trimStart(); } else line += w;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-async function cardBlob(c) {
-  // The approved weekly card (Art 2026-11-16), drawn as a picture: same content as the LINE flex card.
-  await Promise.all(['600 14px Anuphan', '700 16px Anuphan', '800 30px Anuphan', '800 17px Inter'].map((f) => document.fonts.load(f)));
-  let photo = null;
-  if (c.photo) {
-    photo = await new Promise((ok) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => ok(im); im.onerror = (e) => { console.error('[growth] card photo', e); ok(null); }; im.src = c.photo; });
-  }
-  const K = 3, W = 340 * K, P = 22 * K, canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
-  const font = (w, px, fam = 'Anuphan') => `${w} ${px * K}px ${fam}`;
-  const paint = (draw) => {
-    let y = P;
-    const text = (str, f, color, lh, x = P, maxW = W - P - x) => {
-      ctx.font = f; ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      const lines = wrapLines(ctx, str, maxW);
-      lines.forEach((l, i) => draw && ctx.fillText(l, x, y + i * lh * K));
-      y += lines.length * lh * K;
-    };
-    const rr = (x, yy, w, h, r, fill, stroke) => { ctx.beginPath(); ctx.roundRect(x, yy, w, h, r); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.setLineDash([6 * K / 2, 4 * K / 2]); ctx.lineWidth = 2 * K; ctx.strokeStyle = stroke; ctx.stroke(); ctx.setLineDash([]); } };
-    // logo + week
-    if (draw) {
-      ctx.textBaseline = 'top'; ctx.textAlign = 'left'; ctx.font = font(800, 17, 'Inter');
-      ctx.fillStyle = '#0A0A0A'; ctx.fillText('book', P, y); const bw = ctx.measureText('book').width; ctx.fillStyle = '#2D55EB'; ctx.fillText('ease', P + bw, y);
-      ctx.font = font(600, 13); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'right'; ctx.fillText(`สัปดาห์ที่ ${c.week}`, W - P, y + 2 * K);
-    }
-    y += 34 * K;
-    text(c.headline, font(800, 30), c.color, 38);
-    if (c.from) { y += 2 * K; text(c.from, font(700, 16), c.color, 24); }
-    if (c.where) { y += 2 * K; text(c.where, font(600, 13.5), '#8A827B', 20); }
-    // ladder
-    if (c.ladder.length) {
-      y += 14 * K;
-      const numW = 30 * K, barX = P + numW + 10 * K, barW = W - P - barX, rowH = 40 * K;
-      for (const row of c.ladder) {
-        if (row.kind === 'gap') { if (draw) { ctx.font = font(700, 14, 'Inter'); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('· · ·', W / 2, y + 7 * K); } y += 16 * K; continue; }
-        if (draw) {
-          ctx.font = font(800, 17, 'Inter'); ctx.fillStyle = row.kind === 'me' ? c.color : '#8A827B'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-          ctx.fillText(row.n, P + numW, y + rowH / 2);
-          if (row.kind === 'me') {
-            rr(barX, y, barW, rowH, 12 * K, c.color);
-            let tx = barX + 14 * K;
-            if (photo) {
-              const d = 30 * K, cx = barX + 6 * K + d / 2, cy = y + rowH / 2;
-              ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, d / 2, 0, Math.PI * 2); ctx.clip();
-              const sz = Math.min(photo.width, photo.height); ctx.drawImage(photo, (photo.width - sz) / 2, (photo.height - sz) / 2, sz, sz, cx - d / 2, cy - d / 2, d, d); ctx.restore();
-              ctx.beginPath(); ctx.arc(cx, cy, d / 2, 0, Math.PI * 2); ctx.lineWidth = 2 * K; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
-              tx = barX + 6 * K + d + 10 * K;
-            }
-            ctx.font = font(700, 16); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'left'; ctx.fillText('ร้านคุณ', tx, y + rowH / 2);
-          } else if (row.kind === 'was') {
-            rr(barX + K, y + K, barW - 2 * K, rowH - 2 * K, 12 * K, null, '#D9D2CB');
-            ctx.font = font(600, 14); ctx.fillStyle = '#8A827B'; ctx.textAlign = 'left'; ctx.fillText('สัปดาห์ก่อน', barX + 12 * K, y + rowH / 2);
-          } else rr(barX, y, barW, rowH, 12 * K, '#EFEBE7');
-        }
-        y += rowH + 6 * K;
-      }
-      y -= 6 * K;
-    }
-    // calls
-    y += 16 * K;
-    const boxH = 54 * K;
-    if (draw) {
-      rr(P, y, W - 2 * P, boxH, 16 * K, '#F7F5F2');
-      ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.font = `${26 * K}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
-      ctx.fillText('📞', P + 16 * K, y + boxH / 2);
-      ctx.font = font(700, 17); ctx.fillStyle = '#14110F'; ctx.fillText(c.calls, P + 56 * K, y + boxH / 2);
-    }
-    y += boxH + 16 * K;
-    // button (the link itself is sent in the chat right after the picture)
-    const btnH = 48 * K;
-    if (draw) {
-      rr(P, y, W - 2 * P, btnH, btnH / 2, '#2D55EB');
-      ctx.font = font(700, 17); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.cta, W / 2, y + btnH / 2 + K);
-    }
-    y += btnH + P;
-    return y;
-  };
-  const H = paint(false);
-  canvas.width = W; canvas.height = H;
-  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
-  paint(true);
-  return new Promise((ok, no) => canvas.toBlob((b) => (b ? ok(b) : no(new Error('toBlob failed'))), 'image/png'));
-}
-
 
 load().catch((e) => { console.error('[kit] load', e); $('app').innerHTML = '<p class="err">เปิดชุดของร้านไม่ได้ ลองกดเปิดลิงก์ใหม่อีกครั้ง</p>'; });
 </script>
