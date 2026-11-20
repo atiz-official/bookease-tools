@@ -817,6 +817,58 @@ function growthFlex(c) {
   };
 }
 
+
+// ── building registry: bookease.co/r/<code> ─────────────────────────
+// One record per condo or hotel with a printed BookEase Neighborhood Directory: the QR's path segment,
+// the shops printed on the paper (picks, print order) and the photo chosen for each. The Radar menu tool
+// writes it; the bookease.co Nearby page and the paper read it, so paper and phone always agree and a new
+// building needs no code change. Name and area come from Google (English), never from the caller, so
+// nobody can put their own words on bookease.co; a shorter name is accepted only if every word of it is
+// in Google's name.
+const BLD_CODE = /^[a-z0-9][a-z0-9-]{1,29}$/;
+const PLACE_ID = /^[A-Za-z0-9_-]{10,200}$/;
+const PHOTO_NAME = /^places\/[A-Za-z0-9_-]{10,200}\/photos\/[A-Za-z0-9_-]{10,1000}$/;
+function bldSlug(name) {
+  return String(name || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 26).replace(/-+$/, '');
+}
+function bldWords(v) { return String(v || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean); }
+function bldShortName(googleName, wanted) {
+  const w = String(wanted || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+  if (!w) return googleName;
+  const all = new Set(bldWords(googleName));
+  const mine = bldWords(w);
+  return mine.length && mine.every((x) => all.has(x)) ? w : googleName;
+}
+function bldArea(components) {
+  const pick = (t) => (components || []).find((c) => (c.types || []).includes(t));
+  const c = pick('sublocality_level_1') || pick('sublocality') || pick('locality') || pick('administrative_area_level_2');
+  return c ? String(c.longText || c.shortText || '').replace(/^(Khet|Amphoe|Tambon)\s+/i, '').slice(0, 40) : '';
+}
+const bldPublic = (r) => ({ code: r.code, placeId: r.placeId, name: r.name, area: r.area || '', kind: r.kind || 'condo',
+  picks: r.picks || [], photos: r.photos || {}, updatedAt: r.updatedAt || '' });
+async function bldGet(env, code) { return BLD_CODE.test(code) ? env.REPORTS.get(`bld/code/${code}`, 'json') : null; }
+async function bldByPlace(env, b) {
+  const code = await env.REPORTS.get(`bld/place/${b}`);
+  return code ? bldGet(env, code) : null;
+}
+/** The building's record, created from Google on first use (a stable code: the printed QR never changes). */
+async function bldEnsure(env, b) {
+  const have = await bldByPlace(env, b);
+  if (have) return have;
+  const place = await google(env, `places/${encodeURIComponent(b)}?languageCode=en&regionCode=TH`, 'id,displayName,addressComponents');
+  const gname = String((place && place.displayName && place.displayName.text) || '').slice(0, 80);
+  if (!gname) return null;
+  const base = bldSlug(gname) || `b-${b.slice(-8).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+  let code = base.length >= 2 ? base : `b-${base}`;
+  for (let n = 2; await env.REPORTS.get(`bld/code/${code}`); n += 1) code = `${base}-${n}`;
+  const rec = { code, placeId: b, gname, name: gname, area: bldArea(place.addressComponents), kind: 'condo',
+    picks: [], photos: {}, createdAt: new Date().toISOString() };
+  await env.REPORTS.put(`bld/code/${code}`, JSON.stringify(rec));
+  await env.REPORTS.put(`bld/place/${b}`, code);
+  return rec;
+}
+
 // ── handler ─────────────────────────────────────────────────────────
 
 export { growthCard, growthFlex, growthLadder, lineWeekly, lineSignatureOk };
@@ -955,6 +1007,36 @@ export default {
         if (!(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
         const out = await find(env, body.q);
         return json(out, out.error ? 400 : 200, origin);
+      }
+
+      // Building registry (see bldEnsure). get: by code (bookease.co/r/<code>) or by building (the menu tool).
+      if (url.pathname === '/building/get') {
+        if (!env.REPORTS) return json({ error: 'server_misconfigured' }, 500, origin);
+        const code = String(body.code || '').trim().toLowerCase(), b = String(body.b || '');
+        const rec = code ? await bldGet(env, code) : PLACE_ID.test(b) ? await bldByPlace(env, b) : null;
+        return rec ? json(bldPublic(rec), 200, origin) : json({ error: 'not_found' }, 404, origin);
+      }
+      // save: the shops printed on the paper and their photos. Creates the record (and its code) on first save.
+      if (url.pathname === '/building/save') {
+        if (!env.REPORTS) return json({ error: 'server_misconfigured' }, 500, origin);
+        const b = String(body.b || '');
+        if (!PLACE_ID.test(b)) return json({ error: 'bad_place_id' }, 400, origin);
+        if (!(await bldByPlace(env, b)) && !(await underDailyCap(env, request.url, 'find'))) return json({ error: 'full_today' }, 429, origin);
+        const rec = await bldEnsure(env, b);
+        if (!rec) return json({ error: 'not_found' }, 404, origin);
+        if (Array.isArray(body.picks)) rec.picks = [...new Set(body.picks.map(String).filter((id) => PLACE_ID.test(id)))].slice(0, 30);
+        if (body.photos && typeof body.photos === 'object') {
+          const photos = {};
+          rec.picks.forEach((id) => {
+            const n = String(body.photos[id] || '');
+            if (PHOTO_NAME.test(n) && n.startsWith(`places/${id}/`)) photos[id] = n;
+          });
+          rec.photos = photos;
+        }
+        if (body.name !== undefined) rec.name = bldShortName(rec.gname || rec.name, body.name);
+        rec.updatedAt = new Date().toISOString();
+        await env.REPORTS.put(`bld/code/${rec.code}`, JSON.stringify(rec));
+        return json(bldPublic(rec), 200, origin);
       }
 
       // Shops of one Google type around a point (for a building's service menu). Read-only.
