@@ -6,16 +6,19 @@
 <meta name="robots" content="noindex, nofollow">
 <title>เมนูบริการรอบอาคาร · bookease</title>
 <link rel="icon" href="../../favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=Inter:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="buildings.js"></script>
 <style>
-:root{--ink:#0A0A0A;--ink-2:#3B4250;--ink-3:#6B7383;--line:#E3E6EC;--ground:#F3F5F8;--card:#FFFFFF;--blue:#2D55EB;--good:#15803D;--warn-bg:#FFF4D6;--warn:#8A5A00}
+/* Team view (builder) + the printed A4: BookEase Neighborhood Directory, design D v4 (locked by Art 2026-11-20).
+   Spec: bookease-official/brand/neighborhood-directory-2026-11-20/README.md. Change only the building, the shops
+   and the photos; never the design. The QR goes to bookease.co/r/<code> (the phone page, design C v3). */
+:root{--ink:#0A0A0A;--ink-2:#3B4250;--ink-3:#6B7383;--line:#E3E6EC;--ground:#F3F5F8;--blue:#2D55EB;--good:#15803D;--warn-bg:#FFF4D6;--warn:#8A5A00}
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
 body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:var(--blue)}
-.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:16px}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:14px}
 .top{display:flex;align-items:baseline;gap:10px}
 .top img{height:16px;display:block}
 .top span{font:500 15px Inter;color:var(--ink-3);padding-left:10px;border-left:1.5px solid var(--line)}
@@ -24,95 +27,132 @@ a{color:var(--blue)}
 .status .st.on{color:var(--warn);background:var(--warn-bg);border-color:#F2DCA0}
 .status .st.on.live{color:#fff;background:var(--good);border-color:var(--good)}
 .status .arrow{color:#B4BAC5;font-size:12px}
-.cols{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
+.cols{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
 .panel{background:#fff;border-radius:18px;padding:16px}
 .panel h2{font:800 17px Sarabun;margin-bottom:2px}
-.panel .hint{font-size:13px;color:var(--ink-3);margin-bottom:10px}
+.panel .hint{font-size:13px;color:var(--ink-3);margin-bottom:6px}
 .cat{margin-top:12px}
-.cat h3{font:700 13px Sarabun;color:var(--ink-3);margin-bottom:4px}
-.opt{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px solid var(--line);cursor:pointer}
-.opt input{margin-top:4px;accent-color:var(--blue);width:16px;height:16px;flex:none}
-.opt b{display:block;font:600 14px Sarabun;line-height:1.3}
+.cat h3{font:700 13px Sarabun;color:var(--ink-3);margin-bottom:2px}
+.opt{display:flex;gap:10px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line)}
+.opt label{display:flex;gap:10px;align-items:flex-start;flex:1;min-width:0;cursor:pointer}
+.opt input{margin-top:3px;accent-color:var(--blue);width:17px;height:17px;flex:none}
+.opt b{display:block;font:600 14px/1.3 Sarabun}
 .opt small{color:var(--ink-3);font-size:12.5px}
+.opt .swap{flex:none;width:52px;height:52px;border-radius:8px;border:0;padding:0;background:#EEF0F4 center/cover no-repeat;cursor:pointer;position:relative}
+.opt .swap span{position:absolute;right:2px;bottom:2px;background:#fff;border-radius:999px;font:700 11px Inter;line-height:1;padding:3px 5px;color:var(--ink)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .btn{border:0;border-radius:999px;background:var(--blue);color:#fff;font:700 14px Sarabun;padding:10px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .btn.soft{background:#EEF2FD;color:var(--blue)}
 .count{font-size:13px;color:var(--ink-3);margin-top:8px}
+.count.over{color:#B91C1C;font-weight:700}
 .toast{font-size:13px;color:var(--good);margin-top:6px}
+.dirty{font-size:13px;color:var(--warn);margin-top:6px}
+.phone{font-size:13px;color:var(--ink-2);margin-top:10px;word-break:break-all}
 .busy{padding:40px;text-align:center;color:var(--ink-3)}
 .err{padding:20px;color:#B91C1C}
-
-/* the menu sheet (A4 when printed) */
-.sheet{background:#fff;border-radius:18px;padding:28px 28px 20px;position:relative}
-.sheet .sample{position:absolute;right:20px;top:14px;font:700 12px Sarabun;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:3px 10px}
-.sheet header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
-.eye{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--ink-3)}
-.sheet h1{font:800 34px/1.05 Sarabun;margin:6px 0 4px;letter-spacing:-.01em}
-.tag{font-size:14px;color:var(--ink-2)}
-.brand img{width:120px;display:block;margin-left:auto}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
-.tile{min-width:0}
-a.tile{display:block;text-decoration:none;color:inherit}
-a.tile:focus-visible{outline:3px solid #2D55EB;outline-offset:3px;border-radius:10px}
-.ph{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#EEF0F4}
-.ph img{width:100%;height:100%;object-fit:cover;display:block}
-.ph .chip{position:absolute;left:8px;top:8px;font:700 11px Sarabun;background:#fff;border-radius:999px;padding:2px 9px}
-.ph.none{display:grid;place-items:center}
-.ph.none .big{font:800 26px Sarabun;color:rgba(10,10,10,.14)}
-.tile h4{font:700 15px/1.25 Sarabun;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile .meta{font-size:12.5px;color:var(--ink-3)}
-.tile .src{font-size:11px;color:#9AA3B2}
-.qrtile{border:1.5px solid var(--ink);border-radius:10px;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-.qrtile .qr{width:130px;height:130px}
-.qrtile .qr img,.qrtile .qr canvas{width:100%!important;height:100%!important}
-.qrtile b{font:800 15px/1.3 Sarabun}
-.qrtile small{font-size:12px;color:var(--ink-2)}
-.sheet footer{display:flex;justify-content:space-between;gap:12px;margin-top:18px;font-size:11px;color:#9AA3B2}
 .claim{font-size:13px;color:var(--ink-3)}
+.fit{width:100%;overflow:hidden}
+.fit .page{transform-origin:0 0;box-shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.06)}
 
-@media (max-width:860px){.cols{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sheet h1{font-size:28px}}
+/* ── the A4 page: D v4 ── */
+.page{width:210mm;height:297mm;position:relative;overflow:hidden;background:#fff;display:grid;grid-template-columns:60mm 1fr;
+  font-family:Inter,Anuphan,sans-serif;color:#0A0A0A;line-height:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page .t{letter-spacing:0!important}
+.page .sample{position:absolute;right:12mm;top:7mm;font:700 8pt Anuphan;color:var(--warn);background:var(--warn-bg);border-radius:99px;padding:.6mm 3mm}
+.side{border-right:.6mm solid #2D55EB;padding:18mm 8mm 12mm 12mm;display:flex;flex-direction:column;min-height:0}
+.side .eye{font:700 8pt Inter;letter-spacing:.16em;color:#2D55EB;line-height:1.5}
+.side h1{font:700 23pt/1.1 Inter;letter-spacing:-.015em;margin-top:4mm;overflow-wrap:anywhere}
+.side h1 span{display:block;color:#2D55EB;font-weight:600;font-size:14pt;margin-top:1.5mm}
+.side .lead{margin-top:9mm;font:700 15pt/1.35 Anuphan}
+.bl{color:#2D55EB}
+.side .lead i{display:block;font:600 10pt Inter;font-style:normal;color:#1E293B;margin-top:1mm}
+.side .qrw{margin-top:auto;border:.5mm solid #0A0A0A;border-radius:4mm;padding:3.5mm}
+.side .qr{width:100%;aspect-ratio:1}
+.side .qr img,.side .qr canvas{width:100%!important;height:100%!important;display:block}
+.side .sc{margin-top:4mm}
+.side .sc b{display:block;font:700 12pt Anuphan}
+.side .sc span{display:block;font:600 9.5pt Inter;color:#1E293B;margin-top:.5mm}
+.side .acts{margin-top:4mm;padding-top:3.5mm;border-top:.3mm solid #CBD5E1}
+.side .acts b{display:block;font:700 10.5pt Anuphan;color:#0A0A0A}
+.side .acts span{display:block;font:600 9.5pt Inter;color:#1E293B}
+.side .noapp{margin-top:3.5mm;align-self:flex-start;font:700 9.5pt/1.3 Anuphan;color:#2D55EB;border:.4mm solid #2D55EB;border-radius:3mm;padding:1.6mm 3.5mm}
+.side .noapp span{font:600 8.5pt Inter}
+.side .logo{height:7mm;margin-top:7mm;align-self:flex-start}
+.main{padding:18mm 12mm 12mm 8mm;display:flex;flex-direction:column;min-height:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 7mm;align-items:start}
+.g{margin-bottom:5.5mm}
+.ic{width:5.2mm;height:5.2mm;fill:none;stroke:#2D55EB;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;align-self:center;flex:none}
+.g h2{font:700 12pt/1.2 Anuphan;color:#2D55EB;display:grid;grid-template-columns:auto 1fr;column-gap:2.2mm;align-items:center;border-bottom:.4mm solid #0A0A0A;padding-bottom:1.4mm}
+.g h2 .ic{grid-row:span 2}
+.g h2 em{display:block;font:600 8pt Inter;font-style:normal;color:#334155;letter-spacing:.06em;text-transform:uppercase}
+.more{padding:3mm 0;border-bottom:.25mm solid #CBD5E1;font:700 10.5pt/1.35 Anuphan}
+.more span{display:block;font:600 9.5pt Inter;color:#1E293B}
+.r{display:flex;align-items:center;gap:3mm;padding:2mm 0;border-bottom:.25mm solid #CBD5E1}
+.r .tx{min-width:0;flex:1}
+.r .tx .star{display:block;margin-top:.8mm;font:600 10pt Inter;color:#1E293B;white-space:nowrap}
+.r .tx .star i{font-style:normal;color:#2D55EB}
+.r img,.r .noimg{width:20mm;height:20mm;border-radius:2.5mm;object-fit:cover;flex:none;background:#EEF0F4}
+.r b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:700 10.5pt/1.25 Inter}
+.main .note{margin-top:auto;font:500 8pt Anuphan;color:#334155}
+
+@media (max-width:860px){.cols{grid-template-columns:1fr}}
 @media print{
-  @page{size:A4;margin:10mm}
-  body{background:#fff}
+  @page{size:A4;margin:0}
+  html,body{background:#fff}
   .top,.status,.panel,.claim,.no-print{display:none!important}
-  .wrap{padding:0;max-width:none}
+  .wrap{padding:0;max-width:none;display:block}
   .cols{display:block}
-  .sheet{border-radius:0;padding:0}
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .fit{width:auto!important;height:auto!important;overflow:visible}
+  .fit .page{transform:none!important;box-shadow:none}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>Shop Radar · เมนูบริการรอบอาคาร</span></div>
-  <div class="status" id="status"></div>
+  <div class="top no-print"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>Shop Radar · เมนูบริการรอบอาคาร</span></div>
+  <div class="status no-print" id="status"></div>
   <div id="app"><p class="busy">กำลังหาร้านรอบอาคาร…</p></div>
   <p class="claim no-print">ร้านของคุณอยู่ในเมนูนี้? ขอแก้ข้อมูลหรือขอออกได้ทาง <a href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a></p>
 </div>
 <script>
 const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const PHONE_PAGE = 'https://bookease.co/r/';
 // Building status is set by the team from real evidence, never by the page: survey → sample → approved → live.
 const STEPS = [['survey', 'สำรวจแล้ว'], ['sample', 'มีเมนูตัวอย่าง'], ['approved', 'อนุมัติแล้ว'], ['live', 'แจกจริง']];
-const CATS = [
-  { k: 'hair', label: 'ทำผม', types: 'hair_salon,beautician' },
-  { k: 'massage', label: 'นวด', types: 'massage,spa' },
-  { k: 'nail', label: 'ทำเล็บ', types: 'nail_salon' },
-  { k: 'beauty', label: 'ความงาม / ขนตา', types: 'beauty_salon' },
-  { k: 'barber', label: 'ตัดผมชาย', types: 'barber_shop' },
-  { k: 'clinic', label: 'คลินิกผิว', types: 'skin_care_clinic' },
-  { k: 'dental', label: 'ทำฟัน', types: 'dental_clinic' },
+// Same groups, order, words and listing rule as the phone page (bookease-frontend src/utils/nearbyDirectory.ts),
+// so the paper and bookease.co/r/<code> show the same shops under the same names.
+const GROUPS = [
+  { k: 'massage', th: 'นวด · สปา', en: 'Massage & spa', icon: 'M12 20c-4 0-7-3-7-7 3 0 5 1.5 7 4 2-2.5 4-4 7-4 0 4-3 7-7 7zM12 16.5c-1.4-1.8-2-3.7-2-5.5s.8-3.8 2-5c1.2 1.2 2 3.2 2 5s-.6 3.7-2 5.5z' },
+  { k: 'nail', th: 'ทำเล็บ', en: 'Nails', icon: 'M9.5 3h5v4h-5zM8 7h8l1 4v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-8z' },
+  { k: 'beauty', th: 'ความงาม · แว็กซ์', en: 'Beauty & waxing', icon: 'M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8zM18.5 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z' },
+  { k: 'barber', th: 'ตัดผมชาย', en: 'Barber', icon: 'M8 7.9L20 19.5M8 16.1L20 4.5M8.6 6a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0zM8.6 18a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0z' },
+  { k: 'hair', th: 'ทำผม', en: 'Hair', icon: 'M5 20c0-8 3-15 7-15s7 7 7 15M9 20c0-6 1-11 3-13M15 20c0-6-1-11-3-13' },
+  { k: 'clinic', th: 'คลินิกผิว', en: 'Skin clinic', icon: 'M12 3v18M3 12h18M7 7l10 10M17 7 7 17' },
+  { k: 'dental', th: 'ทำฟัน', en: 'Dental', icon: 'M7.5 3.5c-2 0-3.3 1.8-3.3 4 0 2.6.9 3.8 1.4 6.6.4 2.6 1.3 6.4 2.8 6.4 1.6 0 1.5-4.2 3.6-4.2s2 4.2 3.6 4.2c1.5 0 2.4-3.8 2.8-6.4.5-2.8 1.4-4 1.4-6.6 0-2.2-1.3-4-3.3-4-1.9 0-2.8.9-4.5.9s-2.6-.9-4.5-.9z' },
+  { k: 'physio', th: 'กายภาพบำบัด', en: 'Physiotherapy', icon: 'M12 5a2 2 0 1 0 0-.01M8 21l2-7-3-3 3-3h4l2 4h3M14 21l-1-5' },
+  { k: 'fitness', th: 'ฟิตเนส · โยคะ', en: 'Gym & yoga', icon: 'M6 8v8M3 10v4M18 8v8M21 10v4M6 12h12' },
+  { k: 'laundry', th: 'ซักรีด', en: 'Laundry', icon: 'M5 3h14v18H5zM5 7h14M12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z' },
 ];
-const MAX = 8;
+const BY_PRIMARY = {
+  massage: 'massage', massage_spa: 'massage', spa: 'massage', thai_massage: 'massage', wellness_center: 'massage', sauna: 'massage',
+  nail_salon: 'nail', beauty_salon: 'beauty', beautician: 'beauty', makeup_artist: 'beauty', barber_shop: 'barber',
+  hair_salon: 'hair', hair_care: 'hair', skin_care_clinic: 'clinic', dental_clinic: 'dental', dentist: 'dental',
+  physiotherapist: 'physio', gym: 'fitness', fitness_center: 'fitness', yoga_studio: 'fitness', pilates_studio: 'fitness', laundry: 'laundry',
+};
+const AUTO = 14;  // shops chosen automatically: the locked master holds 14
+const MAX = 18;   // the page fits about 18 at this photo size (README)
+const PER_GROUP = 3;
 const $ = (id) => document.getElementById(id);
-const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ID = /^[A-Za-z0-9_-]{10,200}$/;
 const qs = new URLSearchParams(location.search);
 const B = qs.get('b') || '';
-const SHOP = qs.get('shop') || ''; // the shop whose report opened this menu: pinned first
-// view=1: show the finished menu with the automatic choice (sales kit preview) instead of the builder.
-const EDIT = qs.get('edit') === '1' || (!qs.get('s') && qs.get('view') !== '1');
-// How the reader arrived: the printed QR carries v=qr, a copied or LINE-shared link v=link.
+const SHOP = ID.test(qs.get('shop') || '') ? qs.get('shop') : ''; // the shop whose report opened this menu: shown first
+const VIEW = qs.get('view') === '1';                 // sales kit preview: the page only, nothing saved
+const EDIT = !VIEW && (qs.get('edit') === '1' || !qs.get('s'));
 const VIA = ['qr', 'link'].includes(qs.get('v')) ? qs.get('v') : 'direct';
-/** Count a menu view or a tap on a shop for the weekly report (the worker counts tracked places only). */
+const CONF = (typeof BUILDING_STATUS !== 'undefined' && BUILDING_STATUS[B]) || {};
+
 function hit(p, a, src) {
   try { if (localStorage.getItem('bookease-staff') === '1') return; } catch (e) { console.error('[hit] storage', e); } // team devices are not customers
   try {
@@ -122,155 +162,231 @@ function hit(p, a, src) {
     }
   } catch (e) { console.error('[menu] hit', e); }
 }
-let building = null, pool = [], chosen = [];
-const CONF = BUILDING_STATUS[B] || {};
-// The building's short name when we set one (Google's can be long or Thai-only), else Google's.
-const bname = () => CONF.name || building.name;
-// Shops in the URL win; a building with a hand-picked menu (buildings.js) uses that; otherwise the automatic choice.
-const PICKS = qs.has('s') ? (qs.get('s') || '') : (CONF.pick || []).join(',');
-
 async function post(path, body) {
   const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  const d = await r.json();
-  if (!r.ok) throw new Error(d.error || `http_${r.status}`);
+  let d = null;
+  try { d = await r.json(); } catch (e) { console.error('[menu] bad json', path, e); }
+  if (!r.ok || !d) { const err = new Error((d && d.error) || `http_${r.status}`); err.status = r.status; throw err; }
   return d;
 }
-function catOf(types) {
-  const t = types || [];
-  if (t.includes('nail_salon')) return 'nail';
-  if (t.includes('barber_shop')) return 'barber';
-  if (t.includes('hair_salon') || t.includes('hair_care') || t.includes('beautician')) return 'hair';
-  if (t.includes('massage') || t.includes('spa') || t.includes('massage_spa')) return 'massage';
-  if (t.includes('skin_care_clinic')) return 'clinic';
-  if (t.includes('dental_clinic') || t.includes('dentist')) return 'dental';
-  return 'beauty';
-}
+const groupOfTypes = (types) => { for (const t of types || []) if (BY_PRIMARY[t]) return BY_PRIMARY[t]; return null; };
+const listed = (s) => (s.reviews || 0) >= 5 && (s.rating || 0) >= 4 && Boolean(s.group);
+const score = (s) => (s.rating || 0) * Math.log10(1 + (s.reviews || 0)) - s.m / 1500;
+const dist = (m) => (m < 1000 ? `${Math.max(10, Math.round(m / 10) * 10)} m` : `${(m / 1000).toFixed(1)} km`);
+const cleanName = (n) => String(n || '').replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+/g, ' ').trim(); // "(Former …)" is for Google, not a menu
+const photoUrl = (name, w = 600) => `${API}/photo?w=${w}&name=${encodeURIComponent(name)}`;
 function metres(a, b) {
   const x = (b.lng - a.lng) * 111320 * Math.cos(a.lat * Math.PI / 180), y = (b.lat - a.lat) * 110540;
   return Math.round(Math.hypot(x, y));
 }
-const distText = (m) => (m < 60 ? 'ในอาคาร / ติดกัน' : m < 1000 ? `ห่าง ${Math.round(m / 10) * 10} ม.` : `ห่าง ${(m / 1000).toFixed(1)} กม.`);
-const photoUrl = (name) => `${API}/photo?w=600&name=${encodeURIComponent(name)}`;
-const score = (p) => (p.rating || 0) * Math.log10(1 + (p.reviews || 0)) - p.m / 1500;
+
+let rec = null;          // the building's registry record: code, name, area, saved picks and photos
+let building = null;     // { id, name, lat, lng } from the directory
+let pool = [];           // every listed shop around the building (+ the pinned shop and saved picks)
+let chosen = [];         // shop ids on the paper, print order
+let photos = {};         // shop id → chosen Google photo name
+const gallery = {};      // shop id → that shop's photo names (fetched when the team taps "change photo")
+let savedKey = '';
+
+const stateKey = () => JSON.stringify([chosen, chosen.map((id) => photos[id] || '')]);
 
 async function load() {
-  if (!/^[A-Za-z0-9_-]{10,200}$/.test(B)) { $('app').innerHTML = '<p class="err">ไม่พบอาคาร · เปิดจากรายงาน Shop Radar แล้วกด "สร้างเมนูรอบอาคาร"</p>'; return; }
-  const key = `menu-pool-v2:${B}:${SHOP}`;
-  let cached = null;
-  try { cached = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { console.error('[menu] cache read', e); }
-  if (cached) { ({ building, pool } = cached); }
-  else {
-    building = await post('/place', { placeId: B });
-    const seen = new Set();
-    const lists = await Promise.all(CATS.map((c) => post('/nearby', { lat: building.lat, lng: building.lng, type: c.types, radius: 1000 })
-      .then((d) => d.places || []).catch((e) => { console.error('[menu] nearby', c.k, e); return []; })));
-    pool = [];
-    CATS.forEach((c, i) => {
-      lists[i].forEach((p) => {
-        if (seen.has(p.id) || p.id === B) return;
-        seen.add(p.id);
-        pool.push({ id: p.id, name: p.name, rating: p.rating, reviews: p.reviews, lat: p.lat, lng: p.lng, photo: p.photo, cat: c.k, mapsUrl: p.mapsUrl, m: metres(building, p) });
-      });
-    });
-    if (/^[A-Za-z0-9_-]{10,200}$/.test(SHOP) && !pool.some((p) => p.id === SHOP)) {
-      try {
-        const sp = await post('/place', { placeId: SHOP });
-        pool.unshift({ id: sp.id, name: sp.name, rating: sp.rating, reviews: sp.reviews, lat: sp.lat, lng: sp.lng,
-          photo: (sp.photos && sp.photos[0] && sp.photos[0].name) || '', cat: catOf(sp.types), mapsUrl: sp.mapsUrl, m: metres(building, sp) });
-      } catch (e) { console.error('[menu] pinned shop', e); }
-    }
-    try { sessionStorage.setItem(key, JSON.stringify({ building, pool })); } catch (e) { console.error('[menu] cache write', e); }
-  }
-  const fromUrl = PICKS.split(',').filter((id) => /^[A-Za-z0-9_-]{10,200}$/.test(id)).slice(0, MAX);
-  if (PICKS) {
-    const missing = fromUrl.filter((id) => !pool.some((p) => p.id === id));
-    const got = await Promise.all(missing.map((id) => post('/place', { placeId: id }).catch((e) => { console.error('[menu] shop', id, e); return null; })));
-    got.filter(Boolean).forEach((sp) => pool.push({ id: sp.id, name: sp.name, rating: sp.rating, reviews: sp.reviews, lat: sp.lat, lng: sp.lng,
-      photo: (sp.photos && sp.photos[0] && sp.photos[0].name) || '', cat: catOf(sp.types), mapsUrl: sp.mapsUrl, m: metres(building, sp) }));
-    chosen = fromUrl.filter((id) => pool.some((p) => p.id === id));
-  } else {
-    // the shop that opened this menu first, then one best shop for each other type (no second shop of a type)
-    const pinned = pool.find((p) => p.id === SHOP);
-    if (pinned) chosen.push(pinned.id);
-    CATS.forEach((c) => {
-      if (pinned && pinned.cat === c.k) return;
-      const best = pool.filter((p) => p.cat === c.k && (p.reviews || 0) >= 3).sort((a, b) => score(b) - score(a))[0];
-      if (best && chosen.length < MAX) chosen.push(best.id);
-    });
-  }
+  if (!ID.test(B)) { $('app').innerHTML = '<p class="err">ไม่พบอาคาร · เปิดจากรายงาน Shop Radar แล้วกด "สร้างเมนูรอบอาคาร"</p>'; return; }
+  // The registry record: made once per building (its code is the QR's address on bookease.co, so it never changes).
+  try { rec = await post('/building/get', { b: B }); }
+  catch (e) { if (e.status !== 404) throw e; rec = await post('/building/save', { b: B }); }
+  // A reader who scanned an old Radar menu QR, or opened a shared link: the phone page is on bookease.co now.
+  if (!EDIT && !VIEW) { hit(B, 'view', VIA); location.replace(PHONE_PAGE + rec.code); return; }
+
+  const dir = await post('/directory', { b: B });
+  building = dir.building;
+  pool = dir.shops.map((s) => ({ ...s, group: BY_PRIMARY[s.primaryType] || null })).filter(listed);
+  const urlPicks = (qs.get('s') || '').split(',').filter((id) => ID.test(id));
+  const savedPicks = (rec.picks || []).filter((id) => ID.test(id));
+  const want = [...new Set([SHOP, ...urlPicks, ...savedPicks, ...(CONF.pick || [])].filter(Boolean))].filter((id) => !pool.some((p) => p.id === id));
+  // The pinned shop, or a pick the 1 km list does not hold (fewer reviews, another main type): fetched one by one.
+  const got = await Promise.all(want.slice(0, 20).map((id) => post('/place', { placeId: id }).catch((e) => { console.error('[menu] shop', id, e); return null; })));
+  got.filter(Boolean).forEach((sp) => {
+    const group = groupOfTypes(sp.types);
+    if (!group) return;
+    gallery[sp.id] = (sp.photos || []).map((p) => p.name);
+    pool.push({ id: sp.id, name: sp.name, rating: sp.rating, reviews: sp.reviews, mapsUrl: sp.mapsUrl, group,
+      photo: gallery[sp.id][0] || '', m: metres(building, sp) });
+  });
+  photos = { ...(rec.photos || {}) };
+  const have = (id) => pool.some((p) => p.id === id);
+  if (urlPicks.length) chosen = urlPicks.filter(have).slice(0, MAX);
+  else if (savedPicks.length && !(VIEW && SHOP && !savedPicks.includes(SHOP))) chosen = savedPicks.filter(have).slice(0, MAX);
+  else if (!SHOP && (CONF.pick || []).length) chosen = CONF.pick.filter(have).slice(0, MAX);
+  else chosen = autoPick();
+  savedKey = savedPicks.length ? JSON.stringify([savedPicks, savedPicks.map((id) => (rec.photos || {})[id] || '')]) : '';
   render();
 }
 
-function shareUrl(via) {
-  return `${location.origin}${location.pathname}?b=${encodeURIComponent(B)}${SHOP ? `&shop=${encodeURIComponent(SHOP)}` : ''}&s=${chosen.map(encodeURIComponent).join(',')}${via ? `&v=${via}` : ''}`;
+/**
+ * Several shops per type, not one of everything (Art's lock: "choices and selection is the key"): the types with
+ * the most good shops (at least 2 each; the pinned shop's type always), then the best shops of those types, one
+ * round at a time, up to 3 a type. The rest of the 1 km list is on the phone page ("ร้านอื่นๆ รอบอาคาร").
+ */
+const MAX_GROUPS = 6;
+function autoPick() {
+  const pinned = SHOP && pool.find((p) => p.id === SHOP);
+  const byGroup = GROUPS.map((g) => ({ k: g.k, list: pool.filter((p) => p.group === g.k && p.id !== SHOP).sort((a, b) => score(b) - score(a)) }));
+  const keep = byGroup.filter((g) => g.list.length >= 2 || (pinned && pinned.group === g.k))
+    .sort((a, b) => (pinned && b.k === pinned.group) - (pinned && a.k === pinned.group) || b.list.length - a.list.length)
+    .slice(0, MAX_GROUPS).map((g) => g.k);
+  const out = pinned ? [SHOP] : [];
+  const taken = (k) => out.filter((id) => pool.find((p) => p.id === id).group === k).length;
+  for (let round = 0; round < PER_GROUP && out.length < AUTO; round += 1) {
+    byGroup.filter((g) => keep.includes(g.k)).forEach((g) => {
+      const next = g.list.find((p) => !out.includes(p.id));
+      if (next && taken(g.k) < PER_GROUP && out.length < AUTO) out.push(next.id);
+    });
+  }
+  return out;
+}
+
+/** Groups in print order with their chosen shops (inside a group: the order they were chosen). */
+function paperGroups() {
+  const shops = chosen.map((id) => pool.find((p) => p.id === id)).filter(Boolean);
+  return GROUPS.map((g) => ({ ...g, shops: shops.filter((s) => s.group === g.k) })).filter((g) => g.shops.length);
+}
+/** Two columns, each group kept whole, heights as even as possible (a shop row ≈ 2.4 group headers). */
+function columns(groups) {
+  const cols = [[], []], h = [0, 0];
+  groups.forEach((g) => { const i = h[0] <= h[1] ? 0 : 1; cols[i].push(g); h[i] += 1 + g.shops.length * 2.4; });
+  return { cols, shorter: h[0] <= h[1] ? 0 : 1 };
 }
 
 function renderStatus() {
-  const st = (BUILDING_STATUS[B] && BUILDING_STATUS[B].step) || 'survey';
-  $('status').innerHTML = STEPS.map(([k, t]) => `<span class="st${k === st ? ' on' : ''}${k === st && k === 'live' ? ' live' : ''}">${t}</span>`).join('<span class="arrow">→</span>');
+  const st = CONF.step || 'survey';
+  $('status').innerHTML = EDIT ? STEPS.map(([k, t]) => `<span class="st${k === st ? ' on' : ''}${k === st && k === 'live' ? ' live' : ''}">${t}</span>`).join('<span class="arrow">→</span>') : '';
   return st;
 }
 
-function render() {
-  const st = renderStatus();
-  const isLive = st === 'live';
-  const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-  const picked = chosen.map((id) => pool.find((p) => p.id === id)).filter(Boolean);
-  const tiles = picked.map((p) => {
-    const c = CATS.find((x) => x.k === p.cat);
-    const ph = p.photo ? `<div class="ph"><img src="${photoUrl(p.photo)}" alt="" loading="lazy"><span class="chip">${esc(c.label)}</span></div>`
-      : `<div class="ph none"><span class="big">${esc(c.label)}</span><span class="chip">${esc(c.label)}</span></div>`;
-    const inner = `${ph}<h4>${esc(p.name)}</h4><div class="meta">${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${distText(p.m)}</div>`;
-    // Reader view: each shop opens its page (call · directions), tagged with this building for the shop's report.
-    return EDIT ? `<article class="tile">${inner}</article>`
-      : `<a class="tile" data-shop="${esc(p.id)}" href="../site/?p=${encodeURIComponent(p.id)}&src=b:${encodeURIComponent(B)}">${inner}</a>`;
-  }).join('');
-  const sheet = `<section class="sheet" id="sheet">
+function pageHtml(isLive) {
+  const name = esc(rec.name || CONF.name || building.name), area = esc(rec.area || '');
+  const month = new Date().toLocaleDateString('th-TH', { month: 'short', year: 'numeric' });
+  const { cols, shorter } = columns(paperGroups());
+  // No review counts on paper (they change every week) — Art, 2026-11-20.
+  const shop = (s) => {
+    const ph = photos[s.id] || s.photo;
+    return `<div class="r">${ph ? `<img src="${photoUrl(ph)}" alt="">` : '<span class="noimg"></span>'}<div class="tx"><b>${esc(cleanName(s.name))}</b>`
+      + `<span class="star">${s.rating ? `<i>★</i> ${Number(s.rating).toFixed(1)} · ` : ''}${dist(s.m)}</span></div></div>`;
+  };
+  const group = (g) => `<section class="g"><h2><svg class="ic" viewBox="0 0 24 24"><path d="${g.icon}"/></svg><span>${esc(g.th)}<em>${esc(g.en)}</em></span></h2>${g.shops.map(shop).join('')}</section>`;
+  const more = '<section class="g"><div class="more">ร้านอื่นๆ รอบอาคาร สแกนดูทั้งหมด<span>More places nearby — scan to see all</span></div></section>';
+  return `<div class="page" id="page">
     ${isLive ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
-    <header><div><div class="eye">เมนูบริการ · สำหรับลูกบ้านและแขก</div><h1>${esc(bname())}</h1><p class="tag">ร้านดีใกล้ตัว · สแกน QR เพื่อดูร้านและติดต่อ</p></div>
-      <div class="brand"><img src="../../brand/bookease-logo.svg" alt="bookease"></div></header>
-    <div class="grid">${tiles}<article class="qrtile"><div class="qr" id="qr"></div><b>สแกนดูร้าน<br>และติดต่อจองคิว</b><small>ไม่ต้องโหลดแอป</small></article></div>
-    <footer><div>ข้อมูลร้านจาก Google · ฉบับ ${today} · ระยะเป็นระยะทางตรงจากอาคาร</div><div>bookease.co</div></footer>
-  </section>`;
-  const panel = `<aside class="panel">
-    <h2>เลือกร้านในเมนู</h2><p class="hint">ติ๊กร้านที่จะแสดง (สูงสุด ${MAX} ร้าน) · ร้านดีที่สุดของแต่ละประเภทถูกเลือกไว้ให้แล้ว</p>
-    ${CATS.map((c) => {
-      const all = pool.filter((p) => p.cat === c.k).sort((a, b) => score(b) - score(a));
-      const pin = all.find((p) => p.id === SHOP);
-      const list = (pin ? [pin, ...all.filter((p) => p.id !== SHOP)] : all).slice(0, 4);
-      if (!list.length) return '';
-      return `<div class="cat"><h3>${esc(c.label)}</h3>${list.map((p) => `<label class="opt"><input type="checkbox" data-id="${esc(p.id)}"${chosen.includes(p.id) ? ' checked' : ''}><span><b>${esc(p.name)}</b><small>${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${distText(p.m)}</small></span></label>`).join('')}</div>`;
-    }).join('')}
-    <p class="count" id="count">เลือกแล้ว ${chosen.length} / ${MAX}</p>
-    <div class="actions"><button class="btn" id="copy">คัดลอกลิงก์เมนู</button><a class="btn soft" id="line" target="_blank" rel="noopener">ส่งทาง LINE</a><button class="btn soft" id="print">พิมพ์ / PDF</button></div>
-    <p class="toast" id="toast" hidden>คัดลอกลิงก์แล้ว</p>
-  </aside>`;
-  $('app').innerHTML = `<div class="cols">${EDIT ? panel : ''}<div>${sheet}${EDIT ? '' : `<p class="no-print" style="margin-top:10px;display:flex;gap:18px;flex-wrap:wrap"><a href="../directory/?b=${encodeURIComponent(B)}"><b>ดูร้านทั้งหมดรอบอาคาร →</b></a><a href="${shareUrl()}&edit=1">แก้ไขเมนูนี้</a></p>`}</div></div>`;
-  if (!EDIT) $('app').querySelector('.cols').style.gridTemplateColumns = '1fr';
-  try { new QRCode($('qr'), { text: shareUrl('qr'), width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M }); }
-  catch (e) { console.error('[menu] qr', e); }
-  if (EDIT) wire();
-  else $('app').querySelectorAll('a.tile').forEach((a) => a.addEventListener('click', () => hit(a.dataset.shop, 'open', `b:${B}`)));
+    <aside class="side"><div class="eye"><span class="t">สำหรับลูกบ้านและแขก</span><br>RESIDENTS &amp; GUESTS</div><h1>${name}${area ? `<span>${area}</span>` : ''}</h1>
+      <div class="lead"><span class="bl">ร้านดีใกล้ตัว</span><br>จองง่ายทันที<i>Discover local.<br>Book with ease.</i></div>
+      <div class="qrw"><div class="qr" id="qr"></div></div><div class="sc"><b><em class="bl" style="font-style:normal">สแกน</em>ดูร้านทั้งหมด</b><span>Scan to see all places</span></div>
+      <div class="acts"><b>โทร · นำทาง · จองคิว</b><span>Call · Navigate · Book</span></div>
+      <div class="noapp">ไม่ต้องโหลดแอป<br><span>No app needed</span></div>
+      <img class="logo" src="../../brand/bookease-logo.svg" alt="bookease"></aside>
+    <main class="main"><div class="two">${cols.map((col, i) => `<div>${col.map(group).join('')}${i === shorter ? more : ''}</div>`).join('')}</div>
+      <p class="note">ข้อมูลร้านจาก Google Maps · ${esc(month)} · Shop details from Google Maps</p></main>
+  </div>`;
 }
 
+function panelHtml() {
+  const rows = GROUPS.map((g) => {
+    const all = pool.filter((p) => p.group === g.k).sort((a, b) => score(b) - score(a));
+    const head = all.filter((p) => chosen.includes(p.id) || p.id === SHOP);
+    const list = [...head, ...all.filter((p) => !head.includes(p)).slice(0, Math.max(0, 6 - head.length))];
+    if (!list.length) return '';
+    return `<div class="cat"><h3>${esc(g.th)} · ${all.length} ร้าน</h3>${list.map((p) => {
+      const on = chosen.includes(p.id), ph = photos[p.id] || p.photo;
+      return `<div class="opt"><label><input type="checkbox" data-id="${esc(p.id)}"${on ? ' checked' : ''}><span><b>${esc(cleanName(p.name))}</b>`
+        + `<small>${p.rating ? `★ ${p.rating} · ${p.reviews || 0} รีวิว · ` : ''}${dist(p.m)}</small></span></label>`
+        + (on ? `<button class="swap" data-swap="${esc(p.id)}" title="เปลี่ยนรูป" style="background-image:url(&quot;${ph ? photoUrl(ph, 160) : ''}&quot;)"><span>↻</span></button>` : '')
+        + '</div>';
+    }).join('')}</div>`;
+  }).join('');
+  const url = PHONE_PAGE + rec.code;
+  return `<aside class="panel no-print">
+    <h2>เลือกร้านในเมนู</h2><p class="hint">ร้านดีที่สุดของแต่ละประเภทถูกเลือกไว้ให้แล้ว (ประเภทละไม่เกิน ${PER_GROUP} ร้าน) · กดรูปเพื่อเปลี่ยนรูปร้าน ใช้รูปหน้าร้านหรือในร้าน ไม่ใช้โลโก้ ใบราคา หรือเซลฟี่</p>
+    ${rows || '<p class="hint">ยังไม่พบร้านบริการที่มีรีวิวพอในระยะ 1 กม.</p>'}
+    <p class="count" id="count"></p>
+    <div class="actions"><button class="btn" id="save">บันทึกเมนู</button><button class="btn soft" id="print">พิมพ์ / PDF (A4)</button>
+      <button class="btn soft" id="copy">คัดลอกลิงก์หน้ามือถือ</button><a class="btn soft" id="line" target="_blank" rel="noopener">ส่งทาง LINE</a></div>
+    <p class="dirty" id="dirty" hidden>ยังไม่ได้บันทึก · หน้ามือถือยังเรียงร้านแบบเดิม</p>
+    <p class="toast" id="toast" hidden></p>
+    <p class="phone">QR บนกระดาษพาไปที่ <a href="${url}" target="_blank" rel="noopener">${url.replace('https://', '')}</a> · ตอนพิมพ์เลือกกระดาษ A4 และไม่มีขอบ</p>
+  </aside>`;
+}
+
+function render() {
+  const isLive = renderStatus() === 'live';
+  $('app').innerHTML = `<div class="cols"${EDIT ? '' : ' style="grid-template-columns:1fr"'}>${EDIT ? panelHtml() : ''}<div class="fit" id="fit">${pageHtml(isLive)}</div></div>`;
+  try { new QRCode($('qr'), { text: PHONE_PAGE + rec.code, width: 600, height: 600, colorDark: '#0A0A0A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
+  catch (e) { console.error('[menu] qr', e); }
+  fit();
+  if (EDIT) wire();
+}
+
+/** Show the A4 page at the width the screen has (printing uses the real size). */
+function fit() {
+  const box = $('fit'), page = $('page');
+  if (!box || !page) return;
+  const s = Math.min(1, box.clientWidth / page.offsetWidth);
+  page.style.transform = `scale(${s})`;
+  box.style.height = `${page.offsetHeight * s}px`;
+  overflowCheck();
+}
+/** The page must stay one A4: say so when the chosen shops no longer fit. */
+function overflowCheck() {
+  const count = $('count'), main = document.querySelector('.main');
+  if (!count || !main) return;
+  const over = main.scrollHeight > main.clientHeight + 1;
+  count.textContent = `เลือกแล้ว ${chosen.length} / ${MAX} ร้าน${over ? ' · เกินหน้า A4 เอาออกสัก 1–2 ร้าน' : ''}`;
+  count.classList.toggle('over', over);
+}
+addEventListener('resize', fit);
+document.fonts && document.fonts.ready.then(fit).catch((e) => console.error('[menu] fonts', e));
+
+async function save() {
+  rec = await post('/building/save', { b: B, picks: chosen, photos: Object.fromEntries(chosen.filter((id) => photos[id]).map((id) => [id, photos[id]])) });
+  savedKey = stateKey();
+  markDirty();
+}
+function markDirty() { const d = $('dirty'); if (d) d.hidden = savedKey === stateKey(); }
+function toast(text) { const t = $('toast'); t.textContent = text; t.hidden = false; }
+
 function wire() {
-  const line = $('line');
-  if (line) line.href = `https://line.me/R/share?text=${encodeURIComponent(`เมนูบริการรอบ ${bname()}\n${shareUrl('link')}`)}`;
+  const url = PHONE_PAGE + rec.code;
+  $('line').href = `https://line.me/R/share?text=${encodeURIComponent(`ร้านดีใกล้ตัวรอบ ${rec.name}\n${url}`)}`;
+  markDirty();
   $('app').querySelectorAll('.opt input').forEach((box) => box.addEventListener('change', () => {
     const id = box.dataset.id;
     if (box.checked) { if (chosen.length >= MAX) { box.checked = false; return; } chosen.push(id); }
     else chosen = chosen.filter((x) => x !== id);
-    history.replaceState(null, '', `${shareUrl()}&edit=1`);
     render();
   }));
-  $('copy').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(shareUrl('link')); $('toast').hidden = false; }
-    catch (e) { console.error('[menu] copy', e); prompt('คัดลอกลิงก์นี้', shareUrl('link')); }
-  });
-  $('print').addEventListener('click', () => window.print());
+  $('app').querySelectorAll('[data-swap]').forEach((btn) => btn.addEventListener('click', async () => {
+    const id = btn.dataset.swap, shop = pool.find((p) => p.id === id);
+    try {
+      if (!gallery[id]) gallery[id] = ((await post('/place', { placeId: id })).photos || []).map((p) => p.name);
+      const list = gallery[id];
+      if (!list.length) return;
+      const now = photos[id] || (shop && shop.photo) || list[0];
+      photos[id] = list[(list.indexOf(now) + 1) % list.length];
+      render();
+    } catch (e) { console.error('[menu] photos', id, e); toast('โหลดรูปของร้านนี้ไม่ได้ ลองใหม่อีกครั้ง'); }
+  }));
+  const guarded = (fn) => async () => {
+    try { await fn(); } catch (e) { console.error('[menu] save', e); toast(`บันทึกไม่ได้ (${e.message}) ลองใหม่อีกครั้ง`); }
+  };
+  $('save').addEventListener('click', guarded(async () => { await save(); toast('บันทึกแล้ว · หน้ามือถือเรียงร้านตามกระดาษแล้ว'); }));
+  $('print').addEventListener('click', guarded(async () => { await save(); window.print(); }));
+  $('copy').addEventListener('click', guarded(async () => {
+    await save();
+    try { await navigator.clipboard.writeText(url); toast('คัดลอกลิงก์แล้ว'); }
+    catch (e) { console.error('[menu] copy', e); prompt('คัดลอกลิงก์นี้', url); }
+  }));
+  $('line').addEventListener('click', () => { save().catch((e) => console.error('[menu] save before LINE', e)); });
 }
 
-if (B && !EDIT) hit(B, 'view', VIA); // one menu open per page load
 load().catch((e) => { console.error('[menu] load', e); $('app').innerHTML = `<p class="err">โหลดเมนูไม่ได้ (${esc(e.message)}) ลองใหม่อีกครั้ง</p>`; });
 </script>
 </body>

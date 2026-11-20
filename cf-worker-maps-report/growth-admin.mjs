@@ -4,7 +4,7 @@
 // Cloudflare login (`npx wrangler login`) and no extra secret. Run from this folder.
 //
 //   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --cat salon --area thaphra [--buildings <id>,<id>] [--since 2026-11-16]
-//   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --word "ศูนย์ดูแลผู้สูงอายุ" --area ramintra   (any other shop type:
+//   node growth-admin.mjs track-shop <placeId> --name "ร้าน…" --word "ศูนย์ดูแลผู้สูงอายุ" --area raminthra   (any other shop type:
 //        --word = the search word the Radar report used for this shop, keywords.js; Art 2026-11-19, a nursing home bought Basic)
 //   node growth-admin.mjs track-building <placeId> --name "Aqua Residences" --status sample|approved|live
 //   node growth-admin.mjs log <placeId> --at 2026-11-15 --what "…" [--short "…"] [--where "…"] [--minutes 5] [--evidence https://…]
