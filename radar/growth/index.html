@@ -75,13 +75,13 @@ function render(d) {
     ? `<ul class="log">${log.slice(0, SHOW).map((e) => `<li><time>${thDate(e.at)}</time><div><b>${work(e)}</b>${e.evidence ? ` <a href="${esc(e.evidence)}" target="_blank" rel="noopener">ดูรูป</a>` : ''}</div></li>`).join('')}</ul>`
       + (log.length > SHOW ? `<details class="more"><summary>ดูงานก่อนหน้าอีก ${log.length - SHOW} งาน</summary><ul class="log">${log.slice(SHOW).map((e) => `<li><time>${thDate(e.at)}</time><div><b>${work(e)}</b></div></li>`).join('')}</ul></details>` : '')
     : '<p class="lead">สัปดาห์นี้เรากำลังเริ่มงานให้ร้านคุณ</p>';
-  const plan = (d.plan || []).length
-    ? `<section class="card"><h2>สัปดาห์หน้าเราจะทำ</h2><ul class="log">${d.plan.map((x) => `<li><time>ต่อไป</time><div><b>${work(x)}</b></div></li>`).join('')}</ul></section>` : '';
+  const plan = (d.plan || []).length > 2 // the card already lists the next two
+    ? `<section class="card"><h2>งานต่อไปทั้งหมด</h2><ul class="log">${d.plan.map((x) => `<li><time>ต่อไป</time><div><b>${work(x)}</b></div></li>`).join('')}</ul></section>` : '';
 
   $('app').innerHTML = `
     <header class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>${esc(s.name)}</span></header>
     <img class="weekcard" id="weekcard" alt="${esc(d.card.headline)} · ${esc(d.card.calls)}">
-    <section class="card" id="work"><h2>งานที่เราทำให้ร้านคุณ</h2>${logHtml}</section>
+    <section class="card" id="work"><h2>งานทั้งหมดที่เราทำให้ร้าน</h2>${logHtml}</section>
     ${plan}
     <p class="foot">มีคำถาม ทักเราได้ที่ <a href="https://line.me/R/ti/p/@bookease" target="_blank" rel="noopener">LINE @bookease</a></p>
     ${STAFF ? `<section class="card staff"><h2>ส่งการ์ดอัตโนมัติทาง LINE (สำหรับทีม)</h2>
@@ -92,8 +92,7 @@ function render(d) {
       <p class="lead">1) ส่งรูปการ์ดนี้ให้ร้าน 2) ส่งลิงก์รายงานตามไป</p>
       <img id="cardimg" alt="การ์ดรายงานประจำสัปดาห์" style="width:100%;max-width:420px;display:block;border-radius:14px">
       <button id="share">ส่งรูปการ์ดทาง LINE</button> <button id="save" class="soft">บันทึกรูป</button> <button id="copylink" class="soft">คัดลอกลิงก์รายงาน</button> <span id="ok" hidden>คัดลอกแล้ว</span></section>` : ''}`;
-  // The owner sees the card without its button (they are already on the page the button opens).
-  cardBlob(d.card, { button: false }).then((blob) => { $('weekcard').src = URL.createObjectURL(blob); })
+  cardBlob(d.card).then((blob) => { $('weekcard').src = URL.createObjectURL(blob); })
     .catch((e) => { console.error('[growth] owner card', e); $('weekcard').replaceWith(Object.assign(document.createElement('h1'), { className: 'cardtext', textContent: d.card.headline })); });
   if (location.hash === '#work') requestAnimationFrame(() => $('work').scrollIntoView({ block: 'start' }));
   if (STAFF) {
@@ -127,7 +126,7 @@ function wrapLines(ctx, text, maxW) {
   if (line) lines.push(line);
   return lines;
 }
-async function cardBlob(c, opts = {}) {
+async function cardBlob(c) {
   // The approved weekly card (Art 2026-11-16), drawn as a picture: same content as the LINE flex card.
   await Promise.all(['600 14px Anuphan', '700 16px Anuphan', '800 30px Anuphan', '800 17px Inter'].map((f) => document.fonts.load(f)));
   let photo = null;
@@ -193,15 +192,23 @@ async function cardBlob(c, opts = {}) {
       ctx.fillText('📞', P + 16 * K, y + boxH / 2);
       ctx.font = font(700, 17); ctx.fillStyle = '#14110F'; ctx.fillText(c.calls, P + 56 * K, y + boxH / 2);
     }
-    y += boxH + 16 * K;
-    // button (the link itself is sent in the chat right after the picture)
-    if (opts.button === false) return y - 16 * K + P;
-    const btnH = 48 * K;
-    if (draw) {
-      rr(P, y, W - 2 * P, btnH, btnH / 2, '#2D55EB');
-      ctx.font = font(700, 17); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.cta, W / 2, y + btnH / 2 + K);
-    }
-    y += btnH + P;
+    y += boxH;
+    // The rest of the report, readable without opening anything (Art 2026-11-17/20): this week's work, where the
+    // shop is shown, next week's plan. Plain lines, no chips, no numbers.
+    const section = (title, lines) => {
+      if (!lines.length) return;
+      y += 18 * K;
+      if (draw) { ctx.fillStyle = '#EFEBE7'; ctx.fillRect(P, y, W - 2 * P, 1.5 * K); }
+      y += 16 * K;
+      text(title, font(700, 16), '#14110F', 24);
+      y += 4 * K;
+      for (const line of lines) { text(`•  ${line}`, font(600, 15), '#4A4440', 23); y += 4 * K; }
+    };
+    section('สัปดาห์นี้เราทำให้ร้าน', [...(c.done || []), ...(c.doneMore ? [`และอีก ${c.doneMore} งาน`] : [])]);
+    section('ร้านคุณอยู่ที่', c.shownOn || []);
+    section('สัปดาห์หน้าเราจะทำ', c.next || []);
+    // No button on the picture: it is read in the chat as it is; the report link is sent as a message after it.
+    y += P;
     return y;
   };
   const H = paint(false);

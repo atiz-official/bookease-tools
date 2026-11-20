@@ -714,12 +714,14 @@ async function growthData(env, id) {
 }
 
 // ── The weekly LINE card ──
-// Approved by Art 2026-11-16 (9.2/10, "do not redesign further"): a picture, not text.
-//   headline (3–4 words) · "จากอันดับ 6 → 8" · ค้นหา “<type>” แถว <hub> · rank ladder with the shop's own photo ·
-//   📞 กดโทรหาร้าน N ครั้ง · one button "ดูว่าเราทำอะไรให้ร้าน" (work done, plans and every other number live behind it).
-// Rules: plain words · ≤ 2 numbers · a bad week is said plainly (red) · never "ลูกค้าเพิ่มขึ้น" · calls are counted as taps (ครั้ง),
-// not people · the work list is never on the card and never linked to the result.
-// One source for the picture the team sends today and the Flex message the LINE bot will push.
+// Approved by Art 2026-11-16 (9.2/10, "do not redesign the visual"): a picture, not text.
+//   headline (3–4 words) · "จากอันดับ 6 → 8" · ค้นหา “<type>” แถว <hub> · rank ladder with the shop's own photo · 📞 กดโทรหาร้าน N ครั้ง.
+// Locked 2026-11-17 and restated by Art 2026-11-20 ("the report is shown as cards; nobody has to tap a link"): the card
+// is read in full in the chat — under the same top part it says, in plain lines, what we did this week, where the shop
+// is shown, and what we do next week. The link only adds detail.
+// Rules: plain words · ≤ 2 numbers (rank, calls) · a bad week is said plainly (red) · never "ลูกค้าเพิ่มขึ้น" · calls are
+// taps (ครั้ง), not people · done work and planned work are never mixed · the work is never said to have caused the result.
+// One source for the picture the team sends today and the Flex message the LINE bot pushes.
 const G_REPORT_URL = 'https://radar.bookease.co/growth/?p=';
 const G_WORKER_URL = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 const G_TONE = { up: '#15803D', down: '#B42318', same: '#2D55EB', start: '#2D55EB', wait: '#2D55EB' };
@@ -752,9 +754,18 @@ function growthCard(d) {
     for (const [k, n] of Object.entries(row)) if (k.split('|')[0] === 'call') calls7 += n;
   }
   const photoName = (last && last.photo) || s.photo || '';
+  // What we did in the last 7 days (newest first, 3 lines max), where the shop is shown, what we do next (2 max).
+  const short = (e) => String(e.short || e.what || '').trim();
+  const doneAll = (d.log || []).filter((e) => e.at >= from7 && e.at <= d.today).sort((a, b) => b.at.localeCompare(a.at)).map(short).filter(Boolean);
+  if (last && bkkDay(Date.parse(last.at)) >= from7 && !doneAll.some((t) => t.includes('อันดับ'))) doneAll.push('ตรวจอันดับร้านใน Google Maps');
+  const shownOn = ['Google Maps', s.bookeaseUrl ? 'หน้าร้านบน bookease.co' : 'หน้าร้านบน bookease.co (กำลังทำ)',
+    ...(d.buildings || []).filter((b) => b.status === 'live').map((b) => `เมนูบริการที่ ${b.name}`)].slice(0, 3);
+  const next = (d.plan || []).map(short).filter(Boolean).slice(0, 2);
   const out = (tone, headline, from, where, ladder) => ({
     name: s.name, week, tone, color: G_TONE[tone], headline, from: from || '', where: where || '', ladder: ladder || [],
-    calls: `กดโทรหาร้าน ${calls7} ครั้ง`, cta: 'ดูว่าเราทำอะไรให้ร้าน', url: `${G_REPORT_URL}${s.id}#work`,
+    calls: `กดโทรหาร้าน ${calls7} ครั้ง`,
+    done: doneAll.slice(0, 3), doneMore: Math.max(0, doneAll.length - 3), shownOn, next,
+    cta: 'ดูทั้งหมด', url: `${G_REPORT_URL}${s.id}#work`,
     photo: photoName ? `${G_WORKER_URL}/photo?w=200&name=${encodeURIComponent(photoName)}` : '',
   });
   if (!last) return out('wait', 'เริ่มดูแลร้านคุณแล้ว', '', 'เราจะตรวจอันดับร้านคุณครั้งแรกเร็วๆ นี้');
@@ -777,6 +788,18 @@ function growthCard(d) {
   if (!prev) return out('start', say(found(last)), '', where);
   const n = found(last), b = found(prev);
   return out(n > b ? 'up' : n < b ? 'down' : 'same', say(n), n === b ? '' : `จาก ${b} → ${n} ใน 9`, where);
+}
+
+/** The three plain sections under the calls line (the same lines the picture draws). */
+function growthFlexSections(c, t) {
+  const sec = (title, lines) => (lines.length ? [{ type: 'separator', margin: 'lg', color: '#EFEBE7' },
+    t(title, { size: 'sm', weight: 'bold', color: '#14110F', margin: 'lg' }),
+    ...lines.map((x) => t(`• ${x}`, { size: 'sm', color: '#4A4440', margin: 'sm' }))] : []);
+  return [
+    ...sec('สัปดาห์นี้เราทำให้ร้าน', [...c.done, ...(c.doneMore ? [`และอีก ${c.doneMore} งาน`] : [])]),
+    ...sec('ร้านคุณอยู่ที่', c.shownOn),
+    ...sec('สัปดาห์หน้าเราจะทำ', c.next),
+  ];
 }
 
 /** LINE Messaging API flex message for the card (push it once the bot has the channel token). */
@@ -810,9 +833,10 @@ function growthFlex(c) {
         ...(c.where ? [t(c.where, { size: 'xs', color: '#8A827B', margin: 'xs' })] : []),
         ...(c.ladder.length ? [{ type: 'box', layout: 'vertical', margin: 'md', contents: c.ladder.map(rung) }] : []),
         { type: 'box', layout: 'horizontal', margin: 'lg', paddingAll: '12px', cornerRadius: '12px', backgroundColor: '#F7F5F2', contents: [t(`📞 ${c.calls}`, { size: 'md', weight: 'bold', color: '#14110F' })] },
+        ...growthFlexSections(c, t),
       ] },
       footer: { type: 'box', layout: 'vertical', paddingStart: '18px', paddingEnd: '18px', paddingBottom: '18px', paddingTop: '0px', contents: [
-        { type: 'button', style: 'primary', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: c.cta, uri: c.url } }] },
+        { type: 'button', style: 'link', color: '#2D55EB', height: 'sm', action: { type: 'uri', label: c.cta, uri: c.url } }] },
     },
   };
 }

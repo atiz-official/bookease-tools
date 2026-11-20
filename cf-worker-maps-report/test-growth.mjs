@@ -47,7 +47,7 @@ const req = (path, body, method = body ? 'POST' : 'GET') => worker.fetch(new Req
 await kv.put('g/index', JSON.stringify([{ id: SHOP, kind: 'shop' }, { id: BLD, kind: 'building' }]));
 await kv.put(`g/shop/${SHOP}`, JSON.stringify({ id: SHOP, kind: 'shop', name: 'ร้านเสริมสวยลลิศา', cat: 'salon', area: 'thaphra', since: '2026-11-16', buildings: [BLD], active: true }));
 await kv.put(`g/shop/${BLD}`, JSON.stringify({ id: BLD, kind: 'building', name: 'Aqua Residences', status: 'sample' }));
-await kv.put(`g/log/${SHOP}`, JSON.stringify([{ at: '2026-11-15', what: 'ตรวจ Google Maps 6 จุด', where: 'Google Maps', minutes: null, evidence: '' }]));
+await kv.put(`g/log/${SHOP}`, JSON.stringify([{ at: '2026-11-15', what: 'ตรวจหน้าร้านใน Google Maps 6 เรื่อง', where: 'Google Maps', minutes: null, evidence: '' }]));
 
 // 1. hits: tracked counted, untracked not, bad input refused
 let r = await (await req('/hit', { p: SHOP, a: 'call', src: 'site' })).json();
@@ -125,9 +125,12 @@ const cardFor = async (lastRank, prevRank) => {
 const rungs = (c) => c.ladder.map((x) => (x.kind === 'gap' ? '···' : x.n + (x.kind ? `[${x.kind}]` : ''))).join(' ');
 assert.match(data.card.url, /growth\/\?p=ChIJ.*#work$/);
 assert.equal(data.card.calls, 'กดโทรหาร้าน 2 ครั้ง'); // the two 'call' taps above — taps, not people
-assert.equal(data.card.cta, 'ดูว่าเราทำอะไรให้ร้าน');
+assert.equal(data.card.cta, 'ดูทั้งหมด');
 assert.equal(data.card.where, 'ค้นหา “ร้านเสริมสวย” แถว MRT ท่าพระ');
-assert.equal(data.card.did, undefined); // no work checklist on the card
+// the card is read in full in the chat (Art 2026-11-17/20): this week's work, where the shop is shown, next week's plan
+assert.ok(Array.isArray(data.card.done) && data.card.done.length <= 3);
+assert.deepEqual(data.card.shownOn.slice(0, 1), ['Google Maps']);
+assert.ok(data.card.next.length <= 2);
 let card = await cardFor(12, 12);
 assert.equal(card.tone, 'same'); assert.equal(card.headline, 'ยังอยู่อันดับ 12'); assert.equal(card.from, '');
 assert.equal(rungs(card), '1 ··· 11 12[me] 13');
@@ -143,7 +146,7 @@ card = await cardFor(30, null);
 assert.equal(card.tone, 'up'); assert.equal(card.from, 'จากอันดับ 40+ → 30');
 for (const r of [[5, 6], [8, 6], [12, 12], [null, 12]]) {
   const c = await cardFor(...r);
-  const text = [c.headline, c.from, c.where, c.calls, c.cta].join(' ');
+  const text = [c.headline, c.from, c.where, c.calls, c.cta, ...c.done, ...c.shownOn, ...c.next].join(' ');
   assert.ok(!/ลูกค้าเพิ่ม|จุด|\/ ?9|คนกดโทร/.test(text), 'banned words: ' + text);
 }
 const flex = await (await req('/growth/flex?p=' + SHOP)).json();
