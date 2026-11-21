@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ชำระเงิน · BookEase Growth</title>
+<meta property="og:title" content="BookEase Growth · ชำระเงิน">
+<meta property="og:description" content="สรุปคำสั่งซื้อและชำระผ่าน PromptPay หรือบัตร ในหน้าเดียว">
+<link rel="icon" href="../../favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14110F;--ink-2:#4A4440;--ink-3:#7A726C;--line:#E6EAF3;--ground:#F4F6FB;--card:#fff;--blue:#2D55EB;--blue-d:#1C3BB8;--blue-soft:#E7EDFE;--good:#15803D;--good-soft:#E8F5EC;--bad:#B91C1C}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:Anuphan,Inter,system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+.card{background:var(--card);border-radius:24px;padding:20px 18px 22px;box-shadow:0 1px 3px rgba(20,17,15,.06)}
+.top{display:flex;justify-content:space-between;align-items:center}
+.top img{height:22px;display:block}
+.top span{font:600 13px Anuphan;color:var(--ink-3)}
+h1{font:700 22px/1.3 Anuphan;margin:16px 0 2px;text-wrap:balance}
+.lbl{font:600 13.5px Anuphan;color:var(--ink-3)}
+.line{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.line:last-of-type{border-bottom:0}
+.line b{font:700 16px Anuphan}
+.line small{display:block;font-size:13.5px;color:var(--ink-3);margin-top:2px}
+.price{text-align:right;flex:none}
+.price s{display:block;font:600 14px Inter;color:var(--ink-3)}
+.price strong{display:block;font:800 30px/1.1 Inter;font-variant-numeric:tabular-nums}
+.price i{display:block;font:600 13px Anuphan;font-style:normal;color:var(--ink-3)}
+.promo{display:inline-block;margin-top:6px;background:var(--blue-soft);color:var(--blue-d);font:700 12.5px Anuphan;padding:2px 9px;border-radius:999px}
+.pay{display:flex;align-items:center;justify-content:center;width:100%;margin-top:16px;height:58px;border-radius:999px;border:0;background:var(--blue);color:#fff;font:700 19px Anuphan;cursor:pointer;text-decoration:none}
+.pay:active{background:var(--blue-d)}
+.pay[disabled]{background:#9AA9E8;cursor:progress}
+.ways{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ways span{font:600 12.5px Anuphan;color:var(--ink-2);background:var(--ground);border-radius:999px;padding:3px 10px}
+.terms{margin-top:14px;font-size:13.5px;color:var(--ink-2);line-height:1.6}
+.terms li{list-style:none;padding-left:18px;position:relative}
+.terms li::before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:700}
+.seller{margin-top:12px;font-size:12.5px;color:var(--ink-3)}
+.err{margin-top:12px;background:#FDECEC;color:var(--bad);border-radius:12px;padding:10px 12px;font-size:14px}
+.err a{color:var(--blue-d);font-weight:700}
+.done-tick{width:64px;height:64px;border-radius:50%;background:var(--good-soft);color:var(--good);display:grid;place-items:center;font:800 34px Inter;margin:6px auto 0}
+.center{text-align:center}
+.steps{margin-top:18px;display:grid;gap:10px}
+.step{border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.step b{font:700 16px Anuphan}
+.step p{font-size:14px;color:var(--ink-2);margin-top:2px}
+.step .go2{display:inline-flex;margin-top:10px;height:44px;align-items:center;padding:0 18px;border-radius:999px;background:var(--blue);color:#fff;font:700 15px Anuphan;text-decoration:none;border:0;cursor:pointer}
+.step .go2.soft{background:var(--blue-soft);color:var(--blue-d)}
+.tax{margin-top:10px;display:grid;gap:8px}
+.tax label{font:600 13px Anuphan;color:var(--ink-2)}
+.tax input,.tax textarea{width:100%;border:1px solid #CBD3E6;border-radius:10px;padding:9px 10px;font:500 15px Anuphan;color:var(--ink)}
+.tax textarea{min-height:66px;resize:vertical}
+.msg{text-align:center;padding:40px 10px;color:var(--ink-2)}
+.foot{text-align:center;color:var(--ink-3);font-size:13px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="msg">กำลังเปิดคำสั่งซื้อ…</p></div>
+<script>
+// BookEase Growth · one-page checkout (Art 2026-11-21: "ลูกค้าตอบตกลง → ส่งลิงก์จ่าย → จ่าย → เริ่มงาน", target ≤ 2 minutes).
+// The shop opens this from the offer card ("เริ่มเลย") or from a link the team sends the moment the owner says yes.
+// No form before paying: shop name comes from the cached Shop Radar report; tax-invoice details are asked AFTER payment.
+// Money: the amount is decided only by Atiz Rail (bookease-backend internal/growthpay, tier table); this page sends placeId + tier.
+// Prices (Art 2026-11-17): list 1,290 / 2,490 / 3,490; promotion 1,000 / 2,000 / 3,000 for the first 50 shops. Shown together.
+const RADAR = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+const RAIL = 'https://atizrail.bookease.co';
+const LINE_OA = '@bookease';
+const PHONE = '092-641-4296';
+const SELLER = 'บริษัท เอทิซ อินโนเวชั่น จำกัด';
+const PLANS = {
+  1290: { promo: 1000, name: 'ให้ลูกค้าแถวร้านเจอคุณก่อน' },
+  2490: { promo: 2000, name: 'ให้ลูกค้าเลือกร้านคุณ' },
+  3490: { promo: 3000, name: 'ให้ร้านเด่นกว่าร้านอื่น' },
+};
+const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const baht = (n) => Number(n).toLocaleString('en-US');
+const qs = new URLSearchParams(location.search);
+const P = qs.get('p') || '', C = qs.get('c') || '', ORDER = qs.get('order') || '';
+const LIST = PLANS[Number(qs.get('t'))] ? Number(qs.get('t')) : 1290;
+const PLAN = PLANS[LIST];
+const monthNow = () => { const d = new Date(Date.now() + 7 * 3600e3); return `${TH_M[d.getUTCMonth()]} ${d.getUTCFullYear() + 543}`; };
+const lineMsg = (text) => `https://line.me/R/oaMessage/${LINE_OA}/?${encodeURIComponent(text)}`;
+let SHOP = { id: P, name: qs.get('n') || '', address: '' };
+
+async function loadShop() {
+  try {
+    const res = await fetch(`${RADAR}/view?p=${encodeURIComponent(P)}${C ? `&c=${encodeURIComponent(C)}` : ''}`);
+    if (!res.ok) throw new Error(`view ${res.status}`);
+    const r = await res.json();
+    if (r && r.shop) SHOP = { id: r.shop.id || P, name: r.shop.name || SHOP.name, address: r.shop.address || '' };
+  } catch (e) {
+    // No cached report (older than 7 days): the page still works with the name in the link, or the shop id.
+    console.error('[pay] shop', e);
+  }
+}
+
+function summary() {
+  document.title = `ชำระเงิน · ${SHOP.name || 'BookEase Growth'}`;
+  $('app').innerHTML = `
+  <div class="card">
+    <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>สรุปคำสั่งซื้อ</span></div>
+    <h1>BookEase Growth</h1>
+    <p class="lbl">${esc(SHOP.name || 'ร้านของคุณ')}</p>
+    <div class="line" style="margin-top:6px">
+      <div><b>${esc(PLAN.name)}</b><small>รายเดือน · รอบ ${esc(monthNow())}</small><span class="promo">ราคา 50 ร้านแรก</span></div>
+      <div class="price"><s>฿${baht(LIST)}</s><strong>฿${baht(PLAN.promo)}</strong><i>ต่อเดือน</i></div>
+    </div>
+    <button class="pay" id="pay" type="button">ชำระเงิน ฿${baht(PLAN.promo)}</button>
+    <div class="ways"><span>PromptPay QR</span><span>Mobile Banking</span><span>บัตรเครดิต / เดบิต</span></div>
+    <div id="err" class="err" hidden></div>
+    <ul class="terms">
+      <li>ไม่ผูกมัด ยกเลิกได้ทุกเดือน</li>
+      <li>ยกเลิกแล้ว หน้าร้านฟรีบน bookease.co ยังอยู่</li>
+      <li>ใบเสร็จ / ใบกำกับภาษี ขอได้หลังชำระ</li>
+    </ul>
+    <p class="seller">ผู้ขาย: ${SELLER} · ชำระผ่าน Xendit</p>
+  </div>
+  <p class="foot">สงสัยอะไร ทัก LINE ${LINE_OA} · ${PHONE}</p>`;
+  $('pay').onclick = startPay;
+}
+
+async function startPay() {
+  const btn = $('pay'), err = $('err');
+  btn.disabled = true; btn.textContent = 'กำลังเปิดหน้าชำระเงิน…'; err.hidden = true;
+  const back = `${location.origin}${location.pathname}?p=${encodeURIComponent(SHOP.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
+  try {
+    const res = await fetch(`${RAIL}/api/v1/growth/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ placeId: SHOP.id, tier: PLAN.promo, shopName: SHOP.name, returnUrl: back }),
+    });
+    const data = await res.json().catch((e) => { console.error('[pay] checkout json', e); return {}; });
+    const o = data && data.order;
+    if (res.ok && o && o.status === 'PAID') { location.replace(`${back}&order=${encodeURIComponent(o.orderId)}&t=${LIST}`); return; }
+    if (res.ok && o && o.invoiceUrl) { location.href = o.invoiceUrl; return; }
+    throw new Error(`checkout ${res.status} ${(data && data.error) || ''}`);
+  } catch (e) {
+    console.error('[pay] checkout', e);
+    btn.disabled = false; btn.textContent = `ชำระเงิน ฿${baht(PLAN.promo)}`;
+    err.hidden = false;
+    err.innerHTML = `เปิดหน้าชำระเงินไม่ได้ตอนนี้ ลองอีกครั้ง หรือ <a href="${lineMsg(`ขอชำระแพ็กเกจ ${baht(PLAN.promo)} บาท/เดือน\nร้าน: ${SHOP.name}\nรหัสร้าน: ${SHOP.id}`)}">ชำระผ่าน LINE ${LINE_OA}</a>`;
+  }
+}
+
+// Back from Xendit: ask Atiz Rail (which reads Xendit itself) until the order is settled.
+async function checkOrder() {
+  $('app').innerHTML = '<div class="card center"><p class="msg">กำลังตรวจสอบการชำระเงิน…</p></div>';
+  for (let i = 0; i < 40; i++) {
+    let o = null;
+    try {
+      const res = await fetch(`${RAIL}/api/v1/growth/orders/${encodeURIComponent(ORDER)}`);
+      const data = await res.json();
+      o = data && data.order;
+    } catch (e) { console.error('[pay] order', e); }
+    if (o && o.status === 'PAID') { done(o); return; }
+    if (o && (o.status === 'EXPIRED' || o.status === 'REVIEW')) { notPaid(o.status); return; }
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+  notPaid('PENDING');
+}
+
+function notPaid(status) {
+  const text = status === 'REVIEW' ? 'ได้รับรายการแล้ว ทีมกำลังตรวจสอบยอด จะแจ้งทาง LINE' : status === 'EXPIRED' ? 'ลิงก์ชำระเงินหมดอายุแล้ว' : 'ยังไม่พบการชำระเงิน';
+  $('app').innerHTML = `<div class="card center"><p class="msg">${esc(text)}</p>
+    ${status === 'REVIEW' ? '' : `<button class="pay" id="again" type="button">ชำระเงิน ฿${baht(PLAN.promo)}</button>`}
+    <p class="foot">ทัก LINE ${LINE_OA} · ${PHONE}</p></div>`;
+  if ($('again')) $('again').onclick = () => { history.replaceState(null, '', location.pathname + `?p=${encodeURIComponent(SHOP.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}&t=${LIST}`); summary(); startPay(); };
+}
+
+function done(o) {
+  document.title = `ชำระเรียบร้อย · ${SHOP.name || o.shop}`;
+  const name = SHOP.name || o.shop || '';
+  $('app').innerHTML = `
+  <div class="card">
+    <div class="done-tick">✓</div>
+    <h1 class="center">ชำระเรียบร้อย ฿${baht(o.amount)}</h1>
+    <p class="center lbl">${esc(name)} · เราเริ่มดูแลร้านให้แล้ว</p>
+    <div class="steps">
+      <div class="step"><b>1. ทัก LINE ${LINE_OA}</b><p>รับรายงานร้านทุกสัปดาห์ และคุยกับทีมได้ที่นี่</p>
+        <a class="go2" href="${lineMsg(`ชำระแล้ว ✓ ${name}\nเลขคำสั่งซื้อ: ${o.orderId}`)}">เปิด LINE ${LINE_OA}</a></div>
+      <div class="step"><b>2. ใบกำกับภาษี (ถ้าต้องการ)</b><p>ตรวจข้อมูลแล้วกดส่ง ทีมบัญชีออกให้</p>
+        <div class="tax">
+          <label for="tx-n">ชื่อบริษัท หรือชื่อบุคคล</label><input id="tx-n" value="${esc(name)}">
+          <label for="tx-id">เลขประจำตัวผู้เสียภาษี</label><input id="tx-id" inputmode="numeric" maxlength="13" placeholder="13 หลัก">
+          <label for="tx-a">ที่อยู่</label><textarea id="tx-a">${esc(SHOP.address.replace(/\s*ประเทศไทย\s*$/, ''))}</textarea>
+          <button class="go2 soft" id="tx-send" type="button">ส่งข้อมูลทาง LINE</button>
+        </div></div>
+    </div>
+  </div>
+  <p class="foot">ผู้ขาย: ${SELLER} · LINE ${LINE_OA} · ${PHONE}</p>`;
+  $('tx-send').onclick = () => {
+    const text = `ขอใบกำกับภาษี\nเลขคำสั่งซื้อ: ${o.orderId}\nยอด: ${baht(o.amount)} บาท\nชื่อ: ${$('tx-n').value.trim()}\nเลขผู้เสียภาษี: ${$('tx-id').value.trim()}\nที่อยู่: ${$('tx-a').value.trim()}`;
+    location.href = lineMsg(text);
+  };
+}
+
+(async () => {
+  if (!P) { $('app').innerHTML = `<p class="msg">ไม่พบร้าน · ทัก LINE ${LINE_OA}</p>`; return; }
+  await loadShop();
+  if (ORDER) checkOrder(); else summary();
+})();
+</script>
+</body>
+</html>
