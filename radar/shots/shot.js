@@ -1,0 +1,43 @@
+// Shop Radar · shows the real Google Maps picture of the shop (taken by radar/shots/capture.mjs) on the report and offer pages.
+// Usage: radarShot(element, placeId, baseUrl) — baseUrl is the folder that holds index.json ('shots/' from the report, '../shots/' from the offer).
+// No picture for this shop → the element stays hidden and the page looks as before.
+(function () {
+  const TH_MONTH = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const thDay = (iso) => { const [y, m, d] = iso.split('-').map(Number); return `${d} ${TH_MONTH[m - 1]} ${String(y + 543).slice(-2)}`; };
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let indexPromise = null;
+  const CSS = `
+.gshot{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:16px 20px;align-items:start}
+.gshot h3{grid-column:1/-1;font-size:17px;font-weight:800;line-height:1.35}
+.gshot a.pic{display:block;border-radius:14px;overflow:hidden;border:1px solid #E3E6EC;line-height:0}
+.gshot img{width:100%;height:auto;display:block}
+.gshot ol{list-style:none;display:flex;flex-direction:column;gap:10px;padding:0;margin:0}
+.gshot li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.4}
+.gshot li b{flex:none;width:22px;height:22px;border-radius:50%;background:#2D55EB;color:#fff;font:700 13px/22px Inter,Arial,sans-serif;text-align:center}
+.gshot small{display:block;margin-top:12px;color:#6B7383;font-size:13px}
+.gshot small span{white-space:nowrap}
+@media (max-width:560px){.gshot{grid-template-columns:1fr}.gshot a.pic{max-width:340px}}
+.gshot.compact{grid-template-columns:44% 1fr;gap:10px 12px}
+.gshot.compact h3{font-size:15.5px}
+.gshot.compact li{font-size:13.5px}
+.gshot.compact a.pic{max-width:none}`;
+
+  window.radarShot = function (el, placeId, base, opts) {
+    if (!el || !placeId) return;
+    if (!document.getElementById('gshot-css')) { const st = document.createElement('style'); st.id = 'gshot-css'; st.textContent = CSS; document.head.appendChild(st); }
+    indexPromise = indexPromise || fetch(`${base}index.json`, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : {})).catch((e) => { console.error('[radarShot] index.json', e); return {}; });
+    indexPromise.then((index) => {
+      const shot = index[placeId];
+      if (!shot) return;
+      const src = `${base}${encodeURIComponent(placeId)}.jpg?d=${encodeURIComponent(shot.date)}`;
+      const maps = `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}`;
+      el.innerHTML = `<div class="gshot${opts && opts.compact ? ' compact' : ''}">
+        <h3>นี่คือหน้าร้านคุณบน Google Maps ที่เราตรวจ</h3>
+        <a class="pic" href="${maps}" target="_blank" rel="noopener"><img src="${src}" alt="หน้าร้าน ${esc(shot.name || '')} บน Google Maps" loading="lazy"></a>
+        <div><ol>${shot.marks.map((m) => `<li><b>${m.n}</b><span>${esc(m.text)}</span></li>`).join('')}</ol>
+        <small>ภาพจาก Google Maps · <span>${thDay(shot.date)}</span></small></div>
+      </div>`;
+      el.hidden = false;
+    });
+  };
+}());

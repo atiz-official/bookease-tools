@@ -112,6 +112,9 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .vol-parts b{color:var(--ink-2);font-weight:700}
 .vol .num{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:.95;color:var(--blue)}
 .found{font-size:22px;font-weight:800;line-height:1.3}
+/* Proof first (Art 2026-11-23, locked): the shop's own Google Maps page comes right under its name, before the search numbers */
+.proof{margin-top:6px}
+.proof:not([hidden]) + .vol-label{border-top:1px solid var(--line);padding-top:20px}
 .found .bad{color:var(--bad)} .found .good{color:var(--good)} .found .wait{color:#B45309}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .stat{background:var(--ground);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
@@ -295,6 +298,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 </div>
 
 <script src="volume.js?v=20261117c"></script>
+<script src="shots/shot.js?v=20261123"></script>
 <script>
 /* ── config ─────────────────────────────────────────────────────── */
 const CONFIG = {
@@ -692,6 +696,7 @@ function paint() {
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
     <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
+    <div class="proof" id="gshot" hidden></div>
     ${headline(k)}
   </section>
 
@@ -724,6 +729,7 @@ function paint() {
   </footer>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
+  if (window.radarShot) window.radarShot($('gshot'), s.id, 'shots/');
   const share = $('share');
   if (share) {
     const url = `${location.origin}${location.pathname}${link(R)}`;
