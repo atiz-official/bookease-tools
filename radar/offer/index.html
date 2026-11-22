@@ -61,7 +61,7 @@ h1{font:700 24px/1.25 Anuphan;margin:14px 0 2px;text-wrap:balance}
 <body>
 <div class="wrap" id="app"><p class="msg">กำลังเปิดผลตรวจ…</p></div>
 <script>
-// One card: the shop's Shop Radar result + the package we recommend + price + "เริ่มเลย" (opens LINE @bookease with the order prefilled).
+// One card: the shop's Shop Radar result + the package we recommend + price + "เริ่มเลย" (opens the pay page radar/pay for that package).
 // Data = the cached Shop Radar report (/view, 7 days). No new Google calls here.
 const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
 const LINE_OA = '@bookease';
@@ -123,8 +123,8 @@ function render(r) {
   const rec = recommend(top3, total, hubRank, hub);
   const t = TIERS[rec.price];
   const first = ahead[0];
-  const order = `เริ่มเลย · แพ็กเกจ ${rec.price.toLocaleString()} บาท/เดือน\nร้าน: ${s.name}\nรหัสร้าน: ${s.id}`;
-  const lineHref = `https://line.me/R/oaMessage/${LINE_OA}/?${encodeURIComponent(order)}`;
+  // "เริ่มเลย" opens the one-page bill + pay page (radar/pay): no quotation needed before paying (Art 2026-11-21).
+  const payHref = `../pay/?p=${encodeURIComponent(s.id)}&t=${rec.price}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
   const report = `../?p=${encodeURIComponent(s.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
   const self = `${location.origin}${location.pathname}?p=${encodeURIComponent(s.id)}${C ? `&c=${encodeURIComponent(C)}` : ''}`;
   document.title = `ผลตรวจร้าน ${s.name} · bookease`;
@@ -145,13 +145,13 @@ function render(r) {
         <div class="why">${esc(rec.why)}</div>
         <ul>${t.items.map(([e, x]) => `<li><span>${e}</span>${esc(x)}</li>`).join('')}</ul>
       </div>
-      <a class="go" id="go" href="${lineHref}">เริ่มเลย ทาง LINE</a>
+      <a class="go" id="go" href="${payHref}">เริ่มเลย</a>
       <p class="sub">ไม่ผูกมัด ยกเลิกได้ทุกเดือน · ใช้ได้ทุกร้าน</p>
     </div>
     <div class="links"><button id="more">ดูแพ็กเกจอื่น</button><a href="${report}">ดูผลตรวจเต็ม</a></div>
     <div id="all" hidden><img src="packages.png" alt="แพ็กเกจ 1,290 / 2,490 / 3,490 บาทต่อเดือน"></div>
     <p class="foot">LINE ${LINE_OA} · ${PHONE}</p>
-    ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วข้อความเข้า ${LINE_OA} พร้อมชื่อร้านและแพ็กเกจ)
+    ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วเห็นยอดชำระและจ่ายได้ทันที ไม่ต้องส่งใบเสนอราคา)
       <input id="link" readonly value="${esc(self)}"><button id="copy">คัดลอกลิงก์</button> <span id="ok" hidden>คัดลอกแล้ว</span></div>` : ''}`;
   $('more').onclick = () => { $('all').hidden = !$('all').hidden; $('more').textContent = $('all').hidden ? 'ดูแพ็กเกจอื่น' : 'ซ่อนแพ็กเกจ'; };
   if (STAFF) {
