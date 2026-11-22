@@ -13,7 +13,7 @@
 .gshot img{width:100%;height:auto;display:block}
 .gshot ol{list-style:none;display:flex;flex-direction:column;gap:10px;padding:0;margin:0}
 .gshot li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.4}
-.gshot li b{flex:none;width:22px;height:22px;border-radius:50%;background:#7C3AED;color:#fff;font:700 13px/22px Inter,Arial,sans-serif;text-align:center}
+.gshot li b{flex:none;width:22px;height:22px;border-radius:50%;background:#2D55EB;color:#fff;font:700 13px/22px Inter,Arial,sans-serif;text-align:center}
 .gshot small{display:block;margin-top:12px;color:#6B7383;font-size:13px}
 .gshot small span{white-space:nowrap}
 @media (max-width:560px){.gshot{grid-template-columns:1fr}.gshot a.pic{max-width:340px}}

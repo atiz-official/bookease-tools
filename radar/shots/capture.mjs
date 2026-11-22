@@ -79,10 +79,10 @@ for (const shop of list) {
         const inset = m.kind === 'web' || m.kind === 'phone';
         const b = inset ? { x: m.x + 14, y: m.y + 3, w: m.w - 28, h: m.h - 6 } : { x: m.x - 4, y: m.y - 2, w: m.w + 8, h: m.h + 4 };
         const d = document.createElement('div');
-        d.style.cssText = `position:fixed;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;border:3px solid #7C3AED;border-radius:10px;z-index:99999;pointer-events:none;box-sizing:border-box`;
+        d.style.cssText = `position:fixed;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;border:3px solid #2D55EB;border-radius:10px;z-index:99999;pointer-events:none;box-sizing:border-box`;
         const n = document.createElement('div');
         n.textContent = m.n;
-        n.style.cssText = 'position:absolute;right:-12px;top:-12px;width:22px;height:22px;border-radius:50%;background:#7C3AED;color:#fff;font:700 14px Arial;display:flex;align-items:center;justify-content:center';
+        n.style.cssText = 'position:absolute;right:-12px;top:-12px;width:22px;height:22px;border-radius:50%;background:#2D55EB;color:#fff;font:700 14px Arial;display:flex;align-items:center;justify-content:center';
         d.appendChild(n);
         document.body.appendChild(d);
       }
