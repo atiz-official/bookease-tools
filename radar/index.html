@@ -295,6 +295,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 </div>
 
 <script src="volume.js?v=20261117c"></script>
+<script src="shots/shot.js?v=20261123"></script>
 <script>
 /* ── config ─────────────────────────────────────────────────────── */
 const CONFIG = {
@@ -694,6 +695,7 @@ function paint() {
     <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
     ${headline(k)}
   </section>
+  <section class="card" id="gshot" hidden></section>
 
   <section class="main">
     <div class="card">
@@ -724,6 +726,7 @@ function paint() {
   </footer>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
+  if (window.radarShot) window.radarShot($('gshot'), s.id, 'shots/');
   const share = $('share');
   if (share) {
     const url = `${location.origin}${location.pathname}${link(R)}`;
