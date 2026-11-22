@@ -897,6 +897,13 @@ addEventListener('message', (e) => {
     catch (e) { console.error('[report] demo load failed', e); }
   }
   const p = qs.get('p'), c = qs.get('c') || '', a = qs.get('a') || '', sp = qs.get('s') || '';
+  // A demo link the sales team sent (?l=<lead id>, made on bookease.co/admin/funnel): tell the worker it was opened.
+  // text/plain keeps it a simple request (no preflight); the page never waits for it.
+  const lead = qs.get('l') || '';
+  if (p && /^[a-z0-9]{8}$/.test(lead)) {
+    fetch(`${CONFIG.api}/lead/open`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ l: lead, p }) })
+      .catch((e) => console.error('[report] lead open not counted', e));
+  }
   if (p) {
     show('s-busy');
     $('busy-text').textContent = 'กำลังเปิดรายงาน';

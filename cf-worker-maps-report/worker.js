@@ -39,6 +39,7 @@
 import { AREAS, AREAS_AS_OF, DISTRICTS, VOLUMES } from './areas-data.js';
 import { wordFromListing, wordFromReviews } from './keywords.js';
 import { MORE, MORE_AS_OF } from './volumes-more.js';
+import { leadRoute } from './leads.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
 const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io', 'https://bookease.co'];
@@ -965,6 +966,11 @@ export default {
       if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
       let body;
       try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400, origin); }
+
+      // Sales lead lists, demo opens and the funnel (leads.js). Admin routes need the CMS login; /lead/open is public.
+      const leadRes = await leadRoute(url.pathname, body, { env, json, origin, google, isCmsAdmin, underDailyCap,
+        requestUrl: request.url, CATEGORIES, metres, bkkDay, gIndex });
+      if (leadRes) return leadRes;
 
       // A view or a tap on call / map / web… (sendBeacon from our pages). Counts tracked shops only.
       if (url.pathname === '/hit') {
