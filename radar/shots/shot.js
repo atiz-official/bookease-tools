@@ -51,6 +51,7 @@
         <small>ภาพจาก Google Maps · <span>${thDay(shot.date)}</span></small></div>
       </div>`;
     el.hidden = false;
+    document.dispatchEvent(new CustomEvent('radar-shot', { detail: { placeId, marks: shot.marks } }));
   }
   // While the iMac is taking the picture: a quiet placeholder of the same size, so nothing jumps when it lands.
   function waiting(el, opts) {
