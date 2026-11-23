@@ -58,7 +58,7 @@ h1{font:700 24px/1.25 Anuphan;margin:14px 0 2px;text-wrap:balance}
 .msg{text-align:center;padding:40px 10px;color:var(--ink-2)}
 .msg a{display:inline-block;margin-top:12px;color:var(--blue);font-weight:600}
 </style>
-<script src="../shots/shot.js?v=20261123"></script>
+<script src="../shots/shot.js?v=20261123b"></script>
 </head>
 <body>
 <div class="wrap" id="app"><p class="msg">กำลังเปิดผลตรวจ…</p></div>
@@ -156,7 +156,7 @@ function render(r) {
     <p class="foot">LINE ${LINE_OA} · ${PHONE}</p>
     ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วข้อความเข้า ${LINE_OA} พร้อมชื่อร้านและแพ็กเกจ)
       <input id="link" readonly value="${esc(self)}"><button id="copy">คัดลอกลิงก์</button> <span id="ok" hidden>คัดลอกแล้ว</span></div>` : ''}`;
-  if (window.radarShot) window.radarShot($('gshot'), s.id, '../shots/', { compact: true });
+  if (window.radarShot) window.radarShot($('gshot'), s.id, '../shots/', { compact: true, api: API });
   $('more').onclick = () => { $('all').hidden = !$('all').hidden; $('more').textContent = $('all').hidden ? 'ดูแพ็กเกจอื่น' : 'ซ่อนแพ็กเกจ'; };
   if (STAFF) {
     $('copy').onclick = async () => {
