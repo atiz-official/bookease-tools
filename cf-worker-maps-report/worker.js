@@ -98,7 +98,7 @@ function cors(origin) {
   return {
     'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Shot-Key',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -898,6 +898,40 @@ async function bldEnsure(env, b) {
   return rec;
 }
 
+
+// ── real Google Maps picture of the shop (Shop Radar "proof first", Art 2026-11-23) ──
+// Every report asks for one. The iMac (radar/shots/watch.mjs) takes the queue, shoots the shop's own Maps page in
+// headless Chrome and uploads the picture here; the report and offer pages show it as soon as it lands.
+// Queue in D1 (strongly consistent, so the iMac sees a new shop within one poll); pictures in KV for 7 days, like reports.
+const SHOT_TTL = CACHE_SECONDS;
+const SHOT_FAIL_TTL = 24 * 3600; // a shop that could not be shot is not retried for a day
+const shotId = (v) => (/^[A-Za-z0-9_-]{10,200}$/.test(v || '') ? v : '');
+async function shotDb(env, sql, binds, mode) {
+  const run = () => { const st = env.GROWTH_DB.prepare(sql).bind(...binds); return mode === 'all' ? st.all() : mode === 'first' ? st.first() : st.run(); };
+  try { return await run(); } catch (e) {
+    if (!/no such table/i.test(String(e && e.message))) throw e;
+    await env.GROWTH_DB.prepare('CREATE TABLE IF NOT EXISTS shot_queue (place_id TEXT PRIMARY KEY, queued_at INTEGER NOT NULL)').run();
+    return run();
+  }
+}
+async function queueShot(env, placeId) {
+  if (!env.GROWTH_DB || !env.REPORTS || !shotId(placeId)) return;
+  if (await env.REPORTS.get(`shot/meta/${placeId}`)) return; // have it, or it failed today
+  await shotDb(env, 'INSERT OR IGNORE INTO shot_queue (place_id, queued_at) VALUES (?, ?)', [placeId, Date.now()]);
+}
+async function shotKeyOk(env, request) {
+  const got = new TextEncoder().encode(request.headers.get('X-Shot-Key') || '');
+  const want = new TextEncoder().encode(env.SHOT_KEY || '');
+  if (!want.length || got.length !== want.length) return false;
+  return crypto.subtle.timingSafeEqual ? crypto.subtle.timingSafeEqual(got, want) : got.every((b, i) => b === want[i]);
+}
+async function shotStatus(env, placeId) {
+  const meta = await env.REPORTS.get(`shot/meta/${placeId}`, 'json');
+  if (meta) return meta;
+  const q = env.GROWTH_DB ? await shotDb(env, 'SELECT queued_at FROM shot_queue WHERE place_id = ?', [placeId], 'first') : null;
+  return q ? { status: 'pending', queuedAt: q.queued_at } : { status: 'none' };
+}
+
 // ── handler ─────────────────────────────────────────────────────────
 
 export { growthCard, growthFlex, growthLadder, lineWeekly, lineSignatureOk };
@@ -919,6 +953,7 @@ export default {
         const saved = await loadReport(env, request.url,
           reportKey(placeId, catParam(q.get('c')), areaParam(q.get('a')), spacingParam(q.get('s'))));
         if (!saved || outdated(saved)) return json({ error: 'not_found' }, 404, origin);
+        await queueShot(env, placeId).catch((e) => console.error('[shot] queue', e && e.stack || e));
         return json(withVolume(saved), 200, origin);
       }
 
@@ -959,6 +994,45 @@ export default {
         for (const ev of events) {
           try { await lineEvent(env, ev); } catch (e) { console.error('[line] event', e && e.stack || e); }
         }
+        return json({ ok: true }, 200, origin);
+      }
+
+      // The shop's real Google Maps picture: status + list (page), the image itself, and the iMac's queue/upload.
+      if (request.method === 'GET' && url.pathname === '/shot') {
+        const id = shotId(url.searchParams.get('p'));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        return json(await shotStatus(env, id), 200, origin, { 'Cache-Control': 'no-store' });
+      }
+      if (request.method === 'GET' && url.pathname === '/shot/img') {
+        const id = shotId(url.searchParams.get('p'));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        const img = await env.REPORTS.get(`shot/img/${id}`, 'arrayBuffer');
+        if (!img) return json({ error: 'not_found' }, 404, origin);
+        return new Response(img, { headers: { ...cors(origin), 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600' } });
+      }
+      if (url.pathname === '/shot/queue' || url.pathname === '/shot/upload' || url.pathname === '/shot/fail') {
+        if (!(await shotKeyOk(env, request))) return json({ error: 'unauthorized' }, 401, origin);
+        if (request.method === 'GET' && url.pathname === '/shot/queue') {
+          const r = await shotDb(env, 'SELECT place_id, queued_at FROM shot_queue ORDER BY queued_at LIMIT 20', [], 'all');
+          return json({ queue: (r.results || []).map((x) => ({ id: x.place_id, queuedAt: x.queued_at })) }, 200, origin);
+        }
+        if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, origin);
+        let b;
+        try { b = await request.json(); } catch { return json({ error: 'invalid_json' }, 400, origin); }
+        const id = shotId(String(b.id || ''));
+        if (!id) return json({ error: 'bad_place_id' }, 400, origin);
+        if (url.pathname === '/shot/upload') {
+          const jpg = Uint8Array.from(atob(String(b.jpg || '')), (c) => c.charCodeAt(0));
+          if (jpg.length < 2000 || jpg[0] !== 0xFF || jpg[1] !== 0xD8) return json({ error: 'not_a_jpeg' }, 400, origin);
+          const marks = (Array.isArray(b.marks) ? b.marks : []).slice(0, 6).map((m, i) => ({ n: i + 1, kind: String(m.kind || '').slice(0, 10), text: String(m.text || '').slice(0, 120) }));
+          const meta = { status: 'ready', date: String(b.date || '').slice(0, 10), name: String(b.name || '').slice(0, 160), marks };
+          await env.REPORTS.put(`shot/img/${id}`, jpg, { expirationTtl: SHOT_TTL });
+          await env.REPORTS.put(`shot/meta/${id}`, JSON.stringify(meta), { expirationTtl: SHOT_TTL });
+        } else {
+          await env.REPORTS.put(`shot/meta/${id}`, JSON.stringify({ status: 'none' }), { expirationTtl: SHOT_FAIL_TTL });
+          console.error('[shot] failed', id, String(b.why || '').slice(0, 200));
+        }
+        await shotDb(env, 'DELETE FROM shot_queue WHERE place_id = ?', [id]);
         return json({ ok: true }, 200, origin);
       }
 
@@ -1181,6 +1255,8 @@ export default {
         if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
         const key = reportKey(placeId, cat, area, spacing);
         const old = await loadReport(env, request.url, key);
+        // Ask for the shop's Google Maps picture before answering, so the page's first /shot call already sees "pending".
+        await queueShot(env, placeId).catch((e) => console.error('[shot] queue', e && e.stack || e));
         if (old && !outdated(old) && Date.now() - Date.parse(old.checkedAt) < FRESH_SECONDS * 1000) return json({ ...withVolume(old), cached: true }, 200, origin);
         if (!(await underDailyCap(env, request.url, 'report'))) return json({ error: 'full_today' }, 429, origin);
         const report = await buildReport(env, placeId, cat, area, spacing);
