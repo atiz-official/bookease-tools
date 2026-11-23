@@ -6,8 +6,8 @@
 // Rules this script keeps:
 // - The opening-hours row (open/closed, times) is hidden before the shot and the picture is rejected if any open/closed text is left:
 //   Radar never mentions open/closed or time of day (Art 2026-11-19).
-// - Boxes are drawn on Google's own rows from the live page, numbered 1, 2, 3… in order, only for rows that exist.
-// - A booking button counts only when it is Google's own button, never a facebook.com link.
+// - The picture is Google's page as it is (no boxes, Art 2026-11-23); beside it, a short list of what we found:
+//   rating, phone, Google's own booking button, a real website (a LINE / Facebook / IG link in that row is flagged).
 // - If Google shows a block/consent page the run stops: no CAPTCHA solving, ever.
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
@@ -37,7 +37,7 @@ for (const shop of list) {
     fs.writeFileSync(path.join(DIR, `${shop.id}.jpg`), r.jpg);
     index[shop.id] = { date: today, name: r.name, marks: r.marks };
     fs.writeFileSync(INDEX, `${JSON.stringify(index, null, 1)}\n`);
-    console.log(`ok   ${((Date.now() - t0) / 1000).toFixed(1)}s ${shop.id} ${r.name} · ${r.marks.map((m) => `${m.n}=${m.kind}`).join(' ')}${r.hoursHidden ? '' : ' (no hours row)'}`);
+    console.log(`ok   ${((Date.now() - t0) / 1000).toFixed(1)}s ${shop.id} ${r.name} · ${r.marks.map((m) => `${m.kind === 'ok' ? '✓' : '!'} ${m.text}`).join(' · ')}${r.hoursHidden ? '' : ' (no hours row)'}`);
   } catch (e) {
     console.error(`FAIL ${shop.id} ${shop.name}:`, e.message);
     failed.push({ id: shop.id, name: shop.name, why: e.message });
