@@ -38,23 +38,31 @@ export async function shoot(pg, id) {
       && !e.closest('[data-item-id]') && !/facebook\.com|instagram\.com/.test(e.href || '') && box(e) && box(e).x < 520 && box(e).y < addrY); // Google's button sits above the address row; owner posts further down can say "จอง" too
     const web = document.querySelector('a[data-item-id="authority"]');
     const phone = document.querySelector('button[data-item-id^="phone"]');
-    // What we found, in plain words, for the list beside the picture (Art 2026-11-23: clean picture, no boxes or numbers).
-    // kind 'ok' = found on the page · 'warn' = not found, or the website row holds a LINE / Facebook / IG link.
+    // What we found, in plain words, for the list beside the picture (Art 2026-11-23). kind 'ok' = found · 'warn' = not
+    // found, or the website row holds a LINE / Facebook / IG link. A second line after "\n" is the small grey detail.
+    // Rating is left out: it is plain to see in the picture.
     const marks = [];
-    const starsText = stars && stars.getAttribute('aria-label').replace(/\s+/g, ' ').trim().replace(/\s*ดาว$/, '');
-    const nReviews = reviews && (reviews.getAttribute('aria-label').match(/[\d,]+/) || [''])[0];
-    if (starsText && nReviews) marks.push({ kind: 'ok', text: `คะแนน ${starsText} จาก ${nReviews} รีวิว` });
-    else marks.push({ kind: 'warn', text: 'ยังไม่พบรีวิวบน Google' });
-    const tel = phone && (phone.getAttribute('aria-label') || '').replace(/^โทรศัพท์:\s*/, '').trim();
-    marks.push(tel ? { kind: 'ok', text: `มีเบอร์โทร ${tel}` } : { kind: 'warn', text: 'ยังไม่พบเบอร์โทร' });
-    marks.push(book ? { kind: 'ok', text: 'มีปุ่มจองออนไลน์บน Google' } : { kind: 'warn', text: 'ยังไม่พบปุ่มจองออนไลน์บน Google' });
     const site = (web && (web.getAttribute('aria-label') || '').replace(/^เว็บไซต์:\s*/, '').trim()) || '';
+    const notSite = /lin\.ee|line\.me/i.test(site) ? 'ลิงก์ LINE' : /facebook\.com|fb\.com/i.test(site) ? 'เพจ Facebook' : /instagram\.com/i.test(site) ? 'Instagram' : '';
     if (!web) marks.push({ kind: 'warn', text: 'ยังไม่พบเว็บไซต์ร้าน' });
-    else if (/lin\.ee|line\.me/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็นลิงก์ LINE ไม่ใช่เว็บร้าน' });
-    else if (/facebook\.com|fb\.com/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็นเพจ Facebook ไม่ใช่เว็บร้าน' });
-    else if (/instagram\.com/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็น Instagram ไม่ใช่เว็บร้าน' });
-    else marks.push({ kind: 'ok', text: `มีเว็บไซต์ร้าน ${site}` });
+    else if (notSite) marks.push({ kind: 'warn', text: `ช่องเว็บไซต์เป็น${notSite}\n(ยังไม่ใช่เว็บไซต์ร้าน)` });
+    else marks.push({ kind: 'ok', text: `มีเว็บไซต์ร้าน\n(${site})` });
+    marks.push(phone ? { kind: 'ok', text: 'มีเบอร์โทรติดต่อ' } : { kind: 'warn', text: 'ยังไม่พบเบอร์โทร' });
+    marks.push(book ? { kind: 'ok', text: 'มีปุ่มจองออนไลน์บน Google' } : { kind: 'warn', text: 'ยังไม่พบปุ่มจองออนไลน์บน Google' });
+    if (!(stars && reviews)) marks.push({ kind: 'warn', text: 'ยังไม่มีรีวิวบน Google' });
     marks.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'ok' ? -1 : 1)); // what is fine first, then what to fix
+
+    // At most ONE thin box (Art 2026-11-23: "1 is ok, don't annotate 3-4"): the website row when it holds a LINE / FB / IG
+    // link (amber, the thing to fix); else a real website, else Google's booking button (blue); else none.
+    const one = web && notSite ? { el: web, color: '#D97706', inset: true } : web ? { el: web, color: '#2D55EB', inset: true }
+      : book ? { el: book, color: '#2D55EB', inset: false } : null;
+    if (one && box(one.el)) {
+      const m = box(one.el);
+      const b = one.inset ? { x: m.x + 12, y: m.y + 3, w: m.w - 24, h: m.h - 6 } : { x: m.x - 4, y: m.y - 3, w: m.w + 8, h: m.h + 6 };
+      const d = document.createElement('div');
+      d.style.cssText = `position:fixed;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;border:2px solid ${one.color};border-radius:10px;z-index:99999;pointer-events:none;box-sizing:border-box`;
+      document.body.appendChild(d);
+    }
     // The picture ends a little below the last of these rows (stars, booking button, address, website, phone).
     const rowBoxes = [starsRow, book, addrEl, web, phone].map(box).filter(Boolean);
     const bottom = Math.min(1500, Math.max(400, ...rowBoxes.map((m) => m.y + m.h)) + 40);
