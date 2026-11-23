@@ -1,6 +1,8 @@
 # Shop Radar · real Google Maps picture of the shop
 
-Locked by Art 2026-11-23: the report starts with the shop's own Google Maps page ("proof first"), boxes and numbers in BookEase blue `#2D55EB`.
+Locked by Art 2026-11-23: the report starts with the shop's own Google Maps page ("proof first"). The picture is Google's page as it is,
+no boxes or numbers; beside it "สรุปที่ตรวจพบ": green tick = found (rating, phone, Google's booking button, a real website),
+amber "!" = not found ("ยังไม่พบ…") or the website row holds a LINE / Facebook / IG link.
 
 ## How a picture gets on a report
 1. Someone opens or makes a report → the worker (`cf-worker-maps-report`) puts the shop in the queue (D1 table `shot_queue`) before it answers.
@@ -11,8 +13,8 @@ Locked by Art 2026-11-23: the report starts with the shop's own Google Maps page
    If the page waits 3 minutes with no picture (iMac asleep or off), the box disappears; the report is unchanged.
 
 Rules kept by `shoot.mjs`: the opening-hours row is hidden and any open/closed text rejects the picture (Radar never
-mentions open/closed); boxes only on rows that exist; booking box = only Google's own button above the address; a
-Facebook/IG link in the website row is called a page; a Google block page pauses the service 30 minutes (never solve a CAPTCHA).
+mentions open/closed); booking = only Google's own button above the address; a LINE / Facebook / IG link in the
+website row is not a website; a Google block page pauses the service 30 minutes (never solve a CAPTCHA).
 
 ## The iMac service
 - Key: 1Password "Atiz Dev" → **Shop Radar shot key**. Same value as worker secret `SHOT_KEY` and the macOS Keychain

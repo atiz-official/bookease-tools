@@ -38,27 +38,26 @@ export async function shoot(pg, id) {
       && !e.closest('[data-item-id]') && !/facebook\.com|instagram\.com/.test(e.href || '') && box(e) && box(e).x < 520 && box(e).y < addrY); // Google's button sits above the address row; owner posts further down can say "จอง" too
     const web = document.querySelector('a[data-item-id="authority"]');
     const phone = document.querySelector('button[data-item-id^="phone"]');
+    // What we found, in plain words, for the list beside the picture (Art 2026-11-23: clean picture, no boxes or numbers).
+    // kind 'ok' = found on the page · 'warn' = not found, or the website row holds a LINE / Facebook / IG link.
     const marks = [];
-    if (starsRow && box(starsRow)) marks.push({ ...box(starsRow), kind: 'stars', text: [stars.getAttribute('aria-label').replace(/\s+/g, ' ').trim(), reviews && `${(reviews.getAttribute('aria-label').match(/[\d,]+/) || [''])[0]} รีวิว`].filter((x) => x && x !== ' รีวิว').join(' จาก ') });
-    if (book) marks.push({ ...box(book), kind: 'book', text: `มีปุ่ม "${label(book)}"` });
-    // Same words as the report: a Facebook/IG link in the website row is a page, not a website.
+    const starsText = stars && stars.getAttribute('aria-label').replace(/\s+/g, ' ').trim().replace(/\s*ดาว$/, '');
+    const nReviews = reviews && (reviews.getAttribute('aria-label').match(/[\d,]+/) || [''])[0];
+    if (starsText && nReviews) marks.push({ kind: 'ok', text: `คะแนน ${starsText} จาก ${nReviews} รีวิว` });
+    else marks.push({ kind: 'warn', text: 'ยังไม่พบรีวิวบน Google' });
+    const tel = phone && (phone.getAttribute('aria-label') || '').replace(/^โทรศัพท์:\s*/, '').trim();
+    marks.push(tel ? { kind: 'ok', text: `มีเบอร์โทร ${tel}` } : { kind: 'warn', text: 'ยังไม่พบเบอร์โทร' });
+    marks.push(book ? { kind: 'ok', text: 'มีปุ่มจองออนไลน์บน Google' } : { kind: 'warn', text: 'ยังไม่พบปุ่มจองออนไลน์บน Google' });
     const site = (web && (web.getAttribute('aria-label') || '').replace(/^เว็บไซต์:\s*/, '').trim()) || '';
-    if (web && box(web)) marks.push({ ...box(web), kind: 'web', text: /facebook\.com|fb\.com/i.test(site) ? 'เพจ Facebook ในช่องเว็บไซต์' : /instagram\.com/i.test(site) ? 'Instagram ในช่องเว็บไซต์' : `เว็บไซต์ ${site}` });
-    if (phone && box(phone)) marks.push({ ...box(phone), kind: 'phone', text: `เบอร์โทร ${(phone.getAttribute('aria-label') || '').replace(/^โทรศัพท์:\s*/, '').trim()}` });
-    marks.forEach((m, i) => { m.n = i + 1; });
-    for (const m of marks) {
-      // Rows (website, phone) touch each other, so their boxes sit inside the row; the stars and the button get a little room outside.
-      const inset = m.kind === 'web' || m.kind === 'phone';
-      const b = inset ? { x: m.x + 14, y: m.y + 3, w: m.w - 28, h: m.h - 6 } : { x: m.x - 4, y: m.y - 2, w: m.w + 8, h: m.h + 4 };
-      const d = document.createElement('div');
-      d.style.cssText = `position:fixed;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;border:3px solid #2D55EB;border-radius:10px;z-index:99999;pointer-events:none;box-sizing:border-box`;
-      const n = document.createElement('div');
-      n.textContent = m.n;
-      n.style.cssText = 'position:absolute;right:-12px;top:-12px;width:22px;height:22px;border-radius:50%;background:#2D55EB;color:#fff;font:700 14px Arial;display:flex;align-items:center;justify-content:center';
-      d.appendChild(n);
-      document.body.appendChild(d);
-    }
-    const bottom = Math.min(1500, Math.max(400, ...marks.map((m) => m.y + m.h)) + 40);
+    if (!web) marks.push({ kind: 'warn', text: 'ยังไม่พบเว็บไซต์ร้าน' });
+    else if (/lin\.ee|line\.me/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็นลิงก์ LINE ไม่ใช่เว็บร้าน' });
+    else if (/facebook\.com|fb\.com/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็นเพจ Facebook ไม่ใช่เว็บร้าน' });
+    else if (/instagram\.com/i.test(site)) marks.push({ kind: 'warn', text: 'ช่องเว็บไซต์เป็น Instagram ไม่ใช่เว็บร้าน' });
+    else marks.push({ kind: 'ok', text: `มีเว็บไซต์ร้าน ${site}` });
+    marks.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'ok' ? -1 : 1)); // what is fine first, then what to fix
+    // The picture ends a little below the last of these rows (stars, booking button, address, website, phone).
+    const rowBoxes = [starsRow, book, addrEl, web, phone].map(box).filter(Boolean);
+    const bottom = Math.min(1500, Math.max(400, ...rowBoxes.map((m) => m.y + m.h)) + 40);
     // Start a little above the shop name: keeps a strip of the shop photo, drops the tall photo and Google's search bar.
     const h1 = document.querySelector('h1');
     const top = Math.max(0, Math.floor((h1 ? h1.getBoundingClientRect().y : 0) - 70));
@@ -71,11 +70,11 @@ export async function shoot(pg, id) {
       const r = t.parentElement.getBoundingClientRect();
       if (r.width && r.x < 516 && r.x + r.width > 60 && r.y < bottom && r.y + r.height > top && getComputedStyle(t.parentElement).visibility !== 'hidden') leftovers.push(t.textContent.trim());
     }
-    return { h1: h1?.textContent?.trim(), hoursHidden: !!hours, marks: marks.map(({ n, kind, text }) => ({ n, kind, text })), top, bottom, leftovers };
+    return { h1: h1?.textContent?.trim(), hoursHidden: !!hours, marks, rows: rowBoxes.length, top, bottom, leftovers };
   }, OPEN_CLOSED.source);
 
   if (info.leftovers.length) throw new Error(`open/closed text still in picture: ${info.leftovers.join(' | ')}`);
-  if (!info.marks.length) throw new Error('no rows found to mark (Google layout changed?)');
+  if (!info.rows) throw new Error('no shop rows found on the page (Google layout changed?)');
   const jpg = await pg.screenshot({ type: 'jpeg', quality: 82, clip: { x: 60, y: info.top, width: 456, height: info.bottom - info.top } });
   return { jpg, name: info.h1, marks: info.marks, hoursHidden: info.hoursHidden };
 }
