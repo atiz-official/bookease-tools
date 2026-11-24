@@ -51,6 +51,13 @@
         <small>ภาพจาก Google Maps · <span>${thDay(shot.date)}</span></small></div>
       </div>`;
     el.hidden = false;
+    // A picture that only just landed can 404 for a moment: try again a few times before hiding the block.
+    const img = el.querySelector('img');
+    let tries = 0;
+    if (img) img.addEventListener('error', () => {
+      if (++tries > 6) { console.error('[radarShot] picture did not load', placeId); el.hidden = true; return; }
+      setTimeout(() => { img.src = `${src}${src.includes('?') ? '&' : '?'}r=${tries}`; }, 3000);
+    });
     document.dispatchEvent(new CustomEvent('radar-shot', { detail: { placeId, marks: shot.marks } }));
   }
   // While the iMac is taking the picture: a quiet placeholder of the same size, so nothing jumps when it lands.

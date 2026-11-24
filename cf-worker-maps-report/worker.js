@@ -906,17 +906,26 @@ async function bldEnsure(env, b) {
 const SHOT_TTL = CACHE_SECONDS;
 const SHOT_FAIL_TTL = 24 * 3600; // a shop that could not be shot is not retried for a day
 const shotId = (v) => (/^[A-Za-z0-9_-]{10,200}$/.test(v || '') ? v : '');
+// Result of each shot (meta + picture) also lives in D1 (shot_state), because KV is not read-after-write: a page that asked
+// before the picture landed got KV's cached "not found" for up to 60 s, saw "none" once the queue row was gone, and hid
+// the picture (found live 2026-11-24). D1 answers the new state at once. KV stays as the fallback for older shots.
 async function shotDb(env, sql, binds, mode) {
   const run = () => { const st = env.GROWTH_DB.prepare(sql).bind(...binds); return mode === 'all' ? st.all() : mode === 'first' ? st.first() : st.run(); };
   try { return await run(); } catch (e) {
     if (!/no such table/i.test(String(e && e.message))) throw e;
     await env.GROWTH_DB.prepare('CREATE TABLE IF NOT EXISTS shot_queue (place_id TEXT PRIMARY KEY, queued_at INTEGER NOT NULL)').run();
+    await env.GROWTH_DB.prepare('CREATE TABLE IF NOT EXISTS shot_state (place_id TEXT PRIMARY KEY, meta TEXT NOT NULL, jpg BLOB, until INTEGER NOT NULL)').run();
     return run();
   }
 }
+async function shotState(env, placeId) {
+  if (!env.GROWTH_DB) return null;
+  return shotDb(env, 'SELECT meta, until FROM shot_state WHERE place_id = ? AND until > ?', [placeId, Date.now()], 'first');
+}
 async function queueShot(env, placeId) {
   if (!env.GROWTH_DB || !env.REPORTS || !shotId(placeId)) return;
-  if (await env.REPORTS.get(`shot/meta/${placeId}`)) return; // have it, or it failed today
+  if (await shotState(env, placeId)) return; // have it, or it failed today
+  if (await env.REPORTS.get(`shot/meta/${placeId}`)) return; // same, from before shot_state existed
   await shotDb(env, 'INSERT OR IGNORE INTO shot_queue (place_id, queued_at) VALUES (?, ?)', [placeId, Date.now()]);
 }
 async function shotKeyOk(env, request) {
@@ -926,6 +935,10 @@ async function shotKeyOk(env, request) {
   return crypto.subtle.timingSafeEqual ? crypto.subtle.timingSafeEqual(got, want) : got.every((b, i) => b === want[i]);
 }
 async function shotStatus(env, placeId) {
+  const row = await shotState(env, placeId);
+  if (row) {
+    try { return JSON.parse(row.meta); } catch (e) { console.error('[shot] bad meta', placeId, e); }
+  }
   const meta = await env.REPORTS.get(`shot/meta/${placeId}`, 'json');
   if (meta) return meta;
   const q = env.GROWTH_DB ? await shotDb(env, 'SELECT queued_at FROM shot_queue WHERE place_id = ?', [placeId], 'first') : null;
@@ -1006,7 +1019,8 @@ export default {
       if (request.method === 'GET' && url.pathname === '/shot/img') {
         const id = shotId(url.searchParams.get('p'));
         if (!id) return json({ error: 'bad_place_id' }, 400, origin);
-        const img = await env.REPORTS.get(`shot/img/${id}`, 'arrayBuffer');
+        const row = env.GROWTH_DB ? await shotDb(env, 'SELECT jpg FROM shot_state WHERE place_id = ? AND until > ? AND jpg IS NOT NULL', [id, Date.now()], 'first') : null;
+        const img = row && row.jpg ? new Uint8Array(row.jpg) : await env.REPORTS.get(`shot/img/${id}`, 'arrayBuffer');
         if (!img) return json({ error: 'not_found' }, 404, origin);
         return new Response(img, { headers: { ...cors(origin), 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600' } });
       }
@@ -1028,11 +1042,15 @@ export default {
           const meta = { status: 'ready', date: String(b.date || '').slice(0, 10), name: String(b.name || '').slice(0, 160), marks };
           await env.REPORTS.put(`shot/img/${id}`, jpg, { expirationTtl: SHOT_TTL });
           await env.REPORTS.put(`shot/meta/${id}`, JSON.stringify(meta), { expirationTtl: SHOT_TTL });
+          await shotDb(env, 'INSERT OR REPLACE INTO shot_state (place_id, meta, jpg, until) VALUES (?, ?, ?, ?)', [id, JSON.stringify(meta), jpg.buffer, Date.now() + SHOT_TTL * 1000]);
         } else {
           await env.REPORTS.put(`shot/meta/${id}`, JSON.stringify({ status: 'none' }), { expirationTtl: SHOT_FAIL_TTL });
+          await shotDb(env, 'INSERT OR REPLACE INTO shot_state (place_id, meta, jpg, until) VALUES (?, ?, NULL, ?)', [id, JSON.stringify({ status: 'none' }), Date.now() + SHOT_FAIL_TTL * 1000]);
           console.error('[shot] failed', id, String(b.why || '').slice(0, 200));
         }
+        // State first, then the queue row: a page polling in between sees "pending" or the result, never "none".
         await shotDb(env, 'DELETE FROM shot_queue WHERE place_id = ?', [id]);
+        await shotDb(env, 'DELETE FROM shot_state WHERE until < ?', [Date.now()]);
         return json({ ok: true }, 200, origin);
       }
 
