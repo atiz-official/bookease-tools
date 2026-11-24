@@ -38,7 +38,15 @@ async function page() {
   return pg;
 }
 
-let pausedUntil = 0;
+// Can this Mac reach Google at all? A dead connection (router, ISP) is not the shop's fault: the shop stays in the
+// queue and is shot when the line is back, instead of being marked failed and skipped for a day (2026-11-23: the
+// iMac lost Google from 14:02 and every shop that afternoon got no picture).
+async function online() {
+  try { const r = await fetch('https://www.google.com/generate_204', { signal: AbortSignal.timeout(8000) }); return r.status === 204; }
+  catch (e) { return false; }
+}
+
+let pausedUntil = 0, offlineSince = 0;
 for (;;) {
   try {
     if (Date.now() < pausedUntil) { await new Promise((r) => setTimeout(r, POLL_MS)); continue; }
@@ -48,12 +56,19 @@ for (;;) {
       try {
         const r = await shoot(await page(), item.id);
         await api('/shot/upload', { id: item.id, jpg: r.jpg.toString('base64'), date: today(), name: r.name, marks: r.marks });
+        if (offlineSince) { log(`Google reachable again after ${((Date.now() - offlineSince) / 60e3).toFixed(0)} min`); offlineSince = 0; }
         log('ok', ((Date.now() - t0) / 1000).toFixed(1) + 's', `waited ${((Date.now() - item.queuedAt) / 1000).toFixed(0)}s`, item.id, r.name);
       } catch (e) {
         if (e.stop) {
           // Google is showing a block/consent page: stop for 30 minutes, leave the queue as it is, never solve a CAPTCHA.
           console.error('[watch] Google block page, pausing 30 min:', e.message);
           pausedUntil = Date.now() + 30 * 60e3;
+          if (pg) await pg.close().catch((err) => console.error('[watch] close page', err.message));
+          break;
+        }
+        if (!(await online())) {
+          if (!offlineSince) { offlineSince = Date.now(); console.error('[watch] cannot reach Google, waiting; queue kept:', e.message); }
+          pausedUntil = Date.now() + 60e3;
           if (pg) await pg.close().catch((err) => console.error('[watch] close page', err.message));
           break;
         }
