@@ -17,7 +17,6 @@ body{background:var(--ground);color:var(--ink);font-family:Sarabun,Inter,system-
 a{color:var(--blue)}
 .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:14px}
 .head{background:#fff;border-radius:18px;padding:22px 20px 18px;position:relative}
-.sample{display:inline-block;margin-bottom:10px;font:700 12px Sarabun;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:3px 10px}
 .logo{height:18px;display:block;margin-bottom:12px}
 .wrap>*,.list,.cat,.row{min-width:0;max-width:100%}
 .eye{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--ink-3)}
@@ -53,7 +52,7 @@ h1{font:800 28px/1.1 Sarabun;margin:6px 0 4px;letter-spacing:-.01em}
   @page{size:A4;margin:10mm}
   body{background:#fff;font-size:12px}
   .wrap{max-width:none;padding:0;gap:6px}
-  .chips,.more,.no-print,.sample{display:none!important}
+  .chips,.more,.no-print{display:none!important}
   .list{columns:2;column-gap:18px}
   .cat{break-inside:avoid;padding:6px 0;border-radius:0}
   .row{padding:4px 0}.th{width:38px;height:38px;border-radius:6px}
@@ -144,7 +143,6 @@ async function load() {
 }
 
 function render(name, pool) {
-  const live = CONF.step === 'live';
   const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
   // Only shops people have reviewed and liked: a listing with almost no reviews may be closed or a home address.
   const groups = CATS.map((c) => ({ c, shops: pool.filter((p) => p.cat === c.k && (p.reviews || 0) >= 5 && (p.rating || 0) >= 4).sort((a, b) => score(b) - score(a)) }))
@@ -155,7 +153,7 @@ function render(name, pool) {
       <div class="tx"><b>${esc(p.name)}</b><small>${p.rating ? `★ ${p.rating} · ${p.reviews} รีวิว · ` : ''}${distText(p.m)}</small></div><span class="go">›</span></a>`;
   $('app').innerHTML = `
     <section class="head">
-      <img class="logo" src="../../brand/bookease-logo.svg" alt="bookease">${live ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
+      <img class="logo" src="../../brand/bookease-logo.svg" alt="bookease">
       <div class="eye">ร้านบริการรอบอาคาร · SERVICES NEARBY</div>
       <h1>${esc(name)}</h1>
       <p class="sub">${total} ร้านในระยะ 1 กม. · แตะร้านเพื่อโทรหรือนำทาง<br><i>${total} places within 1 km · tap a place to call or get directions</i></p>
