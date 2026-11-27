@@ -393,6 +393,7 @@ function newSearch() {
   $('q').value = ''; $('cands').hidden = true; fail($('find-err'), '');
   show('s-find'); exploreLoad(); $('q').focus();
   $('contact-line').href = 'https://line.me/R/ti/p/@bookease';
+  $('contact-line').textContent = 'LINE @bookease';
   $('contact-promo').href = $('contact-line').href;
   $('contact-promo-wrap').hidden = true;
 }
@@ -604,6 +605,13 @@ function nearShop() {
 }
 const latinGap = (t) => (/^[A-Za-z]/.test(t) ? ' ' : '');
 
+// Art 2026-11-22: a clinic is a Dr.Ease prospect, not a BookEase one, so on a clinic report the contact line goes to
+// the Dr.Ease sales LINE @drease (never @easecare, that is after-sales). Clinic = our clinic type, or a shop Google
+// files under a clinic type of its own (e.g. คลินิกทันตกรรม). Every other type keeps @bookease.
+const isClinic = (r) => !!(r && r.category && (r.category.id === 'clinic'
+  || (r.category.id === 'other' && /คลินิก|clinic/i.test(r.category.label || ''))));
+const contactOa = (r) => (isClinic(r) ? '@drease' : '@bookease');
+
 // The push button is a service offer, not a reading of today's rank: it always shows, shop open or closed,
 // top 3 or not (Art 2026-11-19: "don't hide the button. the button is a service").
 function pushLink() {
@@ -775,7 +783,7 @@ function paint() {
   <section class="card bld" id="bld" hidden></section>
   <footer class="print-only print-foot">
     <b>อยากให้ลูกค้าแถวร้านเจอร้านคุณก่อน?</b>
-    ทัก LINE @bookease · โทร 092-641-4296 · ดูรายงานล่าสุด ${esc(reportUrl.replace(/^https?:\/\//, ''))}
+    ทัก LINE ${contactOa(R)} · โทร 092-641-4296 · ดูรายงานล่าสุด ${esc(reportUrl.replace(/^https?:\/\//, ''))}
   </footer>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
@@ -788,10 +796,20 @@ function paint() {
   const cl = $('contact-line');
   if (cl) {
     const url = `${location.origin}${location.pathname}${link(R)}`;
-    cl.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(`อยากให้โปรโมทร้าน ${s.name} ฟรี
+    if (isClinic(R)) {
+      // the free promotion is a BookEase offer, so a clinic gets only the Dr.Ease line
+      const who = s.name.startsWith('คลินิก') ? s.name : `คลินิก ${s.name}`;
+      cl.href = `https://line.me/R/oaMessage/@drease/?${encodeURIComponent(`อยากให้ทีม Dr.Ease ช่วยดู${who}
 ${url}`)}`;
-    $('contact-promo').href = cl.href;
-    $('contact-promo-wrap').hidden = false;
+      cl.textContent = 'LINE @drease';
+      $('contact-promo-wrap').hidden = true;
+    } else {
+      cl.href = `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(`อยากให้โปรโมทร้าน ${s.name} ฟรี
+${url}`)}`;
+      cl.textContent = 'LINE @bookease';
+      $('contact-promo').href = cl.href;
+      $('contact-promo-wrap').hidden = false;
+    }
   }
   const push = $('push');
   if (push) {
