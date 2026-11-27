@@ -54,9 +54,11 @@ h1{font:700 24px/1.25 Anuphan;margin:14px 0 2px;text-wrap:balance}
 .staff{margin-top:16px;border:2px dashed var(--line);border-radius:16px;padding:12px;font-size:14px}
 .staff button{margin-top:8px;height:40px;padding:0 16px;border-radius:999px;border:0;background:var(--ink);color:#fff;font:600 14px Anuphan;cursor:pointer}
 .staff input{width:100%;margin-top:6px;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:14px Inter}
+.shotbox{margin-top:16px}
 .msg{text-align:center;padding:40px 10px;color:var(--ink-2)}
 .msg a{display:inline-block;margin-top:12px;color:var(--blue);font-weight:600}
 </style>
+<script src="../shots/shot.js?v=20261124a"></script>
 </head>
 <body>
 <div class="wrap" id="app"><p class="msg">กำลังเปิดผลตรวจ…</p></div>
@@ -134,6 +136,7 @@ function render(r) {
       <div class="top"><img src="../../brand/bookease-logo.svg" alt="bookease"><span>ผลตรวจร้านฟรี</span></div>
       <h1>${esc(s.name)}</h1>
       <p class="when">ตรวจจาก Google Maps · ${esc(thWhen(r.checkedAt))}</p>
+      <div class="shotbox" id="gshot" hidden></div>
       <p class="q">ลูกค้าเจอร้านคุณไหม?</p>
       <div class="stats">
         <div class="st ${top3 >= Math.ceil(total * 2 / 3) ? 'good' : top3 >= Math.ceil(total / 3) ? 'mid' : 'bad'}"><b>${top3}<i> ใน ${total} พื้นที่ค้นหา</i></b><small>เจอร้านคุณใน 3 ร้านแรก</small></div>
@@ -153,6 +156,7 @@ function render(r) {
     <p class="foot">LINE ${LINE_OA} · ${PHONE}</p>
     ${STAFF ? `<div class="staff"><b>สำหรับทีม</b> · ส่งลิงก์นี้ให้ร้านทาง LINE (ร้านกด "เริ่มเลย" แล้วเห็นยอดชำระและจ่ายได้ทันที ไม่ต้องส่งใบเสนอราคา)
       <input id="link" readonly value="${esc(self)}"><button id="copy">คัดลอกลิงก์</button> <span id="ok" hidden>คัดลอกแล้ว</span></div>` : ''}`;
+  if (window.radarShot) window.radarShot($('gshot'), s.id, '../shots/', { compact: true, api: API });
   $('more').onclick = () => { $('all').hidden = !$('all').hidden; $('more').textContent = $('all').hidden ? 'ดูแพ็กเกจอื่น' : 'ซ่อนแพ็กเกจ'; };
   if (STAFF) {
     $('copy').onclick = async () => {

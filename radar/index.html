@@ -112,6 +112,9 @@ h2{font-size:20px;font-weight:800;line-height:1.3;text-wrap:balance}
 .vol-parts b{color:var(--ink-2);font-weight:700}
 .vol .num{font-size:88px;font-weight:800;letter-spacing:-.035em;line-height:.95;color:var(--blue)}
 .found{font-size:22px;font-weight:800;line-height:1.3}
+/* Proof first (Art 2026-11-23, locked): the shop's own Google Maps page comes right under its name, before the search numbers */
+.proof{margin-top:6px}
+.proof:not([hidden]) + .vol-label{border-top:1px solid var(--line);padding-top:20px}
 .found .bad{color:var(--bad)} .found .good{color:var(--good)} .found .wait{color:#B45309}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .stat{background:var(--ground);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
@@ -260,6 +263,21 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
   .print-foot b{display:block;font:800 17px Sarabun,sans-serif;color:var(--ink);margin-bottom:2px}
   .source{text-align:left}
 }
+
+/* Action card + one CTA, TOP 5 fold, second line for top-3 shops (Art 2026-11-23) */
+.found-but{font-size:16px;color:var(--ink-2);margin-top:-6px}
+.found-but b{color:var(--ink)}
+.rank-list.folded li.x-more{display:none}
+.more-btn{align-self:flex-start;margin-top:4px}
+.act{gap:14px}
+.fix{list-style:none;display:flex;flex-direction:column;gap:14px;margin:2px 0 4px}
+.fix li{display:flex;gap:12px;align-items:flex-start}
+.fix .arr{flex:none;color:var(--blue);font-weight:800;font-size:18px;line-height:1.3}
+.fix b{display:block;font-size:17px;line-height:1.35}
+.fix small{display:block;font-size:14px;color:var(--ink-3);margin-top:2px}
+.act-go{display:flex;align-items:center;justify-content:center;text-decoration:none;min-height:54px;font-size:18px;max-width:520px}
+.act-sub{font-size:13.5px;color:var(--ink-3)}
+.act-sub a{color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
 </style>
 </head>
 <body>
@@ -295,6 +313,7 @@ a.web{text-decoration:none;max-width:150px;overflow:hidden;text-overflow:ellipsi
 </div>
 
 <script src="volume.js?v=20261117c"></script>
+<script src="shots/shot.js?v=20261124a"></script>
 <script>
 /* ── config ─────────────────────────────────────────────────────── */
 const CONFIG = {
@@ -478,10 +497,10 @@ function wherePlace(v) {
 // The neighbourhood in the headline is a picker: the ten nearest the shop, the current one selected.
 function areaPicker(current, prefix) {
   const wrap = (inner) => (prefix ? `<span class="where">${prefix}${inner}</span>` : inner);
-  if (!R.areas || !R.areas.length) return wrap(`<span>${current}</span>`);
+  if (!R.areas || !R.areas.filter((a) => Number(a.km) <= 50).length) return wrap(`<span>${current}</span>`);
   const chosen = R.area && R.area.auto === false ? R.area.id : '';
   const opts = [`<option value=""${chosen ? '' : ' selected'}>${chosen ? (prefix ? 'ที่ใกล้ร้านที่สุด' : 'ย่านใกล้ร้านที่สุด') : current}</option>`]
-    .concat(R.areas.filter((a) => !(R.area && R.area.auto !== false && a.id === R.area.id && R.volume && R.volume.kind === 'area'))
+    .concat(R.areas.filter((a) => Number(a.km) <= 50).filter((a) => !(R.area && R.area.auto !== false && a.id === R.area.id && R.volume && R.volume.kind === 'area'))
       .map((a) => `<option value="${esc(a.id)}"${a.id === chosen ? ' selected' : ''}>${prefix ? '' : 'บริเวณ'}${esc(a.name)} · ${esc(a.km)} กม.</option>`));
   return wrap(`<select class="area-pick" id="area-pick" aria-label="เปลี่ยนย่าน">${opts.join('')}</select>`);
 }
@@ -537,7 +556,11 @@ function headline(k) {
   const second = n === 0 ? '<span class="bad">แต่ไม่เจอร้านคุณ</span>'
     : n === total ? '<span class="good">เจอร้านคุณทุกพื้นที่ค้นหา</span>'
     : `<span class="${n <= 2 ? 'bad' : 'wait'}">เจอร้านคุณ ${n} ใน ${total} พื้นที่ค้นหา</span>`;
-  return `${first}<p class="found">${second}</p>`;
+  const others = k.top10.slice(0, 3).filter((id) => id !== R.shop.id).map((id) => R.places[id]).filter((p) => p && p.reviews != null);
+  const minR = others.length ? Math.min(...others.map((p) => p.reviews)) : null;
+  const behind = n === total && minR != null && R.shop.reviews != null && R.shop.reviews < minR
+    ? `<p class="found-but">แต่ร้านอันดับบนมีรีวิว <b>${range(others.map((p) => p.reviews), fmt)}</b> รีวิว ร้านคุณมี <b>${fmt(R.shop.reviews)}</b></p>` : '';
+  return `${first}<p class="found">${second}</p>${behind}`;
 }
 
 function placeRow(id, pos, cls) {
@@ -558,14 +581,15 @@ function top10List(k) {
   const rank = R.area ? k.hubRank : k.centreRank;
   const rows = k.top10.map((id, i) => (id === R.shop.id
     ? placeRow(id, i + 1, i < 3 ? 'you ok' : 'you')
-    : placeRow(id, i + 1, i < 3 ? 'top3' : '')));
+    : placeRow(id, i + 1, `${i < 3 ? 'top3' : ''}${i >= 5 ? ' x-more' : ''}`)));
   if (!k.top10.includes(R.shop.id)) {
     const between = rank == null ? null : rank - 1 - k.top10.length;
     if (between === null) rows.push('<li class="gap-row">…</li>');
     else if (between > 0) rows.push(`<li class="gap-row">อีก ${between} ร้าน</li>`);
     rows.push(placeRow(R.shop.id, rankText(rank), 'you'));
   }
-  return `<ol class="rank-list">${rows.join('')}</ol>`;
+  const hidden = k.top10.length > 5;
+  return `<ol class="rank-list${hidden ? ' folded' : ''}">${rows.join('')}</ol>${hidden ? `<button class="link more-btn" type="button">ดูทั้งหมด ${k.top10.length} ร้าน</button>` : ''}`;
 }
 
 // The one sales link on the page, right under the shop's own row: only when the shop is open and not in the
@@ -610,23 +634,52 @@ function range(vals, f) {
   return lo === hi ? f(lo) : `${f(lo)}–${f(hi)}`;
 }
 
-function gapCard(k) {
-  const ahead = k.ahead.map((id) => R.places[id]).filter((p) => p && p.detail);
-  if (!ahead.length) return '';
-  const withWeb = ahead.filter((p) => realSite(p.website)).length;
-  const s = R.shop;
-  const title = !realSite(s.website) && withWeb > ahead.length / 2 ? 'ร้านอันดับบนมีเว็บ ร้านคุณยังไม่มี' : 'ร้านคุณ เทียบกับร้านอันดับบน';
-  return `<div class="card">
-    <h2>${title}</h2>
-    <div class="check">
-      <div class="check-row head"><span></span><span class="c">${ahead.length} ร้านแรก</span><span class="c">ร้านคุณ</span></div>
-      <div class="check-row"><span>คะแนนรีวิว</span><span class="c">${range(ahead.map((p) => p.rating), (x) => x)}</span><span class="c">${s.rating == null ? '–' : esc(s.rating)}</span></div>
-      <div class="check-row"><span>จำนวนรีวิว</span><span class="c num">${range(ahead.map((p) => p.reviews), fmt)}</span><span class="c num">${s.reviews == null ? '–' : fmt(s.reviews)}</span></div>
-      <div class="check-row"><span>มีเว็บไซต์</span><span class="c">${withWeb} / ${ahead.length}</span><span class="c ${realSite(s.website) ? 'ok' : 'x'}">${realSite(s.website) ? 'มี' : s.website ? 'มีแค่เพจ' : 'ไม่มี'}</span></div>
-    </div>
-    <div class="cta"><a class="btn2" id="share" target="_blank" rel="noopener">ส่งรายงานนี้ทาง LINE</a></div>
-  </div>`;
+// What to improve, from this report's own numbers (and the Google Maps picture for the booking button), then ONE button.
+// Only things the BookEase package covers or the owner can act on (Brain #26: Google Maps upkeep, website with booking
+// and call, promotion, weekly LINE report).
+function fixItems(k) {
+  const s = R.shop, items = [];
+  const rank = R.area ? k.hubRank : k.centreRank;
+  const from = R.area ? `เมื่อค้นจาก ${R.area.hub}` : 'เมื่อค้นจากหน้าร้าน';
+  if (rank == null || rank > 3) items.push({ id: 'rank', t: 'ขึ้นติด 3 อันดับแรก', d: `ตอนนี้${rank == null ? 'ยังไม่ติดอันดับ' : `อันดับ ${rankText(rank)}`} ${from}` });
+  if (!realSite(s.website)) items.push({ id: 'web', t: 'มีเว็บร้านของตัวเอง กดจองและโทรได้', d: s.website ? `ตอนนี้ช่องเว็บไซต์เป็น${socialName(s.website) || 'ลิงก์อื่น'}` : 'ตอนนี้ยังไม่มีเว็บไซต์' });
+  const top = k.top10.slice(0, 3).filter((id) => id !== s.id).map((id) => R.places[id]).filter((p) => p && p.reviews != null);
+  if (top.length && s.reviews != null && s.reviews < Math.min(...top.map((p) => p.reviews))) items.push({ id: 'rev', t: 'มีรีวิวมากขึ้น', d: `ร้านคุณ ${fmt(s.reviews)} รีวิว · ร้านอันดับบน ${range(top.map((p) => p.reviews), fmt)}` });
+  return items;
 }
+let FIX = [];
+function fixHtml() {
+  return FIX.slice(0, 3).map((f) => `<li><span class="arr" aria-hidden="true">→</span><div><b>${esc(f.t)}</b><small>${esc(f.d)}</small></div></li>`).join('');
+}
+function fixLine() {
+  const url = `${location.origin}${location.pathname}${link(R)}`;
+  const msg = `ร้าน ${R.shop.name}\nอยากให้ BookEase ช่วยปรับหน้าร้าน${FIX.length ? `\n${FIX.slice(0, 3).map((f) => `- ${f.t}`).join('\n')}` : ''}\n${url}`;
+  return `https://line.me/R/oaMessage/@bookease/?${encodeURIComponent(msg)}`;
+}
+function gapCard(k) {
+  FIX = fixItems(k);
+  return `<section class="card act" id="act">
+    <h2 id="act-h">${FIX.length ? `สิ่งที่ควรปรับ ${Math.min(FIX.length, 3)} ข้อ` : 'หน้าร้านคุณอยู่ในเกณฑ์ดี'}</h2>
+    <ul class="fix" id="fix">${fixHtml()}</ul>
+    <a class="btn act-go" id="act-go" target="_blank" rel="noopener" href="${fixLine()}">ให้ BookEase ช่วยปรับหน้าร้าน</a>
+    <p class="act-sub">ทัก LINE @bookease · คุยก่อนได้ ไม่ผูกมัด · <a id="share" target="_blank" rel="noopener">ส่งรายงานนี้ให้คนอื่น</a></p>
+  </section>`;
+}
+// The Google Maps picture knows whether Google shows a booking button; add that item when it lands.
+document.addEventListener('radar-shot', (e) => {
+  const marks = (e.detail && e.detail.marks) || [];
+  if (!marks.some((m) => m.kind === 'warn' && /ปุ่มจอง/.test(m.text)) || FIX.some((f) => f.id === 'book')) return;
+  FIX.splice(Math.min(1, FIX.length), 0, { id: 'book', t: 'มีปุ่มจองบน Google Maps', d: 'ตอนนี้ยังไม่พบปุ่มจองออนไลน์' });
+  const ul = $('fix'); if (ul) ul.innerHTML = fixHtml();
+  const h = $('act-h'); if (h) h.textContent = `สิ่งที่ควรปรับ ${Math.min(FIX.length, 3)} ข้อ`;
+  const go = $('act-go'); if (go) go.href = fixLine();
+});
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('.more-btn');
+  if (!b) return;
+  const ol = b.previousElementSibling; ol.classList.toggle('folded');
+  b.textContent = ol.classList.contains('folded') ? b.textContent.replace('ย่อ', 'ดูทั้งหมด') : 'ย่อรายการ';
+});
 
 function volumeCard() {
   const v = R.volume;
@@ -676,7 +729,7 @@ function paint() {
   const from = R.area ? R.area.hub : 'หน้าร้าน';
   const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(k.keyword)}/@${s.lat},${s.lng},16z?hl=th`;
   const meta = [s.rating != null ? `<span class="star">★ ${esc(s.rating)}</span>` : '', s.reviews != null ? `<span class="num">${fmt(s.reviews)} รีวิว</span>` : ''].join('');
-  const bottom = [volumeCard(), gapCard(k)].filter(Boolean);
+  const bottom = [volumeCard()].filter(Boolean);
   const open = ''; // Art 2026-11-19: never mention open/closed or time of day on Radar results
 
   const rid = reportNo(R);
@@ -692,6 +745,7 @@ function paint() {
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
     <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
+    <div class="proof" id="gshot" hidden></div>
     ${headline(k)}
   </section>
 
@@ -716,6 +770,7 @@ function paint() {
     </div>
   </section>
 
+  ${gapCard(k)}
   ${bottom.length ? `<section class="${bottom.length > 1 ? 'bottom' : ''}">${bottom.join('')}</section>` : ''}
   <section class="card bld" id="bld" hidden></section>
   <footer class="print-only print-foot">
@@ -724,6 +779,7 @@ function paint() {
   </footer>
   <p class="source">ข้อมูลจาก Google · ${thDate(checked)}${open}</p>`;
 
+  if (window.radarShot) window.radarShot($('gshot'), s.id, 'shots/', { api: CONFIG.api });
   const share = $('share');
   if (share) {
     const url = `${location.origin}${location.pathname}${link(R)}`;

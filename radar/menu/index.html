@@ -58,7 +58,6 @@ a{color:var(--blue)}
 .page{width:210mm;height:297mm;position:relative;overflow:hidden;background:#fff;display:grid;grid-template-columns:60mm 1fr;
   font-family:Inter,Anuphan,sans-serif;color:#0A0A0A;line-height:normal;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .page .t{letter-spacing:0!important}
-.page .sample{position:absolute;right:12mm;top:7mm;font:700 8pt Anuphan;color:var(--warn);background:var(--warn-bg);border-radius:99px;padding:.6mm 3mm}
 .side{border-right:.6mm solid #2D55EB;padding:18mm 8mm 12mm 12mm;display:flex;flex-direction:column;min-height:0}
 .side .eye{font:700 8pt Inter;letter-spacing:.16em;color:#2D55EB;line-height:1.5}
 .side h1{font:700 23pt/1.1 Inter;letter-spacing:-.015em;margin-top:4mm;overflow-wrap:anywhere}
@@ -264,7 +263,7 @@ function renderStatus() {
   return st;
 }
 
-function pageHtml(isLive) {
+function pageHtml() {
   const name = esc(rec.name || CONF.name || building.name), area = esc(rec.area || '');
   const month = new Date().toLocaleDateString('th-TH', { month: 'short', year: 'numeric' });
   const { cols, shorter } = columns(paperGroups());
@@ -277,7 +276,6 @@ function pageHtml(isLive) {
   const group = (g) => `<section class="g"><h2><svg class="ic" viewBox="0 0 24 24"><path d="${g.icon}"/></svg><span>${esc(g.th)}<em>${esc(g.en)}</em></span></h2>${g.shops.map(shop).join('')}</section>`;
   const more = '<section class="g"><div class="more">ร้านอื่นๆ รอบอาคาร สแกนดูทั้งหมด<span>More places nearby — scan to see all</span></div></section>';
   return `<div class="page" id="page">
-    ${isLive ? '' : '<span class="sample">ตัวอย่าง · ยังไม่ได้แจกจริง</span>'}
     <aside class="side"><div class="eye"><span class="t">สำหรับลูกบ้านและแขก</span><br>RESIDENTS &amp; GUESTS</div><h1>${name}${area ? `<span>${area}</span>` : ''}</h1>
       <div class="lead"><span class="bl">ร้านดีใกล้ตัว</span><br>จองง่ายทันที<i>Discover local.<br>Book with ease.</i></div>
       <div class="qrw"><div class="qr" id="qr"></div></div><div class="sc"><b><em class="bl" style="font-style:normal">สแกน</em>ดูร้านทั้งหมด</b><span>Scan to see all places</span></div>
@@ -317,8 +315,8 @@ function panelHtml() {
 }
 
 function render() {
-  const isLive = renderStatus() === 'live';
-  $('app').innerHTML = `<div class="cols"${EDIT ? '' : ' style="grid-template-columns:1fr"'}>${EDIT ? panelHtml() : ''}<div class="fit" id="fit">${pageHtml(isLive)}</div></div>`;
+  renderStatus();
+  $('app').innerHTML = `<div class="cols"${EDIT ? '' : ' style="grid-template-columns:1fr"'}>${EDIT ? panelHtml() : ''}<div class="fit" id="fit">${pageHtml()}</div></div>`;
   try { new QRCode($('qr'), { text: PHONE_PAGE + rec.code, width: 600, height: 600, colorDark: '#0A0A0A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
   catch (e) { console.error('[menu] qr', e); }
   fit();

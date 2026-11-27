@@ -29,3 +29,8 @@ CREATE TABLE IF NOT EXISTS growth_orders (
   note           TEXT
 );
 CREATE INDEX IF NOT EXISTS growth_orders_place ON growth_orders (place_id, period, status);
+
+-- Shop Radar Maps picture (worker creates these itself on first use). shot_state is the read-after-write copy of the
+-- result, because KV can answer a stale "not found" for up to 60 s (2026-11-24).
+CREATE TABLE IF NOT EXISTS shot_queue (place_id TEXT PRIMARY KEY, queued_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS shot_state (place_id TEXT PRIMARY KEY, meta TEXT NOT NULL, jpg BLOB, until INTEGER NOT NULL);
