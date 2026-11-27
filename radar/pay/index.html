@@ -94,6 +94,7 @@ const monthNow = () => { const d = new Date(Date.now() + 7 * 3600e3); return `${
 const ph = (s) => String(s).split(' ').map((w) => `<span class="nw">${esc(w)}</span>`).join(' ');
 const lineMsg = (text) => `https://line.me/R/oaMessage/${LINE_OA}/?${encodeURIComponent(text)}`;
 let SHOP = { id: P, name: qs.get('n') || '', address: '' };
+const payByLine = () => lineMsg(`ขอชำระบริการโปรโมทร้าน BookEase ${baht(LIST)} บาท/เดือน + VAT = ${satText(totalSat(LIST))} บาท\nร้าน: ${SHOP.name}\nรหัสร้าน: ${SHOP.id}`);
 
 async function loadShop() {
   try {
@@ -148,12 +149,14 @@ async function startPay() {
     const o = data && data.order;
     if (res.ok && o && o.status === 'PAID') { location.replace(`${back}&order=${encodeURIComponent(o.orderId)}&t=${LIST}`); return; }
     if (res.ok && o && o.invoiceUrl) { location.href = o.invoiceUrl; return; }
+    // Online payment not switched on yet (Atiz Rail answers 503 payments_off): send the bill to LINE so the team replies with how to pay.
+    if (res.status === 503 && data && (data.message === 'payments_off' || data.error === 'payments_off')) { location.href = payByLine(); return; }
     throw new Error(`checkout ${res.status} ${(data && data.error) || ''}`);
   } catch (e) {
     console.error('[pay] checkout', e);
     btn.disabled = false; btn.textContent = `ชำระเงิน ฿${satText(totalSat(LIST))}`;
     err.hidden = false;
-    err.innerHTML = `${ph('เปิดหน้าชำระเงินไม่ได้ตอนนี้ ลองอีกครั้ง หรือ')} <a href="${lineMsg(`ขอชำระบริการโปรโมทร้าน BookEase ${baht(LIST)} บาท/เดือน + VAT = ${satText(totalSat(LIST))} บาท\nร้าน: ${SHOP.name}\nรหัสร้าน: ${SHOP.id}`)}" class="nw">ชำระผ่าน LINE ${LINE_OA}</a>`;
+    err.innerHTML = `${ph('เปิดหน้าชำระเงินไม่ได้ตอนนี้ ลองอีกครั้ง หรือ')} <a href="${payByLine()}" class="nw">ชำระผ่าน LINE ${LINE_OA}</a>`;
   }
 }
 
