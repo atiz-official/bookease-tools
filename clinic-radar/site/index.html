@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic Radar</title>
+<meta name="description" content="ตรวจหน้า Google Maps ของคลินิกคุณฟรี ดูอันดับจริง สิ่งที่ลูกค้าเห็น และ 3 เรื่องที่ควรทำก่อน">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Clinic Radar Template V1.0 (v16, locked 23 Nov 2026): same type, colours and blocks as v16-*.html; only the content
+   is filled from the cloud capture. Narrow single column for a phone. */
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{font-family:'Inter','Sarabun',sans-serif;color:#1F1A2E;-webkit-font-smoothing:antialiased;background:#EFEAE0;min-height:100vh}
+.paper{max-width:480px;margin:14px auto;background:#FFFDF7;border-radius:6px;padding:24px 20px 22px;box-shadow:0 1px 0 #E8E1CF,0 8px 24px rgba(60,40,0,.08)}
+@media (max-width:508px){.paper{margin:0;border-radius:0;box-shadow:none}}
+.brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#7C3AED;text-decoration:none}
+.dot{width:10px;height:10px;border-radius:50%;background:#7C3AED;box-shadow:0 0 0 4px #EDE4FE}
+.title{font-size:21px;font-weight:800;margin-top:12px;line-height:1.35;text-wrap:pretty}.date{font-size:13px;color:#8A7F66;margin-top:4px}
+.intro{font-size:14.5px;color:#4A4360;margin-top:10px;line-height:1.55}
+.strong{margin-top:18px;background:#ECFDF3;border-left:4px solid #12B76A;border-radius:8px;padding:12px 14px;font-size:15.5px;line-height:1.6}
+.strong .k{font-size:12.5px;font-weight:800;color:#067647;margin-bottom:2px}
+h2{font-size:18px;font-weight:700;margin-top:30px;color:#3B1C80;line-height:1.4}
+p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weight:800}
+.fig{margin-top:12px;background:#fff;border:1px solid #ECE6D6;border-radius:14px;padding:12px}
+.fig>img{width:92%;margin:0 auto;display:block;border:1px solid #ECE6D6;border-radius:10px}
+.figlbl{font-size:12.5px;font-weight:800;color:#5B21B6;margin-bottom:8px}
+.how{font-size:13px;color:#7A705A;margin-top:10px;line-height:1.55}
+.how a{color:#5B21B6;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+.legend div{display:flex;gap:6px;font-size:13.5px;line-height:1.5}
+.legend .n{flex:none;width:20px;height:20px;border-radius:50%;background:#7C3AED;color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.legend .x{background:#F04438}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.tile3{background:#fff;border:1px solid #ECE6D6;border-radius:12px;padding:10px 10px 9px}
+.tile3 .v{font-size:20px;font-weight:800;line-height:1.15}.tile3 .l{font-size:12.5px;color:#8A7F66;margin-top:4px;line-height:1.35}
+.tile3.g .v{color:#067647}.tile3.a .v{color:#B54708}.tile3.r .v{color:#B42318}
+.read{margin-top:12px;font-size:15px;line-height:1.55;font-weight:700}
+.jr{margin-top:12px;border:1px solid #ECE6D6;border-radius:14px;background:#fff;overflow:hidden}
+.js{display:flex;gap:12px;padding:12px 14px;border-top:1px solid #F1ECDF;align-items:center}.js:first-child{border-top:none}
+.js .ico{flex:none;width:34px;height:34px;border-radius:10px;background:#F4EEFF;display:flex;align-items:center;justify-content:center}
+.js .t{font-size:14.5px;font-weight:800}.js .d{font-size:13.5px;color:#4A4360;line-height:1.5;margin-top:1px}
+.js .s{flex:none;font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px}
+.s.g{color:#067647;background:#ECFDF3}.s.a{color:#B54708;background:#FFF6E5}.s.r{color:#B42318;background:#FEF1F1}
+.ac{margin-top:12px;background:#fff;border:1px solid #ECE6D6;border-radius:14px;padding:14px}
+.ah{display:flex;gap:10px;align-items:center}.ah .num{flex:none;width:28px;height:28px;border-radius:50%;background:#7C3AED;color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.ah b{font-size:16px;line-height:1.35}
+.vis{display:flex;align-items:center;gap:8px;margin-top:12px}.vis.col{flex-direction:column;align-items:stretch}
+.pane{position:relative;flex:1;border:1px solid #ECE6D6;border-radius:10px;padding:18px 6px 6px;background:#FCFBF8;min-width:0}
+.pane img{width:100%;display:block;border-radius:6px}
+.tag{position:absolute;top:-1px;left:8px;font-size:11.5px;font-weight:800;padding:1px 8px;border-radius:0 0 8px 8px}
+.tag.now{background:#FDE2E2;color:#B42318}.tag.do{background:#DCFAE6;color:#067647}
+.arrow{flex:none;font-size:20px;color:#7C3AED;font-weight:800;text-align:center}
+.cap{font-size:14px;color:#1F1A2E;margin-top:10px;line-height:1.45;font-weight:700}.feat{font-size:13px;color:#5B21B6;margin-top:2px}
+.st{display:inline-block;font-size:12.5px;font-weight:800;border-radius:999px;padding:2px 9px;margin-top:7px;margin-right:4px}
+.free{background:#DCFAE6;color:#067647}.new{background:#EDE4FE;color:#5B21B6}.paid{background:#FEF0C7;color:#93370D}
+.pill{display:inline-block;background:#EEF2FF;color:#3730A3;font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;margin:2px}
+.phone{position:relative;width:96px;margin:0 auto;border:4px solid #1F1A2E;border-radius:16px;overflow:hidden;background:#fff}
+.phone img{border-radius:0}
+.sign{display:flex;gap:12px;align-items:center;margin-top:28px}
+.av{width:44px;height:44px;border-radius:50%;background:#EDE4FE;color:#5B21B6;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.btn{display:block;text-align:center;background:#06C755;color:#fff;font-weight:700;font-size:15.5px;padding:13px;border-radius:14px;margin-top:14px;text-decoration:none}
+.src{margin-top:22px;border-top:1px dashed #DCD3BD;padding-top:12px;font-size:12.5px;color:#8A7F66;line-height:1.6}.src b{color:#5E5440}
+.src a{color:#5B21B6;font-weight:700}
+/* start screen + waiting */
+.find h1{font-size:24px;font-weight:800;line-height:1.3;margin-top:14px;text-wrap:balance}
+.find .sub{font-size:14.5px;color:#4A4360;margin-top:6px;line-height:1.55}
+.field{display:flex;gap:8px;margin-top:16px}
+.field input{flex:1;min-width:0;border:1.5px solid #DCD3BD;border-radius:12px;padding:12px 13px;font:500 16px 'Sarabun','Inter',sans-serif;color:#1F1A2E;background:#fff}
+.field input:focus{outline:none;border-color:#7C3AED}
+.go{border:0;border-radius:12px;background:#7C3AED;color:#fff;font:800 16px 'Sarabun','Inter',sans-serif;padding:0 18px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:default}
+.go:focus-visible,.cand:focus-visible,.btn:focus-visible{outline:3px solid #3B1C80;outline-offset:2px}
+.cands{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.cand{text-align:left;border:1px solid #ECE6D6;border-radius:12px;background:#fff;padding:11px 13px;cursor:pointer;font:inherit;color:inherit}
+.cand b{display:block;font-size:15px}.cand span{display:block;font-size:13px;color:#8A7F66;margin-top:2px}
+.cand:hover{border-color:#7C3AED}
+.err{color:#B42318;font-weight:700;font-size:14.5px;margin-top:10px}
+.what{margin-top:22px;border-top:1px dashed #DCD3BD;padding-top:14px;font-size:13.5px;color:#4A4360;line-height:1.7}
+.what b{color:#1F1A2E}
+.wait{margin-top:22px;text-align:center;padding:26px 8px}
+.spin{width:38px;height:38px;border-radius:50%;border:4px solid #EDE4FE;border-top-color:#7C3AED;margin:0 auto 14px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.wait b{display:block;font-size:16px}.wait span{display:block;font-size:13.5px;color:#8A7F66;margin-top:6px;line-height:1.55}
+.steps{list-style:none;margin:16px auto 0;max-width:300px;text-align:left;font-size:13.5px;color:#4A4360;display:flex;flex-direction:column;gap:6px}
+.again{margin-top:14px;font-size:13.5px;color:#4A4360}
+.again summary{cursor:pointer;color:#5B21B6;font-weight:700}
+.again form{display:flex;gap:8px;margin-top:8px}
+.again input{flex:1;min-width:0;border:1.5px solid #DCD3BD;border-radius:10px;padding:9px 11px;font:500 15px 'Sarabun','Inter',sans-serif}
+.again button{border:0;border-radius:10px;background:#7C3AED;color:#fff;font:800 14px 'Sarabun',sans-serif;padding:0 14px;cursor:pointer}
+</style>
+</head>
+<body>
+<main class="paper" id="app">
+  <a class="brand" href="/"><span class="dot"></span>Clinic Radar · โดย Dr.Ease</a>
+  <section class="find" id="find">
+    <h1>ลูกค้าเห็นคลินิกคุณบน Google Maps อย่างไร</h1>
+    <p class="sub">พิมพ์ชื่อคลินิก หรือวางลิงก์ Google Maps แล้วเราจะเปิดหน้าจริงให้ดู พร้อมอันดับเมื่อลูกค้าค้นหา และ 3 เรื่องที่ควรทำก่อน · ฟรี · ประมาณ 1–2 นาที</p>
+    <form class="field" id="qf">
+      <input id="q" autocomplete="off" placeholder="ชื่อคลินิก หรือ ลิงก์ Google Maps" aria-label="ชื่อคลินิก หรือ ลิงก์ Google Maps" required minlength="2">
+      <button class="go" id="go">ตรวจ</button>
+    </form>
+    <div class="err" id="ferr" hidden></div>
+    <div class="cands" id="cands"></div>
+    <div class="what"><b>ในรายงานมีอะไร</b><br>ภาพหน้า Google Maps จริงของคลินิก · ผลค้นหาจริงที่ลูกค้าเห็น ค้นซ้ำ 3 รอบ · เว็บไซต์ของคลินิกบนมือถือ · สิ่งที่ลูกค้าเจอตั้งแต่ค้นจนจอง · 3 เรื่องที่ควรทำก่อน<br>ใช้ข้อมูลสาธารณะบน Google เท่านั้น</div>
+  </section>
+  <section id="wait" class="wait" hidden>
+    <div class="spin" aria-hidden="true"></div>
+    <b id="wtitle">กำลังเปิด Google Maps ของคลินิก</b>
+    <span id="wsub">ใช้เวลาประมาณ 1–2 นาที เปิดหน้านี้ทิ้งไว้ได้ ลิงก์นี้เปิดดูภายหลังได้</span>
+    <ul class="steps"><li>1. เปิดหน้า Google Maps ของคลินิก</li><li>2. ค้นหาใน Google Maps 3 รอบ</li><li>3. เปิดเว็บไซต์คลินิกบนมือถือ</li></ul>
+  </section>
+  <section id="report" hidden></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+  const $ = (id) => document.getElementById(id);
+  const E = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const thDate = (s) => { const [d, t] = String(s).split(' '); const [y, m, dd] = d.split('-').map(Number); return { day: `${dd} ${TH_M[m - 1]} ${y + 543}`, time: t || '', month: `${TH_M[m - 1]} ${y + 543}`, code: `${String(y + 543).slice(-2)}${String(m).padStart(2, '0')}` }; };
+  const fmt = (n) => Number(n).toLocaleString('th-TH');
+  const post = (path, body) => fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .then((r) => r.json().then((j) => ({ ok: r.ok, status: r.status, j })));
+  const show = (id) => ['find', 'wait', 'report'].forEach((k) => { $(k).hidden = k !== id; });
+
+  // ── start: find the clinic ──
+  $('qf').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = $('q').value.trim();
+    $('ferr').hidden = true; $('cands').innerHTML = ''; $('go').disabled = true;
+    try {
+      const r = await post('/find', { q });
+      if (!r.ok) throw new Error(r.j.error === 'bad_link' ? 'อ่านลิงก์นี้ไม่ได้ ลองพิมพ์ชื่อคลินิกแทน' : r.j.error === 'full_today' ? 'วันนี้มีคนใช้เต็มแล้ว ลองใหม่พรุ่งนี้' : 'ค้นไม่สำเร็จ ลองใหม่อีกครั้ง');
+      const c = r.j.candidates || [];
+      if (!c.length) throw new Error('ไม่พบคลินิกนี้บน Google Maps ลองพิมพ์ชื่อให้ตรงกับบน Google หรือวางลิงก์');
+      $('cands').innerHTML = `<div class="figlbl">เลือกคลินิกของคุณ</div>` + c.map((p) => `<button class="cand" type="button" data-id="${E(p.id)}"><b>${E(p.name)}</b><span>${E(p.address)}</span></button>`).join('');
+    } catch (err) { console.error('[clinic-radar] find', err); $('ferr').textContent = err.message; $('ferr').hidden = false; }
+    finally { $('go').disabled = false; }
+  });
+  $('cands').addEventListener('click', (e) => { const b = e.target.closest('.cand'); if (b) start(b.dataset.id); });
+
+  async function start(placeId, term) {
+    show('wait');
+    try {
+      const r = await post('/clinic/start', term ? { placeId, term } : { placeId });
+      if (!r.ok || !r.j.id) throw new Error(r.j.error === 'full_today' ? 'วันนี้ตรวจครบจำนวนแล้ว ลองใหม่พรุ่งนี้' : 'เริ่มตรวจไม่สำเร็จ ลองใหม่อีกครั้ง');
+      history.pushState(null, '', `/r/${r.j.id}`);
+      const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow'; document.head.appendChild(meta);
+      poll(r.j.id);
+    } catch (err) { console.error('[clinic-radar] start', err); show('find'); $('ferr').textContent = err.message; $('ferr').hidden = false; }
+  }
+
+  // ── waiting: the cloud browser takes the pictures ──
+  async function poll(id, n = 0) {
+    let v;
+    try {
+      const r = await fetch(`${API}/clinic/view?id=${id}`, { cache: 'no-store' });
+      if (r.status === 404) { show('find'); $('ferr').textContent = 'ไม่พบรายงานนี้ หรือหมดอายุแล้ว ตรวจใหม่ได้เลย'; $('ferr').hidden = false; return; }
+      v = await r.json();
+    } catch (err) { console.error('[clinic-radar] view', err); setTimeout(() => poll(id, n + 1), 6000); return; }
+    if (v.status === 'ready') { render(v); return; }
+    show('wait');
+    if (v.base && v.base.name) $('wtitle').textContent = `กำลังเปิด Google Maps ของ ${v.base.name}`;
+    if (v.status === 'failed') { $('wtitle').textContent = 'ยังเปิดหน้าของคลินิกนี้ไม่สำเร็จ'; $('wsub').textContent = 'ลองตรวจใหม่อีกครั้งในอีกสักครู่'; return; }
+    $('wsub').textContent = v.ahead ? `มีคลินิกรอก่อนหน้า ${v.ahead} แห่ง · ใช้เวลาประมาณ ${Math.max(2, v.ahead + 2)} นาที · ลิงก์นี้เปิดดูภายหลังได้` : 'ใช้เวลาประมาณ 1–2 นาที เปิดหน้านี้ทิ้งไว้ได้ ลิงก์นี้เปิดดูภายหลังได้';
+    setTimeout(() => poll(id, n + 1), n < 40 ? 4000 : 15000);
+  }
+
+  // ── the report (Template V1.0 order: evidence → what we see → competitors → path → actions → CTA) ──
+  const ICON = {
+    search: "<path d='M10.5 3a7.5 7.5 0 015.9 12.1l4.2 4.2-1.4 1.4-4.2-4.2A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z'/>",
+    globe: "<path d='M12 2a10 10 0 110 20 10 10 0 010-20zm-1.9 2.3A8 8 0 004.1 11H8a14 14 0 012.1-6.7zm3.8 0A14 14 0 0116 11h3.9a8 8 0 00-6-6.7zM14 11a12 12 0 00-2-6 12 12 0 00-2 6zm-4 2a12 12 0 002 6 12 12 0 002-6zm-1.9 0H4.1a8 8 0 006 6.7A14 14 0 018.1 13zm7.9 0a14 14 0 01-2.1 6.7 8 8 0 006-6.7z'/>",
+    cal: "<path d='M7 2h2v2h6V2h2v2h3a1 1 0 011 1v15a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3zm12 8H5v9h14zM5 8h14V6H5zm2 4h4v4H7z'/>",
+  };
+  const ST = { g: 'ดีแล้ว', a: 'ควรปรับ', r: 'ยังไม่พบ' };
+  const CHIP = { free: "<span class='st free'>ทำได้เอง · ฟรี</span>", paid: "<span class='st paid'>มีค่าใช้จ่าย</span>" };
+
+  function render(v) {
+    const r = v.result, p = r.place, id = v.id, when = thDate(r.checkedAt);
+    const img = (n) => `${API}/clinic/img?id=${id}&n=${n}`;
+    const name = p.name || (v.base && v.base.name) || 'คลินิกของคุณ';
+    const term = r.term;
+    const lists = r.search.filter((s) => s.list);
+    const rank = lists.length ? lists[0].rank : null;
+    const seen = lists.length ? Math.max(...lists.map((s) => s.seen || 0)) : 0;
+    const ranks = lists.map((s) => s.rank);
+    const others = lists.length ? (lists[0].top || []).filter((x) => x.id !== (v.base && v.base.id)) : [];
+    const leader = lists.length ? (lists[0].top || [])[0] : null;
+    const youLead = leader && v.base && leader.id === v.base.id;
+    const booking = p.partner ? 'partner' : p.linkRow ? 'link' : '';
+    const site = r.site || { kind: 'none' };
+
+    // How often each rank came up in the rounds (Template V2.0 rule, applied to both).
+    const counts = {};
+    ranks.forEach((x) => { const k = x == null ? 'none' : x; counts[k] = (counts[k] || 0) + 1; });
+    const rk = (k) => (k === 'none' ? `ยังไม่พบใน ${fmt(seen)} อันดับแรก` : `อันดับ ${k}`);
+    const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const spread = !lists.length ? '' : keys.length === 1
+      ? `เราค้นซ้ำ ${lists.length} รอบในวันเดียวกัน ได้${rk(keys[0])}ทุกรอบ`
+      : `เราค้นซ้ำ ${lists.length} รอบในวันเดียวกัน · ${keys.map((k) => `${rk(k)} ${counts[k]} รอบ`).join(' · ')} · ในภาพนี้${rk(rank == null ? 'none' : rank)}`;
+
+    // 1. strength first (words, no repeated numbers)
+    const strength = rank != null && rank <= 3 ? 'ลูกค้าที่ค้นหาคลินิกแบบคุณในย่านนี้ เห็นคลินิกคุณใน 3 อันดับแรก'
+      : booking ? 'ลูกค้ากดจองจากหน้า Google ได้ทันที ไม่ต้องโทรถาม'
+      : p.rating >= 4.7 && p.reviews >= 20 ? 'ลูกค้าที่มาแล้วให้คะแนนรีวิวสูง เป็นจุดที่คนใหม่ดูก่อนตัดสินใจ'
+      : site.kind === 'ok' ? 'มีเว็บไซต์ของคลินิกเองที่เปิดบนมือถือได้ทันที'
+      : p.phone ? 'ลูกค้าโทรหาคลินิกได้ทันทีจากหน้า Google'
+      : 'คลินิกคุณมีหน้าบน Google Maps ให้ลูกค้าค้นเจอแล้ว';
+
+    // 2. tiles
+    const rankCls = rank == null ? 'r' : rank <= 3 ? 'g' : rank <= 10 ? 'a' : 'r';
+    const rev = others.filter((x) => x.rating != null).map((x) => x.rating);
+    const starCls = p.rating == null ? 'r' : p.rating >= 4.7 ? 'g' : p.rating >= 4.0 ? 'a' : 'r';
+    const tiles = [
+      [rankCls, rank == null ? 'ยังไม่พบ' : `อันดับ ${rank}`, rank == null ? `ใน ${fmt(seen)} อันดับแรก ค้น "${term}"` : `ค้น "${term}"`],
+      [starCls, p.rating == null ? 'ยังไม่มี' : String(p.rating), p.rating == null ? 'รีวิวบน Google' : `ดาว จาก ${fmt(p.reviews || 0)} รีวิว${rev.length ? ` · ${youLead ? 'คลินิกถัดไป' : 'คลินิกอันดับบน'}ได้ ${Math.min(...rev)}${rev.length > 1 && Math.max(...rev) !== Math.min(...rev) ? `–${Math.max(...rev)}` : ''}` : ''}`],
+      booking ? ['g', 'จองได้', booking === 'partner' ? 'ปุ่มจองออนไลน์บน Google' : `ลิงก์จองบน Google · ${p.linkRow}`] : ['r', 'ยังไม่พบ', 'ปุ่มหรือลิงก์จองบน Google'],
+    ];
+
+    // 3. action cards, by impact; each only things we or the owner can actually do
+    const cards = [];
+    if (p.claimable && r.img.claim) cards.push({ t: 'ยืนยันว่าเป็นเจ้าของหน้า Google นี้', gap: 'หน้า Google ยังขึ้นปุ่มอ้างสิทธิ์',
+      vis: `<div class='vis col'><div class='pane'><span class='tag now'>ตอนนี้ · หน้านี้ยังขึ้นปุ่มนี้</span><img src='${img('claim.jpg')}' alt=''></div><div class='arrow'>↓</div><div class='pane' style='padding:24px 6px 10px'><span class='tag do'>ถ้าทำ</span><div style='text-align:center;padding:4px 0;font-size:0'><span class='pill'>แก้ข้อมูลร้านเอง</span><span class='pill'>ตอบรีวิวลูกค้า</span><span class='pill'>ดูจำนวนคนที่เห็นหน้านี้</span><div style='font-size:12px;color:#6B6480;margin-top:6px'>หลังยืนยันว่าเป็นเจ้าของกับ Google</div></div></div></div>`,
+      cap: 'คุณแก้ข้อมูล ตอบรีวิว และดูจำนวนคนที่เห็นหน้านี้ได้เอง', feat: 'ยืนยันผ่าน Google Business Profile ไม่มีค่าใช้จ่าย', chip: CHIP.free });
+    if (!booking) cards.push({ t: 'ให้ลูกค้าจองจากหน้า Google ได้', gap: 'ลูกค้ายังกดจองจากหน้า Google ไม่ได้',
+      vis: `<div class='vis col'><div class='pane'><span class='tag now'>ตอนนี้ · ยังไม่พบแถวลิงก์จอง</span><img src='${img('rows.jpg')}' alt=''></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ถ้าทำ · ลิงก์จองพาเข้า LINE ของคลินิก</span><img src='/a/booking-link-row.png' alt='ตัวอย่างแถวลิงก์จองบน Google'></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ใน LINE ลูกค้าขอนัดผ่าน Dr.Ease</span><img src='/a/drease-booking-form.png' alt='หน้าขอนัดของ Dr.Ease ใน LINE' style='width:62%;margin:0 auto'></div></div>`,
+      cap: 'ลูกค้าขอนัดจาก Google ผ่าน LINE ของคลินิกได้ทันที', feat: 'ระบบขอนัดผ่าน LINE ของ Dr.Ease', chip: CHIP.paid });
+    if (site.kind === 'broken') cards.push({ t: 'ให้ลิงก์เว็บไซต์บน Google เปิดได้ทันที', gap: 'เว็บไซต์ที่ลิงก์จาก Google เปิดไม่ได้',
+      vis: `<div class='vis' style='align-items:center'><div class='pane' style='flex:0 0 46%'><span class='tag now'>ตอนนี้ · กดเว็บไซต์จาก Google</span>${r.img.phone ? `<div class='phone'><img src='${img('phone.jpg')}' alt=''></div>` : `<div style='text-align:center;font-size:12.5px;color:#B42318;padding:14px 4px'>เปิด ${E(site.host)} ไม่ได้</div>`}</div><div class='arrow'>→</div><div class='pane' style='padding:24px 6px 14px'><span class='tag do'>ถ้าทำ</span><div style='display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 0'><span style='width:52px;height:52px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center'><svg width='28' height='28' viewBox='0 0 24 24' fill='#3730A3'>${ICON.globe}</svg></span><span style='font-size:12px;color:#6B6480;text-align:center'>กดแล้วเห็นหน้าเว็บทันที</span></div></div></div>`,
+      cap: 'ลูกค้าที่อยากดูบริการก่อนจองเข้าเว็บได้จริง', feat: 'ให้ทีมเว็บแก้หน้าให้เปิดได้ หรือเปลี่ยนลิงก์บน Google ไปหน้าที่เปิดได้', chip: CHIP.free });
+    else if (site.kind === 'ok' && !site.book && !site.line && r.img.phone) cards.push({ t: 'ให้ลูกค้าจองจากเว็บไซต์ได้', gap: 'หน้าแรกของเว็บไซต์ยังไม่พบปุ่มจองหรือ LINE',
+      vis: `<div class='vis' style='align-items:center'><div class='pane' style='flex:0 0 38%'><span class='tag now'>ตอนนี้</span><div class='phone' style='width:74px;border-width:3px;border-radius:13px'><img src='${img('phone.jpg')}' alt=''></div></div><div class='arrow'>→</div><div class='pane' style='padding:24px 6px 14px'><span class='tag do'>ถ้าทำ</span><div style='display:flex;flex-direction:column;align-items:center;gap:8px'><span style='background:#06C755;color:#fff;font-size:15px;font-weight:800;border-radius:999px;padding:9px 22px;box-shadow:0 3px 10px rgba(6,199,85,.35)'>จองคิวออนไลน์</span><span style='font-size:12px;color:#6B6480'>ปุ่มเด่นในจอแรก</span></div></div></div>`,
+      cap: 'คนที่เข้าเว็บจองได้ตั้งแต่จอแรก', feat: booking || !cards.some((c) => c.t.startsWith('ให้ลูกค้าจองจากหน้า Google')) ? 'ใส่ปุ่มที่พาไป LINE หรือหน้าจองของคลินิก' : 'ใช้ลิงก์จองเดียวกับข้อก่อนหน้า', chip: CHIP.free });
+    const revCard = { t: 'ขอรีวิวหลังรับบริการ', gap: 'รีวิวน้อยกว่าคลินิกอันดับบน',
+      vis: `<div class='vis' style='align-items:center'><div class='pane' style='padding:24px 6px 14px'><span class='tag now'>รีวิวตอนนี้</span><div style='text-align:center'><div style='font-size:30px;font-weight:800;color:#1F1A2E'>${p.rating == null ? '–' : p.rating} <span style='color:#F5B400'>★</span></div><div style='font-size:12.5px;color:#6B6480'>${fmt(p.reviews || 0)} รีวิวบน Google</div></div></div><div class='arrow'>→</div><div class='pane' style='flex:0 0 38%'><span class='tag do'>QR ของคุณ</span><div id='qr' style='width:88%;margin:0 auto'></div></div></div>`,
+      cap: rank === 1 ? 'รักษาอันดับ 1 ไว้ให้มั่นคง' : 'ลูกค้าที่พอใจรีวิวได้ทันทีก่อนออกจากคลินิก', feat: `QR นี้เปิดหน้ารีวิว ${name} บน Google ได้จริง`, chip: CHIP.free };
+    if (cards.length < 3) cards.push(revCard);
+    const n = cards.length;
+
+    // what the owner reads in one line
+    const gaps = cards.filter((c) => c !== revCard).map((c) => c.gap);
+    const read = gaps.length ? `จุดที่ควรแก้ก่อนคือ${gaps.slice(0, 2).join(' และ')}` : rank != null && rank <= 3 ? 'หน้า Google ของคลินิกคุณครบในเรื่องที่เราตรวจ เรื่องต่อไปคือรักษาอันดับด้วยรีวิวใหม่' : 'หน้า Google ของคลินิกคุณครบในเรื่องที่เราตรวจ เรื่องต่อไปคือเพิ่มรีวิวเพื่อขยับอันดับ';
+
+    // 4. competitors: one fact visible in the screenshot
+    let comp = '';
+    if (lists.length && leader) {
+      comp = youLead
+        ? `<b>คลินิกคุณขึ้นอันดับ 1</b>${others[0] ? ` คลินิกถัดไปคือ ${E(others[0].name)}${others[0].reviews ? ` มี ${fmt(others[0].reviews)} รีวิว` : ''}` : ''}`
+        : `<b>${E(leader.name)} ขึ้นอันดับ 1${leader.reviews ? ` ด้วย ${fmt(leader.reviews)} รีวิว` : ''}</b>${p.reviews != null ? ` · คลินิกคุณมี ${fmt(p.reviews)} รีวิว` : ''}`;
+    }
+    const where = rank == null ? `ยังไม่พบคลินิกคุณใน ${fmt(seen)} อันดับแรก` : rank === 1 ? 'อันดับ 1 อยู่บนสุด' : rank <= 3 ? `อันดับ ${rank} อยู่ในภาพนี้ (กรอบสีม่วง)` : `อันดับ ${rank} อยู่ถัดลงไป ต้องเลื่อนผ่านคลินิกอื่น ${rank - 1} แห่งก่อน`;
+
+    // 5. customer path
+    const j1 = rank == null ? ['r', `ยังไม่พบใน ${fmt(seen)} อันดับแรก เมื่อค้น "${term}"`] : rank <= 3 ? ['g', `อันดับ ${rank} จากคำว่า "${term}"`] : ['a', `อันดับ ${rank} จากคำว่า "${term}" ต้องเลื่อนผ่านคลินิกอื่น ${rank - 1} แห่ง`];
+    const j2 = site.kind === 'ok' ? ['g', `กดเว็บไซต์บน Google แล้วเปิดบนมือถือได้ (${E(site.finalHost || site.host)})`]
+      : site.kind === 'broken' ? ['a', `กดเว็บไซต์บน Google แล้วเปิดไม่ได้${site.login ? ' ขึ้นหน้าขอรหัสผ่าน' : ''}`]
+      : site.kind === 'social' ? ['a', `ช่องเว็บไซต์บน Google เป็น ${E(site.host)} ยังไม่ใช่เว็บไซต์ของคลินิก`]
+      : ['r', 'ยังไม่พบเว็บไซต์บนหน้าที่ตรวจ'];
+    const j3 = booking === 'partner' ? ['g', 'กดจองออนไลน์บน Google ได้'] : booking === 'link' ? ['g', `มีลิงก์จองบน Google (${E(p.linkRow)})`]
+      : p.phone ? ['a', 'ลูกค้าต้องโทรถามคิว ยังไม่พบปุ่มจองบนหน้าที่ตรวจ'] : ['r', 'ยังไม่พบปุ่มจองหรือเบอร์โทรบนหน้าที่ตรวจ'];
+    const journey = [['ค้นหา', 'search', j1], ['ดูข้อมูล', 'globe', j2], ['ติดต่อ / จอง', 'cal', j3]].map(([t, ic, [s, d]]) =>
+      `<div class='js'><div class='ico'><svg width='18' height='18' viewBox='0 0 24 24' fill='#5B21B6'>${ICON[ic]}</svg></div><div style='flex:1'><div class='t'>${t}</div><div class='d'>${d}</div></div><span class='s ${s}'>${ST[s]}</span></div>`).join('');
+
+    // legend for the numbered boxes + red ✗ for what the page doesn't have
+    const missing = [];
+    if (!booking) missing.push('ยังไม่พบปุ่มจอง');
+    if (!p.website) missing.push('ยังไม่พบเว็บไซต์');
+    const legend = r.marks.map((m) => `<div><span class='n'>${m.n}</span><span>${E(m.text)}</span></div>`).join('')
+      + missing.map((t) => `<div><span class='n x'>✕</span><span>${E(t)}</span></div>`).join('');
+
+    const nos = cards.map((c, i) => String(i + 1).padStart(2, '0'));
+    const pick = nos.length > 1 ? `${nos.slice(0, -1).join(', ')} หรือ ${nos[nos.length - 1]}` : nos[0];
+    const url = location.href.split('#')[0];
+    const line = `https://line.me/R/oaMessage/@drease/?${encodeURIComponent(`Clinic Radar · ${name}\nอยากให้ทีมช่วยเรื่องข้อ: \n${url}`)}`;
+    const no = `CR-${when.code}-${id.slice(0, 4).toUpperCase()}`;
+    const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(term)}`;
+
+    $('report').innerHTML = `
+      <div class='title'>คุณหมอและทีม ${E(name)}</div>
+      <div class='date'>รายงานวิเคราะห์เฉพาะคลินิก · ${when.month}</div>
+      <div class='intro'>ทีม Dr.Ease เปิดหน้า Google Maps ของคลินิกคุณเมื่อ ${when.day} นี่คือสิ่งที่ลูกค้าเห็น และสิ่งที่เราพบ</div>
+      <div class='fig' style='margin-top:14px'><img src='${img('page.jpg')}' alt='หน้า ${E(name)} บน Google Maps' style='width:100%'>
+        <div class='legend'>${legend}</div>
+        <div class='how'>ภาพหน้าจอจริงจาก Google Maps วันที่ ${when.day} ${when.time} น. · กรอบและเลขสีม่วงเราใส่เพื่อชี้จุด · <a href='https://www.google.com/maps/place/?q=place_id:${E(v.base.id)}' target='_blank' rel='noopener'>เปิดหน้านี้ใน Google Maps</a></div></div>
+      <h2>สิ่งที่เราเห็นจากหน้านี้</h2>
+      <div class='strong'><div class='k'>จุดแข็งของคลินิกคุณ</div>${E(strength)}</div>
+      <div class='tiles'>${tiles.map(([c, val, l]) => `<div class='tile3 ${c}'><div class='v'>${E(val)}</div><div class='l'>${E(l)}</div></div>`).join('')}</div>
+      <div class='read'>${E(read)}</div>
+      <div class='how'>วิธีวัด: อันดับ = ลำดับของคลินิกคุณในผลค้นหา Google Maps ด้านล่าง ไม่นับโฆษณา · ดาวและรีวิว = ตัวเลขบนหน้า Google ของคลินิกในภาพด้านบน · การจอง = ปุ่มหรือแถวลิงก์จองบนหน้าเดียวกัน</div>
+      ${lists.length ? `<h2>คู่แข่งที่ลูกค้าเห็นพร้อมกับคุณ</h2>
+      ${comp ? `<p>${comp}</p>` : ''}
+      <div class='fig'><div class='figlbl'>ผลค้นหาจริงใน Google Maps ที่ลูกค้าเห็น</div>${r.img.search ? `<img src='${img('search.jpg')}' alt='ผลค้นหา ${E(term)} ใน Google Maps'>` : ''}
+        <div style='margin-top:8px;font-size:13.5px'><b style='color:#5B21B6'>คลินิกคุณ:</b> ${E(where)}</div>
+        <div class='how'>ภาพหน้าจอจริง ค้น "${E(term)}" ใน Google Maps บนคอมพิวเตอร์ ไม่ได้ล็อกอิน วันที่ ${when.day} ${when.time} น. · ภาพแสดง 3 คลินิกแรก · อันดับไม่นับโฆษณา · ${E(spread)} · ผลอาจต่างกันเล็กน้อยตามตำแหน่งและเวลาที่ค้น · <a href='${mapsSearch}' target='_blank' rel='noopener'>ลองค้นเองด้วยคำเดียวกัน</a></div></div>` : ''}
+      <h2>ลูกค้าเจออะไร ตั้งแต่ค้นจนจอง</h2>
+      <div class='jr'>${journey}</div>
+      <h2>${n} เรื่องที่ควรทำก่อน</h2>
+      ${cards.map((c, i) => `<div class='ac'><div class='ah'><span class='num'>${nos[i]}</span><b>${E(c.t)}</b></div>${c.vis}<div class='cap'>${E(c.cap)}</div><div class='feat'>${E(c.feat)}</div>${c.chip}</div>`).join('')}
+      <div class='sign'><div class='av'>D</div><div><div style='font-size:15.5px;font-weight:800'>สนใจให้ทีมช่วยเรื่องไหน?</div><div style='font-size:13px;color:#8A7F66'>ตอบ ${pick} ทาง LINE · ทีม Dr.Ease</div></div></div>
+      <a class='btn' href='${line}' target='_blank' rel='noopener'>ตอบทาง LINE @drease</a>
+      <details class='again'><summary>ตรวจอันดับด้วยคำค้นอื่น</summary><form id='againf'><input id='againq' value='${E(term)}' maxlength='60' aria-label='คำค้น'><button>ตรวจ</button></form></details>
+      <div class='src'><b>ที่มา</b> ค้นและเปิดดู Google Maps หน้า Google ของคลินิก และเว็บไซต์ วันที่ ${when.day} · ข้อมูลสาธารณะทั้งหมด ไม่มีข้อมูลคนไข้<br>เลขที่ ${no} · สำหรับเจ้าของและผู้บริหารคลินิก · <a href='/'>ตรวจคลินิกอื่น</a></div>`;
+    show('report');
+    document.title = `Clinic Radar · ${name}`;
+    const q = $('qr');
+    if (q && window.QRCode && v.base && v.base.id) {
+      try { new QRCode(q, { text: `https://search.google.com/local/writereview?placeid=${v.base.id}`, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M }); }
+      catch (err) { console.error('[clinic-radar] qr', err); }
+      q.querySelectorAll('img,canvas').forEach((x) => { x.style.width = '100%'; x.style.height = 'auto'; });
+    }
+    const af = $('againf');
+    if (af) af.addEventListener('submit', (e) => { e.preventDefault(); const t = $('againq').value.trim(); if (t && t !== term) start(v.base.id, t); });
+  }
+
+  // ── route ──
+  const m = location.pathname.match(/^\/r\/([0-9a-f]{32})\/?$/);
+  if (m) {
+    const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow'; document.head.appendChild(meta);
+    show('wait'); poll(m[1]);
+  } else show('find');
+  window.addEventListener('popstate', () => location.reload());
+}());
+</script>
+</body>
+</html>

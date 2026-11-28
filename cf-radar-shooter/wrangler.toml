@@ -1,0 +1,33 @@
+# Radar shooter · takes the real Google Maps pictures in Cloudflare's cloud browser (Browser Run), so Shop Radar and
+# Clinic Radar never depend on the iMac being awake (Art 2026-11-28: "cloud available at all time").
+# Deploy: cd cf-radar-shooter && npm ci && npx wrangler deploy
+# It shares the queue and the storage with the main worker (cf-worker-maps-report): D1 bookease-growth + KV REPORTS.
+name = "radar-shooter"
+main = "shooter.js"
+compatibility_date = "2026-05-05"
+compatibility_flags = ["nodejs_compat"]
+account_id = "b8da7782d6a1a500d9789844a4c3ce8a"
+workers_dev = true
+
+browser = { binding = "BROWSER" }
+
+# Run near Thailand: a cron started in Europe got Google's EU consent page and EU-flavoured results (2026-11-28).
+[placement]
+region = "aws:ap-southeast-1"
+
+# Every minute. One run at a time (D1 lease); a run watches the queue for ~50 s and opens a browser only when there is
+# work, because idle browser time counts against the free plan's 10 min/day.
+[triggers]
+crons = ["* * * * *"]
+
+[[kv_namespaces]]
+binding = "REPORTS"
+id = "c3bb5ce38cea4b68a9b56de03b53a179"
+
+[[d1_databases]]
+binding = "GROWTH_DB"
+database_name = "bookease-growth"
+database_id = "89fa7df7-e8ff-4eec-b816-66db19942031"
+
+[observability]
+enabled = true
