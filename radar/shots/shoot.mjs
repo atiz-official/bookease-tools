@@ -1,12 +1,15 @@
 // Shop Radar · shoot one shop's own Google Maps page (shared by capture.mjs = batch from a list, and watch.mjs = the
 // iMac service that shoots every new report). Rules: see capture.mjs.
 export const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
-export const CONTEXT = { viewport: { width: 1280, height: 1500 }, deviceScaleFactor: 2, locale: 'th-TH', userAgent: UA };
+export const CONTEXT = { viewport: { width: 1280, height: 1500 }, deviceScaleFactor: 2, locale: 'th-TH', userAgent: UA, timezoneId: 'Asia/Bangkok' };
+// A browser that Google places in the EU gets its cookie-consent page first. This is the standard "reject all
+// non-essential cookies" answer (SOCS), so Maps opens directly. Used by the cloud shooter; harmless in Thailand.
+export const CONSENT_COOKIES = [{ name: 'SOCS', value: 'CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg', domain: '.google.com', path: '/', secure: true, sameSite: 'Lax' }];
 const OPEN_CLOSED = /ปิดอยู่|เปิดอยู่|ปิดแล้ว|เปิดเวลา|ปิดเวลา|เปิด 24 ชั่วโมง|ปิดชั่วคราว|ปิดถาวร|จะเปิด|จะปิด|เร็วๆ นี้/;
 
 /** Returns { jpg: Buffer, name, marks }. Throws on failure; err.stop = true when Google shows a block/consent page. */
 export async function shoot(pg, id) {
-  await pg.goto(`https://www.google.com/maps/place/?q=place_id:${id}&hl=th`, { waitUntil: 'domcontentloaded' });
+  await pg.goto(`https://www.google.com/maps/place/?q=place_id:${id}&hl=th&gl=th`, { waitUntil: 'domcontentloaded' });
   if (/sorry|consent\./.test(pg.url())) throw Object.assign(new Error(`Google block/consent page: ${pg.url()}`), { stop: true });
   await pg.waitForSelector('h1', { timeout: 30000 });
   await pg.waitForTimeout(2500);

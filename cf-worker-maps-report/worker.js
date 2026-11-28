@@ -90,7 +90,7 @@ const BIAS_RADIUS_M = 300;   // "someone standing here searches"
 const PAGES = 2;             // 20 per page → rank up to 40
 const CACHE_SECONDS = 7 * 24 * 3600; // how long a shared link keeps working (/view)
 const FRESH_SECONDS = 3 * 3600;      // a new check re-uses a report younger than this; rank moves with time of day
-const DAILY_CAP = { report: 300, find: 1500 };
+const DAILY_CAP = { report: 300, find: 1500, clinic: 60 }; // clinic: cloud browser time (free plan 10 min/day)
 
 // ── helpers ─────────────────────────────────────────────────────────
 
@@ -241,13 +241,27 @@ async function find(env, q) {
     }
   }
   const r = await google(env, 'places:searchText',
-    'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri',
+    'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.types,places.primaryType',
     { ...searchBody(text, lat, lng, radius), pageSize: 5 });
   // A shop whose name is exactly what was typed (or what the link named) goes first.
   const same = (a) => a.replace(/\s+/g, '').toLowerCase() === text.replace(/\s+/g, '').toLowerCase();
-  const candidates = (r.places || []).map(slim);
+  const candidates = (r.places || []).map((p) => ({ ...slim(p), kind: placeKind(p) }));
   candidates.sort((a, b) => same(b.name) - same(a.name));
   return { candidates };
+}
+
+/** One entry at radar.bookease.co (Art 2026-11-28): a clinic gets Clinic Radar, everything else Shop Radar. Aesthetic
+ *  clinics and beauty salons share Google types, so the page also offers a one-tap switch. */
+const CLINIC_TYPES = new Set(['doctor', 'dentist', 'dental_clinic', 'hospital', 'general_hospital', 'medical_clinic', 'skin_care_clinic', 'medical_center', 'physiotherapist']);
+export function placeKind(p) {
+  const types = [p.primaryType, ...(p.types || [])].filter(Boolean);
+  if (types.some((t) => CLINIC_TYPES.has(t))) return 'clinic';
+  // Google files many aesthetic clinics as beauty_salon / spa, so the name decides there; a hair, nail or barber shop
+  // called "... Clinic" stays a shop.
+  if (/^(hair_salon|hair_care|nail_salon|barber_shop|massage|thai_massage)$/.test(p.primaryType || '')) return 'shop';
+  const name = (p.displayName && p.displayName.text) || p.name || '';
+  if (/คลินิก|clinic|ทันตกรรม|dental|โรงพยาบาล|hospital/i.test(name)) return 'clinic';
+  return 'shop';
 }
 
 // ── /report ─────────────────────────────────────────────────────────
@@ -487,7 +501,7 @@ const spacingParam = (v) => (SPACINGS.includes(Number(v)) ? Number(v) : SPACING_
 async function underDailyCap(env, url, kind) {
   const day = new Date().toISOString().slice(0, 10);
   const cap = DAILY_CAP[kind];
-  const kv = env.RATE_LIMIT || (kind === 'report' ? env.REPORTS : null);
+  const kv = env.RATE_LIMIT || (kind === 'report' || kind === 'clinic' ? env.REPORTS : null);
   if (kv) {
     const key = `cap:${kind}:${day}`;
     const n = parseInt((await kv.get(key)) || '0', 10);
@@ -945,6 +959,71 @@ async function shotStatus(env, placeId) {
   return q ? { status: 'pending', queuedAt: q.queued_at } : { status: 'none' };
 }
 
+
+// ── Clinic Radar (public, self-serve · radar.bookease.co/clinic/, Art 2026-11-28) ──
+// /clinic/start makes a job; the cloud shooter (cf-radar-shooter) takes the clinic's Google Maps page, a real Maps search
+// for "<type> <area>" 3 times and the website on a phone; the page (radar/clinic/) builds Template V1.0 from that.
+// The report link carries a random 32-hex id (unguessable) and is noindex. Public Google data only.
+const CLINIC_ID = /^[0-9a-f]{32}$/;
+const CLINIC_REUSE_MS = 24 * 3600 * 1000; // the same clinic + search word within a day opens the same report
+const CLINIC_SCHEMA = [
+  `CREATE TABLE IF NOT EXISTS clinic_job (id TEXT PRIMARY KEY, place_id TEXT NOT NULL, term TEXT NOT NULL, status TEXT NOT NULL,
+     created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, base TEXT, result TEXT, error TEXT, tries INTEGER NOT NULL DEFAULT 0)`,
+  'CREATE INDEX IF NOT EXISTS clinic_job_q ON clinic_job (status, created_at)',
+];
+async function clinicDb(env) { await env.GROWTH_DB.batch(CLINIC_SCHEMA.map((q) => env.GROWTH_DB.prepare(q))); return env.GROWTH_DB; }
+/** What a patient types: the clinic type (from Google's type / Thai category / name) + the nearest area. */
+function clinicWord(p) {
+  const t = (p.types || []).join(' ');
+  const s = `${(p.primaryTypeDisplayName && p.primaryTypeDisplayName.text) || ''} ${(p.displayName && p.displayName.text) || ''}`;
+  if (/dent/.test(t) || /ทันต|ฟัน|dental/i.test(s)) return 'คลินิกทันตกรรม';
+  if (/veterin/.test(t) || /สัตว|vet/i.test(s)) return 'คลินิกสัตว์';
+  if (/physiotherap/.test(t) || /กายภาพ|physio/i.test(s)) return 'คลินิกกายภาพบำบัด';
+  if (/ศัลยกรรม|plastic surgery/i.test(s)) return 'คลินิกศัลยกรรม';
+  if (/skin_care|beauty/.test(t) || /ความงาม|ผิว|เสริมสวย|aesthetic|beauty|skin/i.test(s)) return 'คลินิกความงาม';
+  return 'คลินิก';
+}
+function clinicArea(p) {
+  if (p.location) {
+    const here = { lat: p.location.latitude, lng: p.location.longitude };
+    let best = null, bd = Infinity;
+    for (const a of AREAS) { const d = metres(here, a); if (d < bd && d <= AREA_RADIUS_M) { best = a; bd = d; } }
+    if (best) return best.name;
+  }
+  const pick = (k) => (p.addressComponents || []).find((c) => (c.types || []).includes(k));
+  const c = pick('sublocality_level_1') || pick('locality') || pick('administrative_area_level_2') || pick('administrative_area_level_1');
+  return c ? String(c.longText || c.shortText || '').replace(/^(เขต|อำเภอ|อ\.|แขวง|ตำบล|จังหวัด|จ\.)\s*/, '').trim() : '';
+}
+async function clinicStart(env, placeId, wanted, underCap) {
+  const p = await google(env, `places/${encodeURIComponent(placeId)}?languageCode=th&regionCode=TH`,
+    'id,displayName,formattedAddress,location,rating,userRatingCount,websiteUri,types,primaryTypeDisplayName,googleMapsUri,addressComponents,businessStatus');
+  const area = clinicArea(p);
+  const auto = `${clinicWord(p)}${area ? ` ${area}` : ''}`;
+  const term = String(wanted || '').replace(/\s+/g, ' ').trim().slice(0, 60) || auto;
+  const db = await clinicDb(env);
+  const old = await db.prepare("SELECT id FROM clinic_job WHERE place_id = ? AND term = ? AND created_at > ? AND status != 'failed' ORDER BY created_at DESC LIMIT 1")
+    .bind(placeId, term, Date.now() - CLINIC_REUSE_MS).first();
+  if (old) return { id: old.id, reused: true };
+  if (!(await underCap())) return { error: 'full_today' }; // only new reports use cloud browser time
+  const id = [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const base = { ...slim(p), autoTerm: auto, area, status: p.businessStatus || '' };
+  await db.prepare('INSERT INTO clinic_job (id, place_id, term, status, created_at, updated_at, base) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, placeId, term, 'queued', Date.now(), Date.now(), JSON.stringify(base)).run();
+  return { id };
+}
+async function clinicView(env, id) {
+  const db = await clinicDb(env);
+  const j = await db.prepare('SELECT * FROM clinic_job WHERE id = ?').bind(id).first();
+  if (!j) return null;
+  const out = { id: j.id, status: j.status, term: j.term, createdAt: j.created_at, base: JSON.parse(j.base || '{}') };
+  if (j.status === 'ready') out.result = JSON.parse(j.result);
+  if (j.status === 'queued' || j.status === 'running') {
+    const a = await db.prepare("SELECT COUNT(*) n FROM clinic_job WHERE status IN ('queued','running') AND created_at < ?").bind(j.created_at).first();
+    out.ahead = a ? a.n : 0;
+  }
+  return out;
+}
+
 // ── handler ─────────────────────────────────────────────────────────
 
 export { growthCard, growthFlex, growthLadder, lineWeekly, lineSignatureOk };
@@ -978,6 +1057,22 @@ export default {
         const res = await fetch(`${PLACES}/${name}/media?maxWidthPx=${w}&key=${env.GOOGLE_PLACES_KEY}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
         if (!res.ok) { console.error('[maps-report] photo', res.status, name.slice(0, 80)); return json({ error: 'photo_unavailable' }, 502, origin); }
         return new Response(res.body, { headers: { ...cors(origin), 'Content-Type': res.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
+      }
+
+
+      // Clinic Radar: status + report data (polled by the page), and its pictures.
+      if (request.method === 'GET' && url.pathname === '/clinic/view') {
+        const id = url.searchParams.get('id') || '';
+        if (!CLINIC_ID.test(id)) return json({ error: 'bad_id' }, 400, origin);
+        const v = await clinicView(env, id);
+        return v ? json(v, 200, origin, { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }) : json({ error: 'not_found' }, 404, origin);
+      }
+      if (request.method === 'GET' && url.pathname === '/clinic/img') {
+        const id = url.searchParams.get('id') || '', n = url.searchParams.get('n') || '';
+        if (!CLINIC_ID.test(id) || !/^(page|rows|claim|search|phone)\.jpg$/.test(n)) return json({ error: 'bad_id' }, 400, origin);
+        const img = await env.REPORTS.get(`clinic/img/${id}/${n}`, 'arrayBuffer');
+        if (!img) return json({ error: 'not_found' }, 404, origin);
+        return new Response(img, { headers: { ...cors(origin), 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=86400', 'X-Robots-Tag': 'noindex' } });
       }
 
       // BookEase Growth weekly report data for one tracked shop (read-only).
@@ -1122,6 +1217,15 @@ export default {
         if (!cfg) return json({ error: 'not_due' }, 409, origin);
         const snap = await growthRun(env, cfg);
         return json(snap, snap.skipped ? 409 : 200, origin);
+      }
+
+
+      if (url.pathname === '/clinic/start') {
+        const placeId = String(body.placeId || '');
+        if (!/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return json({ error: 'bad_place_id' }, 400, origin);
+        if (!env.GROWTH_DB) return json({ error: 'server_misconfigured' }, 500, origin);
+        const out = await clinicStart(env, placeId, body.term, () => underDailyCap(env, request.url, 'clinic'));
+        return json(out, out.error ? 429 : 200, origin);
       }
 
       if (url.pathname === '/find') {

@@ -1,0 +1,9 @@
+{
+  "name": "radar-shooter",
+  "private": true,
+  "type": "module",
+  "description": "Shop Radar + Clinic Radar: real Google Maps pictures in Cloudflare's cloud browser",
+  "dependencies": {
+    "@cloudflare/playwright": "1.3.6"
+  }
+}

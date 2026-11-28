@@ -376,7 +376,7 @@ $('f-find').addEventListener('submit', async (ev) => {
     const { candidates } = await api('/find', { q: $('q').value });
     if (!candidates.length) { fail($('find-err'), 'ไม่เจอร้านนี้บน Google Maps ลองวางลิงก์ร้านแทน'); return; }
     $('cands').innerHTML = candidates.map((c) =>
-      `<button class="cand" data-id="${esc(c.id)}"><div><strong>${esc(c.name)}</strong><small>${esc(c.address)}</small></div><span>ใช่ร้านนี้</span></button>`).join('');
+      `<button class="cand" data-id="${esc(c.id)}" data-kind="${c.kind === 'clinic' ? 'clinic' : 'shop'}"><div><strong>${esc(c.name)}</strong><small>${esc(c.address)}</small></div><span>${c.kind === 'clinic' ? 'ใช่คลินิกนี้' : 'ใช่ร้านนี้'}</span></button>`).join('');
     $('cands').hidden = false;
   } catch (e) { fail($('find-err'), say(e.message)); }
   finally { btn.disabled = false; }
@@ -384,7 +384,11 @@ $('f-find').addEventListener('submit', async (ev) => {
 
 $('cands').addEventListener('click', (ev) => {
   const b = ev.target.closest('.cand');
-  if (b) run(b.dataset.id);
+  if (!b) return;
+  // One entry (Art 2026-11-28): a clinic (doctor / dentist / hospital / skin or aesthetic clinic, from its Google type)
+  // gets Clinic Radar; everything else Shop Radar. Each report has a one-tap switch for when the guess is wrong.
+  if (b.dataset.kind === 'clinic') { location.href = `clinic/?p=${encodeURIComponent(b.dataset.id)}`; return; }
+  run(b.dataset.id);
 });
 
 // Back to the search screen (the shop-name pill on the report does this).
@@ -744,7 +748,7 @@ function paint() {
   </header>
   <section class="card">
     <button class="shop-q" id="shop-q" type="button" aria-label="ค้นร้านอื่น แทน ${esc(s.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>${esc(s.name)}</span></button>
-    <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a></p>
+    <p class="shop-meta">${meta}<a href="${esc(s.mapsUrl || mapsLink(s.id))}" target="_blank" rel="noopener">ดูใน Google Maps</a><a href="site/?p=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">ตัวอย่างเว็บร้าน</a><a href="offer/?p=${encodeURIComponent(s.id)}${R.category && R.category.id ? `&c=${encodeURIComponent(R.category.id)}` : ''}" target="_blank" rel="noopener">แพ็กเกจที่แนะนำ</a><a href="#" id="pdf">ดาวน์โหลด PDF</a><a href="clinic/?p=${encodeURIComponent(s.id)}">นี่คือคลินิก · ดูแบบ Clinic Radar</a></p>
     <div class="proof" id="gshot" hidden></div>
     ${headline(k)}
   </section>
