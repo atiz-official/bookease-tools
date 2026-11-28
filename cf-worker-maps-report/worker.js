@@ -41,7 +41,7 @@ import { wordFromListing, wordFromReviews } from './keywords.js';
 import { MORE, MORE_AS_OF } from './volumes-more.js';
 
 const PLACES = 'https://places.googleapis.com/v1';
-const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io', 'https://bookease.co', 'https://radar.drease.co'];
+const ALLOWED_ORIGINS = ['https://radar.bookease.co', 'https://make.bookease.co', 'https://atiz-official.github.io', 'https://bookease.co'];
 // Shop types. `label` is both the word shown in the report and the phrase searched on Maps, Thai only.
 // Checked against the real Google Maps app on 2026-11-14:
 //   "ร้านนวด"  → API rank matched Maps (1 vs 2, 33 vs 34).
@@ -241,13 +241,27 @@ async function find(env, q) {
     }
   }
   const r = await google(env, 'places:searchText',
-    'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri',
+    'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.types,places.primaryType',
     { ...searchBody(text, lat, lng, radius), pageSize: 5 });
   // A shop whose name is exactly what was typed (or what the link named) goes first.
   const same = (a) => a.replace(/\s+/g, '').toLowerCase() === text.replace(/\s+/g, '').toLowerCase();
-  const candidates = (r.places || []).map(slim);
+  const candidates = (r.places || []).map((p) => ({ ...slim(p), kind: placeKind(p) }));
   candidates.sort((a, b) => same(b.name) - same(a.name));
   return { candidates };
+}
+
+/** One entry at radar.bookease.co (Art 2026-11-28): a clinic gets Clinic Radar, everything else Shop Radar. Aesthetic
+ *  clinics and beauty salons share Google types, so the page also offers a one-tap switch. */
+const CLINIC_TYPES = new Set(['doctor', 'dentist', 'dental_clinic', 'hospital', 'general_hospital', 'medical_clinic', 'skin_care_clinic', 'medical_center', 'physiotherapist']);
+export function placeKind(p) {
+  const types = [p.primaryType, ...(p.types || [])].filter(Boolean);
+  if (types.some((t) => CLINIC_TYPES.has(t))) return 'clinic';
+  // Google files many aesthetic clinics as beauty_salon / spa, so the name decides there; a hair, nail or barber shop
+  // called "... Clinic" stays a shop.
+  if (/^(hair_salon|hair_care|nail_salon|barber_shop|massage|thai_massage)$/.test(p.primaryType || '')) return 'shop';
+  const name = (p.displayName && p.displayName.text) || p.name || '';
+  if (/คลินิก|clinic|ทันตกรรม|dental|โรงพยาบาล|hospital/i.test(name)) return 'clinic';
+  return 'shop';
 }
 
 // ── /report ─────────────────────────────────────────────────────────
@@ -946,9 +960,9 @@ async function shotStatus(env, placeId) {
 }
 
 
-// ── Clinic Radar (public, self-serve · radar.drease.co, Art 2026-11-28) ──
+// ── Clinic Radar (public, self-serve · radar.bookease.co/clinic/, Art 2026-11-28) ──
 // /clinic/start makes a job; the cloud shooter (cf-radar-shooter) takes the clinic's Google Maps page, a real Maps search
-// for "<type> <area>" 3 times and the website on a phone; the page (clinic-radar/) builds Template V1.0 from that.
+// for "<type> <area>" 3 times and the website on a phone; the page (radar/clinic/) builds Template V1.0 from that.
 // The report link carries a random 32-hex id (unguessable) and is noindex. Public Google data only.
 const CLINIC_ID = /^[0-9a-f]{32}$/;
 const CLINIC_REUSE_MS = 24 * 3600 * 1000; // the same clinic + search word within a day opens the same report

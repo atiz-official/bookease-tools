@@ -1,4 +1,4 @@
-// Clinic Radar · the evidence for one public, self-serve report (radar.drease.co), captured in the cloud browser.
+// Clinic Radar · the evidence for one public, self-serve report (radar.bookease.co/clinic/), captured in the cloud browser.
 // Template V1.0 (atiz-ops missions/growth-2027/clinic-radar-real/TEMPLATE-V1.md) asks for real screenshots only:
 //   1. the clinic's own Google Maps page, numbered boxes on the rows the report talks about (purple, like v16)
 //   2. a real Google Maps search for "<type> <area>", searched 3 times (rank + how often), search box + results on screen

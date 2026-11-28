@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clinic Radar</title>
-<meta name="description" content="ตรวจหน้า Google Maps ของคลินิกคุณฟรี ดูอันดับจริง สิ่งที่ลูกค้าเห็น และ 3 เรื่องที่ควรทำก่อน">
+<!-- Clinic Radar report page (radar.bookease.co/clinic/?r=<id>). The one entry is radar.bookease.co: a clinic is sent here,
+     everything else gets Shop Radar (Art 2026-11-28). Report links are unguessable and never indexed. -->
+<meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -85,6 +87,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 .wait b{display:block;font-size:16px}.wait span{display:block;font-size:13.5px;color:#8A7F66;margin-top:6px;line-height:1.55}
 .steps{list-style:none;margin:16px auto 0;max-width:300px;text-align:left;font-size:13.5px;color:#4A4360;display:flex;flex-direction:column;gap:6px}
+.swap{margin-top:10px;font-size:13.5px;color:#6B6480}.swap a{color:#5B21B6;font-weight:700}
 .again{margin-top:14px;font-size:13.5px;color:#4A4360}
 .again summary{cursor:pointer;color:#5B21B6;font-weight:700}
 .again form{display:flex;gap:8px;margin-top:8px}
@@ -94,18 +97,8 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
 </head>
 <body>
 <main class="paper" id="app">
-  <a class="brand" href="/"><span class="dot"></span>Clinic Radar · โดย Dr.Ease</a>
-  <section class="find" id="find">
-    <h1>ลูกค้าเห็นคลินิกคุณบน Google Maps อย่างไร</h1>
-    <p class="sub">พิมพ์ชื่อคลินิก หรือวางลิงก์ Google Maps แล้วเราจะเปิดหน้าจริงให้ดู พร้อมอันดับเมื่อลูกค้าค้นหา และ 3 เรื่องที่ควรทำก่อน · ฟรี · ประมาณ 1–2 นาที</p>
-    <form class="field" id="qf">
-      <input id="q" autocomplete="off" placeholder="ชื่อคลินิก หรือ ลิงก์ Google Maps" aria-label="ชื่อคลินิก หรือ ลิงก์ Google Maps" required minlength="2">
-      <button class="go" id="go">ตรวจ</button>
-    </form>
-    <div class="err" id="ferr" hidden></div>
-    <div class="cands" id="cands"></div>
-    <div class="what"><b>ในรายงานมีอะไร</b><br>ภาพหน้า Google Maps จริงของคลินิก · ผลค้นหาจริงที่ลูกค้าเห็น ค้นซ้ำ 3 รอบ · เว็บไซต์ของคลินิกบนมือถือ · สิ่งที่ลูกค้าเจอตั้งแต่ค้นจนจอง · 3 เรื่องที่ควรทำก่อน<br>ใช้ข้อมูลสาธารณะบน Google เท่านั้น</div>
-  </section>
+  <a class="brand" href="../"><span class="dot"></span>Clinic Radar · โดย Dr.Ease</a>
+  <section id="find" hidden><p class="err" id="ferr"></p><p class="swap"><a href="../">กลับไปค้นหา</a></p></section>
   <section id="wait" class="wait" hidden>
     <div class="spin" aria-hidden="true"></div>
     <b id="wtitle">กำลังเปิด Google Maps ของคลินิก</b>
@@ -117,7 +110,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function () {
-  // Local preview (clinic-radar/preview.mjs) answers the same API under /api.
+  // Local preview (radar/clinic/preview.mjs) answers the same API under /api.
   const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/api' : 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
   const $ = (id) => document.getElementById(id);
   const E = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -129,29 +122,12 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     .then((r) => r.json().then((j) => ({ ok: r.ok, status: r.status, j })));
   const show = (id) => ['find', 'wait', 'report'].forEach((k) => { $(k).hidden = k !== id; });
 
-  // ── start: find the clinic ──
-  $('qf').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const q = $('q').value.trim();
-    $('ferr').hidden = true; $('cands').innerHTML = ''; $('go').disabled = true;
-    try {
-      const r = await post('/find', { q });
-      if (!r.ok) throw new Error(r.j.error === 'bad_link' ? 'อ่านลิงก์นี้ไม่ได้ ลองพิมพ์ชื่อคลินิกแทน' : r.j.error === 'full_today' ? 'วันนี้มีคนใช้เต็มแล้ว ลองใหม่พรุ่งนี้' : 'ค้นไม่สำเร็จ ลองใหม่อีกครั้ง');
-      const c = r.j.candidates || [];
-      if (!c.length) throw new Error('ไม่พบคลินิกนี้บน Google Maps ลองพิมพ์ชื่อให้ตรงกับบน Google หรือวางลิงก์');
-      $('cands').innerHTML = `<div class="figlbl">เลือกคลินิกของคุณ</div>` + c.map((p) => `<button class="cand" type="button" data-id="${E(p.id)}"><b>${E(p.name)}</b><span>${E(p.address)}</span></button>`).join('');
-    } catch (err) { console.error('[clinic-radar] find', err); $('ferr').textContent = err.message; $('ferr').hidden = false; }
-    finally { $('go').disabled = false; }
-  });
-  $('cands').addEventListener('click', (e) => { const b = e.target.closest('.cand'); if (b) start(b.dataset.id); });
-
   async function start(placeId, term) {
     show('wait');
     try {
       const r = await post('/clinic/start', term ? { placeId, term } : { placeId });
       if (!r.ok || !r.j.id) throw new Error(r.j.error === 'full_today' ? 'วันนี้ตรวจครบจำนวนแล้ว ลองใหม่พรุ่งนี้' : 'เริ่มตรวจไม่สำเร็จ ลองใหม่อีกครั้ง');
-      history.pushState(null, '', `/r/${r.j.id}`);
-      const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow'; document.head.appendChild(meta);
+      history.replaceState(null, '', `?r=${r.j.id}`);
       poll(r.j.id);
     } catch (err) { console.error('[clinic-radar] start', err); show('find'); $('ferr').textContent = err.message; $('ferr').hidden = false; }
   }
@@ -229,7 +205,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
       vis: `<div class='vis col'><div class='pane'><span class='tag now'>ตอนนี้ · หน้านี้ยังขึ้นปุ่มนี้</span><img src='${img('claim.jpg')}' alt=''></div><div class='arrow'>↓</div><div class='pane' style='padding:24px 6px 10px'><span class='tag do'>ถ้าทำ</span><div style='text-align:center;padding:4px 0;font-size:0'><span class='pill'>แก้ข้อมูลร้านเอง</span><span class='pill'>ตอบรีวิวลูกค้า</span><span class='pill'>ดูจำนวนคนที่เห็นหน้านี้</span><div style='font-size:12px;color:#6B6480;margin-top:6px'>หลังยืนยันว่าเป็นเจ้าของกับ Google</div></div></div></div>`,
       cap: 'คุณแก้ข้อมูล ตอบรีวิว และดูจำนวนคนที่เห็นหน้านี้ได้เอง', feat: 'ยืนยันผ่าน Google Business Profile ไม่มีค่าใช้จ่าย', chip: CHIP.free });
     if (!booking) cards.push({ t: 'ให้ลูกค้าจองจากหน้า Google ได้', gap: 'ลูกค้ายังกดจองจากหน้า Google ไม่ได้',
-      vis: `<div class='vis col'><div class='pane'><span class='tag now'>ตอนนี้ · ยังไม่พบแถวลิงก์จอง</span><img src='${img('rows.jpg')}' alt=''></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ถ้าทำ · ลิงก์จองพาเข้า LINE ของคลินิก</span><img src='/a/booking-link-row.png' alt='ตัวอย่างแถวลิงก์จองบน Google'></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ใน LINE ลูกค้าขอนัดผ่าน Dr.Ease</span><img src='/a/drease-booking-form.png' alt='หน้าขอนัดของ Dr.Ease ใน LINE' style='width:62%;margin:0 auto'></div></div>`,
+      vis: `<div class='vis col'><div class='pane'><span class='tag now'>ตอนนี้ · ยังไม่พบแถวลิงก์จอง</span><img src='${img('rows.jpg')}' alt=''></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ถ้าทำ · ลิงก์จองพาเข้า LINE ของคลินิก</span><img src='a/booking-link-row.png' alt='ตัวอย่างแถวลิงก์จองบน Google'></div><div class='arrow'>↓</div><div class='pane'><span class='tag do'>ใน LINE ลูกค้าขอนัดผ่าน Dr.Ease</span><img src='a/drease-booking-form.png' alt='หน้าขอนัดของ Dr.Ease ใน LINE' style='width:62%;margin:0 auto'></div></div>`,
       cap: 'ลูกค้าขอนัดจาก Google ผ่าน LINE ของคลินิกได้ทันที', feat: 'ระบบขอนัดผ่าน LINE ของ Dr.Ease', chip: CHIP.paid });
     if (site.kind === 'broken') cards.push({ t: 'ให้ลิงก์เว็บไซต์บน Google เปิดได้ทันที', gap: 'เว็บไซต์ที่ลิงก์จาก Google เปิดไม่ได้',
       vis: `<div class='vis' style='align-items:center'><div class='pane' style='flex:0 0 46%'><span class='tag now'>ตอนนี้ · กดเว็บไซต์จาก Google</span>${r.img.phone ? `<div class='phone'><img src='${img('phone.jpg')}' alt=''></div>` : `<div style='text-align:center;font-size:12.5px;color:#B42318;padding:14px 4px'>เปิด ${E(site.host)} ไม่ได้</div>`}</div><div class='arrow'>→</div><div class='pane' style='padding:24px 6px 14px'><span class='tag do'>ถ้าทำ</span><div style='display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 0'><span style='width:52px;height:52px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center'><svg width='28' height='28' viewBox='0 0 24 24' fill='#3730A3'>${ICON.globe}</svg></span><span style='font-size:12px;color:#6B6480;text-align:center'>กดแล้วเห็นหน้าเว็บทันที</span></div></div></div>`,
@@ -284,6 +260,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     $('report').innerHTML = `
       <div class='title'>คุณหมอและทีม ${E(name)}</div>
       <div class='date'>รายงานวิเคราะห์เฉพาะคลินิก · ${when.month}</div>
+      <div class='swap'>นี่คือร้าน ไม่ใช่คลินิก? <a href='../?p=${encodeURIComponent(v.base.id)}'>ดูแบบรายงานร้าน (Shop Radar)</a></div>
       <div class='intro'>ทีม Dr.Ease เปิดหน้า Google Maps ของคลินิกคุณเมื่อ ${when.day} นี่คือสิ่งที่ลูกค้าเห็น และสิ่งที่เราพบ</div>
       <div class='fig' style='margin-top:14px'><img src='${img('page.jpg')}' alt='หน้า ${E(name)} บน Google Maps' style='width:100%'>
         <div class='legend'>${legend}</div>
@@ -305,7 +282,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
       <div class='sign'><div class='av'>D</div><div><div style='font-size:15.5px;font-weight:800'>สนใจให้ทีมช่วยเรื่องไหน?</div><div style='font-size:13px;color:#8A7F66'>ตอบ ${pick} ทาง LINE · ทีม Dr.Ease</div></div></div>
       <a class='btn' href='${line}' target='_blank' rel='noopener'>ตอบทาง LINE @drease</a>
       <details class='again'><summary>ตรวจอันดับด้วยคำค้นอื่น</summary><form id='againf'><input id='againq' value='${E(term)}' maxlength='60' aria-label='คำค้น'><button>ตรวจ</button></form></details>
-      <div class='src'><b>ที่มา</b> ค้นและเปิดดู Google Maps หน้า Google ของคลินิก และเว็บไซต์ วันที่ ${when.day} · ข้อมูลสาธารณะทั้งหมด ไม่มีข้อมูลคนไข้<br>เลขที่ ${no} · สำหรับเจ้าของและผู้บริหารคลินิก · <a href='/'>ตรวจคลินิกอื่น</a></div>`;
+      <div class='src'><b>ที่มา</b> ค้นและเปิดดู Google Maps หน้า Google ของคลินิก และเว็บไซต์ วันที่ ${when.day} · ข้อมูลสาธารณะทั้งหมด ไม่มีข้อมูลคนไข้<br>เลขที่ ${no} · สำหรับเจ้าของและผู้บริหารคลินิก · <a href='../'>ตรวจคลินิกอื่น</a></div>`;
     show('report');
     document.title = `Clinic Radar · ${name}`;
     const q = $('qr');
@@ -318,12 +295,12 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     if (af) af.addEventListener('submit', (e) => { e.preventDefault(); const t = $('againq').value.trim(); if (t && t !== term) start(v.base.id, t); });
   }
 
-  // ── route ──
-  const m = location.pathname.match(/^\/r\/([0-9a-f]{32})\/?$/);
-  if (m) {
-    const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow'; document.head.appendChild(meta);
-    show('wait'); poll(m[1]);
-  } else show('find');
+  // ── route: ?r=<report id> opens a report · ?p=<Google place id> starts one (from the radar.bookease.co search) ──
+  const qs = new URLSearchParams(location.search);
+  const rid = qs.get('r') || '', pid = qs.get('p') || '';
+  if (/^[0-9a-f]{32}$/.test(rid)) { show('wait'); poll(rid); }
+  else if (/^[A-Za-z0-9_-]{10,200}$/.test(pid)) start(pid, qs.get('t') || '');
+  else location.replace('../');
   window.addEventListener('popstate', () => location.reload());
 }());
 </script>
