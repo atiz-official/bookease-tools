@@ -85,8 +85,8 @@ async function placePage(pg, placeId) {
   // Clean crop of the info rows (address → website/phone/booking row) for action card "ตอนนี้".
   const infoRows = [info.rows.addr, info.rows.linkRow, info.rows.web, info.rows.phone].filter(Boolean);
   const rowsTop = Math.min(...infoRows.map((b) => b.y)) - 8, rowsBot = Math.max(...infoRows.map((b) => b.y + b.h)) + 8;
-  const rowsJpg = await pg.screenshot({ type: 'jpeg', quality: 82, clip: { x: 60, y: rowsTop, width: 456, height: rowsBot - rowsTop } });
-  const claimJpg = info.rows.claim ? await pg.screenshot({ type: 'jpeg', quality: 82, clip: { x: 60, y: info.rows.claim.y - 6, width: 456, height: info.rows.claim.h + 12 } }) : null;
+  const rowsJpg = await pg.screenshot({ type: 'jpeg', quality: 82, clip: { x: 60, y: rowsTop, width: 436, height: rowsBot - rowsTop } });
+  const claimJpg = info.rows.claim ? await pg.screenshot({ type: 'jpeg', quality: 82, clip: { x: 60, y: info.rows.claim.y - 6, width: 436, height: info.rows.claim.h + 12 } }) : null;
 
   // Numbered purple boxes on what the report talks about (v16 order): 1 stars+reviews · 2 booking · 3 website · 4 claim.
   const marks = [];
@@ -115,8 +115,12 @@ async function placePage(pg, placeId) {
 }
 
 // ── 2. a real Google Maps search, SEARCH_ROUNDS times ──────────────────────────────────────────────────────────
-async function searchOnce(pg, term, placeId, withShot) {
-  await pg.goto(`https://www.google.com/maps/search/${encodeURIComponent(term)}?hl=th&gl=th`, { waitUntil: 'domcontentloaded' });
+// The map opens at the clinic's own location (zoom 15), as a patient nearby sees it. Without this, results follow the
+// browser's IP location: from a Bangkok IP, Agafar (Siam) was not in the first 91; centred on Siam it was #20, which
+// matches the hand check of 24 Nov (#21). Checked 2026-11-28.
+async function searchOnce(pg, term, placeId, here, withShot) {
+  const centre = here && here.lat != null ? `/@${(+here.lat).toFixed(6)},${(+here.lng).toFixed(6)},15z` : '';
+  await pg.goto(`https://www.google.com/maps/search/${encodeURIComponent(term)}${centre}?hl=th&gl=th`, { waitUntil: 'domcontentloaded' });
   if (blocked(pg.url())) throw Object.assign(new Error(`Google block/consent page: ${pg.url()}`), { stop: true });
   const feed = await pg.waitForSelector('div[role="feed"]', { timeout: 25000 }).catch(() => null);
   if (!feed) return { list: false };
@@ -129,6 +133,27 @@ async function searchOnce(pg, term, placeId, withShot) {
       rating: al ? parseFloat((al.match(/[\d.]+/) || [])[0]) : null, reviews: al ? parseInt((al.match(/(\d+)\s*รีวิว/) || [])[1] || '', 10) || null : null,
       ad: /ได้รับการสนับสนุน|Sponsored|โฆษณา/.test(card.textContent || '') };
   }).filter((r) => !r.ad));
+  // Opening hours are never shown (Radar rule): hide every open/closed line in the result cards.
+  const hideHours = () => pg.evaluate((ocSrc) => {
+    const OC = new RegExp(ocSrc), feed = document.querySelector('div[role="feed"]');
+    const left = [];
+    for (let pass = 0; pass < 3; pass++) {
+      left.length = 0;
+      const tw = document.createTreeWalker(feed, NodeFilter.SHOW_TEXT);
+      for (let t; (t = tw.nextNode());) {
+        if (!OC.test(t.textContent) || !t.parentElement.getBoundingClientRect().width) continue;
+        let el = t.parentElement;
+        for (let up = 0; up < pass; up++) if (el.parentElement && !el.parentElement.querySelector('a.hfpxzc')) el = el.parentElement;
+        el.style.display = 'none';
+        left.push(t.textContent.trim());
+      }
+      if (!left.length) break;
+    }
+    const still = [];
+    const tw = document.createTreeWalker(feed, NodeFilter.SHOW_TEXT);
+    for (let t; (t = tw.nextNode());) if (OC.test(t.textContent) && t.parentElement.getBoundingClientRect().width) still.push(t.textContent.trim());
+    return still;
+  }, OPEN_CLOSED.source);
   // The picture is taken before any scrolling: the search box and the first results, as a patient sees them.
   let shot = null, boxed = false;
   let list = await read();
@@ -145,6 +170,8 @@ async function searchOnce(pg, term, placeId, withShot) {
         return true;
       }, placeId);
     }
+    const still = await hideHours();
+    if (still.length) throw new Error(`open/closed text still in search picture: ${still.slice(0, 3).join(' | ')}`);
     // Search box + first 3 results (the feed's third card bottom), left panel only.
     const cut = await pg.evaluate(() => {
       const cards = [...document.querySelectorAll('div[role="feed"] a.hfpxzc')].map((a) => a.parentElement.getBoundingClientRect());
@@ -182,7 +209,7 @@ async function websiteOnPhone(browser, site) {
       const res = await pg.goto(u.toString(), { waitUntil: 'domcontentloaded', timeout: 20000 });
       status = res ? res.status() : 0;
     } catch (e) { err = String(e && e.message || e).slice(0, 160); }
-    if (err) return { kind: 'broken', host: u.hostname.replace(/^www\./, ''), why: err };
+    if (err) return { kind: 'broken', host: u.hostname.replace(/^www\./, ''), why: err, login: /AUTH_CREDENTIALS|401/.test(err) };
     await pg.waitForTimeout(2500);
     const seen = await pg.evaluate(() => {
       const H = innerHeight;
@@ -220,7 +247,8 @@ export async function runClinicJob(env, browser, id) {
     try {
       const pg = await ctx.newPage();
       place = await placePage(pg, job.place_id);
-      for (let i = 0; i < SEARCH_ROUNDS; i++) rounds.push(await searchOnce(pg, job.term, job.place_id, i === 0));
+      const base = JSON.parse(job.base || '{}');
+      for (let i = 0; i < SEARCH_ROUNDS; i++) rounds.push(await searchOnce(pg, job.term, job.place_id, base, i === 0));
     } finally { await ctx.close().catch((e) => console.error('[clinic] ctx close', e)); }
     const site = place.info.website ? await websiteOnPhone(browser, place.info.website) : { kind: 'none' };
 

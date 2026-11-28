@@ -117,12 +117,14 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function () {
-  const API = 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
+  // Local preview (clinic-radar/preview.mjs) answers the same API under /api.
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/api' : 'https://bookease-maps-report.atiz-cloudflare-account.workers.dev';
   const $ = (id) => document.getElementById(id);
   const E = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
   const thDate = (s) => { const [d, t] = String(s).split(' '); const [y, m, dd] = d.split('-').map(Number); return { day: `${dd} ${TH_M[m - 1]} ${y + 543}`, time: t || '', month: `${TH_M[m - 1]} ${y + 543}`, code: `${String(y + 543).slice(-2)}${String(m).padStart(2, '0')}` }; };
   const fmt = (n) => Number(n).toLocaleString('th-TH');
+  const f1 = (x) => Number(x).toFixed(1);
   const post = (path, body) => fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     .then((r) => r.json().then((j) => ({ ok: r.ok, status: r.status, j })));
   const show = (id) => ['find', 'wait', 'report'].forEach((k) => { $(k).hidden = k !== id; });
@@ -200,7 +202,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     const rk = (k) => (k === 'none' ? `ยังไม่พบใน ${fmt(seen)} อันดับแรก` : `อันดับ ${k}`);
     const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
     const spread = !lists.length ? '' : keys.length === 1
-      ? `เราค้นซ้ำ ${lists.length} รอบในวันเดียวกัน ได้${rk(keys[0])}ทุกรอบ`
+      ? `เราค้นซ้ำ ${lists.length} รอบในวันเดียวกัน ได้${rk(keys[0])} ทุกรอบ`
       : `เราค้นซ้ำ ${lists.length} รอบในวันเดียวกัน · ${keys.map((k) => `${rk(k)} ${counts[k]} รอบ`).join(' · ')} · ในภาพนี้${rk(rank == null ? 'none' : rank)}`;
 
     // 1. strength first (words, no repeated numbers)
@@ -217,7 +219,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     const starCls = p.rating == null ? 'r' : p.rating >= 4.7 ? 'g' : p.rating >= 4.0 ? 'a' : 'r';
     const tiles = [
       [rankCls, rank == null ? 'ยังไม่พบ' : `อันดับ ${rank}`, rank == null ? `ใน ${fmt(seen)} อันดับแรก ค้น "${term}"` : `ค้น "${term}"`],
-      [starCls, p.rating == null ? 'ยังไม่มี' : String(p.rating), p.rating == null ? 'รีวิวบน Google' : `ดาว จาก ${fmt(p.reviews || 0)} รีวิว${rev.length ? ` · ${youLead ? 'คลินิกถัดไป' : 'คลินิกอันดับบน'}ได้ ${Math.min(...rev)}${rev.length > 1 && Math.max(...rev) !== Math.min(...rev) ? `–${Math.max(...rev)}` : ''}` : ''}`],
+      [starCls, p.rating == null ? 'ยังไม่มี' : f1(p.rating), p.rating == null ? 'รีวิวบน Google' : `ดาว จาก ${fmt(p.reviews || 0)} รีวิว${rev.length ? ` · คลินิกอื่นใน 3 อันดับแรกได้ ${f1(Math.min(...rev))}${rev.length > 1 && Math.max(...rev) !== Math.min(...rev) ? `–${f1(Math.max(...rev))}` : ''}` : ''}`],
       booking ? ['g', 'จองได้', booking === 'partner' ? 'ปุ่มจองออนไลน์บน Google' : `ลิงก์จองบน Google · ${p.linkRow}`] : ['r', 'ยังไม่พบ', 'ปุ่มหรือลิงก์จองบน Google'],
     ];
 
@@ -236,7 +238,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
       vis: `<div class='vis' style='align-items:center'><div class='pane' style='flex:0 0 38%'><span class='tag now'>ตอนนี้</span><div class='phone' style='width:74px;border-width:3px;border-radius:13px'><img src='${img('phone.jpg')}' alt=''></div></div><div class='arrow'>→</div><div class='pane' style='padding:24px 6px 14px'><span class='tag do'>ถ้าทำ</span><div style='display:flex;flex-direction:column;align-items:center;gap:8px'><span style='background:#06C755;color:#fff;font-size:15px;font-weight:800;border-radius:999px;padding:9px 22px;box-shadow:0 3px 10px rgba(6,199,85,.35)'>จองคิวออนไลน์</span><span style='font-size:12px;color:#6B6480'>ปุ่มเด่นในจอแรก</span></div></div></div>`,
       cap: 'คนที่เข้าเว็บจองได้ตั้งแต่จอแรก', feat: booking || !cards.some((c) => c.t.startsWith('ให้ลูกค้าจองจากหน้า Google')) ? 'ใส่ปุ่มที่พาไป LINE หรือหน้าจองของคลินิก' : 'ใช้ลิงก์จองเดียวกับข้อก่อนหน้า', chip: CHIP.free });
     const revCard = { t: 'ขอรีวิวหลังรับบริการ', gap: 'รีวิวน้อยกว่าคลินิกอันดับบน',
-      vis: `<div class='vis' style='align-items:center'><div class='pane' style='padding:24px 6px 14px'><span class='tag now'>รีวิวตอนนี้</span><div style='text-align:center'><div style='font-size:30px;font-weight:800;color:#1F1A2E'>${p.rating == null ? '–' : p.rating} <span style='color:#F5B400'>★</span></div><div style='font-size:12.5px;color:#6B6480'>${fmt(p.reviews || 0)} รีวิวบน Google</div></div></div><div class='arrow'>→</div><div class='pane' style='flex:0 0 38%'><span class='tag do'>QR ของคุณ</span><div id='qr' style='width:88%;margin:0 auto'></div></div></div>`,
+      vis: `<div class='vis' style='align-items:center'><div class='pane' style='padding:24px 6px 14px'><span class='tag now'>รีวิวตอนนี้</span><div style='text-align:center'><div style='font-size:30px;font-weight:800;color:#1F1A2E'>${p.rating == null ? '–' : f1(p.rating)} <span style='color:#F5B400'>★</span></div><div style='font-size:12.5px;color:#6B6480'>${fmt(p.reviews || 0)} รีวิวบน Google</div></div></div><div class='arrow'>→</div><div class='pane' style='flex:0 0 38%'><span class='tag do'>QR ของคุณ</span><div id='qr' style='width:88%;margin:0 auto'></div></div></div>`,
       cap: rank === 1 ? 'รักษาอันดับ 1 ไว้ให้มั่นคง' : 'ลูกค้าที่พอใจรีวิวได้ทันทีก่อนออกจากคลินิก', feat: `QR นี้เปิดหน้ารีวิว ${name} บน Google ได้จริง`, chip: CHIP.free };
     if (cards.length < 3) cards.push(revCard);
     const n = cards.length;
@@ -277,7 +279,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
     const url = location.href.split('#')[0];
     const line = `https://line.me/R/oaMessage/@drease/?${encodeURIComponent(`Clinic Radar · ${name}\nอยากให้ทีมช่วยเรื่องข้อ: \n${url}`)}`;
     const no = `CR-${when.code}-${id.slice(0, 4).toUpperCase()}`;
-    const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(term)}`;
+    const mapsSearch = `https://www.google.com/maps/search/${encodeURIComponent(term)}${v.base && v.base.lat != null ? `/@${v.base.lat},${v.base.lng},15z` : ''}`;
 
     $('report').innerHTML = `
       <div class='title'>คุณหมอและทีม ${E(name)}</div>
@@ -295,7 +297,7 @@ p{font-size:15.5px;line-height:1.6;margin-top:8px;text-wrap:pretty}p b{font-weig
       ${comp ? `<p>${comp}</p>` : ''}
       <div class='fig'><div class='figlbl'>ผลค้นหาจริงใน Google Maps ที่ลูกค้าเห็น</div>${r.img.search ? `<img src='${img('search.jpg')}' alt='ผลค้นหา ${E(term)} ใน Google Maps'>` : ''}
         <div style='margin-top:8px;font-size:13.5px'><b style='color:#5B21B6'>คลินิกคุณ:</b> ${E(where)}</div>
-        <div class='how'>ภาพหน้าจอจริง ค้น "${E(term)}" ใน Google Maps บนคอมพิวเตอร์ ไม่ได้ล็อกอิน วันที่ ${when.day} ${when.time} น. · ภาพแสดง 3 คลินิกแรก · อันดับไม่นับโฆษณา · ${E(spread)} · ผลอาจต่างกันเล็กน้อยตามตำแหน่งและเวลาที่ค้น · <a href='${mapsSearch}' target='_blank' rel='noopener'>ลองค้นเองด้วยคำเดียวกัน</a></div></div>` : ''}
+        <div class='how'>ภาพหน้าจอจริง ค้น "${E(term)}" ใน Google Maps บนคอมพิวเตอร์ โดยเปิดแผนที่ที่ตำแหน่งของคลินิก ไม่ได้ล็อกอิน วันที่ ${when.day} ${when.time} น. · ภาพแสดง 3 คลินิกแรก · อันดับไม่นับโฆษณา · ${E(spread)} · ผลอาจต่างกันเล็กน้อยตามตำแหน่งและเวลาที่ค้น · <a href='${mapsSearch}' target='_blank' rel='noopener'>ลองค้นเองด้วยคำเดียวกัน</a></div></div>` : ''}
       <h2>ลูกค้าเจออะไร ตั้งแต่ค้นจนจอง</h2>
       <div class='jr'>${journey}</div>
       <h2>${n} เรื่องที่ควรทำก่อน</h2>
